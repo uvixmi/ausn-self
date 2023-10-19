@@ -1,0 +1,42 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.background-cover {
+  background-image: url("../../svg-images/register-background.svg");
+  background-size: cover;
+  flex-grow: 1;
+  display: flex;
+
+  @media screen and (min-width: $s) {
+    padding: 50px 40px;
+  }
+}
+
+.main-wrapper {
+  background-color: #fff;
+  min-height: 100vh;
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.register-header {
+  width: 100%;
+  display: flex;
+}
+
+.register-footer {
+  width: 100%;
+  height: 88px;
+}
+
+.logo-item {
+  margin: 20px 40px;
+  cursor: pointer;
+}
