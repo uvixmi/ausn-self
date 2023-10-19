@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/ausn-self/static/css/main.a5f0ae33.css",
+    "main.js": "/ausn-self/static/js/main.941eb7e4.js",
+    "static/js/787.ab313b8a.chunk.js": "/ausn-self/static/js/787.ab313b8a.chunk.js",
+    "index.html": "/ausn-self/index.html",
+    "static/media/register-background.svg": "/ausn-self/static/media/register-background.e0a9376d7a0e6da8bb64.svg",
+    "main.a5f0ae33.css.map": "/ausn-self/static/css/main.a5f0ae33.css.map",
+    "main.941eb7e4.js.map": "/ausn-self/static/js/main.941eb7e4.js.map",
+    "787.ab313b8a.chunk.js.map": "/ausn-self/static/js/787.ab313b8a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a5f0ae33.css",
+    "static/js/main.941eb7e4.js"
+  ]
+}
