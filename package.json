@@ -2,7 +2,6 @@
   "name": "ausn-self",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://uvixmi.github.io/ausn-self/",
   "dependencies": {
     "@openapitools/openapi-generator-cli": "^2.7.0",
     "@react-hook/media-query": "^1.1.1",

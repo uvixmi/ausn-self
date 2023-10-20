@@ -13,7 +13,7 @@ import styles from "./styles.module.scss"
 import { useEffect, useState } from "react"
 import { LoadingOutlined } from "@ant-design/icons"
 import { useMediaQuery } from "@react-hook/media-query"
-//import { api } from "../../api/myApi"
+import { api } from "../../api/myApi"
 
 const { Title, Text, Link } = Typography
 
@@ -162,7 +162,6 @@ export const RegisterPage = () => {
                         value={phone}
                         onChange={(event) => setPhone(event.target.value)}
                         placeholder={CONTENT.PHONE_PLACEHOLDER}
-                        type="password"
                       ></Input>
                     </div>
                   </div>
@@ -170,10 +169,10 @@ export const RegisterPage = () => {
                     className={styles["button-item"]}
                     onClick={() => {
                       onChangeStep(1)
-                      // api.users.createUserUsersPost({
-                      // email: "uvixmi@mail.ru",
-                      //phone_number: "+79123456789",
-                      //})
+                      api.users.createUserUsersPost({
+                        email: email,
+                        phone_number: phone,
+                      })
                     }}
                   >
                     {CONTENT.CONTINUE_BUTTON}
@@ -186,7 +185,7 @@ export const RegisterPage = () => {
               {currentStep == 1 && (
                 <div>
                   <div className={styles["links-wrapper"]}>
-                    <Text>{CONTENT.MAIL_SENT_FIRST}</Text>
+                    <Text>{CONTENT.MAIL_SENT_FIRST + email}</Text>
                     <Text>{CONTENT.MAIL_SENT_SECOND}</Text>
                     <Text>{CONTENT.MAIL_SENT_THIRD}</Text>
                   </div>

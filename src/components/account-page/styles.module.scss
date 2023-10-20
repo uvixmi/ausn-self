@@ -1,0 +1,44 @@
+.left-sider-wrapper {
+  background-color: #fff;
+  width: 200px;
+}
+
+.right-sider-wrapper {
+  background-color: #fff;
+  width: 200px;
+}
+
+.heading-text {
+  font-size: 34px;
+  line-height: 36px;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-wrapper {
+  display: flex;
+}
+
+.card-item {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  height: 162px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.income-header-wrapper {
+  display: flex;
+}

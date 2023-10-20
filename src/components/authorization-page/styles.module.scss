@@ -36,6 +36,7 @@ $xxl: 2560px;
   flex-direction: column;
   padding: 20px 0;
   width: 100%;
+  max-width: 340px;
 
   @media screen and (min-width: $s) {
     margin: 40px 0;
@@ -74,8 +75,19 @@ $xxl: 2560px;
 }
 
 .img-wrapper {
-  width: auto;
   margin-top: 50px;
+  height: 200px;
+  width: 200px;
+
+  @media screen and (min-width: $tablet) {
+    height: 300px;
+    width: 300px;
+  }
+
+  @media screen and (min-width: $s) {
+    width: auto;
+    height: auto;
+  }
 }
 
 .heading-text {
