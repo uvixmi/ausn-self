@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/ausn-self/static/css/main.45d1357a.css",
-    "main.js": "/ausn-self/static/js/main.624c85dd.js",
+    "main.js": "/ausn-self/static/js/main.c54f44a4.js",
     "static/js/787.ab313b8a.chunk.js": "/ausn-self/static/js/787.ab313b8a.chunk.js",
     "index.html": "/ausn-self/index.html",
     "static/media/register-background.svg": "/ausn-self/static/media/register-background.e0a9376d7a0e6da8bb64.svg",
     "main.45d1357a.css.map": "/ausn-self/static/css/main.45d1357a.css.map",
-    "main.624c85dd.js.map": "/ausn-self/static/js/main.624c85dd.js.map",
+    "main.c54f44a4.js.map": "/ausn-self/static/js/main.c54f44a4.js.map",
     "787.ab313b8a.chunk.js.map": "/ausn-self/static/js/787.ab313b8a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.45d1357a.css",
-    "static/js/main.624c85dd.js"
+    "static/js/main.c54f44a4.js"
   ]
 }
