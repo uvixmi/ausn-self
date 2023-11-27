@@ -21,12 +21,13 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: "latest",
+    ecmaVersion: 5,
     sourceType: "module",
+    project: "./tsconfig.json", // Добавьте это правило
   },
   plugins: ["@typescript-eslint", "react"],
   rules: {
-    "no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": "warn", // Используйте это правило для TypeScript
     "no-undef": "off",
   },
   settings: {

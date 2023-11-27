@@ -1,11 +1,30 @@
 .left-sider-wrapper {
   background-color: #fff;
   width: 200px;
+  border-right: 1px solid #d9d9d9;
+}
+
+.left-sider-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.left-sider-menu-inner {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.left-sider-menu {
+  margin: 0 16px 0 30px;
 }
 
 .right-sider-wrapper {
   background-color: #fff;
-  width: 200px;
+  border-left: 1px solid #d9d9d9;
+  padding: 20px 40px;
 }
 
 .heading-text {
@@ -19,6 +38,47 @@
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  margin: 35px 40px 0px 240px;
+  gap: 24px;
+}
+
+.logo-inner {
+  max-height: 64px;
+}
+
+.remark-wrapper {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  min-height: 42px;
+  gap: 4px;
+}
+
+.remark-button {
+  border-radius: 4px;
+  background: #6159ff;
+  color: #fff;
+  height: 100%;
+  width: 220px;
+}
+
+.remark-text {
+  display: flex;
+  padding: 12px 13px;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(
+    67.21deg,
+    #f0f0ff 0%,
+    rgba(245, 245, 245, 0.45) 100%
+  );
+  flex-grow: 1;
+}
+
+.logo-item {
+  margin: 20px 40px;
+  cursor: pointer;
 }
 
 .content-wrapper {
@@ -28,17 +88,114 @@
 
 .cards-wrapper {
   display: flex;
+  gap: 16px;
 }
 
 .card-item {
   border: 1px solid #d9d9d9;
   border-radius: 4px;
-  height: 162px;
-  width: 200px;
+  min-width: 216px;
   display: flex;
   flex-direction: column;
+  padding: 16px;
+  height: 162px;
+}
+
+.card-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  line-height: 16px;
+  font-size: 12px;
+}
+
+.taxes-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.amount-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taxes-button {
+  height: 26px;
+  border-radius: 2px;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.button-paid {
+  width: 94px;
+}
+
+.list-item {
+  border: none;
 }
 
 .income-header-wrapper {
   display: flex;
+  flex-direction: row;
+  padding: 16px 0;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.datepicker-item {
+  width: 240px;
+}
+
+.account-select {
+  flex-grow: 1;
+}
+
+.operation-select {
+  width: 155px;
+}
+
+.currency-amount {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+
+.card-fix {
+  background: #fff4ea;
+}
+
+.card-super {
+  background: #ecf6ee;
+}
+
+.link-details {
+  color: #6159ff;
+  cursor: pointer;
+}
+
+.income-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.sider-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.default-button {
+  border-radius: 2px;
+  border: 1px solid #9984ff;
+  color: #6159ff;
+}
+
+.list-item-right {
+  display: flex;
+  justify-content: space-between;
 }

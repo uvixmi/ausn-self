@@ -6,10 +6,16 @@ import Link from "antd/es/typography/Link"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { api } from "../../api/myApi"
+import { AuthorizationPageProps } from "./types"
 
 const { Title, Text } = Typography
 
-export const AuthorizationPage = () => {
+export const AuthorizationPage = ({
+  setTokenType,
+  setAccessToken,
+  setIsAuth,
+  login,
+}: AuthorizationPageProps) => {
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -55,8 +61,26 @@ export const AuthorizationPage = () => {
             </div>
             <Button
               className={styles["button-item"]}
-              onClick={() => {
-                api.auth.loginAuthPost({ username: email, password: password })
+              onClick={async () => {
+                try {
+                  const response = await api.auth.loginAuthPost({
+                    username: email,
+                    password: password,
+                  })
+
+                  // Проверка наличия свойства data в ответе
+                  if (response.data) {
+                    const { token_type, access_token } = response.data
+                    login(access_token)
+                    setTokenType(token_type)
+                    setIsAuth(true)
+                  } else {
+                    console.error("Отсутствует свойство data в ответе API.")
+                  }
+                } catch (error) {
+                  console.error("Ошибка при выполнении запроса:", error)
+                  // Другие действия при ошибке, если необходимо
+                }
               }}
             >
               {CONTENT.ENTER_BUTTON}

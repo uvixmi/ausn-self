@@ -4,31 +4,70 @@ import { AuthorizationPage } from "../authorization-page"
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
 import { RegisterPage } from "../register-page"
 import { AccountPage } from "../account-page"
+import { useEffect, useState } from "react"
+import { useAuth } from "../../AuthContext"
 
 export const MainPage = () => {
   const navigate = useNavigate()
-  return (
-    <>
+  const { isAuthenticated, login, logout } = useAuth()
+
+  const [accessToken, setAccessToken] = useState("")
+  const [isAuth, setIsAuth] = useState(false)
+  const [token_type, setTokenType] = useState("")
+  useEffect(() => {
+    console.log(isAuthenticated)
+  }, [isAuthenticated])
+  if (!isAuthenticated)
+    return (
+      <>
+        <div className={styles["main-wrapper"]}>
+          <div className={styles["register-header"]}>
+            <LogoIcon
+              onClick={() => navigate("/login")}
+              type="icon-custom"
+              className={styles["logo-item"]}
+            />
+          </div>
+          <div className={styles["background-cover"]}>
+            <Routes>
+              <Route
+                path="/login"
+                Component={() => (
+                  <AuthorizationPage
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
+                  />
+                )}
+              />
+              <Route path="/register" Component={RegisterPage} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
+          <div>
+            <div className={styles["register-footer"]}></div>
+          </div>
+        </div>
+      </>
+    )
+  else
+    return (
       <div className={styles["main-wrapper"]}>
-        <div className={styles["register-header"]}>
-          <LogoIcon
-            onClick={() => navigate("/login")}
-            type="icon-custom"
-            className={styles["logo-item"]}
+        <Routes>
+          <Route
+            path="/main"
+            Component={() => (
+              <AccountPage
+                accessToken={accessToken}
+                token_type={token_type}
+                logOut={logout}
+              />
+            )}
           />
-        </div>
-        <div className={styles["background-cover"]}>
-          <Routes>
-            <Route path="/login" Component={AuthorizationPage} />
-            <Route path="/register" Component={RegisterPage} />
-            <Route path="/main" Component={AccountPage} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </div>
-        <div>
-          <div className={styles["register-footer"]}></div>
-        </div>
+          <Route path="/*" element={<Navigate to="/main" replace />} />
+        </Routes>
       </div>
-    </>
-  )
+    )
 }
