@@ -210,10 +210,9 @@ export const RegisterPage = ({
   useEffect(() => {
     if (sno == TaxSystemType.UsnDR) {
       setRate("15%"), setMarks(marks2), setMaxSlider(15)
-    }
-    if (sno == TaxSystemType.UsnD) {
+    } else if (sno == TaxSystemType.UsnD) {
       setRate("6%"), setMarks(marks1), setMaxSlider(6)
-    }
+    } else setRate(undefined)
   }, [sno])
 
   useEffect(() => {
@@ -225,7 +224,7 @@ export const RegisterPage = ({
     }
   }, [marks])
 
-  const [rate, setRate] = useState("6%")
+  const [rate, setRate] = useState<string | undefined>(undefined)
 
   const PhoneMask = "+{0} (000) 000-00-00"
 
@@ -302,13 +301,16 @@ export const RegisterPage = ({
       dispatch(
         setTaxSystem({
           start_year: startYear,
-          tax_rate: parseInt(rate.slice(0, -1), 10),
+          tax_rate:
+            sno == TaxSystemType.UsnDR && rate
+              ? parseInt(rate.slice(0, -1), 10)
+              : undefined,
           tax_system: sno,
           inn,
         })
       )
 
-    if (sno == TaxSystemType.UsnD) {
+    if (sno == TaxSystemType.UsnD && rate) {
       await api.users.saveTaxInfoUsersTaxInfoPut(
         {
           inn,

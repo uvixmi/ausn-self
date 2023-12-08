@@ -48,7 +48,7 @@ const mySlice = createSlice({
       state,
       action: PayloadAction<{
         start_year: number
-        tax_rate: number
+        tax_rate: number | undefined
         tax_system: TaxSystemType
         inn: string
       }>
