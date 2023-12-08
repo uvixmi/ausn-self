@@ -307,10 +307,10 @@ export const RegisterPage = ({
           inn,
         })
       )
-    // await api.users.saveTaxInfoUsersTaxInfoPut(
-    //   { inn, tax_rate: parseInt(rate.slice(0, -1), 10), start_year: startYear },
-    //   { headers }
-    // )
+    await api.users.saveTaxInfoUsersTaxInfoPut(
+      { inn, tax_rate: parseInt(rate.slice(0, -1), 10), start_year: startYear },
+      { headers }
+    )
     if (sno == TaxSystemType.UsnD) setOpen(true)
     else navigate("/non-target")
   }
