@@ -343,7 +343,7 @@ export const RegisterPage = ({
                   responsive={false}
                   size="small"
                   labelPlacement="vertical"
-                  onChange={onChangeStep}
+                  //onChange={onChangeStep}
                   className={styles["stepper-inner"]}
                   percent={currentStep == 1 ? 60 : undefined}
                   items={steps}
@@ -571,7 +571,7 @@ export const RegisterPage = ({
                   direction="vertical"
                   current={currentStep}
                   size="small"
-                  onChange={onChangeStep}
+                  //onChange={onChangeStep}
                   className={styles["stepper-inner"]}
                   percent={currentStep == 1 ? 60 : undefined}
                   items={steps}
