@@ -65,7 +65,7 @@ export const MainPage = () => {
         </div>
       </>
     )
-  else if (token && currentUser.inn == null)
+  else if (token && currentUser.inn == null && currentUser.is_lead == false)
     return (
       <>
         <div className={styles["main-wrapper"]}>
@@ -108,7 +108,7 @@ export const MainPage = () => {
         </div>
       </>
     )
-  else if (token && currentUser.is_lead == true && currentUser.inn != null)
+  else if (token && currentUser.is_lead == true)
     return (
       <>
         <div className={styles["main-wrapper"]}>
