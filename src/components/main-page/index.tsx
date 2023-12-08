@@ -6,6 +6,10 @@ import { RegisterPage } from "../register-page"
 import { AccountPage } from "../account-page"
 import { useEffect, useState } from "react"
 import { useAuth } from "../../AuthContext"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "./store"
+import { NonTargetPage } from "../non-target-page"
+import { clearData } from "../authorization-page/slice"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -14,16 +18,29 @@ export const MainPage = () => {
   const [accessToken, setAccessToken] = useState("")
   const [isAuth, setIsAuth] = useState(false)
   const [token_type, setTokenType] = useState("")
+
+  const dispatch = useDispatch<AppDispatch>()
+  const {
+    data: currentUser,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.user)
+
+  const token = localStorage.getItem("token")
+
   useEffect(() => {
-    console.log(isAuthenticated)
-  }, [isAuthenticated])
+    console.log(currentUser.inn)
+  }, [currentUser])
+
   if (!isAuthenticated)
     return (
       <>
         <div className={styles["main-wrapper"]}>
           <div className={styles["register-header"]}>
             <LogoIcon
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                logout(), dispatch(clearData()), navigate("/login")
+              }}
               type="icon-custom"
               className={styles["logo-item"]}
             />
@@ -44,6 +61,49 @@ export const MainPage = () => {
               <Route path="/register" Component={RegisterPage} />
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
+          <div>
+            <div className={styles["register-footer"]}></div>
+          </div>
+        </div>
+      </>
+    )
+  else if (token && currentUser.inn == null)
+    return (
+      <>
+        <div className={styles["main-wrapper"]}>
+          <div className={styles["register-header"]}>
+            <LogoIcon
+              onClick={() => {
+                logout(), navigate("/login"), dispatch(clearData())
+              }}
+              type="icon-custom"
+              className={styles["logo-item"]}
+            />
+          </div>
+          <div className={styles["background-cover"]}>
+            <Routes>
+              <Route
+                path="/register"
+                Component={() => (
+                  <RegisterPage
+                    registrationPage={2}
+                    currentUser={currentUser}
+                  />
+                )}
+              />
+              <Route
+                path="/non-target"
+                Component={() => (
+                  <NonTargetPage
+                    accessToken={accessToken}
+                    token_type={token_type}
+                    logOut={logout}
+                  />
+                )}
+              />
+              <Route path="/*" element={<Navigate to="/register" replace />} />
             </Routes>
           </div>
           <div>

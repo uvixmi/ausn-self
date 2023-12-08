@@ -1,0 +1,2916 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AKB - FastAPI Project",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "operationId": "login_auth_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_login_auth_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Получить текущего пользователя",
+        "operationId": "current_user_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Зарегистрироваться. Шаг регистрации 1.",
+        "operationId": "create_user_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/inn_info": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Получить информацию пользователя по ИНН. Шаг регистрации 2. Доступно, только если пользователь не имеет сохраненного ИНН в ЛК.",
+        "operationId": "get_inn_info_users_inn_info_get",
+        "parameters": [
+          {
+            "description": "ИНН клиента",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Inn",
+              "description": "ИНН клиента"
+            },
+            "name": "inn",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InnInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/users/tax_info": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Сохранить налоговую информацию по клиенту. Шаг регистрации 3. Доступно, только если пользователь не имеет сохраненного ИНН в ЛК.",
+        "operationId": "save_tax_info_users_tax_info_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InnInfoToSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/users/lead_info": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Сохранить лида по клиенту. Метод нужен для сохранения лида клиента, который не проходит по СНО.",
+        "operationId": "save_lead_info_users_lead_info_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadInfoToSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/sources": {
+      "get": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "Получить информацию о подключенных счетах, макретплейсах и ОФД пользователя",
+        "operationId": "get_sources_info_sources_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesInfo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/sources/account": {
+      "post": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "Добавление счета клиента",
+        "operationId": "create_client_account_sources_account_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_client_account_sources_account_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAccountResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/sources/ofd": {
+      "post": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "Добавление ОФД клиента",
+        "operationId": "create_client_ofd_sources_ofd_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_client_ofd_sources_ofd_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/operations": {
+      "get": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Получить список размеченных операций",
+        "operationId": "get_operations_operations_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Account Number"
+            },
+            "name": "account_number",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Start Date"
+            },
+            "name": "start_date",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "End Date"
+            },
+            "name": "end_date",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/OperationType"
+            },
+            "name": "operation_type",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/OperationDebitDescription"
+            },
+            "name": "debit_description",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/OperationCreditDescription"
+            },
+            "name": "credit_description",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Page Number"
+            },
+            "name": "page_number",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Row Count"
+            },
+            "name": "row_count",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            },
+            "name": "request_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Удалить операции",
+        "operationId": "delete_operations_operations_delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array",
+                "title": "Operation Id"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/operations/by_hand": {
+      "post": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Добавить операцию вручную",
+        "operationId": "create_operation_operations_by_hand_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOperation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/operations/markup": {
+      "put": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Переразметить операцию",
+        "operationId": "update_operation_operations_markup_put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Operation Id"
+            },
+            "name": "operation_id",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationMarkup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/operations/tax_payment": {
+      "post": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Добавить уплату налога",
+        "operationId": "create_operation_tax_payment_operations_tax_payment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaxPaymentOperation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/operations/recalculate_taxes": {
+      "put": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Обновить расчет налога. (для обновления берется ИНН пользователя)",
+        "operationId": "recalculate_taxes_operations_recalculate_taxes_put",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/taxes/calculation": {
+      "get": {
+        "tags": [
+          "Taxes"
+        ],
+        "summary": "Получить рассчитанные налоги и взносы",
+        "operationId": "get_tax_calculation_taxes_calculation_get",
+        "parameters": [
+          {
+            "description": "Год расчета налогов",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Year",
+              "description": "Год расчета налогов"
+            },
+            "name": "year",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxCalculationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/taxes/payment_order": {
+      "post": {
+        "tags": [
+          "Taxes"
+        ],
+        "summary": "Сформировать платежное поручение",
+        "operationId": "generate_payment_order_taxes_payment_order_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePaymentOrder"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOrder"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Получить задачи клиента",
+        "operationId": "get_tasks_tasks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/tasks/status": {
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Обновить статус задачи",
+        "operationId": "update_report_status_tasks_status_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/reports": {
+      "post": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Сгенерировать отчетность выбранного типа за выбранный период",
+        "operationId": "generate_reports_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateReportsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Архив с файлами отчетности. Для типа отчетности 1 в архиве один pdf файл. Для типов отчетности 2,3 в архиве xml файл и pdf файл."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountInfo": {
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "title": "Account Number",
+            "description": "Номер счета клиента"
+          },
+          "bank_bik": {
+            "type": "string",
+            "title": "Bank Bik",
+            "description": "БИК банка"
+          },
+          "bank_name": {
+            "type": "string",
+            "title": "Bank Name",
+            "description": "Наименование банка"
+          },
+          "last_operation": {
+            "type": "string",
+            "format": "date",
+            "title": "Last Operation",
+            "description": "Дата последней операции по счету"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_number",
+          "bank_bik",
+          "bank_name",
+          "last_operation"
+        ],
+        "title": "AccountInfo"
+      },
+      "AccountInfoFromFile": {
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "End Date"
+          },
+          "account_number": {
+            "type": "string",
+            "title": "Account Number"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_date",
+          "end_date",
+          "account_number"
+        ],
+        "title": "AccountInfoFromFile"
+      },
+      "AccountType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "title": "AccountType",
+        "description": "An enumeration."
+      },
+      "Body_create_client_account_sources_account_post": {
+        "properties": {
+          "account_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccountType"
+              }
+            ],
+            "description": "Тип синхронизации. Возможные значения: 1 - Выписка в формате txt. 2 - Директ-банк. 3 - API-метод. 4 - решение ООО Звено."
+          },
+          "account_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Account File",
+            "description": "Файл с банковской выгрузкой формата .txt. Обязателен для заполнения, если account_type = 1"
+          },
+          "login": {
+            "title": "Login",
+            "description": "Логин 1С: ДиректБанк. Обязателен для заполнения, если account_type = [2, 3, 4]"
+          },
+          "password": {
+            "title": "Password",
+            "description": "Пароль 1С: ДиректБанк. Обязателен для заполнения, если account_type = [2, 3, 4]"
+          },
+          "account_number": {
+            "title": "Account Number",
+            "description": "Номер счета клиента. Обязателен для заполнения, если account_type = 2"
+          },
+          "bank_bik": {
+            "title": "Bank Bik",
+            "description": "БИК банка. Обязателен для заполнения, если account_type = 2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_type"
+        ],
+        "title": "Body_create_client_account_sources_account_post"
+      },
+      "Body_create_client_ofd_sources_ofd_post": {
+        "properties": {
+          "ofd_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OFDType"
+              }
+            ],
+            "description": "Тип синхронизации. Возможные значения: 1 - Отчет по чекам (как при подгрузке табличной формы). 2 - API ОФД (как при автозагрузке)"
+          },
+          "ofd_source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OFDSource"
+              }
+            ],
+            "description": "Источник ОФД. Возможные значения:1. ofd_type = 1: Платформа, Яндекс, СБИС, Такском, Контур. 2. ofd_type = 2: ОФД.ру Первый.ОФД"
+          },
+          "ofd_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Ofd File",
+            "description": "Файл выгрузки по чекам. Обязателен для заполнения, если ofd_type = 1"
+          },
+          "login": {
+            "title": "Login",
+            "description": "Логин. Обязателен для заполнения, если account_type = 2"
+          },
+          "password": {
+            "title": "Password",
+            "description": "Пароль / Токен доступа. Обязателен для заполнения, если account_type = 2"
+          },
+          "date_begin": {
+            "title": "Date Begin",
+            "description": "Дата, с которой необходимо подгружать чеки. Обязательна для заполнения, если account_type = 2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ofd_type",
+          "ofd_source"
+        ],
+        "title": "Body_create_client_ofd_sources_ofd_post"
+      },
+      "Body_login_auth_post": {
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "pattern": "password",
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "type": "string",
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_login_auth_post"
+      },
+      "ContributionsInfo": {
+        "properties": {
+          "fixed_fees": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FixedFeesInfo"
+              }
+            ],
+            "title": "Fixed Fees",
+            "description": "Блок Фиксированные взносы"
+          },
+          "income_percentage": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IncomePercentage"
+              }
+            ],
+            "title": "Income Percentage",
+            "description": "1% с дохода"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fixed_fees"
+        ],
+        "title": "ContributionsInfo"
+      },
+      "CreateAccountResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id"
+          },
+          "account_info_from_file": {
+            "$ref": "#/components/schemas/AccountInfoFromFile"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "CreateAccountResponse"
+      },
+      "CreateOperation": {
+        "properties": {
+          "category": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationCategory"
+              }
+            ],
+            "description": "Признак дебетования"
+          },
+          "counterparty_name": {
+            "type": "string",
+            "title": "Counterparty Name",
+            "description": "Наименование контрагента"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "Назначение платежа"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма операции"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Дата совершения операции"
+          },
+          "doc_number": {
+            "type": "string",
+            "title": "Doc Number",
+            "description": "Номер документа"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "counterparty_name",
+          "purpose",
+          "amount",
+          "date"
+        ],
+        "title": "CreateOperation",
+        "example": {
+          "category": "debet",
+          "counterparty_name": "ИП Варягин",
+          "purpose": "Доход от продажи оборудования",
+          "amount": 25000.9,
+          "date": "2023-10-30",
+          "doc_number": "123"
+        }
+      },
+      "CreateTaxPaymentOperation": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Дата совершения операции"
+          },
+          "doc_number": {
+            "type": "string",
+            "title": "Doc Number",
+            "description": "Номер документа"
+          },
+          "tax_period": {
+            "type": "integer",
+            "title": "Tax Period",
+            "description": "Год уплаты налога"
+          },
+          "tax_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaxType"
+              }
+            ],
+            "description": "Тип налога. Возможные значения: 1 - УСН. 2 - фиксированные взносы за ИП. 3 - 1% с дохода сверх 300 000 руб. 4 - ЕНС. 5 - ПФР. 6 - ОМС. "
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "tax_period",
+          "tax_type",
+          "amount"
+        ],
+        "title": "CreateTaxPaymentOperation",
+        "example": {
+          "date": "2023-10-30",
+          "doc_number": "123",
+          "tax_period": 2023,
+          "tax_type": 1,
+          "amount": 25000.9
+        }
+      },
+      "CreateUser": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "Электронная почта клиента"
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number",
+            "description": "Номер телефона клиента"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "CreateUser"
+      },
+      "ENSBalanceInfo": {
+        "properties": {
+          "opening_balance": {
+            "type": "number",
+            "title": "Opening Balance",
+            "description": "Сальдо на 01.01"
+          },
+          "closing_balance": {
+            "type": "number",
+            "title": "Closing Balance",
+            "description": "Сальдо конечное"
+          }
+        },
+        "type": "object",
+        "required": [
+          "opening_balance",
+          "closing_balance"
+        ],
+        "title": "ENSBalanceInfo"
+      },
+      "FixedFeesInfo": {
+        "properties": {
+          "accrued_ff": {
+            "type": "number",
+            "title": "Accrued Ff",
+            "description": "Начислены фикс. взносы"
+          },
+          "paid_ff": {
+            "type": "number",
+            "title": "Paid Ff",
+            "description": "Уплачено фикс. взносов"
+          },
+          "due_ff": {
+            "type": "number",
+            "title": "Due Ff",
+            "description": "Фикс. взносы к уплате"
+          },
+          "due_date_ff": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date Ff",
+            "description": "Дата уплаты фикс. взносов. Всегда первый рабочий день года."
+          }
+        },
+        "type": "object",
+        "required": [
+          "accrued_ff",
+          "paid_ff",
+          "due_ff",
+          "due_date_ff"
+        ],
+        "title": "FixedFeesInfo"
+      },
+      "GeneratePaymentOrder": {
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "title": "Account Number",
+            "description": "Номер счета списания"
+          },
+          "tax_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaxType"
+              }
+            ],
+            "description": "Тип налога",
+            "default": 4
+          },
+          "tax_period": {
+            "type": "integer",
+            "title": "Tax Period",
+            "description": "Год уплаты налога"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма операции"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_number",
+          "tax_period",
+          "amount"
+        ],
+        "title": "GeneratePaymentOrder"
+      },
+      "GenerateReportsRequest": {
+        "properties": {
+          "report_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportType"
+              }
+            ],
+            "description": "Тип запрашиваемого отчета. Возможные значения: 1 - КУДиР в формате pdf. 2 - Уведомления об исчисленных авансовых платежах по УСН (pdf + xml). 3 - Налоговая декларация УСН (pdf + xml). "
+          },
+          "period_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportPeriodType"
+              }
+            ],
+            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год)"
+          },
+          "period_year": {
+            "type": "integer",
+            "title": "Period Year",
+            "description": "Год налогового периода"
+          }
+        },
+        "type": "object",
+        "required": [
+          "report_type",
+          "period_type",
+          "period_year"
+        ],
+        "title": "GenerateReportsRequest",
+        "example": {
+          "report_type": 2,
+          "period_type": 1,
+          "period_year": 2023
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IncomePercentage": {
+        "properties": {
+          "period_ip": {
+            "type": "integer",
+            "title": "Period Ip",
+            "description": "Период, за который рассчитан 1% с дохода. Возможные значения: 1 - 1 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год."
+          },
+          "accrued_ip": {
+            "type": "number",
+            "title": "Accrued Ip",
+            "description": "Начислен 1% с дохода за ближайший закрытый период"
+          },
+          "paid_ip": {
+            "type": "number",
+            "title": "Paid Ip",
+            "description": "Уплачен 1% с дохода за за ближайший закрытый период"
+          },
+          "due_ip": {
+            "type": "number",
+            "title": "Due Ip",
+            "description": "1% с дохода к уплате за год"
+          },
+          "due_date_ip": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date Ip",
+            "description": "Дата уплаты 1% с дохода (окончательная)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "period_ip",
+          "accrued_ip",
+          "paid_ip",
+          "due_ip",
+          "due_date_ip"
+        ],
+        "title": "IncomePercentage"
+      },
+      "InnInfo": {
+        "properties": {
+          "firstname": {
+            "type": "string",
+            "title": "Firstname",
+            "description": "Имя"
+          },
+          "lastname": {
+            "type": "string",
+            "title": "Lastname",
+            "description": "Фамилия"
+          },
+          "patronymic": {
+            "type": "string",
+            "title": "Patronymic",
+            "description": "Отчество"
+          },
+          "fns_code": {
+            "type": "string",
+            "title": "Fns Code",
+            "description": "Код ИФНС"
+          },
+          "fns_description": {
+            "type": "string",
+            "title": "Fns Description",
+            "description": "Название ИФНС"
+          },
+          "fns_reg_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Fns Reg Date",
+            "description": "Дата регистрации ИП в ФНС"
+          }
+        },
+        "type": "object",
+        "required": [
+          "firstname",
+          "lastname",
+          "fns_code",
+          "fns_reg_date"
+        ],
+        "title": "InnInfo"
+      },
+      "InnInfoToSave": {
+        "properties": {
+          "inn": {
+            "type": "string",
+            "title": "Inn",
+            "description": "ИНН клиента"
+          },
+          "tax_rate": {
+            "type": "integer",
+            "title": "Tax Rate",
+            "description": "Налоговая ставка"
+          },
+          "start_year": {
+            "type": "integer",
+            "title": "Start Year",
+            "description": "Год начала расчета налогов"
+          }
+        },
+        "type": "object",
+        "required": [
+          "inn",
+          "tax_rate",
+          "start_year"
+        ],
+        "title": "InnInfoToSave"
+      },
+      "LeadInfoToSave": {
+        "properties": {
+          "inn": {
+            "type": "string",
+            "title": "Inn",
+            "description": "ИНН клиента"
+          },
+          "tax_rate": {
+            "type": "integer",
+            "title": "Tax Rate",
+            "description": "Налоговая ставка"
+          },
+          "start_year": {
+            "type": "integer",
+            "title": "Start Year",
+            "description": "Год начала расчета налогов"
+          },
+          "tax_system": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaxSystemType"
+              }
+            ],
+            "description": "Система налогообложения. Возможные значения: usn_d - УСН Доходы. usn_d_r - УСН Доходы-Расходы. patent - Патент. eshn - ЕСХН. osn - Общая система НО. "
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number",
+            "description": "Телефон пользователя"
+          }
+        },
+        "type": "object",
+        "required": [
+          "inn",
+          "start_year",
+          "tax_system"
+        ],
+        "title": "LeadInfoToSave"
+      },
+      "MarketplaceInfo": {
+        "properties": {
+          "marketplace_name": {
+            "type": "string",
+            "title": "Marketplace Name",
+            "description": "Наименование маркетплейса"
+          },
+          "marketplace_update": {
+            "type": "string",
+            "format": "date",
+            "title": "Marketplace Update",
+            "description": "Дата последней успешной интеграции"
+          }
+        },
+        "type": "object",
+        "required": [
+          "marketplace_name",
+          "marketplace_update"
+        ],
+        "title": "MarketplaceInfo"
+      },
+      "MarkupModeCode": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "MarkupModeCode",
+        "description": "An enumeration."
+      },
+      "NotificationType": {
+        "type": "string",
+        "enum": [
+          "Налог УСН",
+          "Фиксированные взносы",
+          "1% с дохода",
+          "Отчетность",
+          "Иные уведомления"
+        ],
+        "title": "NotificationType",
+        "description": "An enumeration."
+      },
+      "OFDInfo": {
+        "properties": {
+          "ofd_name": {
+            "type": "string",
+            "title": "Ofd Name",
+            "description": "Наименование ОФД"
+          },
+          "ofd_update": {
+            "type": "string",
+            "format": "date",
+            "title": "Ofd Update",
+            "description": "Дата последней успешной интеграции"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ofd_name",
+          "ofd_update"
+        ],
+        "title": "OFDInfo"
+      },
+      "OFDSource": {
+        "type": "string",
+        "enum": [
+          "ОФД.ру",
+          "Первый ОФД",
+          "Платформа",
+          "Яндекс",
+          "СБИС",
+          "Такском",
+          "Контур"
+        ],
+        "title": "OFDSource",
+        "description": "An enumeration."
+      },
+      "OFDType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2
+        ],
+        "title": "OFDType",
+        "description": "An enumeration."
+      },
+      "Operation": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Идентификатор операции"
+          },
+          "account_number": {
+            "type": "string",
+            "title": "Account Number",
+            "description": "Номер счета операции"
+          },
+          "counterparty_name": {
+            "type": "string",
+            "title": "Counterparty Name",
+            "description": "Наименование контрагента"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "Назначение платежа"
+          },
+          "amount_doc": {
+            "type": "number",
+            "title": "Amount Doc",
+            "description": "Сумма операции по документу"
+          },
+          "currency_code": {
+            "type": "string",
+            "title": "Currency Code",
+            "description": "Валюта операции"
+          },
+          "category": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationCategory"
+              }
+            ],
+            "description": "Признак дебетования"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Дата совершения операции"
+          },
+          "markup_mode_code": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarkupModeCode"
+              }
+            ],
+            "description": "Признак, кто выполнил разметку операции. \n1 - авторазметка БРН. 2 - разметка клиентом. 3 - разметка бухгалтером."
+          },
+          "doc_number": {
+            "type": "string",
+            "title": "Doc Number",
+            "description": "Номер документа"
+          },
+          "markup": {
+            "$ref": "#/components/schemas/OperationMarkup"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "counterparty_name",
+          "purpose",
+          "amount_doc",
+          "category",
+          "date",
+          "markup_mode_code",
+          "doc_number",
+          "markup"
+        ],
+        "title": "Operation"
+      },
+      "OperationCategory": {
+        "type": "string",
+        "enum": [
+          "debet",
+          "credit"
+        ],
+        "title": "OperationCategory",
+        "description": "An enumeration."
+      },
+      "OperationCreditDescription": {
+        "type": "string",
+        "enum": [
+          "Возврат покупателю",
+          "Оплата поставщику",
+          "Уплата налога",
+          "Расчеты по кредитам и займам",
+          "Возврат займа контрагенту",
+          "Возврат кредита банку",
+          "Выдача займа контрагенту",
+          "Прочие расчеты с контрагентами",
+          "Перевод на другой счет организации",
+          "Снятие наличных",
+          "Перечисление подотчетному лицу",
+          "Перечисление заработной платы по ведомостям",
+          "Перечисление заработной платы работнику",
+          "Перечисление сотруднику по договору подряда",
+          "Перечисление депонированной заработной платы",
+          "Перечисление дивидендов",
+          "Выдача займа работнику",
+          "Личные средства предпринимателя",
+          "Прочее списание",
+          "Комиссия банка",
+          "Уплата налога за третьих лиц"
+        ],
+        "title": "OperationCreditDescription",
+        "description": "An enumeration."
+      },
+      "OperationDebitDescription": {
+        "type": "string",
+        "enum": [
+          "Оплата от покупателя",
+          "Возврат от поставщика",
+          "Расчеты по кредитам и займам",
+          "Получение займа от контрагента",
+          "Получение кредита в банке",
+          "Возврат займа контрагентом",
+          "Прочие расчеты с контрагентами",
+          "Оплата от факторинговой компании",
+          "Перевод с другого счета",
+          "Взнос наличными",
+          "Инкассация",
+          "Приобретение иностранной валюты",
+          "Поступления от продажи иностранной валюты",
+          "Поступления от продаж по платежным картам и банковским кредитам",
+          "Возврат займа работником",
+          "Личные средства предпринимателя",
+          "Прочее поступление"
+        ],
+        "title": "OperationDebitDescription",
+        "description": "An enumeration."
+      },
+      "OperationMarkup": {
+        "properties": {
+          "operation_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationType"
+              }
+            ],
+            "description": "Вид операции. \n1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
+          },
+          "debit_description": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationDebitDescription"
+              }
+            ],
+            "description": "Описание операций 'Поступления'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type!"
+          },
+          "credit_description": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationCreditDescription"
+              }
+            ],
+            "description": "Описание операций 'Списания'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type!"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма, участвующая в разметке операции"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_type",
+          "amount"
+        ],
+        "title": "OperationMarkup",
+        "example": {
+          "operation_type": 2,
+          "amount": 500.9,
+          "debit_description": "Личные средства предпринимателя"
+        }
+      },
+      "OperationType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "title": "OperationType",
+        "description": "An enumeration."
+      },
+      "OperationsResponse": {
+        "properties": {
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/Operation"
+            },
+            "type": "array",
+            "title": "Operations",
+            "description": "Список операций"
+          },
+          "pages_count": {
+            "type": "integer",
+            "title": "Pages Count",
+            "description": "Количество страниц"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operations",
+          "pages_count"
+        ],
+        "title": "OperationsResponse",
+        "example": {
+          "operations": [
+            {
+              "id": "0d8fce4c-8362-11ed-a1eb-0242ac120002",
+              "account_number": "40702810845370000004",
+              "counterparty_name": "Некоммерческая организация Потребительское общество взаимного страхования с \"Очень длинным названием\"",
+              "purpose": "Перевод денег на счет",
+              "amount_doc": 1000.01,
+              "currency_code": "RUB",
+              "category": "debet",
+              "date": "2022-04-13",
+              "markup_mode_code": 1,
+              "doc_number": "239",
+              "markup": {
+                "operation_type": 2,
+                "amount": 900.01,
+                "description": "Оплата поставщику"
+              }
+            }
+          ],
+          "pages_count": 7
+        }
+      },
+      "PaymentOrder": {
+        "properties": {
+          "uip": {
+            "type": "string",
+            "title": "Uip",
+            "description": "УИН/УИП",
+            "default": "0"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма операции"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "Назначение платежа"
+          },
+          "payer_inn": {
+            "type": "string",
+            "title": "Payer Inn",
+            "description": "ИНН плательщика"
+          },
+          "payer_kpp": {
+            "type": "string",
+            "title": "Payer Kpp",
+            "description": "КПП плательщика",
+            "default": 0
+          },
+          "payer_account": {
+            "type": "string",
+            "title": "Payer Account",
+            "description": "Номер счета плательщика"
+          },
+          "payer_name": {
+            "type": "string",
+            "title": "Payer Name",
+            "description": "Наименование плательщика"
+          },
+          "payer_status": {
+            "type": "string",
+            "title": "Payer Status",
+            "description": "Статус плательщика",
+            "default": "01"
+          },
+          "receiver_inn": {
+            "type": "string",
+            "title": "Receiver Inn",
+            "description": "ИНН получателя",
+            "default": "7727406020"
+          },
+          "receiver_kpp": {
+            "type": "string",
+            "title": "Receiver Kpp",
+            "description": "КПП получателя",
+            "default": "770801001"
+          },
+          "receiver_bank_name": {
+            "type": "string",
+            "title": "Receiver Bank Name",
+            "description": "Наименование банка получателя",
+            "default": "ОТДЕЛЕНИЕ ТУЛА БАНКА РОССИИ//УФК по Тульской области, г Тула"
+          },
+          "receiver_bank_bik": {
+            "type": "string",
+            "title": "Receiver Bank Bik",
+            "description": "БИК банка получателя",
+            "default": "017003983"
+          },
+          "receiver_cor_account": {
+            "type": "string",
+            "title": "Receiver Cor Account",
+            "description": "Корр. счет банка получателя",
+            "default": "40102810445370000059"
+          },
+          "receiver_name": {
+            "type": "string",
+            "title": "Receiver Name",
+            "description": "Наименование получателя",
+            "default": "Казначейство России (ФНС России)"
+          },
+          "receiver_account": {
+            "type": "string",
+            "title": "Receiver Account",
+            "description": "Номер счета получателя",
+            "default": "03100643000000018500"
+          },
+          "kbk": {
+            "type": "string",
+            "title": "Kbk",
+            "description": "Код бюджетной классификации",
+            "default": "18201061201010000510"
+          },
+          "oktmo": {
+            "type": "string",
+            "title": "Oktmo",
+            "description": "ОКТМО",
+            "default": "0"
+          },
+          "payment_purpose": {
+            "type": "string",
+            "title": "Payment Purpose",
+            "description": "Основание платежа",
+            "default": "0"
+          },
+          "payment_period": {
+            "type": "string",
+            "title": "Payment Period",
+            "description": "Налоговый период",
+            "default": "0"
+          },
+          "document_number": {
+            "type": "string",
+            "title": "Document Number",
+            "description": "Номер документа",
+            "default": "0"
+          },
+          "document_date": {
+            "type": "string",
+            "title": "Document Date",
+            "description": "Дата налогового документа",
+            "default": "0"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount",
+          "purpose",
+          "payer_inn",
+          "payer_account",
+          "payer_name"
+        ],
+        "title": "PaymentOrder"
+      },
+      "ReportPeriodType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          9,
+          0
+        ],
+        "title": "ReportPeriodType",
+        "description": "An enumeration."
+      },
+      "ReportStatus": {
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "title": "ReportStatus",
+        "description": "An enumeration."
+      },
+      "ReportType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "ReportType",
+        "description": "An enumeration."
+      },
+      "SourcesInfo": {
+        "properties": {
+          "client": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InnInfo"
+              }
+            ],
+            "title": "Client",
+            "description": "Информация о клиенте (может содержать обновленные данные)"
+          },
+          "tax_system_info": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaxSystemInfo"
+              }
+            ],
+            "title": "Tax System Info",
+            "description": "Информация о системе налогообложения"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountInfo"
+            },
+            "type": "array",
+            "title": "Accounts",
+            "description": "Список подключенных счетов"
+          },
+          "marketplaces": {
+            "items": {
+              "$ref": "#/components/schemas/MarketplaceInfo"
+            },
+            "type": "array",
+            "title": "Marketplaces",
+            "description": "Список подключенных маркетплейсов"
+          },
+          "ofd": {
+            "items": {
+              "$ref": "#/components/schemas/OFDInfo"
+            },
+            "type": "array",
+            "title": "Ofd",
+            "description": "Список подключенных ОФД"
+          },
+          "comment": {
+            "type": "string",
+            "title": "Comment",
+            "description": "Комментарий"
+          }
+        },
+        "type": "object",
+        "required": [
+          "client",
+          "tax_system_info"
+        ],
+        "title": "SourcesInfo",
+        "example": {
+          "clients": [
+            {
+              "inn": "027710159721",
+              "lastname": "Пупкин",
+              "firstname": "Василий",
+              "patronymic": "Петрович",
+              "fns_reg_date": "2020-09-17",
+              "fns": {
+                "code": "0550",
+                "description": "Межрайонная инспекция ФНС России № 4 по Республике Дагестан"
+              },
+              "tax": {
+                "tax_system": "Usn6",
+                "tax_rate": 6,
+                "tax_date_begin": "2022-01-01",
+                "oktmo": "12345678"
+              },
+              "accounts": [
+                {
+                  "account_number": "40817810570000123456",
+                  "bank_bik": "044525092",
+                  "bank_name": "АО КБ Модульбанк",
+                  "last_operation": "2023-09-06"
+                }
+              ],
+              "marketplaces": [
+                {
+                  "marketplace_name": "Озон",
+                  "marketplace_update": "2023-10-01"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "TaskInfo": {
+        "properties": {
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NotificationType"
+              }
+            ],
+            "description": "Тип задачи. Возможные значения: usn - Налог УСН. fixed_fees - Фиксированные взносы. income_percentage - 1% с дохода. report - отчетность. other - иные уведомления."
+          },
+          "year": {
+            "type": "integer",
+            "title": "Year",
+            "description": "Год расчета"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Кодовое обозначение задачи"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Заголовок задачи"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Описание задачи"
+          },
+          "date_begin": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Begin",
+            "description": "Дата начала демонстрации задачи"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date",
+            "description": "Крайник срок действия по задаче (крайний срок уплаты/сдачи отчетности)"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма к уплате по данной задаче"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "Назначение платежа"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "year",
+          "code",
+          "title",
+          "description",
+          "date_begin",
+          "due_date"
+        ],
+        "title": "TaskInfo"
+      },
+      "TaskResponse": {
+        "properties": {
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskInfo"
+            },
+            "type": "array",
+            "title": "Tasks",
+            "description": "Задачи по уплате налогов"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tasks"
+        ],
+        "title": "TaskResponse",
+        "example": {
+          "tasks": [
+            {
+              "type": "usn",
+              "year": 2023,
+              "code": "ZN3",
+              "title": "Налог УСН за 9 месяцев",
+              "description": "Уплата УСН за 9 месяцев до 30 октября",
+              "date_begin": "2023-10-01",
+              "due_date": "2023-10-30",
+              "amount": 25450.5,
+              "purpose": "Налог при упрощенной системе налогообложения (доходы) за 9 месяцев 2023 г."
+            },
+            {
+              "type": "fixed_fees",
+              "year": 2023,
+              "code": "SV4",
+              "title": "Фиксированные взносы ИП за год",
+              "description": "Страховые взносы единый тариф ИП до 31 декабря текущего года.",
+              "date_begin": "2023-01-01",
+              "due_date": "2023-12-31",
+              "amount": 45842,
+              "purpose": "Страховые взносы единый тариф ИП за 2023 год"
+            },
+            {
+              "type": "report",
+              "year": 2023,
+              "code": "ZDO",
+              "title": "Декларация по УСН",
+              "description": "Отправка декларации за год",
+              "date_begin": "2024-01-01",
+              "due_date": "2024-04-29"
+            }
+          ]
+        }
+      },
+      "TaxCalculationResponse": {
+        "properties": {
+          "is_relevant": {
+            "type": "boolean",
+            "title": "Is Relevant",
+            "description": "Актуальность расчета налогов. true - если не стоит в очереди на перерасчет. false - если стоит в очереди на перерасчет."
+          },
+          "recalculation_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Recalculation Date",
+            "description": "Дата и время последнего перерасчета налогов"
+          },
+          "usn_taxes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/USNTaxes"
+              }
+            ],
+            "title": "Usn Taxes",
+            "description": "Налоги УСН"
+          },
+          "contributions": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContributionsInfo"
+              }
+            ],
+            "title": "Contributions",
+            "description": "Взносы"
+          },
+          "ens_balance": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ENSBalanceInfo"
+              }
+            ],
+            "title": "Ens Balance",
+            "description": "Сальдо ЕНС"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_relevant",
+          "recalculation_date",
+          "usn_taxes",
+          "contributions",
+          "ens_balance"
+        ],
+        "title": "TaxCalculationResponse",
+        "example": {
+          "is_relevant": true,
+          "recalculation_date": "2023-12-04T09:02:29.604000",
+          "usn_taxes": {
+            "tax_rate": 6,
+            "usn_1": {
+              "tax_base": 756221,
+              "deductions": 45373,
+              "accrued_tax": 0,
+              "paid_tax": 0,
+              "due_tax": 0,
+              "due_date": "2023-04-28"
+            },
+            "usn_6": {
+              "tax_base": 2357528,
+              "deductions": 61578,
+              "accrued_tax": 79874,
+              "paid_tax": 72695.5,
+              "due_tax": 7178.5,
+              "due_date": "2023-07-28"
+            },
+            "usn_9": {
+              "tax_base": 2857528,
+              "deductions": 104332,
+              "accrued_tax": 67120,
+              "paid_tax": 67120,
+              "due_tax": 0,
+              "due_date": "2023-10-30"
+            },
+            "usn_0": {
+              "tax_base": 2917528,
+              "deductions": 104932,
+              "accrued_tax": 70120,
+              "paid_tax": 70120,
+              "due_tax": 0,
+              "due_date": "2024-04-29"
+            }
+          },
+          "contributions": {
+            "fixed_fees": {
+              "accrued_ff": 41003.12,
+              "paid_ff": 2575.5,
+              "due_ff": 38427.62,
+              "due_date_ff": "2024-01-09"
+            },
+            "income_percentage": {
+              "period_ip": 9,
+              "accrued_ip": 25575.28,
+              "paid_ip": 0,
+              "due_ip": 25575.28,
+              "due_date_ip": "2024-07-01"
+            }
+          },
+          "ens_balance": {
+            "opening_balance": 2000,
+            "closing_balance": 0
+          }
+        }
+      },
+      "TaxSystemInfo": {
+        "properties": {
+          "tax_system": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TaxSystemType"
+              }
+            ],
+            "description": "Система налогообложения. Возможные значения: usn_d - УСН Доходы. usn_d_r - УСН Доходы-Расходы. patent - Патент. eshn - ЕСХН. osn - Общая система НО. "
+          },
+          "tax_rate": {
+            "type": "integer",
+            "title": "Tax Rate",
+            "description": "Налоговая ставка"
+          },
+          "tax_date_begin": {
+            "type": "string",
+            "format": "date",
+            "title": "Tax Date Begin",
+            "description": "Дата начала применения СНО"
+          },
+          "oktmo": {
+            "type": "string",
+            "title": "Oktmo",
+            "description": "Код ОКТМО"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tax_system",
+          "tax_rate",
+          "tax_date_begin",
+          "oktmo"
+        ],
+        "title": "TaxSystemInfo"
+      },
+      "TaxSystemType": {
+        "type": "string",
+        "enum": [
+          "usn_d",
+          "usn_d_r",
+          "osn",
+          "eshn",
+          "patent"
+        ],
+        "title": "TaxSystemType",
+        "description": "An enumeration."
+      },
+      "TaxType": {
+        "type": "integer",
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "title": "TaxType",
+        "description": "An enumeration."
+      },
+      "Token": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "token_type"
+        ],
+        "title": "Token"
+      },
+      "USNTaxInfo": {
+        "properties": {
+          "tax_base": {
+            "type": "number",
+            "title": "Tax Base",
+            "description": "Налоговая база за полугодие"
+          },
+          "deductions": {
+            "type": "number",
+            "title": "Deductions",
+            "description": "Вычеты за 1 квартал"
+          },
+          "accrued_tax": {
+            "type": "number",
+            "title": "Accrued Tax",
+            "description": "Исчислен налог УСН"
+          },
+          "paid_tax": {
+            "type": "number",
+            "title": "Paid Tax",
+            "description": "Уплачен налог УСН"
+          },
+          "due_tax": {
+            "type": "number",
+            "title": "Due Tax",
+            "description": "Налог УСН к уплате"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Due Date",
+            "description": "Дата уплаты налога. В зависимости от accrueds_period: 1/4 - YYYY-04-28. 2 - YYYY-07-28. 3 - YYYY-10-28"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tax_base",
+          "deductions",
+          "accrued_tax",
+          "paid_tax",
+          "due_tax",
+          "due_date"
+        ],
+        "title": "USNTaxInfo"
+      },
+      "USNTaxes": {
+        "properties": {
+          "tax_rate": {
+            "type": "integer",
+            "title": "Tax Rate",
+            "description": "Ставка налога"
+          },
+          "usn_1": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/USNTaxInfo"
+              }
+            ],
+            "title": "Usn 1",
+            "description": "УСН за 1 квартал"
+          },
+          "usn_6": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/USNTaxInfo"
+              }
+            ],
+            "title": "Usn 6",
+            "description": "УСН за полугодие"
+          },
+          "usn_9": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/USNTaxInfo"
+              }
+            ],
+            "title": "Usn 9",
+            "description": "УСН за 9 месяцев"
+          },
+          "usn_0": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/USNTaxInfo"
+              }
+            ],
+            "title": "Usn 0",
+            "description": "УСН за год"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tax_rate",
+          "usn_1",
+          "usn_6",
+          "usn_9",
+          "usn_0"
+        ],
+        "title": "USNTaxes"
+      },
+      "UpdateReportRequest": {
+        "properties": {
+          "report_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportType"
+              }
+            ],
+            "description": "Тип запрашиваемого отчета. Возможные значения: 1 - КУДиР в формате pdf. 2 - Уведомления об исчисленных авансовых платежах по УСН (pdf + xml). 3 - Налоговая декларация УСН (pdf + xml). "
+          },
+          "period_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportPeriodType"
+              }
+            ],
+            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год)"
+          },
+          "period_year": {
+            "type": "integer",
+            "title": "Period Year",
+            "description": "Год налогового периода"
+          },
+          "report_status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportStatus"
+              }
+            ],
+            "description": "Новый статус отчета. Возможные значения: 0 - отчет не сформирован. 1 - отчет сформирован и передан клиенту. 2 - отчет отправлен в ФНС. 3 - отчет принят ФНС. 4 - отчет не принят ФНС (ошибка в отчете). В данном методе используются статусы 2, 3, 4."
+          }
+        },
+        "type": "object",
+        "required": [
+          "report_type",
+          "period_type",
+          "period_year",
+          "report_status"
+        ],
+        "title": "UpdateReportRequest",
+        "example": {
+          "report_type": 2,
+          "period_type": 1,
+          "period_year": 2023,
+          "report_status": 2
+        }
+      },
+      "User": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "firstname": {
+            "type": "string",
+            "title": "Firstname",
+            "description": "Имя"
+          },
+          "lastname": {
+            "type": "string",
+            "title": "Lastname",
+            "description": "Фамилия"
+          },
+          "patronymic": {
+            "type": "string",
+            "title": "Patronymic",
+            "description": "Отчество"
+          },
+          "inn": {
+            "type": "string",
+            "title": "Inn",
+            "description": "ИНН клиента"
+          },
+          "tax_rate": {
+            "type": "integer",
+            "title": "Tax Rate",
+            "description": "Налоговая ставка"
+          },
+          "fns_code": {
+            "type": "string",
+            "title": "Fns Code",
+            "description": "Код ИФНС"
+          },
+          "fns_description": {
+            "type": "string",
+            "title": "Fns Description",
+            "description": "Название ИФНС"
+          },
+          "fns_reg_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Fns Reg Date",
+            "description": "Дата регистрации ИП в ФНС"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "Электронная почта клиента"
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number",
+            "description": "Номер телефона клиента"
+          },
+          "is_lead": {
+            "type": "boolean",
+            "title": "Is Lead",
+            "description": "Является ли клиент лидом",
+            "default": false
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Дата создания пользователя"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At",
+            "description": "Дата последнего обновления"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "User"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "auth"
+          }
+        }
+      }
+    }
+  }
+}

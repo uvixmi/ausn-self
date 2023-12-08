@@ -8,37 +8,86 @@ import {
   Spin,
   Checkbox,
   Slider,
+  Select,
+  Modal,
+  Form,
 } from "antd"
 import styles from "./styles.module.scss"
 import { useEffect, useState } from "react"
 import { LoadingOutlined } from "@ant-design/icons"
 import { useMediaQuery } from "@react-hook/media-query"
-import { api } from "../../api/myApi"
+import {
+  InnInfo,
+  api,
+  HTTPValidationError,
+  TaxSystemType,
+} from "../../api/myApi"
+import { MaskedInput } from "antd-mask-input"
+import { validateInn } from "./utils"
+import { RegisterPageProps } from "./types"
+import { ConfirmModal } from "./confirm-modal"
+import { useNavigate } from "react-router-dom"
+import { setError, setTaxSystem } from "./slice"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "../main-page/store"
 
 const { Title, Text, Link } = Typography
 
-export const RegisterPage = () => {
-  const description = "This is a description."
+export const RegisterPage = ({
+  registrationPage,
+  currentUser,
+}: RegisterPageProps) => {
   const isMobile = useMediaQuery("(max-width: 767px)")
+
+  const navigate = useNavigate()
 
   const steps = [
     {
       title: "Регистрация",
-      description,
+      description: "Укажите ваши контактные данные",
     },
     {
       title: "Подтверждение",
-      description,
+      description: "Подтвердите почту и получите пароль",
     },
     {
       title: "Дополнительные сведения",
-      description,
+      description: "Укажите СНО и ИНН",
+    },
+  ]
+
+  const currentYear = new Date().getFullYear()
+
+  const optionsYears = [
+    { label: "Год, с которого вести учет в сервисе: 2023", value: currentYear },
+    {
+      label: "Год, с которого вести учет в сервисе: 2022",
+      value: currentYear - 1,
+    },
+  ]
+
+  const optionsSNO = [
+    { label: "Система налогообложения: УСН Доходы", value: TaxSystemType.UsnD },
+    {
+      label: "Система налогообложения: УСН Доходы - Расходы",
+      value: TaxSystemType.UsnDR,
+    },
+    { label: "Система налогообложения: Патент", value: TaxSystemType.Eshn },
+    {
+      label: "Система налогообложения: Общая система НО",
+      value: TaxSystemType.Osn,
     },
   ]
 
   const [currentStep, setCurrentStep] = useState(0)
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [inn, setInn] = useState("")
+  const [startYear, setStartYear] = useState(0)
+  const [user, setUser] = useState<InnInfo | undefined>(undefined)
+  const error = { code: 0, message: "" }
+
+  const [sno, setSno] = useState<TaxSystemType | undefined>(undefined)
 
   const onChangeStep = (step: number) => {
     setCurrentStep(step)
@@ -53,18 +102,65 @@ export const RegisterPage = () => {
     />
   )
 
-  const [isButtonDisabled, setButtonDisabled] = useState(false)
+  const [isButtonDisabled, setButtonDisabled] = useState(true)
   const [secondsRemaining, setSecondsRemaining] = useState(0)
 
   const [isLoading, setIsLoading] = useState(false)
   const [isInnLoaded, setIsInnLoaded] = useState(false)
+  const [checkedError, setCheckedError] = useState(false)
+  const [errorText, setErrorText] = useState("")
 
-  const handleCheck = () => {
+  const [emailError, setEmailError] = useState(false)
+  const [phoneError, setPhoneError] = useState(false)
+  const [innError, setInnError] = useState(false)
+  const [isDisabledFirstButton, setIsDisabledFirstButton] = useState(true)
+  const accessToken = localStorage.getItem("token")
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  }
+  interface ErrorResponse {
+    error: {
+      detail: {
+        message: string
+        // Другие поля, если есть...
+      }
+      // Другие поля ошибки, если есть...
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function isErrorResponse(obj: any): obj is ErrorResponse {
+    return (
+      obj &&
+      obj.error &&
+      obj.error.detail &&
+      obj.error.detail.message !== undefined
+    )
+  }
+
+  const handleCheck = async (inn: string) => {
     setIsLoading(true)
-    setTimeout(() => {
+    try {
+      const response = await api.users.getInnInfoUsersInnInfoGet(
+        { inn },
+        { headers }
+      )
+      setUser(response.data)
+      console.log(response.data)
+      if (user?.lastname != "" && !innError) {
+        setIsInnLoaded(true)
+        setIsLoading(false)
+        setCheckedError(false)
+      }
+    } catch (error) {
+      setInnError(true)
       setIsLoading(false)
-      setIsInnLoaded(true)
-    }, 10000)
+      setCheckedError(true)
+      if (isErrorResponse(error)) {
+        // Если объект ошибки соответствует интерфейсу ErrorResponse
+        setErrorText(error.error.detail.message)
+      }
+    }
   }
 
   const formatTime = (seconds: number) => {
@@ -80,7 +176,7 @@ export const RegisterPage = () => {
     setSecondsRemaining(10)
   }
 
-  const marks = {
+  const marks1 = {
     0: "0%",
     1: "1%",
     2: "2%",
@@ -90,7 +186,48 @@ export const RegisterPage = () => {
     6: "6%",
   }
 
-  const [rate, setRate] = useState("4%")
+  const [marks, setMarks] = useState(marks1)
+
+  const marks2 = {
+    0: "0%",
+    1: "1%",
+    2: "2%",
+    3: "3%",
+    4: "4%",
+    5: "5%",
+    6: "6%",
+    7: "7%",
+    8: "8%",
+    9: "9%",
+    10: "10%",
+    11: "11%",
+    12: "12%",
+    13: "13%",
+    14: "14%",
+    15: "15%",
+  }
+  const [maxSlider, setMaxSlider] = useState(6)
+  useEffect(() => {
+    if (sno == TaxSystemType.UsnDR) {
+      setRate("15%"), setMarks(marks2), setMaxSlider(15)
+    }
+    if (sno == TaxSystemType.UsnD) {
+      setRate("6%"), setMarks(marks1), setMaxSlider(6)
+    }
+  }, [sno])
+
+  useEffect(() => {
+    if (sno == TaxSystemType.UsnDR) {
+      setMaxSlider(15)
+    }
+    if (sno == TaxSystemType.UsnD) {
+      setMaxSlider(6)
+    }
+  }, [marks])
+
+  const [rate, setRate] = useState("6%")
+
+  const PhoneMask = "+{0} (000) 000-00-00"
 
   const onChangeSlider = (value: number) => {
     setRate(marks[value as keyof typeof marks])
@@ -105,7 +242,6 @@ export const RegisterPage = () => {
         } else {
           setButtonDisabled(false)
           clearInterval(timer)
-          setCurrentStep(2)
         }
       }, 1000)
     }
@@ -113,6 +249,79 @@ export const RegisterPage = () => {
       clearInterval(timer)
     }
   }, [isButtonDisabled, secondsRemaining])
+
+  useEffect(() => {
+    startTimer()
+  }, [currentStep])
+
+  const validateEmail = (email: string) => {
+    // Регулярное выражение для проверки формата email
+    const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    // Проверка формата email
+    if (!emailRegex.test(email)) {
+      // Возвращаем true, если формат не соответствует
+      return true
+    }
+
+    // Возвращаем false, если формат соответствует
+    return false
+  }
+
+  const validatePhone = (phoneNumber: string) => {
+    const strippedNumber = phoneNumber.replace(/[^\d+]/g, "")
+
+    // Создание регулярного выражения для проверки соответствия маске
+    //const maskRegex = new RegExp(`^\\${PhoneMask.replace(/[\s()+]/g, "")}$`)
+
+    // Создание регулярного выражения для проверки длины строки после удаления
+    const lengthRegex = /^\+\d{11}$/
+
+    // Проверка соответствия маске
+    //const isValidMask = maskRegex.test(phoneNumber)
+
+    // Проверка длины строки после удаления
+    const isValidLength = lengthRegex.test(strippedNumber)
+    return !isValidLength
+  }
+
+  useEffect(() => {
+    if (email == "" || phone == "") setIsDisabledFirstButton(true)
+    else if (emailError || phoneError) setIsDisabledFirstButton(true)
+    else setIsDisabledFirstButton(false)
+  }, [emailError, phoneError, email, phone])
+
+  useEffect(() => {
+    if (registrationPage == 2) onChangeStep(registrationPage)
+  }, [registrationPage])
+
+  const [isOpen, setOpen] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+  const onEnter = async () => {
+    if (sno)
+      dispatch(
+        setTaxSystem({
+          start_year: startYear,
+          tax_rate: parseInt(rate.slice(0, -1), 10),
+          tax_system: sno,
+          inn,
+        })
+      )
+    // await api.users.saveTaxInfoUsersTaxInfoPut(
+    //   { inn, tax_rate: parseInt(rate.slice(0, -1), 10), start_year: startYear },
+    //   { headers }
+    // )
+    if (sno == TaxSystemType.UsnD) setOpen(true)
+    else navigate("/non-target")
+  }
+
+  const [disabledEnter, setDisabledEnter] = useState(true)
+
+  useEffect(() => {
+    if (innError === false && inn !== "" && startYear != 0 && sno != undefined)
+      setDisabledEnter(false)
+    else setDisabledEnter(true)
+  }, [inn, innError, sno, startYear])
 
   return (
     <>
@@ -151,28 +360,44 @@ export const RegisterPage = () => {
                       <Input
                         className={styles["input-item"]}
                         value={email}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) => {
+                          setEmail(event.target.value),
+                            setEmailError(validateEmail(event.target.value))
+                        }}
                         placeholder={CONTENT.EMAIL_PLACEHOLDER}
+                        status={emailError ? "error" : undefined}
                       ></Input>
                     </div>
                     <div className={styles["input-item-wrapper"]}>
                       <Text>{CONTENT.PHONE_TITLE}</Text>
-                      <Input
+                      <MaskedInput
+                        mask={PhoneMask}
                         className={styles["input-item"]}
                         value={phone}
-                        onChange={(event) => setPhone(event.target.value)}
+                        onChange={(event) => {
+                          setPhone(event.target.value),
+                            setPhoneError(validatePhone(event.target.value))
+                        }}
                         placeholder={CONTENT.PHONE_PLACEHOLDER}
-                      ></Input>
+                        status={phoneError ? "error" : undefined}
+                      ></MaskedInput>
                     </div>
                   </div>
                   <Button
                     className={styles["button-item"]}
-                    onClick={() => {
-                      onChangeStep(1)
-                      api.users.createUserUsersPost({
-                        email: email,
-                        phone_number: phone,
-                      })
+                    disabled={isDisabledFirstButton}
+                    onClick={async () => {
+                      if (phone === "" && email === "") {
+                        setPhoneError(true), setEmailError(true)
+                      } else if (phone === "") setPhoneError(true)
+                      else if (email === "") setEmailError(true)
+                      else {
+                        onChangeStep(1)
+                        await api.users.createUserUsersPost({
+                          email: email,
+                          phone_number: phone,
+                        })
+                      }
                     }}
                   >
                     {CONTENT.CONTINUE_BUTTON}
@@ -191,7 +416,9 @@ export const RegisterPage = () => {
                   </div>
                   <div className={styles["buttons-wrapper"]}>
                     <Button
-                      onClick={() => onChangeStep(0)}
+                      onClick={() => {
+                        onChangeStep(0) //, navigate("/login")
+                      }}
                       className={styles["button-back"]}
                     >
                       {CONTENT.BUTTON_BACK}
@@ -212,14 +439,41 @@ export const RegisterPage = () => {
                 <div>
                   <Text>{CONTENT.INN}</Text>
                   <div className={styles["inn-wrapper"]}>
-                    <Input
-                      placeholder="132808730606"
-                      className={styles["input-item"]}
-                      disabled={isLoading}
-                    ></Input>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={checkedError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        checkedError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {errorText}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <Input
+                        placeholder="132808730606"
+                        className={styles["input-item-inn"]}
+                        disabled={isLoading}
+                        value={inn}
+                        onChange={(event) => {
+                          setInn(event.target.value)
+                          setErrorText("")
+                          setInnError(validateInn(event.target.value, error))
+                          if (validateInn(event.target.value, error))
+                            setErrorText(error.message)
+                          setCheckedError(false)
+                        }}
+                        status={innError ? "error" : undefined}
+                      />
+                    </Form.Item>
+
                     <Button
                       className={styles["button-item-check"]}
-                      onClick={handleCheck}
+                      onClick={() => handleCheck(inn)}
                     >
                       {isLoading ? (
                         <Spin indicator={antIcon} />
@@ -232,33 +486,68 @@ export const RegisterPage = () => {
                     <div className={styles["loader-wrapper"]}>
                       <div className={styles["text-row"]}>
                         <Text>{CONTENT.NAME}</Text>
-                        <Text>{CONTENT.NAME_MOCKED}</Text>
+                        <Text>
+                          {"ИП" +
+                            user?.lastname +
+                            " " +
+                            user?.firstname +
+                            " " +
+                            user?.patronymic}
+                        </Text>
                       </div>
                       <div className={styles["text-row"]}>
                         <Text>{CONTENT.DATE_REGISTRATION}</Text>
-                        <Text>{CONTENT.DATE_REGISTRATION_MOCKED}</Text>
+                        <Text>{user?.fns_reg_date}</Text>
                       </div>
-                      <div className={styles["rate-wrapper"]}>
-                        <Checkbox className={styles["checkbox-style"]}>
-                          {CONTENT.USN_INCOME}
-                        </Checkbox>
-                        <div className={styles["slider-style"]}>
-                          <Text>{rate}</Text>
-                          <Slider
-                            dots
-                            marks={marks}
-                            onChange={onChangeSlider}
-                            defaultValue={4}
-                            max={6}
-                          />
+                      <div className={styles["text-row"]}>
+                        <Select
+                          className={styles["select-row"]}
+                          options={optionsYears}
+                          placeholder={"Год, с которого вести учет в сервисе"}
+                          onChange={(value) => setStartYear(value)}
+                        />
+                      </div>
+                      <div className={styles["text-row"]}>
+                        <Select
+                          className={styles["select-row"]}
+                          options={optionsSNO}
+                          placeholder={"Система налогообложения"}
+                          onChange={(value) => setSno(value)}
+                        />
+                      </div>
+                      {(sno == TaxSystemType.UsnD ||
+                        sno == TaxSystemType.UsnDR) && (
+                        <div className={styles["rate-wrapper"]}>
+                          <div className={styles["slider-style"]}>
+                            <Text>{"Ставка налогообложения: "}</Text>
+                            <Text>{rate}</Text>
+                            {sno == TaxSystemType.UsnD ? (
+                              <Slider
+                                dots
+                                marks={marks}
+                                onChange={onChangeSlider}
+                                defaultValue={6}
+                                max={maxSlider}
+                              />
+                            ) : sno == TaxSystemType.UsnDR ? (
+                              <Slider
+                                dots
+                                marks={marks}
+                                onChange={onChangeSlider}
+                                defaultValue={15}
+                                max={maxSlider}
+                              />
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                   <div className={styles["button-one"]}>
                     <Button
                       className={styles["button-item-enter"]}
-                      disabled={true}
+                      disabled={disabledEnter}
+                      onClick={onEnter}
                     >
                       {CONTENT.BUTTON_ENTER}
                     </Button>
@@ -291,6 +580,7 @@ export const RegisterPage = () => {
             )}
           </div>
         </div>
+        <ConfirmModal isOpen={isOpen} setOpen={setOpen} />
       </ConfigProvider>
     </>
   )

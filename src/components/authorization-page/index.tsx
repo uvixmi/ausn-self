@@ -4,9 +4,13 @@ import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
 import Link from "antd/es/typography/Link"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
-import { api } from "../../api/myApi"
+import { useEffect, useState } from "react"
+import { User, api } from "../../api/myApi"
 import { AuthorizationPageProps } from "./types"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchCurrentUser } from "./slice"
+import { AppDispatch, RootState } from "../main-page/store"
+import { useAuth } from "../../AuthContext"
 
 const { Title, Text } = Typography
 
@@ -19,6 +23,12 @@ export const AuthorizationPage = ({
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const dispatch = useDispatch<AppDispatch>()
+  const {
+    data: currentUser,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.user)
 
   return (
     <>
@@ -72,8 +82,10 @@ export const AuthorizationPage = ({
                   if (response.data) {
                     const { token_type, access_token } = response.data
                     login(access_token)
+                    setAccessToken(access_token)
                     setTokenType(token_type)
                     setIsAuth(true)
+                    navigate("/main")
                   } else {
                     console.error("Отсутствует свойство data в ответе API.")
                   }
@@ -81,6 +93,7 @@ export const AuthorizationPage = ({
                   console.error("Ошибка при выполнении запроса:", error)
                   // Другие действия при ошибке, если необходимо
                 }
+                dispatch(fetchCurrentUser())
               }}
             >
               {CONTENT.ENTER_BUTTON}

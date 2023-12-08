@@ -18,6 +18,9 @@ import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons"
 import { AccountPageProps } from "./types"
 import { useEffect, useState } from "react"
 import { SourcesInfo, User, api } from "../../api/myApi"
+import { clearData } from "../authorization-page/slice"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "../main-page/store"
 
 export const AccountPage = ({
   token_type,
@@ -166,9 +169,19 @@ export const AccountPage = ({
 
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
 
+  const dispatch = useDispatch<AppDispatch>()
+
   useEffect(() => {
-    console.log("useEffect is running!")
-  }, [])
+    if (accessToken === "" || !accessToken) {
+      logOut(), dispatch(clearData())
+    } else {
+      const fetchSources = async () => {
+        const response = await api.sources.getSourcesInfoSourcesGet({ headers })
+        setSources(response.data)
+      }
+      fetchSources()
+    }
+  }, [accessToken])
 
   const navigate = useNavigate()
 
@@ -211,7 +224,7 @@ export const AccountPage = ({
               <div className={styles["logo-inner"]}>
                 <LogoIcon
                   onClick={() => {
-                    navigate("/main"), logOut()
+                    navigate("/main"), logOut(), dispatch(clearData())
                   }}
                   type="icon-custom"
                   className={styles["logo-item"]}

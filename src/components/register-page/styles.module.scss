@@ -67,6 +67,27 @@ $xxl: 2560px;
 
 .input-item {
   border-radius: 2px;
+  height: 40px;
+}
+
+.input-item-inn {
+  border-radius: 2px;
+  height: 40px;
+}
+
+.form-inn {
+  width: 100%;
+}
+
+.error-text {
+  font-size: 8px;
+  line-height: 8px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }
 
 .button-item {
@@ -145,10 +166,13 @@ $xxl: 2560px;
   margin: 32px 0 16px 0;
   width: 100%;
 }
+
 .inn-wrapper {
   display: flex;
   flex-direction: row;
   gap: 4px;
+  height: 84px;
+  justify-content: space-between;
 }
 
 .oferta-text {
@@ -178,4 +202,10 @@ $xxl: 2560px;
 .checkbox-style {
   text-wrap: nowrap;
   align-items: center;
+}
+
+.select-row {
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
