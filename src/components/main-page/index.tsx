@@ -28,10 +28,6 @@ export const MainPage = () => {
 
   const token = localStorage.getItem("token")
 
-  useEffect(() => {
-    console.log(currentUser.inn)
-  }, [currentUser])
-
   if (!isAuthenticated)
     return (
       <>

@@ -26,7 +26,6 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
   const [users, setUsers] = useState<User | undefined>(undefined)
 
   useEffect(() => {
-    console.log(headers)
     const fetchData = async () => {
       const response = await api.users.currentUserUsersGet({ headers })
       setUsers(response.data)

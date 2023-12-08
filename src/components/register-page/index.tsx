@@ -146,7 +146,7 @@ export const RegisterPage = ({
         { headers }
       )
       setUser(response.data)
-      console.log(response.data)
+
       if (user?.lastname != "" && !innError) {
         setIsInnLoaded(true)
         setIsLoading(false)

@@ -4,13 +4,12 @@ import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
 import Link from "antd/es/typography/Link"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { User, api } from "../../api/myApi"
 import { AuthorizationPageProps } from "./types"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCurrentUser } from "./slice"
 import { AppDispatch, RootState } from "../main-page/store"
-import { useAuth } from "../../AuthContext"
 
 const { Title, Text } = Typography
 
