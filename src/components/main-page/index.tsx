@@ -112,6 +112,43 @@ export const MainPage = () => {
         </div>
       </>
     )
+  else if (token && currentUser.is_lead == true && currentUser.inn != null)
+    return (
+      <>
+        <div className={styles["main-wrapper"]}>
+          <div className={styles["register-header"]}>
+            <LogoIcon
+              onClick={() => {
+                logout(), navigate("/login"), dispatch(clearData())
+              }}
+              type="icon-custom"
+              className={styles["logo-item"]}
+            />
+          </div>
+          <div className={styles["background-cover"]}>
+            <Routes>
+              <Route
+                path="/non-target"
+                Component={() => (
+                  <NonTargetPage
+                    accessToken={accessToken}
+                    token_type={token_type}
+                    logOut={logout}
+                  />
+                )}
+              />
+              <Route
+                path="/*"
+                element={<Navigate to="/non-target" replace />}
+              />
+            </Routes>
+          </div>
+          <div>
+            <div className={styles["register-footer"]}></div>
+          </div>
+        </div>
+      </>
+    )
   else
     return (
       <div className={styles["main-wrapper"]}>
