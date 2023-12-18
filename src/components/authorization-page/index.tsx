@@ -80,7 +80,7 @@ export const AuthorizationPage = ({
                   // Проверка наличия свойства data в ответе
                   if (response.data) {
                     const { token_type, access_token } = response.data
-                    login(access_token)
+                    login(access_token, 3600)
                     setAccessToken(access_token)
                     setTokenType(token_type)
                     setIsAuth(true)

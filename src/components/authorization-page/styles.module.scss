@@ -9,8 +9,12 @@ $xxl: 2560px;
 .content-wrapper {
   width: 100%;
   display: flex;
-  padding: 28px 20px 20px 60px;
+  padding: 28px 20px 20px 20px;
   justify-content: center;
+
+  @media screen and (min-width: $s) {
+    padding: 28px 20px 20px 60px;
+  }
 }
 
 .register-block-wrapper {

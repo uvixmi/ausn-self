@@ -21,6 +21,8 @@ import { SourcesInfo, User, api } from "../../api/myApi"
 import { clearData } from "../authorization-page/slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
+import { useAuth } from "../../AuthContext"
+import Cookies from "js-cookie"
 
 export const AccountPage = ({
   token_type,
@@ -29,8 +31,12 @@ export const AccountPage = ({
 }: AccountPageProps) => {
   const { Sider, Content } = Layout
 
+  //  Вы можете использовать другую библиотеку
+
+  const token = Cookies.get("token")
+
   const headers = {
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${token}`,
   }
   const [user, setUser] = useState<User | undefined>(undefined)
   const data = [
@@ -170,18 +176,17 @@ export const AccountPage = ({
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
 
   const dispatch = useDispatch<AppDispatch>()
+  const { isAuthenticated, login, logout } = useAuth()
 
   useEffect(() => {
-    if (accessToken === "" || !accessToken) {
-      logOut(), dispatch(clearData())
-    } else {
+    if (token) {
       const fetchSources = async () => {
         const response = await api.sources.getSourcesInfoSourcesGet({ headers })
         setSources(response.data)
       }
       fetchSources()
     }
-  }, [accessToken])
+  }, [])
 
   const navigate = useNavigate()
 

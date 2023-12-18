@@ -495,7 +495,7 @@ export const RegisterPage = ({
                       <div className={styles["text-row"]}>
                         <Text>{CONTENT.NAME}</Text>
                         <Text>
-                          {"ИП" +
+                          {"ИП " +
                             user?.lastname +
                             " " +
                             user?.firstname +

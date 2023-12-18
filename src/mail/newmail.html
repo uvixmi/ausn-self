@@ -1,0 +1,456 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+>
+  <head>
+    <meta charset="utf-8" />
+    <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width" />
+    <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting" />
+    <!-- Disable auto-scale in iOS 10 Mail entirely -->
+    <meta
+      name="format-detection"
+      content="telephone=no,address=no,email=no,date=no,url=no"
+    />
+    <!-- Tell iOS not to automatically link certain text strings. -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title></title>
+
+    <style>
+      /* What it does: Tells the email client that both light and dark styles are provided. A duplicate of meta color-scheme meta tag above. */
+      :root {
+        color-scheme: light dark;
+        supported-color-schemes: light dark;
+      }
+      html,
+      body {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        height: 100% !important;
+        width: 100% !important;
+      }
+
+      /* What it does: Stops email clients resizing small text. */
+      * {
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      /* What it does: Centers email on Android 4.4 */
+      div[style*="margin: 16px 0"] {
+        margin: 0 !important;
+      }
+
+      /* What it does: forces Samsung Android mail clients to use the entire viewport */
+      #MessageViewBody,
+      #MessageWebViewDiv {
+        width: 100% !important;
+      }
+
+      /* What it does: Stops Outlook from adding extra spacing to tables. */
+      table,
+      td {
+        mso-table-lspace: 0pt !important;
+        mso-table-rspace: 0pt !important;
+      }
+
+      /* What it does: Fixes webkit padding issue. */
+      table {
+        border-spacing: 0 !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        margin: 0 auto !important;
+      }
+
+      /* What it does: Uses a better rendering method when resizing images in IE. */
+      img {
+        -ms-interpolation-mode: bicubic;
+      }
+
+      /* What it does: Prevents Windows 10 Mail from underlining links despite inline CSS. Styles for underlined links should be inline. */
+      a {
+        text-decoration: none;
+      }
+
+      /* What it does: A work-around for email clients meddling in triggered links. */
+      a[x-apple-data-detectors],  /* iOS */
+        .unstyle-auto-detected-links a,
+        .aBn {
+        border-bottom: 0 !important;
+        cursor: default !important;
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      /* What it does: Prevents Gmail from displaying a download button on large, non-linked images. */
+     
+
+      /* What it does: Prevents Gmail from changing the text color in conversation threads. */
+      .im {
+        color: inherit !important;
+      }
+
+      /* If the above doesn't work, add a .g-img class to any image in question. */
+      img.g-img + div {
+        display: none !important;
+      }
+
+      /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+      /* Create one of these media queries for each additional viewport size you'd like to fix */
+
+      /* iPhone 4, 4S, 5, 5S, 5C, and 5SE */
+      @media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
+        u ~ div .email-container {
+          min-width: 320px !important;
+        }
+      }
+      /* iPhone 6, 6S, 7, 8, and X */
+      @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+        u ~ div .email-container {
+          min-width: 375px !important;
+        }
+      }
+      /* iPhone 6+, 7+, and 8+ */
+      @media only screen and (min-device-width: 414px) {
+        u ~ div .email-container {
+          min-width: 414px !important;
+        }
+      }
+
+      @media screen and (max-width: 639.98px) {
+        h1 {
+          font-size: 22px;
+          font-weight: 600;
+          line-height: 26px;
+          letter-spacing: -0.02em;
+          text-align: left;
+        }
+      }
+
+      @media screen and (min-width: 639.99px) {
+        h1 {
+          font-size: 28px;
+          font-weight: 600;
+          line-height: 34px;
+          letter-spacing: -0.02em;
+          text-align: left;
+        }
+      }
+    </style>
+
+    <style>
+      /* What it does: Hover styles for buttons */
+
+      /* Dark Mode Styles : BEGIN */
+   
+      /* Dark Mode Styles : END */
+    </style>
+    <!-- Progressive Enhancements : END -->
+  </head>
+  <!--
+	The email background color is defined in three places:
+	1. body tag: for most email clients
+	2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
+	3. mso conditional: For Windows 10 Mail
+-->
+  <body
+    width="100%"
+    style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly"
+    class="email-bg"
+  >
+    <center
+      role="article"
+      aria-roledescription="email"
+      lang="en"
+      style="width: 100%"
+      class="email-bg"
+    >
+      <div style="max-width: 640px; margin: 0 auto" class="email-container">
+        <table
+          align="center"
+          role="presentation"
+          cellspacing="0"
+          cellpadding="0"
+          border="0"
+          width="100%"
+          style="margin: auto"
+        >
+          <tr>
+            <td style="background-color: #ffffff" class="darkmode-bg">
+              <div style="position: relative">
+                <img
+                width="640" height="143" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAACPCAYAAABqBGrfAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAASxSURBVHgB7d1BViIxFIbRgD3Q/W/MJcQd0CNHalsthTECgiIU9d87oKjQcHr4nRcii8fHl5cCAECMZQEAIIoABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgjAAEAAgjAAEAwghAAIAwAhAAIIwABAAIIwABAMIIQACAMAIQACCMAAQACCMAAQDCCEAAgDACEAAgzJ8CAJCp9guLRVm9vJRVuzbcD+vbPuD1tb97Xtv5vq/+Hweq5ZsEIABwEX0gtfG1JZ4eurfXY+5vb4fPWxwSYxEEIACwUxtiY6C1a+0ErF1/fi6r5XITcHX8PCE2DQIQAOanDg/bgq28T9Jq/+/btbu7RS3MlgAEgInoQq3uC7dmwvb/3mSNYwhAADitOl77gOsD7+mprG5uykq8cW4CEAA6Y6g1hxLq+qVNxJnAcc0EIABzV5vr+HxnyPnuGwkEIADXpDbX8fmHmHt9Xm2rwn4CEIBLqutwq+vt1vFPitR2Mifm4LQEIACntDfoTOdgGgQgADs1p1ZreTvVakIHMyAAAfJ8mtI1a5spncMQMF8CEGAedkZdaQ5MiDpgIAABpqsOD68xdy/qgFMSgABn9NV36my/AucgAAFO48MWbHn73VZRB0ySAATYrTbXum0L1ulX4BoJQCBK9xuv9+tl0zogigAE5uLTFmz/fTvTOoA3AhCYLAcmAH6HAAQu4csDE6Z1AL9HAAKnYgsW4EoIQGAfUQcwQwIQgrQnYEUdQC4BCNevNtedByVEHQAjAQgT00/j1ssPpQu94YnTrwB8hwCE31eb64cJXbs+PBF0AJyDAITj1PHaTOo236Gz5QrANRCAROp+Dqydxok5AGZPAHLVDg255fL9NdusAKQTgExBHa/NturgobuvT09lZSIHAD8jAPmpOjz0E7jxoMOugBtuTOIA4DIEYKY6PDTRtllrTqhu1sYtVPEGAPMgACeqm5wNar/exlq7vi3YbJkCACMBeIAtMTaoX9w/7Hl/3fZcpAEA53DKAKzlSN0W5NGf221Xtuvbgq00p0E32inZSIgBAHP2D7HkdWM0V9dJAAAAAElFTkSuQmCC"
+                 
+                  alt="alt_text"
+                  border="0"
+                  style="
+                    width: 100%;
+                    max-width: 640px;
+                    height: 143px;
+                    font-family: sans-serif;
+                    font-size: 15px;
+                    line-height: 15px;
+                    margin: auto;
+                    display: block;
+                  "
+                  class="g-img"
+                />
+                <img
+                  width="280" height="34" alt="" src="data:image/png;base64,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"
+                  border="0"
+                  style="
+                    position: absolute;
+                    top: 53px;
+                    left: 20px;
+                    height: auto;
+                    font-family: sans-serif;
+                    font-size: 15px;
+                    line-height: 15px;
+                    margin: auto;
+                    display: block;
+                    z-index: 1; /* Устанавливаем поверх верхнего изображения */
+                  "
+                  class="g-img"
+                />
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color: #ffffff" class="darkmode-bg">
+              <table
+                role="presentation"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+                width="100%"
+              >
+                <tr>
+                  <td
+                    style="
+                      padding: 20px;
+                      font-family: sans-serif;
+                      font-size: 15px;
+                      line-height: 20px;
+                      color: #555555;
+                    "
+                  >
+                    <h1
+                      style="
+                        margin: 0 0 40px 0;
+                        font-family: sans-serif;
+                        color: #333333;
+                      "
+                    >
+                      Вы начали регистрацию в&nbsp;сервисе АК&nbsp;Бухгалтерия
+                    </h1>
+                    <p
+                      style="
+                        margin: 0;
+                        font-size: 18px;
+                        font-weight: 500;
+                        line-height: 27px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                      "
+                    >
+                      Ваш пароль для входа
+                    </p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding-left: 20px; padding-right: 20px">
+                    <table
+                      role="presentation"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      width="100%"
+                    >
+                      <tr>
+                        <td
+                          style="
+                            padding-top: 20px;
+                            padding-bottom: 20px;
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            font-family: sans-serif;
+                            text-align: center;
+                            font-size: 24px;
+                            font-weight: 500;
+                            line-height: 29px;
+                            letter-spacing: -0.02em;
+                            color: #141414;
+                            padding-left: 0;
+                            padding-right: 0;
+                            background-color: #f0f0ff;
+                            word-wrap: break-word;
+                          "
+                        >
+                          y-K2QYC3OUUU
+                         
+                          <img width="16" height="21" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAVCAYAAABPPm7SAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAD/SURBVHgB7VTLbcJAFJy3spTc4hKcDtwCHZAb4UI+l9ySDmIqSAfBXIAbpgNKcAe4BHMDDn4MghULErAWN8RcdjzSzPOTdlbg4KOtCWqgUuSBK6jiFzUgQHEc8OzphRiMoQiDz7Z+KxDDH8X/QLrvr1qShwH3+CGJUA9dS+wK095QGpdcnJry6LiawZW4B9xEwPYiCcKvlkZWXCxQppmU/gGKeCmYWVEeMeHR9AkwbGB/x3PyBiua8Y+e4AmTjiShcVOO2Bh02My5j5GDJqx0JlZ4a2kisntQBPlDhZdj00rwxwFNFk+coD0OQs7ADTh4kTbrMKTgKtEpc1WhcL/XAbtLZ7AxCGsAAAAASUVORK5CYII="
+                            style="text-align: center; margin-left: 10px"
+                          />
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      padding-top: 10px;
+                      padding-bottom: 0;
+                      padding-left: 20px;
+                      padding-right: 20px;
+                    "
+                  >
+                    <table
+                      role="presentation"
+                      cellspacing="0"
+                      cellpadding="0"
+                      border="0"
+                      width="100%"
+                    >
+                      <tr>
+                        <td>
+                          <a
+                            href="http://109.95.209.141/login"
+                            style="
+                              background: #6159ff;
+                              border: 1px solid #6159ff;
+                              font-family: sans-serif;
+                              font-size: 14px;
+                              line-height: 20px;
+                              text-decoration: none;
+                              color: #ffffff;
+                              display: block;
+                              border-radius: 4px;
+                              text-align: center;
+                              font-weight: 600;
+                              letter-spacing: 0em;
+                              padding-top: 8px;
+                              padding-bottom: 8px;
+                              padding-right: 16px;
+                              padding-left: 16px;
+                            "
+                            >Продолжить регистрацию</a
+                          >
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- Button : END -->
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      padding-top: 40px;
+                      padding-left: 20px;
+                      padding-right: 20px;
+                      padding-bottom: 50px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin: 0;
+                        font-size: 14px;
+                        font-weight: 500;
+                        line-height: 17px;
+                        letter-spacing: -0.02em;
+                        text-align: left;
+                        font-family: sans-serif;
+                        color: #8c8c8c;
+                      "
+                    >
+                      Если письмо попало к вам по ошибке — удалите или просто
+                      проигнорируйте.
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 20px; padding-right: 20px">
+                    <div
+                      style="
+                        height: 1px;
+                        width: 100%;
+                        background-color: #d9d9d9;
+                      "
+                    ></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      padding-top: 30px;
+                      padding-left: 20px;
+                      padding-right: 20px;
+                      padding-bottom: 10px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 15px;
+                        letter-spacing: 0em;
+                        text-align: left;
+                        color: #8c8c8c;
+                        font-family: sans-serif;
+                      "
+                    >
+                      Если у вас возникли вопросы — напишите нам на
+                      <a href="mailto:hello@buh.app" style="color: #6159ff"> hello@buh.app</ф>
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style="
+                      padding-top: 0px;
+                      padding-left: 20px;
+                      padding-right: 20px;
+                      padding-bottom: 10px;
+                    "
+                  >
+                    <p
+                      style="
+                        margin: 0;
+                        margin: 0;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 15px;
+                        letter-spacing: 0em;
+                        text-align: left;
+                        color: #8c8c8c;
+                        font-family: sans-serif;
+                      "
+                    >
+                      Продолжая регистрацию вы принимаете
+                      <u>Пользовательское соглашение</u> и<br />
+                      <u>Оферту использования сервиса</u>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </center>
+  </body>
+</html>

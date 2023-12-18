@@ -13,7 +13,7 @@ interface AuthContextProps {
 
 interface AuthContextValue {
   isAuthenticated: boolean
-  login: (token: string) => void
+  login: (token: string, expiresIn: number) => void
   logout: () => void
 }
 
@@ -25,26 +25,31 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     return storedAuth ? JSON.parse(storedAuth) : false
   })
 
-  const login = (token: string) => {
+  const setToken = (token: string, expiresIn: number) => {
+    document.cookie = `token=${token}; max-age=${expiresIn}; path=/`
+  }
+
+  const login = (token: string, expiresIn: number) => {
+    setToken(token, expiresIn)
     setAuthenticated(true)
-    localStorage.setItem("token", token)
-    // Устанавливаем время жизни токена в localStorage (например, 1 час)
-    const tokenExpiration = new Date().getTime() + 3600000 // 1 час в миллисекундах
-    localStorage.setItem("tokenExpiration", tokenExpiration.toString())
+    localStorage.setItem("isAuthenticated", "true")
   }
 
   const logout = () => {
+    document.cookie = "token=; max-age=0; path=/"
     setAuthenticated(false)
-    localStorage.removeItem("token")
-    localStorage.removeItem("tokenExpiration")
+    localStorage.removeItem("isAuthenticated")
   }
 
   useEffect(() => {
     const checkTokenExpiration = () => {
-      const tokenExpiration = localStorage.getItem("tokenExpiration")
+      const tokenExpiration = document.cookie
+        .split(";")
+        .find((c) => c.trim().startsWith("tokenExpiration="))
+
       if (
         tokenExpiration &&
-        new Date().getTime() > parseInt(tokenExpiration, 10)
+        new Date().getTime() > parseInt(tokenExpiration.split("=")[1], 10)
       ) {
         // Токен истек, производим выход
         logout()

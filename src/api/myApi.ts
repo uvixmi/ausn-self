@@ -1929,4 +1929,4 @@ export class Api<
   }
 }
 
-export const api = new Api({ baseUrl: "http://109.95.209.141:7777" })
+export const api = new Api({ baseUrl: "https://api-dev.buh.app" })
