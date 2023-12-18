@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
-import { Draft } from "immer" // Импорт типа Draft
+import { Draft } from "immer"
 import { User, api } from "../../api/myApi"
+import Cookies from "js-cookie"
 
 export const fetchCurrentUser = createAsyncThunk<
   User,
@@ -8,9 +9,9 @@ export const fetchCurrentUser = createAsyncThunk<
   { rejectValue: string }
 >("user/fetchCurrentUser", async (_, thunkAPI) => {
   try {
-    const accessToken = localStorage.getItem("token")
+    const token = Cookies.get("token")
     const headers = {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${token}`,
     }
     const response = await api.users.currentUserUsersGet({ headers })
     return response.data as User

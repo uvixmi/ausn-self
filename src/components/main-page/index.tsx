@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "./store"
 import { NonTargetPage } from "../non-target-page"
 import { clearData } from "../authorization-page/slice"
+import Cookies from "js-cookie"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -26,7 +27,7 @@ export const MainPage = () => {
     error,
   } = useSelector((state: RootState) => state.user)
 
-  const token = localStorage.getItem("token")
+  const token = Cookies.get("token")
 
   if (!isAuthenticated)
     return (

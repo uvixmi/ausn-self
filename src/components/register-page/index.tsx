@@ -30,6 +30,7 @@ import { useNavigate } from "react-router-dom"
 import { setError, setTaxSystem } from "./slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
+import Cookies from "js-cookie"
 
 const { Title, Text, Link } = Typography
 
@@ -114,9 +115,9 @@ export const RegisterPage = ({
   const [phoneError, setPhoneError] = useState(false)
   const [innError, setInnError] = useState(false)
   const [isDisabledFirstButton, setIsDisabledFirstButton] = useState(true)
-  const accessToken = localStorage.getItem("token")
+  const token = Cookies.get("token")
   const headers = {
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${token}`,
   }
   interface ErrorResponse {
     error: {
