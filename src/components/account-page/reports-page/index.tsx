@@ -76,7 +76,12 @@ export const ReportsPage = () => {
                   defaultValue="I"
                   options={optionsNotifications}
                 />
-                <Button className={styles["buttons-row-item"]}>
+                <Button
+                  className={cn(
+                    styles["buttons-row-item"],
+                    styles["button-make"]
+                  )}
+                >
                   {CONTENT.BUTTON_MAKE_NOTIFICATION}
                 </Button>
               </div>
@@ -124,7 +129,12 @@ export const ReportsPage = () => {
                   defaultValue="2023"
                   options={optionsDeclaration}
                 />
-                <Button className={styles["buttons-row-item"]}>
+                <Button
+                  className={cn(
+                    styles["buttons-row-item"],
+                    styles["button-make"]
+                  )}
+                >
                   {CONTENT.BUTTON_MAKE_DECLARATION}
                 </Button>
               </div>
