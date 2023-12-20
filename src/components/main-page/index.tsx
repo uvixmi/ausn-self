@@ -13,6 +13,8 @@ import { clearData } from "../authorization-page/slice"
 import Cookies from "js-cookie"
 import { ActionsPage } from "../account-page/actions-page"
 import { TaxesPage } from "../account-page/taxes-page"
+import { SettingsPage } from "../account-page/settings-page"
+import { ReportsPage } from "../account-page/reports-page"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -164,6 +166,8 @@ export const MainPage = () => {
           >
             <Route path="main" element={<ActionsPage />} />
             <Route path="taxes" element={<TaxesPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
           </Route>
           <Route path="/*" element={<Navigate to="/main" replace />} />
         </Routes>

@@ -1,0 +1,20 @@
+export const CONTENT = {
+  SETTINGS_HEADING: "Настройки",
+  BUTTON_NOTIFICATIONS: "Настроить уведомления",
+  BUTTON_FEEDBACK: "Обратная связь",
+  TEXT_TAXSYSTEM: "Система налогообложения",
+  TEXT_TAXOBJECT: "Объект налогообожения",
+  TEXT_TAX_RATE: "Ставка налога",
+  TEXT_DATE_BEGIN: "Дата начала расчёта",
+  TEXT_DATE_REGISTRATION: "Дата регистрации ИП",
+  TEXT_OKTMO: "ОКТМО",
+  TEXT_CODE_IFNS: "Код ИФНС",
+  TEXT_DEFAULT_CODE:
+    "Межрайонная инспекция ФНС России №4 по Республике Дагестан",
+  TAXMODE_HEADING: "Налоговый режим",
+  CONTACT_HEADING: "Контактные данные",
+  TEXT_EMAIL: "Электронная почта",
+  TEXT_PHONE: "Номер телефона",
+  BUTTON_CHANGE_PASSWORD: "Сменить пароль",
+  BUTTON_OFF_SERVICE: "Отключить сервис",
+}

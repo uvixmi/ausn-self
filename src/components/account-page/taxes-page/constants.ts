@@ -5,7 +5,7 @@ export const CONTENT = {
   HEADING_BANKS: "Банки",
   HEADING_CASHIERS: "Кассы",
   HEADING_MARKETPLACES: "Маркетплейсы",
-  HEADING_INCOME: "Доходы",
+  HEADING_INCOME: "Операции",
   SIDER_HEADING_EVENTS: "События",
   SIDER_HEADING_TAXES: "Налоговая база",
   SIDER_HEADING_REPORTS: "Отчётность",

@@ -8,7 +8,7 @@ import {
   Table,
   Typography,
 } from "antd"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import { Outlet, useNavigate } from "react-router-dom"
@@ -23,6 +23,7 @@ import { AppDispatch } from "../main-page/store"
 import { useAuth } from "../../AuthContext"
 import Cookies from "js-cookie"
 import { v4 as uuid } from "uuid"
+import cn from "classnames"
 
 export const AccountPage = ({
   token_type,
@@ -34,6 +35,7 @@ export const AccountPage = ({
   //  Вы можете использовать другую библиотеку
 
   const token = Cookies.get("token")
+  const location = useLocation()
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -251,6 +253,10 @@ export const AccountPage = ({
                         //underline={item.title == CONTENT.HEADING_TAXES}
                         //strong={item.title == CONTENT.HEADING_TAXES}
                         to={item.to}
+                        className={cn(styles["item-link-item"], {
+                          [styles["item-active"]]:
+                            location.pathname === item.to,
+                        })}
                       >
                         {item.title}
                       </Link>
@@ -264,6 +270,10 @@ export const AccountPage = ({
                     <List.Item style={{ border: "none" }}>
                       <Link //underline={item == CONTENT.HEADING_TAXES}
                         to={item.to}
+                        className={cn(styles["item-link-item"], {
+                          [styles["item-active"]]:
+                            location.pathname === item.to,
+                        })}
                       >
                         {item.title}
                       </Link>

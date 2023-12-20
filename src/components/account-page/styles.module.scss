@@ -200,3 +200,17 @@
   display: flex;
   justify-content: space-between;
 }
+
+.item-link-item {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.005em;
+  text-align: left;
+  color: #141414;
+}
+
+.item-active {
+  border-bottom: 1px solid #141414;
+  font-weight: 600;
+}
