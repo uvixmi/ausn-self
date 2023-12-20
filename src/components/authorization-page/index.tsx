@@ -1,4 +1,4 @@
-import { Button, Input, Typography } from "antd"
+import { Button, Form, Input, Typography } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
@@ -29,6 +29,27 @@ export const AuthorizationPage = ({
     error,
   } = useSelector((state: RootState) => state.user)
 
+  const [authError, setAuthError] = useState(false)
+  const [errorText, setErrorText] = useState("")
+
+  interface ErrorResponse {
+    error: {
+      detail: {
+        message: string
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function isErrorResponse(obj: any): obj is ErrorResponse {
+    return (
+      obj &&
+      obj.error &&
+      obj.error.detail &&
+      obj.error.detail.message !== undefined
+    )
+  }
+
   return (
     <>
       <div className={styles["content-wrapper"]}>
@@ -40,26 +61,48 @@ export const AuthorizationPage = ({
             <div className={styles["inputs-window"]}>
               <div className={styles["input-item-wrapper"]}>
                 <Text>{CONTENT.EMAIL_TITLE}</Text>
-                <Input
-                  className={styles["input-item"]}
-                  placeholder={CONTENT.EMAIL_PLACEHOLDER}
-                  value={email}
-                  onChange={(event) => {
-                    setEmail(event.target.value)
-                  }}
-                ></Input>
+                <Form.Item
+                  className={styles["form-email"]}
+                  validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                >
+                  <Input
+                    className={styles["input-item"]}
+                    placeholder={CONTENT.EMAIL_PLACEHOLDER}
+                    value={email}
+                    onChange={(event) => {
+                      setEmail(event.target.value)
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div className={styles["input-item-wrapper"]}>
                 <Text>{CONTENT.PASSWORD_TITLE}</Text>
-                <Input
-                  className={styles["input-item"]}
-                  placeholder={CONTENT.PASSWORD_PLACEHOLDER}
-                  type="password"
-                  value={password}
-                  onChange={(event) => {
-                    setPassword(event.target.value)
-                  }}
-                ></Input>
+                <Form.Item
+                  className={styles["form-password"]}
+                  validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                  help={
+                    authError ? (
+                      <div>
+                        <Text className={styles["error-text"]}>
+                          {errorText}
+                        </Text>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  }
+                >
+                  <Input
+                    className={styles["input-item"]}
+                    placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                    type="password"
+                    value={password}
+                    onChange={(event) => {
+                      setPassword(event.target.value)
+                      setAuthError(false)
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div className={styles["links-wrapper"]}>
                 <Link onClick={() => navigate("/register")}>
@@ -85,14 +128,20 @@ export const AuthorizationPage = ({
                     setTokenType(token_type)
                     setIsAuth(true)
                     navigate("/main")
+                    dispatch(fetchCurrentUser())
                   } else {
                     console.error("Отсутствует свойство data в ответе API.")
                   }
                 } catch (error) {
                   console.error("Ошибка при выполнении запроса:", error)
+
+                  setAuthError(true)
+                  if (isErrorResponse(error)) {
+                    setErrorText(error.error.detail.message)
+                  }
+
                   // Другие действия при ошибке, если необходимо
                 }
-                dispatch(fetchCurrentUser())
               }}
             >
               {CONTENT.ENTER_BUTTON}

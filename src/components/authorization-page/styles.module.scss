@@ -100,3 +100,24 @@ $xxl: 2560px;
   font-weight: 500;
   letter-spacing: -0.02em;
 }
+
+.form-email {
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.form-password {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.error-text {
+  font-size: 10px;
+  line-height: 10px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
