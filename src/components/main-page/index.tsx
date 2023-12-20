@@ -11,6 +11,8 @@ import { AppDispatch, RootState } from "./store"
 import { NonTargetPage } from "../non-target-page"
 import { clearData } from "../authorization-page/slice"
 import Cookies from "js-cookie"
+import { ActionsPage } from "../account-page/actions-page"
+import { TaxesPage } from "../account-page/taxes-page"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -151,7 +153,7 @@ export const MainPage = () => {
       <div className={styles["main-wrapper"]}>
         <Routes>
           <Route
-            path="/main"
+            path="/"
             Component={() => (
               <AccountPage
                 accessToken={accessToken}
@@ -159,7 +161,10 @@ export const MainPage = () => {
                 logOut={logout}
               />
             )}
-          />
+          >
+            <Route path="main" element={<ActionsPage />} />
+            <Route path="taxes" element={<TaxesPage />} />
+          </Route>
           <Route path="/*" element={<Navigate to="/main" replace />} />
         </Routes>
       </div>

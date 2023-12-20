@@ -8,11 +8,10 @@ import {
   Table,
   Typography,
 } from "antd"
+import { Link } from "react-router-dom"
 import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
-import cn from "classnames"
-import Link from "antd/es/typography/Link"
-import { useNavigate } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
 import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons"
 import { AccountPageProps } from "./types"
@@ -23,6 +22,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
 import { useAuth } from "../../AuthContext"
 import Cookies from "js-cookie"
+import { v4 as uuid } from "uuid"
 
 export const AccountPage = ({
   token_type,
@@ -40,14 +40,17 @@ export const AccountPage = ({
   }
   const [user, setUser] = useState<User | undefined>(undefined)
   const data = [
-    CONTENT.SIDER_HEADING_EVENTS,
-    CONTENT.SIDER_HEADING_TAXES,
-    CONTENT.SIDER_HEADING_REPORTS,
-    CONTENT.SIDER_HEADING_DOCUMENT,
-    CONTENT.SIDER_HEADING_PERSONNEL,
+    { title: CONTENT.SIDER_HEADING_EVENTS, to: "/main" },
+    { title: CONTENT.SIDER_HEADING_TAXES, to: "/taxes" },
+    { title: CONTENT.SIDER_HEADING_REPORTS, to: "/reports" },
+    { title: CONTENT.SIDER_HEADING_DOCUMENTS, to: "/documents" },
+    { title: CONTENT.SIDER_HEADING_PERSONAL, to: "/personal" },
   ]
 
-  const settings = [CONTENT.SIDER_SETTINGS, CONTENT.SIDER_SUPPORT]
+  const settings = [
+    { title: CONTENT.SIDER_SETTINGS, to: "/settings" },
+    { title: CONTENT.SIDER_SUPPORT, to: "/support" },
+  ]
 
   const data_banks = [CONTENT.BANK_SBER, CONTENT.BANK_VTB, CONTENT.BANK_ALPHA]
 
@@ -177,12 +180,15 @@ export const AccountPage = ({
 
   const dispatch = useDispatch<AppDispatch>()
   const { isAuthenticated, login, logout } = useAuth()
-
   useEffect(() => {
     if (token) {
       const fetchSources = async () => {
         const response = await api.sources.getSourcesInfoSourcesGet({ headers })
         setSources(response.data)
+        const response1 = await api.operations.getOperationsOperationsGet(
+          { page_number: 1, row_count: 10, request_id: uuid() },
+          { headers }
+        )
       }
       fetchSources()
     }
@@ -242,10 +248,11 @@ export const AccountPage = ({
                   renderItem={(item) => (
                     <List.Item style={{ border: "none" }}>
                       <Link
-                        underline={item == CONTENT.HEADING_TAXES}
-                        strong={item == CONTENT.HEADING_TAXES}
+                        //underline={item.title == CONTENT.HEADING_TAXES}
+                        //strong={item.title == CONTENT.HEADING_TAXES}
+                        to={item.to}
                       >
-                        {item}
+                        {item.title}
                       </Link>
                     </List.Item>
                   )}
@@ -255,8 +262,10 @@ export const AccountPage = ({
                   dataSource={settings}
                   renderItem={(item) => (
                     <List.Item style={{ border: "none" }}>
-                      <Link underline={item == CONTENT.HEADING_TAXES}>
-                        {item}
+                      <Link //underline={item == CONTENT.HEADING_TAXES}
+                        to={item.to}
+                      >
+                        {item.title}
                       </Link>
                     </List.Item>
                   )}
@@ -264,7 +273,7 @@ export const AccountPage = ({
               </div>
             </div>
           </Sider>
-          <Content className={styles["content-wrapper"]}>
+          {/* <Content className={styles["content-wrapper"]}>
             <Title level={2} className={styles["heading-text"]}>
               {CONTENT.HEADING_TAXES}
             </Title>
@@ -452,7 +461,8 @@ export const AccountPage = ({
                 </List.Item>
               )}
             />
-          </Sider>
+          </Sider> */}
+          <Outlet />
         </Layout>
       </ConfigProvider>
     </>
