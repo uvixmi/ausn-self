@@ -119,7 +119,6 @@ export const AuthorizationPage = ({
                     username: email,
                     password: password,
                   })
-
                   // Проверка наличия свойства data в ответе
                   if (response.data) {
                     const { token_type, access_token } = response.data

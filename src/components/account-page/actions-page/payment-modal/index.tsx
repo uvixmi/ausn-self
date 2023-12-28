@@ -38,7 +38,7 @@ export const PaymentModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
             </Text>
             {payments.map((item, index) => (
               <div className={styles["payment-inner"]}>
-                {index != -0 && (
+                {index != 0 && (
                   <Title
                     level={3}
                     style={{ marginBottom: 0, marginTop: "8px" }}

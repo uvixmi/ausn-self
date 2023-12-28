@@ -1,7 +1,6 @@
 import {
   Button,
   ConfigProvider,
-  DatePicker,
   Layout,
   List,
   Select,
@@ -13,7 +12,6 @@ import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
-import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons"
 import { AccountPageProps } from "./types"
 import { useEffect, useState } from "react"
 import { SourcesInfo, User, api } from "../../api/myApi"

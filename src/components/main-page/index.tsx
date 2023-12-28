@@ -150,7 +150,7 @@ export const MainPage = () => {
         </div>
       </>
     )
-  else
+  else if (token && currentUser.inn && currentUser.is_lead)
     return (
       <div className={styles["main-wrapper"]}>
         <Routes>
@@ -173,4 +173,5 @@ export const MainPage = () => {
         </Routes>
       </div>
     )
+  else return null
 }

@@ -256,7 +256,8 @@ export const RegisterPage = ({
 
   const validateEmail = (email: string) => {
     // Регулярное выражение для проверки формата email
-    const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex: RegExp =
+      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 
     // Проверка формата email
     if (!emailRegex.test(email)) {
