@@ -112,7 +112,7 @@ export const EnsPaymentModal = ({
     }
     try {
       loadingProcess()
-      await api.taxes.generateEnsOrderTaxesEnsOrderPost(data, { headers })
+      await api.taxes.generateEnsOrderTxtTaxesEnsOrderTxtPost(data, { headers })
       setOpen(false)
       clear()
       successProcess()
