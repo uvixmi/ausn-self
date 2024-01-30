@@ -14,7 +14,7 @@ import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
 import { AccountPageProps } from "./types"
 import { useEffect, useState } from "react"
-import { SourcesInfo, User, api } from "../../api/myApi"
+import { SourcesInfo, TaskResponse, User, api } from "../../api/myApi"
 import { clearData } from "../authorization-page/slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
@@ -177,20 +177,21 @@ export const AccountPage = ({
   ]
 
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+  const [tasks, setTasks] = useState<TaskResponse | undefined>(undefined)
 
   const dispatch = useDispatch<AppDispatch>()
   const { isAuthenticated, login, logout } = useAuth()
   useEffect(() => {
     if (token) {
       const fetchSources = async () => {
-        const response = await api.sources.getSourcesInfoSourcesGet({ headers })
-        setSources(response.data)
-        const response1 = await api.operations.getOperationsOperationsGet(
-          { page_number: 1, row_count: 10, request_id: uuid() },
-          { headers }
-        )
+        const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
+        setTasks(tasksResponse.data)
+        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
+          headers,
+        })
+        setSources(sourcesResponse.data)
       }
-      fetchSources()
+      //fetchSources()
     }
   }, [])
 

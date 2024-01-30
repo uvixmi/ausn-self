@@ -52,7 +52,7 @@
   display: flex;
   width: 100%;
   gap: 16px;
-  min-height: 42px;
+  height: 42px;
   gap: 4px;
 }
 
@@ -233,7 +233,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 336px;
+  max-width: 40%;
 }
 
 .title-style {
@@ -374,4 +374,24 @@
   line-height: 16px;
   letter-spacing: -0.20000000298023224px;
   text-align: left;
+}
+
+.date-title-overdue {
+  display: flex;
+  gap: 4px;
+}
+
+.warning-overdue {
+  background-color: #fff0f3;
+  padding: 0 8px;
+}
+
+.download-button {
+  padding: 4px;
+  height: auto;
+  border: 1px solid #8c8c8c;
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

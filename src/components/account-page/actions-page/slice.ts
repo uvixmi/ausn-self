@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { TaxSystemType } from "../../../api/myApi"
 
-// Определение начального состояния
 interface SliceState {
   email: string
   phone: string

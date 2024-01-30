@@ -4,12 +4,15 @@ import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
 import Link from "antd/es/typography/Link"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
-import { User, api } from "../../api/myApi"
+import { useEffect, useState } from "react"
+import { api } from "../../api/myApi"
 import { AuthorizationPageProps } from "./types"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchCurrentUser } from "./slice"
 import { AppDispatch, RootState } from "../main-page/store"
+import Cookies from "js-cookie"
+import { useAuth } from "../../AuthContext"
+import { isErrorResponse } from "./utils"
 
 const { Title, Text } = Typography
 
@@ -32,23 +35,11 @@ export const AuthorizationPage = ({
   const [authError, setAuthError] = useState(false)
   const [errorText, setErrorText] = useState("")
 
-  interface ErrorResponse {
-    error: {
-      detail: {
-        message: string
-      }
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function isErrorResponse(obj: any): obj is ErrorResponse {
-    return (
-      obj &&
-      obj.error &&
-      obj.error.detail &&
-      obj.error.detail.message !== undefined
-    )
-  }
+  const token = Cookies.get("token")
+  const { isAuthenticated, logout } = useAuth()
+  useEffect(() => {
+    if (!token && isAuthenticated) logout()
+  }, [])
 
   return (
     <>
@@ -138,8 +129,6 @@ export const AuthorizationPage = ({
                   if (isErrorResponse(error)) {
                     setErrorText(error.error.detail.message)
                   }
-
-                  // Другие действия при ошибке, если необходимо
                 }
               }}
             >

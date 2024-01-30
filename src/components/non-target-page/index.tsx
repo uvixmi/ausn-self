@@ -49,7 +49,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
                 <Text>{CONTENT.PHONE_TITLE}</Text>
                 <Input
                   className={styles["input-item"]}
-                  placeholder={users?.phone_number}
+                  placeholder={users?.phone_number || ""}
                   value={phone}
                   onChange={(event) => {
                     setPhone(event.target.value)
@@ -59,7 +59,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
                   className={styles["button-item"]}
                   onClick={async () => {
                     if (tax_system)
-                      api.users.saveLeadInfoUsersLeadInfoPut(
+                      api.users.saveLeadInfoUsersRegistrationLeadInfoPut(
                         {
                           inn,
                           start_year,

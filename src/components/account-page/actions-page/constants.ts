@@ -5,12 +5,22 @@ export const CONTENT = {
   TEXT_AMOUNT_ALREADY_PAID: "Уплачено",
   BUTTON_TO_PAY: "Оплатить",
   BUTTON_PAID: "Уже оплачено",
+  BUTTON_PASSED: "Уже сдано",
+  BUTTON_FORM: "Сформировать",
+  TITLE_FORMED: "Сформировано ",
+  BUTTON_UPDATE: "Обновить",
   UPDATE_DATA_HEADING: "Обновите данные",
   TEXT_AMOUNT_TO_PAY: "К уплате",
+  OVERDUE_WARNING: "просрочено",
+  TAXES_QUARTER_TEXT: "Налог за",
+  TAXES_QUARTER_END: " кв ",
   TEXT_DECLARATION:
     "Перед формированием декларации проверьте данные налоговой базы",
   TEXT_DETAILS: "Подробнее",
   UPDATE_TAXES_LINK: "Налоговая база",
+  NOTIFCATION_REPORT_ERROR: "Ошибка формирования файлов. Попробуйте еще раз",
+  NOTIFCATION_DOWNLOAD_ERROR: "Ошибка скачивания файла. Попробуйте еще раз",
+  NOTIFICATION_DOWNLOAD_SUCCESS: "Скачивание файла",
   UPDATE_DATA_TEXT:
     "Закончился I квартал 2024 года, для корректного расчета добавьте все источники данных в разделе",
 }

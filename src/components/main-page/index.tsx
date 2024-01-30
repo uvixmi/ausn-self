@@ -9,7 +9,7 @@ import { useAuth } from "../../AuthContext"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "./store"
 import { NonTargetPage } from "../non-target-page"
-import { clearData } from "../authorization-page/slice"
+import { clearData, fetchCurrentUser } from "../authorization-page/slice"
 import Cookies from "js-cookie"
 import { ActionsPage } from "../account-page/actions-page"
 import { TaxesPage } from "../account-page/taxes-page"
@@ -23,8 +23,12 @@ export const MainPage = () => {
   const [accessToken, setAccessToken] = useState("")
   const [isAuth, setIsAuth] = useState(false)
   const [token_type, setTokenType] = useState("")
-
   const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    dispatch(fetchCurrentUser())
+  }, [dispatch])
+
   const {
     data: currentUser,
     loading,
@@ -173,5 +177,41 @@ export const MainPage = () => {
         </Routes>
       </div>
     )
-  else return null
+  else
+    return (
+      <>
+        <div className={styles["main-wrapper"]}>
+          <div className={styles["register-header"]}>
+            <LogoIcon
+              onClick={() => {
+                logout(), dispatch(clearData()), navigate("/login")
+              }}
+              type="icon-custom"
+              className={styles["logo-item"]}
+            />
+          </div>
+          <div className={styles["background-cover"]}>
+            <Routes>
+              <Route
+                path="/login"
+                Component={() => (
+                  <AuthorizationPage
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
+                  />
+                )}
+              />
+              <Route path="/register" Component={RegisterPage} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
+          <div>
+            <div className={styles["register-footer"]}></div>
+          </div>
+        </div>
+      </>
+    )
 }

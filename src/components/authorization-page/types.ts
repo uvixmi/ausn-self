@@ -4,3 +4,11 @@ export interface AuthorizationPageProps {
   setIsAuth: (log: boolean) => void
   login: (str: string, exp: number) => void
 }
+
+export interface ErrorResponse {
+  error: {
+    detail: {
+      message: string
+    }
+  }
+}

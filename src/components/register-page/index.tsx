@@ -31,6 +31,7 @@ import { setError, setTaxSystem } from "./slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
 import Cookies from "js-cookie"
+import { formatDateString } from "../account-page/actions-page/utils"
 
 const { Title, Text, Link } = Typography
 
@@ -60,9 +61,12 @@ export const RegisterPage = ({
   const currentYear = new Date().getFullYear()
 
   const optionsYears = [
-    { label: "Год, с которого вести учет в сервисе: 2023", value: currentYear },
     {
-      label: "Год, с которого вести учет в сервисе: 2022",
+      label: `Год, с которого вести учет в сервисе: ${currentYear}`,
+      value: currentYear,
+    },
+    {
+      label: `Год, с которого вести учет в сервисе: ${currentYear - 1}`,
       value: currentYear - 1,
     },
   ]
@@ -111,6 +115,9 @@ export const RegisterPage = ({
   const [checkedError, setCheckedError] = useState(false)
   const [errorText, setErrorText] = useState("")
 
+  const [emailDoubleError, setEmailDoubleError] = useState(false)
+  const [emailDoubleErrorText, setEmailDoubleErrorText] = useState("")
+
   const [emailError, setEmailError] = useState(false)
   const [phoneError, setPhoneError] = useState(false)
   const [innError, setInnError] = useState(false)
@@ -139,10 +146,30 @@ export const RegisterPage = ({
     )
   }
 
+  const handleRegisterMail = async () => {
+    if (email === "") {
+      setEmailError(true)
+    } else {
+      try {
+        await api.users.createUserUsersRegistrationPost({
+          email: email.toLocaleLowerCase(),
+          phone_number: phone,
+        })
+        onChangeStep(1)
+      } catch (error) {
+        setEmailDoubleError(true)
+        if (isErrorResponse(error)) {
+          // Если объект ошибки соответствует интерфейсу ErrorResponse
+          setEmailDoubleErrorText(error.error.detail.message)
+        }
+      }
+    }
+  }
+
   const handleCheck = async (inn: string) => {
     setIsLoading(true)
     try {
-      const response = await api.users.getInnInfoUsersInnInfoGet(
+      const response = await api.users.getInnInfoUsersRegistrationInnInfoGet(
         { inn },
         { headers }
       )
@@ -259,38 +286,27 @@ export const RegisterPage = ({
     const emailRegex: RegExp =
       /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 
-    // Проверка формата email
     if (!emailRegex.test(email)) {
-      // Возвращаем true, если формат не соответствует
       return true
     }
 
-    // Возвращаем false, если формат соответствует
     return false
   }
 
   const validatePhone = (phoneNumber: string) => {
     const strippedNumber = phoneNumber.replace(/[^\d+]/g, "")
-
-    // Создание регулярного выражения для проверки соответствия маске
-    //const maskRegex = new RegExp(`^\\${PhoneMask.replace(/[\s()+]/g, "")}$`)
-
-    // Создание регулярного выражения для проверки длины строки после удаления
     const lengthRegex = /^\+\d{11}$/
-
-    // Проверка соответствия маске
-    //const isValidMask = maskRegex.test(phoneNumber)
-
-    // Проверка длины строки после удаления
     const isValidLength = lengthRegex.test(strippedNumber)
-    return !isValidLength
+    return !(isValidLength || strippedNumber.length === 1)
   }
 
   useEffect(() => {
-    if (email == "" || phone == "") setIsDisabledFirstButton(true)
-    else if (emailError || phoneError) setIsDisabledFirstButton(true)
-    else setIsDisabledFirstButton(false)
-  }, [emailError, phoneError, email, phone])
+    if (email === "") setIsDisabledFirstButton(true)
+    else if (emailError) setIsDisabledFirstButton(true)
+    else if (phone !== "" && phone !== "+" && phoneError) {
+      setIsDisabledFirstButton(true)
+    } else setIsDisabledFirstButton(false)
+  }, [emailError, email, phone, phoneError])
 
   useEffect(() => {
     if (registrationPage == 2) onChangeStep(registrationPage)
@@ -313,10 +329,11 @@ export const RegisterPage = ({
       )
 
     if (sno == TaxSystemType.UsnD && rate) {
-      await api.users.saveTaxInfoUsersTaxInfoPut(
+      await api.users.saveTaxInfoUsersRegistrationTaxInfoPut(
         {
           inn,
           tax_rate: parseInt(rate.slice(0, -1), 10),
+          tax_system: sno,
           start_year: startYear,
         },
         { headers }
@@ -367,16 +384,32 @@ export const RegisterPage = ({
                   <div className={styles["inputs-window"]}>
                     <div className={styles["input-item-wrapper"]}>
                       <Text>{CONTENT.EMAIL_TITLE}</Text>
-                      <Input
-                        className={styles["input-item"]}
-                        value={email}
-                        onChange={(event) => {
-                          setEmail(event.target.value),
-                            setEmailError(validateEmail(event.target.value))
-                        }}
-                        placeholder={CONTENT.EMAIL_PLACEHOLDER}
-                        status={emailError ? "error" : undefined}
-                      ></Input>
+                      <Form.Item
+                        className={styles["form-password"]}
+                        validateStatus={emailDoubleError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          emailDoubleError ? (
+                            <div>
+                              <Text className={styles["error-mail-text"]}>
+                                {emailDoubleErrorText}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <Input
+                          className={styles["input-item"]}
+                          value={email}
+                          onChange={(event) => {
+                            setEmail(event.target.value),
+                              setEmailError(validateEmail(event.target.value))
+                          }}
+                          placeholder={CONTENT.EMAIL_PLACEHOLDER}
+                          status={emailError ? "error" : undefined}
+                        />
+                      </Form.Item>
                     </div>
                     <div className={styles["input-item-wrapper"]}>
                       <Text>{CONTENT.PHONE_TITLE}</Text>
@@ -396,19 +429,7 @@ export const RegisterPage = ({
                   <Button
                     className={styles["button-item"]}
                     disabled={isDisabledFirstButton}
-                    onClick={async () => {
-                      if (phone === "" && email === "") {
-                        setPhoneError(true), setEmailError(true)
-                      } else if (phone === "") setPhoneError(true)
-                      else if (email === "") setEmailError(true)
-                      else {
-                        onChangeStep(1)
-                        await api.users.createUserUsersPost({
-                          email: email,
-                          phone_number: phone,
-                        })
-                      }
-                    }}
+                    onClick={handleRegisterMail}
                   >
                     {CONTENT.CONTINUE_BUTTON}
                   </Button>
@@ -495,8 +516,11 @@ export const RegisterPage = ({
                   {isInnLoaded && (
                     <div className={styles["loader-wrapper"]}>
                       <div className={styles["text-row"]}>
-                        <Text>{CONTENT.NAME}</Text>
-                        <Text>
+                        <Text className={styles["row-left"]}>
+                          {CONTENT.NAME}
+                        </Text>
+
+                        <Text className={styles["row-right"]}>
                           {"ИП " +
                             user?.lastname +
                             " " +
@@ -506,8 +530,11 @@ export const RegisterPage = ({
                         </Text>
                       </div>
                       <div className={styles["text-row"]}>
-                        <Text>{CONTENT.DATE_REGISTRATION}</Text>
-                        <Text>{user?.fns_reg_date}</Text>
+                        <Text className={styles["row-left"]}>
+                          {CONTENT.DATE_REGISTRATION}
+                        </Text>
+
+                        <Text>{formatDateString(user?.fns_reg_date)}</Text>
                       </div>
                       <div className={styles["text-row"]}>
                         <Select

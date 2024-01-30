@@ -79,6 +79,17 @@ $xxl: 2560px;
   width: 100%;
 }
 
+.error-mail-text {
+  font-size: 12px;
+  line-height: 14px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 16px;
+    line-height: 20px;
+  }
+}
+
 .error-text {
   font-size: 8px;
   line-height: 8px;
@@ -184,7 +195,7 @@ $xxl: 2560px;
 
 .text-row {
   display: flex;
-  justify-content: space-between;
+  gap: 40px;
 }
 
 .rate-wrapper {
@@ -208,4 +219,13 @@ $xxl: 2560px;
   width: 100%;
   margin-bottom: 10px;
   margin-top: 10px;
+}
+
+.row-left {
+  width: 150px;
+}
+
+.row-right {
+  display: flex;
+  align-items: flex-start;
 }
