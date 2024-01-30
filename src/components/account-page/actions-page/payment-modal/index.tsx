@@ -49,7 +49,7 @@ export const PaymentModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   const handlePay = async () => {
     try {
       await api.operations.createOperationTaxPaymentOperationsTaxPaymentPost(
-        payments[0],
+        { tax_payments: payments[0] },
         { headers }
       )
       setOpen(false)

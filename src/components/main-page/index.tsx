@@ -37,7 +37,7 @@ export const MainPage = () => {
 
   const token = Cookies.get("token")
 
-  if (!isAuthenticated)
+  if (!token)
     return (
       <>
         <div className={styles["main-wrapper"]}>
@@ -74,110 +74,117 @@ export const MainPage = () => {
         </div>
       </>
     )
-  else if (token && currentUser.inn == null && currentUser.is_lead == false)
-    return (
-      <>
+  else {
+    if (currentUser.inn == null && currentUser.is_lead == false)
+      return (
+        <>
+          <div className={styles["main-wrapper"]}>
+            <div className={styles["register-header"]}>
+              <LogoIcon
+                onClick={() => {
+                  logout(), navigate("/login"), dispatch(clearData())
+                }}
+                type="icon-custom"
+                className={styles["logo-item"]}
+              />
+            </div>
+            <div className={styles["background-cover"]}>
+              <Routes>
+                <Route
+                  path="/register"
+                  Component={() => (
+                    <RegisterPage
+                      registrationPage={2}
+                      currentUser={currentUser}
+                    />
+                  )}
+                />
+                <Route
+                  path="/non-target"
+                  Component={() => (
+                    <NonTargetPage
+                      accessToken={accessToken}
+                      token_type={token_type}
+                      logOut={logout}
+                    />
+                  )}
+                />
+                <Route
+                  path="/*"
+                  element={<Navigate to="/register" replace />}
+                />
+              </Routes>
+            </div>
+            <div>
+              <div className={styles["register-footer"]}></div>
+            </div>
+          </div>
+        </>
+      )
+    else if (currentUser.is_lead == true)
+      return (
+        <>
+          <div className={styles["main-wrapper"]}>
+            <div className={styles["register-header"]}>
+              <LogoIcon
+                onClick={() => {
+                  logout(), navigate("/login"), dispatch(clearData())
+                }}
+                type="icon-custom"
+                className={styles["logo-item"]}
+              />
+            </div>
+            <div className={styles["background-cover"]}>
+              <Routes>
+                <Route
+                  path="/non-target"
+                  Component={() => (
+                    <NonTargetPage
+                      accessToken={accessToken}
+                      token_type={token_type}
+                      logOut={logout}
+                    />
+                  )}
+                />
+                <Route
+                  path="/*"
+                  element={<Navigate to="/non-target" replace />}
+                />
+              </Routes>
+            </div>
+            <div>
+              <div className={styles["register-footer"]}></div>
+            </div>
+          </div>
+        </>
+      )
+    else
+      return (
         <div className={styles["main-wrapper"]}>
-          <div className={styles["register-header"]}>
-            <LogoIcon
-              onClick={() => {
-                logout(), navigate("/login"), dispatch(clearData())
-              }}
-              type="icon-custom"
-              className={styles["logo-item"]}
-            />
-          </div>
-          <div className={styles["background-cover"]}>
-            <Routes>
-              <Route
-                path="/register"
-                Component={() => (
-                  <RegisterPage
-                    registrationPage={2}
-                    currentUser={currentUser}
-                  />
-                )}
-              />
-              <Route
-                path="/non-target"
-                Component={() => (
-                  <NonTargetPage
-                    accessToken={accessToken}
-                    token_type={token_type}
-                    logOut={logout}
-                  />
-                )}
-              />
-              <Route path="/*" element={<Navigate to="/register" replace />} />
-            </Routes>
-          </div>
-          <div>
-            <div className={styles["register-footer"]}></div>
-          </div>
+          <Routes>
+            <Route
+              path="/"
+              Component={() => (
+                <AccountPage
+                  accessToken={accessToken}
+                  token_type={token_type}
+                  logOut={logout}
+                />
+              )}
+            >
+              <Route path="main" element={<ActionsPage />} />
+              <Route path="taxes" element={<TaxesPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+            </Route>
+            <Route path="/*" element={<Navigate to="/main" replace />} />
+          </Routes>
         </div>
-      </>
-    )
-  else if (token && currentUser.is_lead == true)
-    return (
-      <>
-        <div className={styles["main-wrapper"]}>
-          <div className={styles["register-header"]}>
-            <LogoIcon
-              onClick={() => {
-                logout(), navigate("/login"), dispatch(clearData())
-              }}
-              type="icon-custom"
-              className={styles["logo-item"]}
-            />
-          </div>
-          <div className={styles["background-cover"]}>
-            <Routes>
-              <Route
-                path="/non-target"
-                Component={() => (
-                  <NonTargetPage
-                    accessToken={accessToken}
-                    token_type={token_type}
-                    logOut={logout}
-                  />
-                )}
-              />
-              <Route
-                path="/*"
-                element={<Navigate to="/non-target" replace />}
-              />
-            </Routes>
-          </div>
-          <div>
-            <div className={styles["register-footer"]}></div>
-          </div>
-        </div>
-      </>
-    )
-  else if (token && currentUser.inn)
-    return (
-      <div className={styles["main-wrapper"]}>
-        <Routes>
-          <Route
-            path="/"
-            Component={() => (
-              <AccountPage
-                accessToken={accessToken}
-                token_type={token_type}
-                logOut={logout}
-              />
-            )}
-          >
-            <Route path="main" element={<ActionsPage />} />
-            <Route path="taxes" element={<TaxesPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="reports" element={<ReportsPage />} />
-          </Route>
-          <Route path="/*" element={<Navigate to="/main" replace />} />
-        </Routes>
-      </div>
-    )
-  else
+      )
+  }
+
+  {
+    /*else
     return (
       <>
         <div className={styles["main-wrapper"]}>
@@ -213,5 +220,6 @@ export const MainPage = () => {
           </div>
         </div>
       </>
-    )
+    )*/
+  }
 }

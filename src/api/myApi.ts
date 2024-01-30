@@ -238,10 +238,7 @@ export interface CreateOperation {
   doc_number: string | null
 }
 
-/**
- * CreateTaxPaymentOperation
- * @example {"amount":25000.9,"date":"2023-10-30","doc_number":"123","tax_period":2023,"tax_type":1}
- */
+/** CreateTaxPaymentOperation */
 export interface CreateTaxPaymentOperation {
   /**
    * Date
@@ -253,16 +250,25 @@ export interface CreateTaxPaymentOperation {
    * Doc Number
    * Номер документа
    */
-  doc_number?: string
+  doc_number: string | undefined
   /**
    * Tax Period
    * Год уплаты налога
    */
   tax_period: number
-  /** Тип налога. Возможные значения: 1 - УСН. 2 - фиксированные взносы за ИП. 3 - 1% с дохода сверх 300 000 руб. 4 - ЕНС. 5 - ПФР. 6 - ОМС.  */
+  /** Тип налога. Возможные значения: 1 - УСН. 2 - фиксированные взносы за ИП. 3 - 1% с дохода сверх 300 000 руб. 4 - ЕНС.  */
   tax_type: TaxType
   /** Amount */
   amount: number
+}
+
+/**
+ * CreateTaxPaymentOperationsRequest
+ * @example {"tax_payments":{"amount":25000.9,"date":"2023-10-30","doc_number":"123","tax_period":2023,"tax_type":1}}
+ */
+export interface CreateTaxPaymentOperationsRequest {
+  /** Уплаты налога */
+  tax_payments: CreateTaxPaymentOperation
 }
 
 /** CreateUser */
@@ -1315,6 +1321,11 @@ export interface TaskInfo {
    */
   report_code?: string | null
   /**
+   * Report Update
+   * Дата последнего формирования  уведомления / декларации
+   */
+  report_update?: string | null
+  /**
    * Purpose
    * Назначение платежа
    */
@@ -1394,7 +1405,7 @@ export enum TaskReportType {
 export interface TaskResponse {
   /**
    * Tasks
-   * Задачи по уплате налогов
+   * Задачи по уплате налогов. Задачи в списке упорядочены по полю due_date.
    */
   tasks: TaskInfo[]
 }
@@ -2417,7 +2428,7 @@ export class Api<
      * @secure
      */
     createOperationTaxPaymentOperationsTaxPaymentPost: (
-      data: CreateTaxPaymentOperation,
+      data: CreateTaxPaymentOperationsRequest,
       params: RequestParams = {}
     ) =>
       this.request<any, HTTPValidationError | void>({
