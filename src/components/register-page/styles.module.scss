@@ -90,6 +90,12 @@ $xxl: 2560px;
   }
 }
 
+.inn-inner-registration {
+  @media screen and (min-width: $m) {
+    width: 520px;
+  }
+}
+
 .error-text {
   font-size: 8px;
   line-height: 8px;
@@ -203,7 +209,7 @@ $xxl: 2560px;
 }
 
 .loader-wrapper {
-  margin: 20px auto;
+  margin: 0 auto;
 }
 
 .slider-style {
@@ -221,8 +227,22 @@ $xxl: 2560px;
   margin-top: 10px;
 }
 
+.select-row-item {
+  width: 100%;
+  margin-top: 24px;
+}
+
 .row-left {
   width: 150px;
+}
+
+.text-title-person {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.20000000298023224px;
+  text-align: left;
+  color: #505050;
 }
 
 .row-right {
@@ -231,6 +251,10 @@ $xxl: 2560px;
   width: 150px;
 
   @media screen and (min-width: $s) {
-    width: 240px;
+    width: 250px;
+  }
+
+  @media screen and (min-width: $m) {
+    width: 330px;
   }
 }

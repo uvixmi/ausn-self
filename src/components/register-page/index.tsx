@@ -31,6 +31,7 @@ import { setError, setTaxSystem } from "./slice"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../main-page/store"
 import Cookies from "js-cookie"
+import cn from "classnames"
 import { formatDateString } from "../account-page/actions-page/utils"
 
 const { Title, Text, Link } = Typography
@@ -62,24 +63,24 @@ export const RegisterPage = ({
 
   const optionsYears = [
     {
-      label: `Год, с которого вести учет в сервисе: ${currentYear}`,
+      label: `${currentYear}`,
       value: currentYear,
     },
     {
-      label: `Год, с которого вести учет в сервисе: ${currentYear - 1}`,
+      label: `${currentYear - 1}`,
       value: currentYear - 1,
     },
   ]
 
   const optionsSNO = [
-    { label: "Система налогообложения: УСН Доходы", value: TaxSystemType.UsnD },
+    { label: "УСН Доходы", value: TaxSystemType.UsnD },
     {
-      label: "Система налогообложения: УСН Доходы - Расходы",
+      label: "УСН Доходы - Расходы",
       value: TaxSystemType.UsnDR,
     },
-    { label: "Система налогообложения: Патент", value: TaxSystemType.Eshn },
+    { label: "Патент", value: TaxSystemType.Eshn },
     {
-      label: "Система налогообложения: Общая система НО",
+      label: "Общая система НО",
       value: TaxSystemType.Osn,
     },
   ]
@@ -469,7 +470,7 @@ export const RegisterPage = ({
                 </div>
               )}
               {currentStep == 2 && (
-                <div>
+                <div className={styles["inn-inner-registration"]}>
                   <Text>{CONTENT.INN}</Text>
                   <div className={styles["inn-wrapper"]}>
                     <Form.Item
@@ -518,11 +519,21 @@ export const RegisterPage = ({
                   {isInnLoaded && (
                     <div className={styles["loader-wrapper"]}>
                       <div className={styles["text-row"]}>
-                        <Text className={styles["row-left"]}>
+                        <Text
+                          className={cn(
+                            styles["row-left"],
+                            styles["text-title-person"]
+                          )}
+                        >
                           {CONTENT.NAME}
                         </Text>
 
-                        <Text className={styles["row-right"]}>
+                        <Text
+                          className={cn(
+                            styles["row-right"],
+                            styles["text-title-person"]
+                          )}
+                        >
                           {inn.length === 12
                             ? "ИП " +
                               user?.lastname +
@@ -534,25 +545,45 @@ export const RegisterPage = ({
                         </Text>
                       </div>
                       <div className={styles["text-row"]}>
-                        <Text className={styles["row-left"]}>
+                        <Text
+                          className={cn(
+                            styles["row-left"],
+                            styles["text-title-person"]
+                          )}
+                        >
                           {CONTENT.DATE_REGISTRATION}
                         </Text>
 
-                        <Text>{formatDateString(user?.fns_reg_date)}</Text>
+                        <Text
+                          className={cn(
+                            styles["row-right"],
+                            styles["text-title-person"]
+                          )}
+                        >
+                          {formatDateString(user?.fns_reg_date)}
+                        </Text>
                       </div>
-                      <div className={styles["text-row"]}>
+
+                      <div className={styles["select-row-item"]}>
+                        <Text className={styles["select-title"]}>
+                          {"Год, с которого вести учет в сервисе"}
+                        </Text>
                         <Select
                           className={styles["select-row"]}
                           options={optionsYears}
-                          placeholder={"Год, с которого вести учет в сервисе"}
+                          placeholder={"Выберите значение"}
                           onChange={(value) => setStartYear(value)}
                         />
                       </div>
-                      <div className={styles["text-row"]}>
+
+                      <div className={styles["select-row-item"]}>
+                        <Text className={styles["select-title"]}>
+                          {"Система налогообложения"}
+                        </Text>
                         <Select
                           className={styles["select-row"]}
                           options={optionsSNO}
-                          placeholder={"Система налогообложения"}
+                          placeholder={"Выберите значение"}
                           onChange={(value) => setSno(value)}
                         />
                       </div>
