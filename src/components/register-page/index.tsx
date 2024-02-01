@@ -144,6 +144,11 @@ export const RegisterPage = ({
     )
   }
 
+  useEffect(() => {
+    console.log(inn)
+    console.log(inn.length)
+  }, [inn])
+
   const handleRegisterMail = async () => {
     if (email === "") {
       setEmailError(true)
@@ -519,7 +524,7 @@ export const RegisterPage = ({
                         </Text>
 
                         <Text className={styles["row-right"]}>
-                          {inn.length !== 12
+                          {inn.length === 12
                             ? "ИП " +
                               user?.lastname +
                               " " +
