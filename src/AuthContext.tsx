@@ -14,7 +14,9 @@ interface AuthContextProps {
 interface AuthContextValue {
   isAuthenticated: boolean
   login: (token: string, expiresIn: number) => void
+  role: string | null
   logout: () => void
+  setRole: (role: string, expiresIn: number) => void
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -24,9 +26,21 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     const storedAuth = localStorage.getItem("isAuthenticated")
     return storedAuth ? JSON.parse(storedAuth) : false
   })
+  const [role, setRoleState] = useState<string | null>(() => {
+    const storedRole = document.cookie
+      .split(";")
+      .find((c) => c.trim().startsWith("role="))
+
+    return storedRole ? storedRole.split("=")[1] : null
+  })
 
   const setToken = (token: string, expiresIn: number) => {
     document.cookie = `token=${token}; max-age=${expiresIn}; path=/`
+  }
+
+  const setRole = (role: string, expiresIn: number) => {
+    document.cookie = `role=${role}; max-age=${expiresIn}; path=/`
+    setRoleState(role)
   }
 
   const login = (token: string, expiresIn: number) => {
@@ -37,6 +51,8 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
 
   const logout = () => {
     document.cookie = "token=; max-age=0; path=/"
+    document.cookie = "role=; max-age=0; path=/"
+    setRoleState(null)
     setAuthenticated(false)
     localStorage.removeItem("isAuthenticated")
   }
@@ -51,7 +67,6 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
         tokenExpiration &&
         new Date().getTime() > parseInt(tokenExpiration.split("=")[1], 10)
       ) {
-        // Токен истек, производим выход
         logout()
       }
     }
@@ -67,8 +82,10 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
 
   const value: AuthContextValue = {
     isAuthenticated,
+    role,
     login,
     logout,
+    setRole,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

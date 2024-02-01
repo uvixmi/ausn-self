@@ -1,4 +1,12 @@
-import { Button, Input, Modal, Select, Typography, message } from "antd"
+import {
+  Button,
+  Collapse,
+  Input,
+  Modal,
+  Select,
+  Typography,
+  message,
+} from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -9,7 +17,8 @@ import "./styles.scss"
 import { useEffect, useState } from "react"
 import TextArea from "antd/es/input/TextArea"
 import Cookies from "js-cookie"
-import { ENSInfo, api } from "../../../../api/myApi"
+import { ENSInfo, SourcesInfo, api } from "../../../../api/myApi"
+import * as iconv from "iconv-lite"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -26,15 +35,7 @@ export const EnsPaymentModal = ({
     undefined
   )
 
-  const [amount, setAmount] = useState("")
-
-  const options = [
-    {
-      label: "АО КБ Модульбанк ***3456",
-      value: "40702810845370000004",
-      checked: true,
-    },
-  ]
+  const [amount, setAmount] = useState(0)
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -48,7 +49,7 @@ export const EnsPaymentModal = ({
 
   const clear = () => {
     setReason("")
-    setAmount("")
+    setAmount(0)
     setDueAmount && setDueAmount(undefined)
     setEnsRequsites(undefined)
   }
@@ -72,9 +73,18 @@ export const EnsPaymentModal = ({
     messageApi.open({
       type: "error",
       content: CONTENT.NOTIFCATION_PROCESSING_ERROR,
-      style: { marginTop: "90vh", textAlign: "right" },
+      style: { textAlign: "right" },
     })
   }
+  const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+  const options =
+    sources?.accounts &&
+    sources?.accounts.map((item) => {
+      return {
+        label: item.bank_name + " ***" + item.account_number.slice(-4),
+        value: item.account_number,
+      }
+    })
 
   useEffect(() => {
     if (token && isOpen) {
@@ -84,14 +94,18 @@ export const EnsPaymentModal = ({
         })
         setEnsRequsites(tasksResponse.data)
         setReason(tasksResponse.data.purpose || "")
-        payAmount && setAmount(payAmount?.toString())
+        payAmount && setAmount(payAmount)
+        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
+          headers,
+        })
+        setSources(sourcesResponse.data)
       }
       fetchSources()
     }
   }, [isOpen])
 
   useEffect(() => {
-    if (amount !== "" && reason !== "" && account !== "")
+    if (amount > 0 && reason !== "" && account !== "")
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [account, amount, reason])
@@ -99,24 +113,101 @@ export const EnsPaymentModal = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
     const reg = /^-?\d*(\.\d*)?$/
-    if (reg.test(inputValue) || inputValue === "" || inputValue === "-") {
-      setAmount(inputValue)
+    if (reg.test(inputValue) || inputValue === "-") {
+      setAmount(parseFloat(inputValue))
     }
+    if (inputValue === "") setAmount(0)
   }
 
+  const collapseItems = [
+    {
+      key: 1,
+      label: (
+        <Title
+          className={cn(styles["text-description"], styles["default-text"])}
+          level={5}
+          style={{ marginTop: 0 }}
+        >
+          {CONTENT.TITLE_REQUISITES}
+        </Title>
+      ),
+      children: (
+        <div className={styles["inputs-row"]}>
+          <div className={styles["requisites-item"]}>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>{CONTENT.NAME}</Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.receiver_name}
+              </Text>
+            </div>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>{CONTENT.KBK}</Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.kbk}
+              </Text>
+            </div>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>{CONTENT.INN}</Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.receiver_inn}
+              </Text>
+            </div>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>
+                {CONTENT.ACCOUNT}
+              </Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.receiver_cor_account}
+              </Text>
+            </div>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>{CONTENT.BIK}</Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.receiver_bank_bik}
+              </Text>
+            </div>
+            <div className={styles["text-row"]}>
+              <Text className={styles["text-left-part"]}>{CONTENT.BANK}</Text>
+              <Text className={styles["text-right-part"]}>
+                {ensRequsites?.receiver_bank_name}
+              </Text>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ]
   const handlePayment = async () => {
     const data = {
       account_number: account,
       purpose: reason,
-      amount: parseFloat(amount),
+      amount: amount,
     }
+
     try {
       loadingProcess()
-      await api.taxes.generateEnsOrderTxtTaxesEnsOrderTxtPost(data, { headers })
+      const response = await api.taxes.generateEnsOrderTxtTaxesEnsOrderTxtPost(
+        data,
+        { headers }
+      )
+
+      const text = await response.text()
+
+      const downloadLink = document.createElement("a")
+      downloadLink.href = window.URL.createObjectURL(
+        new Blob([text], {
+          type: "text/plain",
+        })
+      )
+      downloadLink.setAttribute("download", "yourFileName.txt")
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+
       setOpen(false)
       clear()
-      successProcess()
     } catch (error) {
+      console.error("Error during API call:", error)
       errorProcess()
       setOpen(false)
       clear()
@@ -201,57 +292,14 @@ export const EnsPaymentModal = ({
                   />
                 </div>
               </div>
-              <div className={styles["inputs-row"]}>
-                <div className={styles["requisites-item"]}>
-                  <Title
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
-                    level={5}
-                  >
-                    {CONTENT.TITLE_REQUISITES}
-                  </Title>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.NAME}
-                    </Text>
-                    <Text>{ensRequsites?.receiver_name}</Text>
-                  </div>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.KBK}
-                    </Text>
-                    <Text>{ensRequsites?.kbk}</Text>
-                  </div>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.INN}
-                    </Text>
-                    <Text>{ensRequsites?.receiver_inn}</Text>
-                  </div>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.ACCOUNT}
-                    </Text>
-                    <Text>{ensRequsites?.receiver_cor_account}</Text>
-                  </div>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.BIK}
-                    </Text>
-                    <Text>{ensRequsites?.receiver_bank_bik}</Text>
-                  </div>
-                  <div className={styles["text-row"]}>
-                    <Text className={styles["text-left-part"]}>
-                      {CONTENT.BANK}
-                    </Text>
-                    <Text style={{ width: "200px", textAlign: "left" }}>
-                      {ensRequsites?.receiver_bank_name}
-                    </Text>
-                  </div>
-                </div>
-              </div>
+              <Collapse
+                items={collapseItems}
+                defaultActiveKey={1}
+                bordered={false}
+                className="payment-collapse"
+                ghost
+                expandIconPosition="end"
+              ></Collapse>
             </div>
             <div className={styles["footer-button"]}>
               <Button
@@ -267,4 +315,7 @@ export const EnsPaymentModal = ({
       </Modal>
     </>
   )
+}
+function saveAs(blob: Blob, arg1: string) {
+  throw new Error("Function not implemented.")
 }

@@ -15,9 +15,9 @@ import { LogoIcon } from "../main-page/logo-icon"
 import { AccountPageProps } from "./types"
 import { useEffect, useState } from "react"
 import { SourcesInfo, TaskResponse, User, api } from "../../api/myApi"
-import { clearData } from "../authorization-page/slice"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "../main-page/store"
+import { clearData, fetchCurrentUser } from "../authorization-page/slice"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "../main-page/store"
 import { useAuth } from "../../AuthContext"
 import Cookies from "js-cookie"
 import { v4 as uuid } from "uuid"
@@ -28,17 +28,12 @@ export const AccountPage = ({
   accessToken,
   logOut,
 }: AccountPageProps) => {
-  const { Sider, Content } = Layout
+  const { Sider } = Layout
 
-  //  Вы можете использовать другую библиотеку
+  const { data: loaded } = useSelector((state: RootState) => state.user)
 
-  const token = Cookies.get("token")
   const location = useLocation()
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  }
-  const [user, setUser] = useState<User | undefined>(undefined)
   const data = [
     { title: CONTENT.SIDER_HEADING_EVENTS, to: "/main" },
     { title: CONTENT.SIDER_HEADING_TAXES, to: "/taxes" },
@@ -176,24 +171,13 @@ export const AccountPage = ({
     },
   ]
 
-  const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
   const [tasks, setTasks] = useState<TaskResponse | undefined>(undefined)
 
   const dispatch = useDispatch<AppDispatch>()
-  const { isAuthenticated, login, logout } = useAuth()
+
   useEffect(() => {
-    if (token) {
-      const fetchSources = async () => {
-        const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-        setTasks(tasksResponse.data)
-        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-          headers,
-        })
-        setSources(sourcesResponse.data)
-      }
-      //fetchSources()
-    }
-  }, [])
+    if (!loaded) dispatch(fetchCurrentUser())
+  }, [dispatch, loaded])
 
   const navigate = useNavigate()
 

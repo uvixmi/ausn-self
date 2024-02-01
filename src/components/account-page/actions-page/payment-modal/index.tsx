@@ -1,6 +1,7 @@
 import { Button, DatePicker, Input, Modal, Select, Typography } from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
+import locale from "antd/es/date-picker/locale/ru_RU"
 import { useDispatch, useSelector } from "react-redux"
 import { CONTENT } from "./constants"
 import cn from "classnames"
@@ -19,7 +20,11 @@ import { RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 
-export const PaymentModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
+export const PaymentModal = ({
+  isOpen,
+  setOpen,
+  payAmount,
+}: ConfirmModalProps) => {
   const { Title, Text } = Typography
 
   const dispatch = useDispatch()
@@ -74,7 +79,7 @@ export const PaymentModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       value: currentYear,
     },
   ]
-
+  const dateFormat = "DD.MM.YYYY"
   useEffect(() => {
     const amountsPayments = payments.every((item) => item.amount !== 0)
     const datesPayments = payments.every((item) => item.date !== "")
@@ -150,8 +155,10 @@ export const PaymentModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
                     </Text>
                     <DatePicker
                       style={{ borderRadius: 0 }}
+                      locale={locale}
+                      format={dateFormat}
                       placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                      value={item.date ? dayjs(item.date) : null}
+                      value={item.date ? dayjs(item.date, dateFormat) : null}
                       onChange={(value, dateString) =>
                         handleDate(dateString, index)
                       }

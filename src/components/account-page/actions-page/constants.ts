@@ -20,6 +20,7 @@ export const CONTENT = {
   UPDATE_TAXES_LINK: "Налоговая база",
   NOTIFCATION_REPORT_ERROR: "Ошибка формирования файлов. Попробуйте еще раз",
   NOTIFCATION_DOWNLOAD_ERROR: "Ошибка скачивания файла. Попробуйте еще раз",
+  NOTIFCATION_TASKS_ERROR: "Ошибка получения событий. Попробуйте позже",
   NOTIFICATION_DOWNLOAD_SUCCESS: "Скачивание файла",
   UPDATE_DATA_TEXT:
     "Закончился I квартал 2024 года, для корректного расчета добавьте все источники данных в разделе",

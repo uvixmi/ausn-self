@@ -1,11 +1,11 @@
-import { Button, Input, Modal, Typography } from "antd"
+import { Button, Input, InputRef, Modal, Typography } from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
 import cn from "classnames"
 import "./styles.scss"
 import Cookies from "js-cookie"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { LeadReason, api } from "../../../../api/myApi"
 import { MaskedInput } from "antd-mask-input"
 
@@ -29,6 +29,11 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       return !isValidLength
     } else return true
   }
+
+  const clear = () => {
+    setPhoneError(false)
+    validatePhone(phone) && setIsButtonDisabled(true)
+  }
   const sendPhone = async () => {
     await api.users.saveUserLeadUsersLeadPut(
       { phone_number: phone.replace(/[^\d+]/g, ""), reason: LeadReason.Ens },
@@ -37,11 +42,19 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       }
     )
     setOpen(false)
+    clear()
   }
   useEffect(() => {
-    if (!phoneError && phone !== "") setIsButtonDisabled(false)
-    else setIsButtonDisabled(true)
+    if (!phoneError && !validatePhone(phone)) setIsButtonDisabled(false)
+    else {
+      setIsButtonDisabled(true)
+    }
   }, [phone, phoneError])
+
+  const closeModal = () => {
+    setOpen(false)
+    clear()
+  }
 
   return (
     <Modal
@@ -50,8 +63,8 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
         borderRadius: "0",
       }}
       centered
-      onOk={() => setOpen(false)}
-      onCancel={() => setOpen(false)}
+      onOk={closeModal}
+      onCancel={closeModal}
       footer={null}
       className={cn(styles["ant-modal"], "modal-payment")}
     >
@@ -104,7 +117,7 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
                 <MaskedInput
                   mask={PhoneMask}
                   style={{ borderRadius: 0 }}
-                  className={styles["input-item"]}
+                  className={cn(styles["input-item"])}
                   value={phone}
                   onChange={(event) => {
                     setPhone(event.target.value),

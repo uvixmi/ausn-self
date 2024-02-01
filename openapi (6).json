@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "paths": {
     "/auth": {
@@ -1499,7 +1499,10 @@
         },
         "responses": {
           "200": {
-            "description": "Платежное поручение в формате txt."
+            "description": "Платежное поручение в формате txt.",
+            "content": {
+              "text/plain": {}
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -1765,6 +1768,96 @@
           }
         ]
       }
+    },
+    "/banners": {
+      "get": {
+        "tags": [
+          "Banners"
+        ],
+        "summary": "Получить информационные баннеры пользователя",
+        "operationId": "get_user_banners_banners_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InfoBannersResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Banners"
+        ],
+        "summary": "Обновить статус информационного баннера у пользователя",
+        "description": "Данный метод реализует обновление статуса баннера пользователя - на данный момент возможность скрыть баннер.",
+        "operationId": "update_user_banner_state_banners_put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "banner_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Banner Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1905,6 +1998,16 @@
           5
         ],
         "title": "AccountType"
+      },
+      "BannerType": {
+        "type": "string",
+        "enum": [
+          "update_data",
+          "update_user_info",
+          "new_user",
+          "advertisement"
+        ],
+        "title": "BannerType"
       },
       "Body_create_client_ofd_sources_ofd_post": {
         "properties": {
@@ -2708,6 +2811,88 @@
           "due_date_ip"
         ],
         "title": "IncomePercentage"
+      },
+      "InfoBanner": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "ID баннера"
+          },
+          "banner_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BannerType"
+              }
+            ],
+            "description": "Тип баннера. Возможные значения: update_data - напоминание об обновлении данных. update_user_info - напоминание об обновлении настроек налогового учета. new_user - баннер для нового пользователя. advertisement - рекламный баннер. "
+          },
+          "begin_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Begin Date",
+            "description": "Начало периода отображения баннера"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date",
+            "description": "Конец периода отображения баннера"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Заголовок баннера"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Описание баннера. В описании баннера можно использовать предзаполняемые значения как на фронтенде, так и на стороне бэкенда. Значения необходимо обозначать в формате {key}. Поддерживаемые на данный момент ключи: year - Текущий год. last_year - Прошлый год. Заполнение ключей не из списка поддерживаемых осуществляется на стороне фронта."
+          },
+          "show_for_user": {
+            "type": "boolean",
+            "title": "Show For User",
+            "description": "Отображать ли баннер пользователям"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "banner_type",
+          "title",
+          "description",
+          "show_for_user"
+        ],
+        "title": "InfoBanner"
+      },
+      "InfoBannersResponse": {
+        "properties": {
+          "banners": {
+            "items": {
+              "$ref": "#/components/schemas/InfoBanner"
+            },
+            "type": "array",
+            "title": "Banners",
+            "description": "Информационные баннеры во всей системе"
+          }
+        },
+        "type": "object",
+        "required": [
+          "banners"
+        ],
+        "title": "InfoBannersResponse"
       },
       "InnInfo": {
         "properties": {

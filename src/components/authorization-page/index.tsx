@@ -36,10 +36,7 @@ export const AuthorizationPage = ({
   const [errorText, setErrorText] = useState("")
 
   const token = Cookies.get("token")
-  const { isAuthenticated, logout } = useAuth()
-  useEffect(() => {
-    if (!token && isAuthenticated) logout()
-  }, [])
+  const { isAuthenticated, setRole, logout } = useAuth()
 
   return (
     <>
@@ -113,12 +110,12 @@ export const AuthorizationPage = ({
                   // Проверка наличия свойства data в ответе
                   if (response.data) {
                     const { token_type, access_token } = response.data
+
                     login(access_token, 3600)
+                    dispatch(fetchCurrentUser())
                     setAccessToken(access_token)
                     setTokenType(token_type)
                     setIsAuth(true)
-                    navigate("/main")
-                    dispatch(fetchCurrentUser())
                   } else {
                     console.error("Отсутствует свойство data в ответе API.")
                   }

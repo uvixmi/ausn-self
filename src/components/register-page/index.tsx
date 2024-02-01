@@ -130,9 +130,7 @@ export const RegisterPage = ({
     error: {
       detail: {
         message: string
-        // Другие поля, если есть...
       }
-      // Другие поля ошибки, если есть...
     }
   }
 
@@ -521,12 +519,14 @@ export const RegisterPage = ({
                         </Text>
 
                         <Text className={styles["row-right"]}>
-                          {"ИП " +
-                            user?.lastname +
-                            " " +
-                            user?.firstname +
-                            " " +
-                            user?.patronymic}
+                          {inn.length !== 12
+                            ? "ИП " +
+                              user?.lastname +
+                              " " +
+                              user?.firstname +
+                              " " +
+                              user?.patronymic
+                            : user?.full_name}
                         </Text>
                       </div>
                       <div className={styles["text-row"]}>
@@ -560,16 +560,12 @@ export const RegisterPage = ({
                             <Text>{rate}</Text>
                             {sno == TaxSystemType.UsnD ? (
                               <Slider
-                                dots
-                                marks={marks}
                                 onChange={onChangeSlider}
                                 defaultValue={6}
                                 max={maxSlider}
                               />
                             ) : sno == TaxSystemType.UsnDR ? (
                               <Slider
-                                dots
-                                marks={marks}
                                 onChange={onChangeSlider}
                                 defaultValue={15}
                                 max={maxSlider}

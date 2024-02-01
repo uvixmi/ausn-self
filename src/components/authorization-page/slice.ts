@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
 import { User, api } from "../../api/myApi"
 import Cookies from "js-cookie"
+import { useAuth } from "../../AuthContext"
 
 export const fetchCurrentUser = createAsyncThunk<
   User,
@@ -14,7 +15,8 @@ export const fetchCurrentUser = createAsyncThunk<
       Authorization: `Bearer ${token}`,
     }
     const response = await api.users.currentUserUsersGet({ headers })
-    return response.data as User
+
+    return response.data
   } catch (error) {
     if (typeof error === "string") {
       return thunkAPI.rejectWithValue(error)
@@ -29,6 +31,7 @@ const userSlice = createSlice({
   initialState: {
     data: {} as User,
     loading: false,
+    loaded: false,
     error: null as string | null,
   },
   reducers: {
@@ -37,6 +40,7 @@ const userSlice = createSlice({
     },
     clearData: (state) => {
       state.data = {} as User
+      state.loaded = false
     },
   },
   extraReducers: (builder) => {
@@ -55,6 +59,7 @@ const userSlice = createSlice({
         (state, action: PayloadAction<User>) => {
           state.loading = false
           state.data = action.payload
+          if (!state.loaded) state.loaded = true
         }
       )
       .addCase(fetchCurrentUser.rejected, (state, action) => {

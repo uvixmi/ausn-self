@@ -2540,7 +2540,7 @@ export class Api<
       data: GenerateENSOrder,
       params: RequestParams = {}
     ) =>
-      this.request<void, HTTPValidationError | void>({
+      this.request<string, HTTPValidationError>({
         path: `/taxes/ens_order/txt`,
         method: "POST",
         body: data,

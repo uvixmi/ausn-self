@@ -4,7 +4,7 @@ export const CONTENT = {
     "Укажите информацию о фактически оплаченных налогах и взносах, сведения о которых не содержатся в подгруженной выписке",
   TEXT_AMOUNT: "Сумма уплаты*",
   DATEPICKER_PLACEHOLDER: "Выберите дату*",
-  TEXT_DATE: "Дата уплаты",
+  TEXT_DATE: "Дата уплаты*",
   TEXT_YEAR: "Год, за который осуществлялась уплата*",
   TEXT_PAYMENT_NUMBER: "Номер платежного документа",
   DESCRIPTION_PAYMENT_NUMBER:

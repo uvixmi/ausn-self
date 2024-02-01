@@ -26,6 +26,8 @@ import { AnalysisEnsModal } from "./analysis-ens-modal"
 import { mockTasks } from "./mock"
 import { AllDoneBlock } from "./all-done-block"
 import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons"
+import { formatToPayDate } from "../../main-page/utils"
+import { setAmount } from "./payment-modal/slice"
 
 export const ActionsPage = () => {
   const [isPaymentOpen, setPaymentOpen] = useState(false)
@@ -64,21 +66,29 @@ export const ActionsPage = () => {
     messageApi.open({
       type: "success",
       content: CONTENT.NOTIFICATION_DOWNLOAD_SUCCESS,
-      style: { marginTop: "90vh", textAlign: "right" },
+      style: { textAlign: "right" },
     })
   }
   const errorReport = () => {
     messageApi.open({
       type: "error",
       content: CONTENT.NOTIFCATION_REPORT_ERROR,
-      style: { marginTop: "90vh", textAlign: "right" },
+      style: { textAlign: "right" },
     })
   }
   const errorDownload = () => {
     messageApi.open({
       type: "error",
       content: CONTENT.NOTIFCATION_DOWNLOAD_ERROR,
-      style: { marginTop: "90vh", textAlign: "right" },
+      style: { textAlign: "right" },
+    })
+  }
+
+  const errorTasks = () => {
+    messageApi.open({
+      type: "error",
+      content: CONTENT.NOTIFCATION_TASKS_ERROR,
+      style: { marginTop: "10vh", textAlign: "right" },
     })
   }
 
@@ -87,20 +97,21 @@ export const ActionsPage = () => {
   }
 
   const dispatch = useDispatch<AppDispatch>()
-  const { isAuthenticated, login, logout } = useAuth()
   useEffect(() => {
-    if (token) {
-      const fetchSources = async () => {
+    const fetchSources = async () => {
+      try {
         const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
         setTasks(tasksResponse.data)
-        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-          headers,
-        })
-        setSources(sourcesResponse.data)
+      } catch (error) {
+        errorTasks()
       }
-      fetchSources()
+      const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
+        headers,
+      })
+      setSources(sourcesResponse.data)
     }
-  }, [token])
+    fetchSources()
+  }, [])
 
   const [isForming, setIsForming] = useState(false)
   const [tasCodeForming, setTaskCodeForming] = useState("")
@@ -161,7 +172,8 @@ export const ActionsPage = () => {
     await api.tasks.updateReportStatusTasksStatusPut(data, { headers })
   }
 
-  const handleSentPayment = () => {
+  const handleSentPayment = (amount: string) => {
+    dispatch(setAmount({ amount, index: 0 }))
     setPaymentOpen(true)
   }
 
@@ -202,8 +214,8 @@ export const ActionsPage = () => {
           </div>
           <div>
             {tasks &&
-              tasks.tasks.map((item) => (
-                <div className={styles["row-item"]}>
+              tasks.tasks.map((item, index) => (
+                <div className={styles["row-item"]} key={index}>
                   <div className={styles["row-inner"]}>
                     <div className={styles["info-part"]}>
                       <div className={styles["info-title"]}>
@@ -214,7 +226,7 @@ export const ActionsPage = () => {
                                 new Date() > new Date(item.due_date),
                             })}
                           >
-                            {"до " + formatDateString(item.due_date)}
+                            {"до " + formatToPayDate(item.due_date)}
                           </Text>
                           {new Date() > new Date(item.due_date) && (
                             <div className={styles["warning-overdue"]}>
@@ -361,7 +373,8 @@ export const ActionsPage = () => {
                                   item.year,
                                   item.report_code
                                 )
-                              : handleSentPayment()
+                              : item.due_amount &&
+                                handleSentPayment(item.due_amount.toString())
                           }
                         >
                           {item.type === "report"
@@ -429,7 +442,11 @@ export const ActionsPage = () => {
             </div>
           </div>
         </Sider>
-        <PaymentModal isOpen={isPaymentOpen} setOpen={setPaymentOpen} />
+        <PaymentModal
+          isOpen={isPaymentOpen}
+          setOpen={setPaymentOpen}
+          payAmount={dueAmount}
+        />
         <EnsPaymentModal
           isOpen={isEnsOpen}
           setOpen={setEnsOpen}
