@@ -144,11 +144,6 @@ export const RegisterPage = ({
     )
   }
 
-  useEffect(() => {
-    console.log(inn)
-    console.log(inn.length)
-  }, [inn])
-
   const handleRegisterMail = async () => {
     if (email === "") {
       setEmailError(true)
@@ -256,6 +251,10 @@ export const RegisterPage = ({
   }, [marks])
 
   const [rate, setRate] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    console.log(rate)
+  }, [rate])
 
   const PhoneMask = "+{0} (000) 000-00-00"
 
@@ -558,27 +557,30 @@ export const RegisterPage = ({
                         />
                       </div>
                       {(sno == TaxSystemType.UsnD ||
-                        sno == TaxSystemType.UsnDR) && (
-                        <div className={styles["rate-wrapper"]}>
-                          <div className={styles["slider-style"]}>
-                            <Text>{"Ставка налогообложения: "}</Text>
-                            <Text>{rate}</Text>
-                            {sno == TaxSystemType.UsnD ? (
-                              <Slider
-                                onChange={onChangeSlider}
-                                defaultValue={6}
-                                max={maxSlider}
-                              />
-                            ) : sno == TaxSystemType.UsnDR ? (
-                              <Slider
-                                onChange={onChangeSlider}
-                                defaultValue={15}
-                                max={maxSlider}
-                              />
-                            ) : null}
+                        sno == TaxSystemType.UsnDR) &&
+                        rate && (
+                          <div className={styles["rate-wrapper"]}>
+                            <div className={styles["slider-style"]}>
+                              <Text>{"Ставка налогообложения: "}</Text>
+                              <Text>{rate}</Text>
+                              {sno == TaxSystemType.UsnD ? (
+                                <Slider
+                                  onChange={onChangeSlider}
+                                  defaultValue={6}
+                                  max={maxSlider}
+                                  value={parseInt(rate.slice(0, -1))}
+                                />
+                              ) : sno == TaxSystemType.UsnDR ? (
+                                <Slider
+                                  onChange={onChangeSlider}
+                                  defaultValue={15}
+                                  max={maxSlider}
+                                  value={parseInt(rate.slice(0, -1))}
+                                />
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   )}
                   <div className={styles["button-one"]}>
