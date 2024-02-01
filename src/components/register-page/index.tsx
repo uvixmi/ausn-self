@@ -565,6 +565,7 @@ export const RegisterPage = ({
                               <Text>{rate}</Text>
                               {sno == TaxSystemType.UsnD ? (
                                 <Slider
+                                  dots
                                   onChange={onChangeSlider}
                                   defaultValue={6}
                                   max={maxSlider}
@@ -572,6 +573,7 @@ export const RegisterPage = ({
                                 />
                               ) : sno == TaxSystemType.UsnDR ? (
                                 <Slider
+                                  dots
                                   onChange={onChangeSlider}
                                   defaultValue={15}
                                   max={maxSlider}

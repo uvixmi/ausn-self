@@ -199,7 +199,7 @@ export const EnsPaymentModal = ({
           type: "text/plain",
         })
       )
-      downloadLink.setAttribute("download", "yourFileName.txt")
+      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
