@@ -22,7 +22,7 @@ export const CONTENT = {
   OFERTA_LINK_TWO: "Оферту использования сервиса",
   TEXT_AND: " и ",
   NAME: "Название",
-  DATE_REGISTRATION: "Дата регистрации ИП",
+  DATE_REGISTRATION: "Дата регистрации",
   NAME_MOCKED: "ИП Пупкин Василий Петрович",
   DATE_REGISTRATION_MOCKED: "20.09.2020",
   USN_INCOME: "Ставка УСН Доходы",
