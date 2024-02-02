@@ -13,13 +13,12 @@
 }
 
 .modal-style {
-  height: 100vh;
+  height: 100%;
   top: 0;
   overflow: auto;
 }
 
 .modal-inner {
-  padding: 40px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -97,4 +96,28 @@
   line-height: 16px;
   letter-spacing: -0.20000000298023224px;
   text-align: left;
+}
+
+.plus-icon {
+  font-size: 10px;
+  color: #141414;
+  align-self: center;
+}
+
+.title-next {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-payment {
+  margin-top: 8px;
+  border: none;
+}
+
+.input-description {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: left;
+  color: #8c8c8c;
 }

@@ -1,12 +1,15 @@
 import { Button, DatePicker, Input, Modal, Select, Typography } from "antd"
+import { PlusOutlined, CloseOutlined } from "@ant-design/icons"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
-import locale from "antd/es/date-picker/locale/ru_RU"
+import locale from "antd/lib/date-picker/locale/ru_RU"
 import { useDispatch, useSelector } from "react-redux"
 import { CONTENT } from "./constants"
 import cn from "classnames"
 import "./styles.scss"
 import dayjs from "dayjs"
+import "dayjs/locale/ru"
+
 import { useEffect, useState } from "react"
 import {
   addPayment,
@@ -15,6 +18,7 @@ import {
   setDocNumber,
   setYear,
   clear,
+  deletePayment,
 } from "./slice"
 import { RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
@@ -26,7 +30,7 @@ export const PaymentModal = ({
   payAmount,
 }: ConfirmModalProps) => {
   const { Title, Text } = Typography
-
+  dayjs.locale("ru")
   const dispatch = useDispatch()
 
   const { payments } = useSelector((state: RootState) => state.payments)
@@ -46,6 +50,9 @@ export const PaymentModal = ({
     dispatch(setDocNumber({ doc_number, index }))
   }
 
+  const deletePay = (index: number) => {
+    dispatch(deletePayment({ index }))
+  }
   const token = Cookies.get("token")
 
   const headers = {
@@ -119,12 +126,22 @@ export const PaymentModal = ({
             {payments.map((item, index) => (
               <div className={styles["payment-inner"]}>
                 {index != 0 && (
-                  <Title
-                    level={3}
-                    style={{ marginBottom: 0, marginTop: "8px" }}
-                  >
-                    {CONTENT.NEXT_PAYMENT}
-                  </Title>
+                  <div className={styles["title-next"]}>
+                    <Title
+                      level={3}
+                      style={{ marginBottom: 0, marginTop: "8px" }}
+                    >
+                      {CONTENT.NEXT_PAYMENT}
+                    </Title>
+                    <Button
+                      className={styles["delete-payment"]}
+                      onClick={() => {
+                        deletePay(index)
+                      }}
+                    >
+                      <CloseOutlined />
+                    </Button>
+                  </div>
                 )}
                 <div className={styles["inputs-row"]}>
                   <div className={styles["input-item"]}>
@@ -153,6 +170,7 @@ export const PaymentModal = ({
                     >
                       {CONTENT.TEXT_DATE}
                     </Text>
+
                     <DatePicker
                       style={{ borderRadius: 0 }}
                       locale={locale}
@@ -177,6 +195,7 @@ export const PaymentModal = ({
                   <Select
                     className={"modal-select"}
                     options={optionsYears}
+                    placeholder={CONTENT.SELECT_YEAR_PLACEHOLDER}
                     value={item.tax_period ? item.tax_period : null}
                     onChange={(value) => {
                       handleYear(value, index)
@@ -199,6 +218,9 @@ export const PaymentModal = ({
                       handleDocNumber(event.target.value, index)
                     }
                   />
+                  <Text className={styles["input-description"]}>
+                    {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
+                  </Text>
                 </div>
               </div>
             ))}
@@ -207,6 +229,10 @@ export const PaymentModal = ({
               onClick={() => dispatch(addPayment())}
             >
               {CONTENT.BUTTON_ADD_PAYMENT}
+              <PlusOutlined
+                className={styles["plus-icon"]}
+                style={{ marginInlineStart: "4px" }}
+              />
             </Button>
           </div>
           <div className={styles["footer-button"]}>

@@ -257,7 +257,7 @@ export const RegisterPage = ({
     console.log(rate)
   }, [rate])
 
-  const PhoneMask = "+{0} (000) 000-00-00"
+  const PhoneMask = "+7 (000) 000-00-00"
 
   const onChangeSlider = (value: number) => {
     setRate(marks[value as keyof typeof marks])
@@ -306,7 +306,7 @@ export const RegisterPage = ({
   useEffect(() => {
     if (email === "") setIsDisabledFirstButton(true)
     else if (emailError) setIsDisabledFirstButton(true)
-    else if (phone !== "" && phone !== "+" && phoneError) {
+    else if (phone !== "" && phone !== "+7" && phoneError) {
       setIsDisabledFirstButton(true)
     } else setIsDisabledFirstButton(false)
   }, [emailError, email, phone, phoneError])

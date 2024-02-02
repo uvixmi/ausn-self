@@ -14,6 +14,11 @@ const paymentsSlice = createSlice({
     addPayment: (state) => {
       state.payments = [...state.payments, initialState.payments[0]]
     },
+    deletePayment: (state, action: PayloadAction<{ index: number }>) => {
+      state.payments = state.payments.filter(
+        (payment, index) => index !== action.payload.index
+      )
+    },
     setAmount: (
       state,
       action: PayloadAction<{ amount: string; index: number }>
@@ -50,16 +55,18 @@ const paymentsSlice = createSlice({
       })
     },
     clear: (state) => {
-      state.payments.forEach((payment) => {
-        payment.amount = 0
-        payment.date = ""
-        payment.tax_period = 0
-        payment.doc_number = ""
-      })
+      state.payments = initialState.payments
     },
   },
 })
 
-export const { setAmount, setDate, setDocNumber, setYear, addPayment, clear } =
-  paymentsSlice.actions
+export const {
+  setAmount,
+  setDate,
+  setDocNumber,
+  setYear,
+  addPayment,
+  clear,
+  deletePayment,
+} = paymentsSlice.actions
 export default paymentsSlice.reducer

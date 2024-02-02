@@ -16,7 +16,7 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
     Authorization: `Bearer ${token}`,
   }
 
-  const PhoneMask = "+{0} (000) 000-00-00"
+  const PhoneMask = "+7 (000) 000-00-00"
   const [phone, setPhone] = useState("")
   const [phoneError, setPhoneError] = useState(false)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)

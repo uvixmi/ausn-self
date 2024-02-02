@@ -4,6 +4,7 @@ export const CONTENT = {
     "Укажите информацию о фактически оплаченных налогах и взносах, сведения о которых не содержатся в подгруженной выписке",
   TEXT_AMOUNT: "Сумма уплаты*",
   DATEPICKER_PLACEHOLDER: "Выберите дату*",
+  SELECT_YEAR_PLACEHOLDER: "Выберите год",
   TEXT_DATE: "Дата уплаты*",
   TEXT_YEAR: "Год, за который осуществлялась уплата*",
   TEXT_PAYMENT_NUMBER: "Номер платежного документа",
@@ -13,5 +14,5 @@ export const CONTENT = {
   BUTTON_PAY: "Добавить уплату",
   BUTTON_PAY_MORE: "Добавить уплату взноса",
   TEXT_REMARK: "* поля, обязательные для заполнения",
-  NEXT_PAYMENT: "Дополнтельный платеж",
+  NEXT_PAYMENT: "Дополнительный платеж",
 }

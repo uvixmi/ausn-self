@@ -1,5 +1,11 @@
 .modal-payment .ant-modal-content {
   border-radius: 0px;
+  padding: 40px;
+  height: 100vh;
+}
+
+.modal-payment .ant-modal-body {
+  height: 100%;
 }
 
 .modal-select .ant-select-selector {

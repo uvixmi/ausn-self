@@ -13,13 +13,12 @@
 }
 
 .modal-style {
-  height: 100vh;
+  height: 100%;
   top: 0;
   overflow: auto;
 }
 
 .modal-inner {
-  padding: 40px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;

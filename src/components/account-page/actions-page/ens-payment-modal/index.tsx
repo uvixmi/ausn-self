@@ -43,6 +43,10 @@ export const EnsPaymentModal = ({
 
   const [reason, setReason] = useState<string>("")
 
+  const handleReason = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReason(event.target.value)
+  }
+
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   const [account, setAccount] = useState("")
@@ -272,7 +276,11 @@ export const EnsPaymentModal = ({
                   >
                     {CONTENT.TEXT_PAYMENT_DIRECTION}
                   </Text>
-                  <TextArea style={{ borderRadius: 0 }} value={reason} />
+                  <TextArea
+                    style={{ borderRadius: 0 }}
+                    value={reason}
+                    onChange={handleReason}
+                  />
                 </div>
               </div>
               <div className={styles["inputs-row"]}>
@@ -317,7 +325,4 @@ export const EnsPaymentModal = ({
       </Modal>
     </>
   )
-}
-function saveAs(blob: Blob, arg1: string) {
-  throw new Error("Function not implemented.")
 }
