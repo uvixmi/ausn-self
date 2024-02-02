@@ -66,7 +66,7 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       onOk={closeModal}
       onCancel={closeModal}
       footer={null}
-      className={cn(styles["ant-modal"], "modal-payment")}
+      className={cn(styles["ant-modal"], "modal-analysis")}
     >
       <div className={styles["modal-style"]}>
         <div className={styles["modal-inner"]}>
