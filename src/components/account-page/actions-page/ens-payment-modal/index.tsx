@@ -62,6 +62,7 @@ export const EnsPaymentModal = ({
       style: { textAlign: "right" },
     })
   }
+
   const loadingProcess = () => {
     messageApi.open({
       type: "loading",
@@ -191,6 +192,7 @@ export const EnsPaymentModal = ({
         { headers }
       )
 
+      successProcess()
       const text = await response.text()
 
       const downloadLink = document.createElement("a")
