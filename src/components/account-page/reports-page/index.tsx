@@ -4,11 +4,9 @@ import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import "./styles.scss"
 import cn from "classnames"
-import { useState } from "react"
 import { DownloadOutlined, InfoCircleOutlined } from "@ant-design/icons"
 
 export const ReportsPage = () => {
-  const [isOpen, setOpen] = useState(false)
   const { Sider, Content } = Layout
   const { Title, Text } = Typography
 

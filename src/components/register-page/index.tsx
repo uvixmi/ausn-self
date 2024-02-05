@@ -89,6 +89,7 @@ export const RegisterPage = ({
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [inn, setInn] = useState("")
+  const [innRequest, setInnRequst] = useState("")
   const [startYear, setStartYear] = useState(0)
   const [user, setUser] = useState<InnInfo | undefined>(undefined)
   const error = { code: 0, message: "" }
@@ -167,6 +168,7 @@ export const RegisterPage = ({
 
   const handleCheck = async (inn: string) => {
     setIsLoading(true)
+    setInnRequst(inn)
     try {
       const response = await api.users.getInnInfoUsersRegistrationInnInfoGet(
         { inn },
@@ -494,10 +496,12 @@ export const RegisterPage = ({
                         disabled={isLoading}
                         value={inn}
                         onChange={(event) => {
-                          setInn(event.target.value)
+                          const input = event.target.value
+                          const numericInput = input.replace(/[^0-9]/g, "")
+                          setInn(numericInput)
                           setErrorText("")
-                          setInnError(validateInn(event.target.value, error))
-                          if (validateInn(event.target.value, error))
+                          setInnError(validateInn(input, error))
+                          if (validateInn(input, error))
                             setErrorText(error.message)
                           setCheckedError(false)
                         }}
@@ -534,7 +538,7 @@ export const RegisterPage = ({
                             styles["text-title-person"]
                           )}
                         >
-                          {inn.length === 12
+                          {innRequest.length === 12
                             ? "ИП " +
                               user?.lastname +
                               " " +
