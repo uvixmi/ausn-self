@@ -36,6 +36,7 @@ export const EnsPaymentModal = ({
   )
 
   const [amount, setAmount] = useState(0)
+  const [amountInput, setAmountInput] = useState("")
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -54,6 +55,7 @@ export const EnsPaymentModal = ({
   const clear = () => {
     setReason("")
     setAmount(0)
+    setAmountInput("")
     setDueAmount && setDueAmount(undefined)
     setEnsRequsites(undefined)
   }
@@ -100,6 +102,7 @@ export const EnsPaymentModal = ({
         setEnsRequsites(tasksResponse.data)
         setReason(tasksResponse.data.purpose || "")
         payAmount && setAmount(payAmount)
+        payAmount && setAmountInput(payAmount.toString())
         const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
           headers,
         })
@@ -117,13 +120,16 @@ export const EnsPaymentModal = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
-    const reg = /^-?\d*(\.\d*)?$/
+    const reg = /^-?\d+(\.\d{0,2})?$/
+    console.log(reg.test(inputValue))
     if (reg.test(inputValue) || inputValue === "-") {
-      setAmount(parseFloat(inputValue))
-    }
-    if (inputValue === "") setAmount(0)
-  }
+      setAmountInput(inputValue)
+      if (inputValue[inputValue.length - 1] !== ".")
+        setAmount(parseFloat(inputValue))
 
+      if (inputValue === "") setAmount(0)
+    }
+  }
   const collapseItems = [
     {
       key: 1,
@@ -296,8 +302,7 @@ export const EnsPaymentModal = ({
                   <Input
                     style={{ borderRadius: 0 }}
                     placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
-                    type=""
-                    value={amount}
+                    value={amountInput}
                     onChange={handleChange}
                   />
                 </div>
