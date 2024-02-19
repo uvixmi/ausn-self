@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "paths": {
     "/auth": {
@@ -832,146 +832,28 @@
       }
     },
     "/operations": {
-      "get": {
+      "post": {
         "tags": [
           "Operations"
         ],
         "summary": "Получить список размеченных операций",
         "description": "Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.",
-        "operationId": "get_operations_operations_get",
+        "operationId": "get_operations_operations_post",
         "security": [
           {
             "OAuth2PasswordBearer": []
           }
         ],
-        "parameters": [
-          {
-            "name": "account_number",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Account Number"
-            }
-          },
-          {
-            "name": "start_date",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Start Date"
-            }
-          },
-          {
-            "name": "end_date",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "End Date"
-            }
-          },
-          {
-            "name": "operation_type",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/OperationType"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Operation Type"
-            }
-          },
-          {
-            "name": "debit_description",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/OperationDebitDescription"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Debit Description"
-            }
-          },
-          {
-            "name": "credit_description",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/OperationCreditDescription"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Credit Description"
-            }
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Page Number"
-            }
-          },
-          {
-            "name": "row_count",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Row Count"
-            }
-          },
-          {
-            "name": "request_id",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Request Id"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetOperationsRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1024,7 +906,6 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid",
               "title": "Operation Id"
             }
           }
@@ -1191,7 +1072,6 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid",
               "title": "Operation Id"
             }
           }
@@ -1201,7 +1081,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OperationMarkup"
+                "$ref": "#/components/schemas/UpdateOperationMarkup"
               }
             }
           }
@@ -1725,7 +1605,7 @@
           "Reports"
         ],
         "summary": "Сгенерировать отчетность выбранного типа за выбранный период",
-        "description": "Данный метод реализует генерацию отчетности пользователя. Актуальность сформированной отчетности зависит  от статуса расчета налоговой базы (taxes/calculation).",
+        "description": "Данный метод реализует генерацию отчетности пользователя (уведомления и декларации). Сгенерированная отчетность при этом запросе хранится на сервере и возвращается пользователю отдельным запросом. Актуальность сформированной отчетности зависит от статуса расчета налоговой базы (taxes/calculation).",
         "operationId": "generate_reports_reports_post",
         "requestBody": {
           "content": {
@@ -1739,7 +1619,14 @@
         },
         "responses": {
           "200": {
-            "description": "Архив с файлами отчетности. Для типа отчетности 1 в архиве один pdf файл. Для типов отчетности 2,3 в архиве xml файл и pdf файл."
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResponse"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -1769,6 +1656,133 @@
         ]
       }
     },
+    "/reports/kudir": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Получить КУДиР за выбранный период",
+        "description": "Данный метод реализует генерацию и возврат КУДиР пользователя. Сгенерированная отчетность при этом НЕ хранится на сервере. Актуальность сформированной отчетности зависит  от статуса расчета налоговой базы (taxes/calculation).",
+        "operationId": "get_kudir_report_reports_kudir_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "period_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ReportPeriodType"
+                }
+              ],
+              "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.",
+              "title": "Period Type"
+            },
+            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год."
+          },
+          {
+            "name": "period_year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Год налогового периода",
+              "title": "Period Year"
+            },
+            "description": "Год налогового периода"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл сформированной КУДиР в формате .pdf"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/{report_id}.{report_format}": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Получить сгенерированный файл отчетности в выбранном формате",
+        "description": "Данный метод возвращает сгенерированный файл в отчетности в формате pdf / xml.",
+        "operationId": "get_report_by_id_reports__report_id___report_format__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Report Id"
+            }
+          },
+          {
+            "name": "report_format",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ReportFormat"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл отчетности выбранного формата"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/banners": {
       "get": {
         "tags": [
@@ -1781,6 +1795,20 @@
             "OAuth2PasswordBearer": []
           }
         ],
+        "parameters": [
+          {
+            "name": "current_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Текущая дата на клиенте. Требуется, чтобы избежать разницы временных зон",
+              "title": "Current Date"
+            },
+            "description": "Текущая дата на клиенте. Требуется, чтобы избежать разницы временных зон"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1788,6 +1816,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InfoBannersResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -1904,6 +1942,11 @@
       },
       "AccountInfo": {
         "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id",
+            "default": "ID источника данных"
+          },
           "account_number": {
             "type": "string",
             "title": "Account Number",
@@ -1944,13 +1987,25 @@
             ],
             "title": "Disable Date",
             "description": "Дата закрытия счета."
+          },
+          "is_integrated": {
+            "type": "boolean",
+            "title": "Is Integrated",
+            "description": "Признак интегрированного счета"
+          },
+          "is_main": {
+            "type": "boolean",
+            "title": "Is Main",
+            "description": "Признак основного банковского счета"
           }
         },
         "type": "object",
         "required": [
           "account_number",
           "bank_bik",
-          "bank_name"
+          "bank_name",
+          "is_integrated",
+          "is_main"
         ],
         "title": "AccountInfo"
       },
@@ -2025,7 +2080,7 @@
                 "$ref": "#/components/schemas/OFDSource"
               }
             ],
-            "description": "Источник ОФД. Возможные значения:1. ofd_type = 1: Платформа, Яндекс, СБИС, Такском, Контур. 2. ofd_type = 2: ОФД.ру Первый.ОФД"
+            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd"
           },
           "ofd_file": {
             "type": "string",
@@ -2411,11 +2466,11 @@
       "CreateTaxPaymentOperationsRequest": {
         "properties": {
           "tax_payments": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CreateTaxPaymentOperation"
-              }
-            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateTaxPaymentOperation"
+            },
+            "type": "array",
+            "title": "Tax Payments",
             "description": "Уплаты налога"
           }
         },
@@ -2425,13 +2480,15 @@
         ],
         "title": "CreateTaxPaymentOperationsRequest",
         "example": {
-          "tax_payments": {
-            "amount": 25000.9,
-            "date": "2023-10-30",
-            "doc_number": "123",
-            "tax_period": 2023,
-            "tax_type": 1
-          }
+          "tax_payments": [
+            {
+              "amount": 25000.9,
+              "date": "2023-10-30",
+              "doc_number": "123",
+              "tax_period": 2023,
+              "tax_type": 1
+            }
+          ]
         }
       },
       "CreateUser": {
@@ -2524,7 +2581,7 @@
                 "type": "null"
               }
             ],
-            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа. Яндекс.ОФД. СБИС. Такском. Контур. Обязателен при source_type = ofd"
+            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd"
           },
           "marketplace_name": {
             "anyOf": [
@@ -2731,7 +2788,7 @@
                 "$ref": "#/components/schemas/ReportType"
               }
             ],
-            "description": "Тип запрашиваемого отчета. Возможные значения: 1 - КУДиР в формате pdf. 2 - Уведомления об исчисленных авансовых платежах по УСН (pdf + xml). 3 - Налоговая декларация УСН (pdf + xml). "
+            "description": "Тип запрашиваемого отчета. Возможные значения: 2 - Уведомления об исчисленных авансовых платежах по УСН. 3 - Налоговая декларация УСН. "
           },
           "period_type": {
             "allOf": [
@@ -2739,7 +2796,7 @@
                 "$ref": "#/components/schemas/ReportPeriodType"
               }
             ],
-            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год)"
+            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год. Для Уведомления возможен выбор только 1-3 кварталов. Для декларации только 0 (весь год)"
           },
           "period_year": {
             "type": "integer",
@@ -2759,6 +2816,71 @@
           "period_year": 2023,
           "report_type": 2
         }
+      },
+      "GetOperationsRequest": {
+        "properties": {
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date",
+            "description": "Начало периода совершения операций"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date",
+            "description": "Окончание периода совершения операций"
+          },
+          "operations_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/OperationType"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operations Types",
+            "description": "Вид операции. Обязателен при использовании параметров description1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
+          },
+          "sources_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sources Ids",
+            "description": "Идентификаторы источников данных"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/OperationsPagination"
+          }
+        },
+        "type": "object",
+        "title": "GetOperationsRequest"
       },
       "HTTPValidationError": {
         "properties": {
@@ -2837,7 +2959,7 @@
               }
             ],
             "title": "Begin Date",
-            "description": "Начало периода отображения баннера"
+            "description": "Начало периода отображения баннера. Формат даты - MM-DD (например, 01-31)."
           },
           "end_date": {
             "anyOf": [
@@ -2849,7 +2971,7 @@
               }
             ],
             "title": "End Date",
-            "description": "Конец периода отображения баннера"
+            "description": "Конец периода отображения баннера. Формат даты - MM-DD (например, 01-31)."
           },
           "title": {
             "type": "string",
@@ -2901,15 +3023,15 @@
             "title": "Full Name",
             "description": "Полное имя"
           },
-          "firstname": {
-            "type": "string",
-            "title": "Firstname",
-            "description": "Имя"
-          },
           "lastname": {
             "type": "string",
             "title": "Lastname",
             "description": "Фамилия"
+          },
+          "firstname": {
+            "type": "string",
+            "title": "Firstname",
+            "description": "Имя"
           },
           "patronymic": {
             "anyOf": [
@@ -2950,8 +3072,8 @@
         "type": "object",
         "required": [
           "full_name",
-          "firstname",
           "lastname",
+          "firstname",
           "fns_code",
           "fns_reg_date"
         ],
@@ -3019,15 +3141,15 @@
             "title": "Full Name",
             "description": "Полное имя"
           },
-          "firstname": {
-            "type": "string",
-            "title": "Firstname",
-            "description": "Имя"
-          },
           "lastname": {
             "type": "string",
             "title": "Lastname",
             "description": "Фамилия"
+          },
+          "firstname": {
+            "type": "string",
+            "title": "Firstname",
+            "description": "Имя"
           },
           "patronymic": {
             "anyOf": [
@@ -3073,8 +3195,8 @@
         "type": "object",
         "required": [
           "full_name",
-          "firstname",
           "lastname",
+          "firstname",
           "fns_code",
           "fns_reg_date",
           "is_disabled"
@@ -3187,6 +3309,11 @@
       },
       "MarketplaceInfo": {
         "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id",
+            "default": "ID источника данных"
+          },
           "marketplace_id": {
             "anyOf": [
               {
@@ -3283,13 +3410,18 @@
       },
       "OFDInfo": {
         "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id",
+            "default": "ID источника данных"
+          },
           "ofd_name": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/OFDSource"
               }
             ],
-            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа. Яндекс.ОФД. СБИС. Такском. Контур. "
+            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД."
           },
           "last_info": {
             "type": "string",
@@ -3323,11 +3455,11 @@
         "enum": [
           "ОФД.ру",
           "Первый ОФД",
-          "Платформа",
-          "Яндекс.ОФД",
-          "СБИС",
-          "Такском",
-          "Контур"
+          "Платформа ОФД",
+          "Яндекс ОФД",
+          "СБИС ОФД",
+          "Такском ОФД",
+          "Контур ОФД"
         ],
         "title": "OFDSource"
       },
@@ -3357,6 +3489,16 @@
             ],
             "title": "Account Number",
             "description": "Номер счета операции"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id",
+            "description": "ID источника, по которому у клиента прошла операция"
+          },
+          "source_name": {
+            "type": "string",
+            "title": "Source Name",
+            "description": "Наименование источника, по счету которого у клиента прошла операция."
           },
           "counterparty_name": {
             "type": "string",
@@ -3419,6 +3561,8 @@
         "type": "object",
         "required": [
           "id",
+          "source_id",
+          "source_name",
           "counterparty_name",
           "purpose",
           "amount_doc",
@@ -3490,27 +3634,11 @@
       },
       "OperationMarkup": {
         "properties": {
-          "operation_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OperationType"
-              }
-            ],
-            "description": "Вид операции. \n1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
-          },
-          "debit_description": {
+          "description": {
             "anyOf": [
               {
                 "$ref": "#/components/schemas/OperationDebitDescription"
               },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Описание операций 'Поступления'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type!"
-          },
-          "credit_description": {
-            "anyOf": [
               {
                 "$ref": "#/components/schemas/OperationCreditDescription"
               },
@@ -3518,23 +3646,13 @@
                 "type": "null"
               }
             ],
-            "description": "Описание операций 'Списания'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type!"
-          },
-          "amount": {
-            "type": "number",
-            "title": "Amount",
-            "description": "Сумма, участвующая в разметке операции"
+            "title": "Description"
           }
         },
         "type": "object",
-        "required": [
-          "operation_type",
-          "amount"
-        ],
         "title": "OperationMarkup",
         "example": {
           "amount": 500.9,
-          "debit_description": "Личные средства предпринимателя",
           "operation_type": 2
         }
       },
@@ -3547,6 +3665,33 @@
           4
         ],
         "title": "OperationType"
+      },
+      "OperationsPagination": {
+        "properties": {
+          "page_number": {
+            "type": "integer",
+            "title": "Page Number",
+            "description": "Номер страницы"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count",
+            "description": "Количество записей на странице"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id",
+            "description": "Уникальный ID операции. Необходим для корректной работы фильтрации. Остается неизменным при пагинации, сбрасывается при изменении фильтров"
+          }
+        },
+        "type": "object",
+        "required": [
+          "page_number",
+          "row_count",
+          "request_id"
+        ],
+        "title": "OperationsPagination"
       },
       "OperationsResponse": {
         "properties": {
@@ -3829,7 +3974,7 @@
                 "$ref": "#/components/schemas/OFDSource"
               }
             ],
-            "description": "Источник ОФД. Возможные значения:1. ofd_type = 1: Платформа, Яндекс, СБИС, Такском, Контур. 2. ofd_type = 2: ОФД.ру Первый.ОФД"
+            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd"
           }
         },
         "type": "object",
@@ -3879,6 +4024,14 @@
           "tax_holidays"
         ],
         "title": "RateReasonType"
+      },
+      "ReportFormat": {
+        "type": "string",
+        "enum": [
+          "pdf",
+          "xml"
+        ],
+        "title": "ReportFormat"
       },
       "ReportInfo": {
         "properties": {
@@ -3955,6 +4108,20 @@
           0
         ],
         "title": "ReportPeriodType"
+      },
+      "ReportResponse": {
+        "properties": {
+          "report_code": {
+            "type": "string",
+            "title": "Report Code",
+            "description": "ID сформированного уведомления / декларации"
+          }
+        },
+        "type": "object",
+        "required": [
+          "report_code"
+        ],
+        "title": "ReportResponse"
       },
       "ReportStatus": {
         "type": "integer",
@@ -4187,6 +4354,18 @@
             "title": "Ofd",
             "description": "Список подключенных ОФД"
           },
+          "source_by_hand_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source By Hand Id",
+            "description": "ID факта ручного ввода операций"
+          },
           "comment": {
             "anyOf": [
               {
@@ -4284,6 +4463,18 @@
             "title": "Due Date",
             "description": "Крайник срок действия по задаче (крайний срок уплаты/сдачи отчетности)"
           },
+          "tax_base": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Base",
+            "description": "Налоговая база"
+          },
           "due_amount": {
             "anyOf": [
               {
@@ -4336,7 +4527,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "date"
+                "format": "date-time"
               },
               {
                 "type": "null"
@@ -4850,7 +5041,7 @@
             "type": "string",
             "format": "date",
             "title": "Tax Date Begin",
-            "description": "Дата начала применения СНО"
+            "description": "Дата начала работы в сервисе"
           },
           "oktmo": {
             "type": "string",
@@ -5010,6 +5201,29 @@
         ],
         "title": "USNTaxes"
       },
+      "UpdateOperationMarkup": {
+        "properties": {
+          "operation_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationType"
+              }
+            ],
+            "description": "Вид операции. \n1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма, участвующая в разметке операции"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_type",
+          "amount"
+        ],
+        "title": "UpdateOperationMarkup"
+      },
       "UpdateReportRequest": {
         "properties": {
           "report_type": {
@@ -5026,7 +5240,7 @@
                 "$ref": "#/components/schemas/ReportPeriodType"
               }
             ],
-            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год)"
+            "description": "Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год. Для Уведомления возможен выбор только 1-3 кварталов. Для декларации только 0 (весь год)"
           },
           "period_year": {
             "type": "integer",

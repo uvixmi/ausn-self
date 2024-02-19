@@ -38,3 +38,27 @@ export const taxesQuarterHeading = (quarter: string) => {
     CONTENT.TAXES_QUARTER_END + new Date().getFullYear().toString()
   return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${yearText}`
 }
+
+export const getCurrency = (value: number, category?: string) => {
+  if (category === "debet") {
+    return (
+      "+" +
+      new Intl.NumberFormat("ru", {
+        style: "currency",
+        currency: "RUB",
+      }).format(value)
+    )
+  } else if (category === "credit")
+    return (
+      "-" +
+      new Intl.NumberFormat("ru", {
+        style: "currency",
+        currency: "RUB",
+      }).format(value)
+    )
+  else
+    return new Intl.NumberFormat("ru", {
+      style: "currency",
+      currency: "RUB",
+    }).format(value)
+}

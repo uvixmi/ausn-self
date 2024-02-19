@@ -3,7 +3,7 @@ import { PaymentsStore } from "./types"
 
 const initialState: PaymentsStore = {
   payments: [
-    { amount: 0, date: "", tax_period: 0, doc_number: " ", tax_type: 1 },
+    { amount: 0, date: "", tax_period: 0, doc_number: "", tax_type: 4 },
   ],
 }
 

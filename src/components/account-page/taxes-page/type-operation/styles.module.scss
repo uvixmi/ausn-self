@@ -1,0 +1,38 @@
+.type-inner {
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  min-width: 110px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.type-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.type-income {
+  background: #fff7e6;
+  color: #f9951a;
+}
+
+.type-back {
+  background: #ecf9ff;
+  color: #158fe8;
+}
+
+.type-non {
+  background: #f0f0f0;
+  color: #505050;
+}
+
+.type-taxes {
+  background: #f6ffed;
+  color: #389e0d;
+}

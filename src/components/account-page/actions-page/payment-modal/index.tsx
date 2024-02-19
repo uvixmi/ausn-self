@@ -23,6 +23,7 @@ import {
 import { RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
+import { convertDateFormat } from "./utils"
 
 export const PaymentModal = ({
   isOpen,
@@ -61,7 +62,14 @@ export const PaymentModal = ({
   const handlePay = async () => {
     try {
       await api.operations.createOperationTaxPaymentOperationsTaxPaymentPost(
-        { tax_payments: payments[0] },
+        {
+          tax_payments: payments.map((item) => {
+            return {
+              ...item,
+              date: convertDateFormat(payments[0].date).toString(),
+            }
+          }),
+        },
         { headers }
       )
       setOpen(false)
@@ -213,7 +221,7 @@ export const PaymentModal = ({
                   </Text>
                   <Input
                     style={{ borderRadius: 0 }}
-                    value={item.doc_number}
+                    value={item.doc_number ? item.doc_number : ""}
                     onChange={(event) =>
                       handleDocNumber(event.target.value, index)
                     }

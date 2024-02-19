@@ -142,20 +142,20 @@
   display: flex;
   flex-direction: row;
   padding: 16px 0;
-  justify-content: space-between;
   gap: 8px;
 }
 
 .datepicker-item {
-  width: 240px;
+  max-width: 300px;
 }
 
 .account-select {
   flex-grow: 1;
+  max-width: 300px;
 }
 
 .operation-select {
-  width: 155px;
+  width: 300px;
 }
 
 .currency-amount {
@@ -198,4 +198,138 @@
 .list-item-right {
   display: flex;
   justify-content: space-between;
+}
+
+.table-header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 4px 8px;
+}
+
+.table-header-title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #8c8c8c;
+  &:first-child {
+    width: 50%;
+  }
+
+  &:nth-child(2) {
+    width: 18%;
+  }
+  &:nth-child(3) {
+    width: 38%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+}
+
+.table-date-row {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #6159ff;
+  padding: 12px 8px;
+}
+
+.table-info-row {
+  display: flex;
+  width: 100%;
+  &:hover {
+    background-color: #f0f0ff;
+  }
+}
+
+.source-inner {
+  width: 50%;
+  padding: 13px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.operation-type-inner {
+  width: 18%;
+  padding: 13px 8px;
+}
+
+.source-title {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #141414;
+}
+
+.source-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #8c8c8c;
+}
+
+.amount-inner {
+  width: 32%;
+  display: flex;
+  align-items: flex-end;
+  padding: 13px 8px;
+  flex-direction: column;
+}
+
+.currency-income {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: right;
+  color: #141414;
+}
+
+.type-inner {
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.type-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.type-income {
+  background: #fff7e6;
+  color: #f9951a;
+  padding-right: 10px;
+}
+
+.type-back {
+  background: #ecf9ff;
+  color: #158fe8;
+  padding-right: 10px;
+}
+
+.type-non {
+  background: #f0f0f0;
+  color: #505050;
+  padding-right: 10px;
+}
+
+.type-taxes {
+  background: #f6ffed;
+  color: #389e0d;
+  padding-right: 10px;
 }

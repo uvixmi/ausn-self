@@ -40,11 +40,6 @@ export interface AccountDetails {
 /** AccountInfo */
 export interface AccountInfo {
   /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /**
    * Account Number
    * Номер счета пользователя
    */
@@ -69,16 +64,6 @@ export interface AccountInfo {
    * Дата закрытия счета.
    */
   disable_date?: string | null
-  /**
-   * Is Integrated
-   * Признак интегрированного счета
-   */
-  is_integrated: boolean
-  /**
-   * Is Main
-   * Признак основного банковского счета
-   */
-  is_main: boolean
 }
 
 /** AccountInfoFromFile */
@@ -113,19 +98,11 @@ export enum AccountType {
   Value5 = 5,
 }
 
-/** BannerType */
-export enum BannerType {
-  UpdateData = "update_data",
-  UpdateUserInfo = "update_user_info",
-  NewUser = "new_user",
-  Advertisement = "advertisement",
-}
-
 /** Body_create_client_ofd_sources_ofd_post */
 export interface BodyCreateClientOfdSourcesOfdPost {
   /** Тип синхронизации. Возможные значения: 1 - Отчет по чекам (как при подгрузке табличной формы). 2 - API ОФД (как при автозагрузке) */
   ofd_type: OFDType
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd */
+  /** Источник ОФД. Возможные значения:1. ofd_type = 1: Платформа, Яндекс, СБИС, Такском, Контур. 2. ofd_type = 2: ОФД.ру Первый.ОФД */
   ofd_source: OFDSource
   /**
    * Ofd File
@@ -273,7 +250,7 @@ export interface CreateTaxPaymentOperation {
    * Doc Number
    * Номер документа
    */
-  doc_number: string | null
+  doc_number: string | undefined
   /**
    * Tax Period
    * Год уплаты налога
@@ -287,14 +264,11 @@ export interface CreateTaxPaymentOperation {
 
 /**
  * CreateTaxPaymentOperationsRequest
- * @example {"tax_payments":[{"amount":25000.9,"date":"2023-10-30","doc_number":"123","tax_period":2023,"tax_type":1}]}
+ * @example {"tax_payments":{"amount":25000.9,"date":"2023-10-30","doc_number":"123","tax_period":2023,"tax_type":1}}
  */
 export interface CreateTaxPaymentOperationsRequest {
-  /**
-   * Tax Payments
-   * Уплаты налога
-   */
-  tax_payments: CreateTaxPaymentOperation[]
+  /** Уплаты налога */
+  tax_payments: CreateTaxPaymentOperation
 }
 
 /** CreateUser */
@@ -340,7 +314,7 @@ export interface DisableSource {
    * Номер счета. Обязателен при source_type = account
    */
   account_number?: string | null
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd */
+  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа. Яндекс.ОФД. СБИС. Такском. Контур. Обязателен при source_type = ofd */
   ofd_name?: OFDSource | null
   /**
    * Marketplace Name
@@ -493,40 +467,15 @@ export interface GenerateENSOrder {
  * @example {"period_type":1,"period_year":2023,"report_type":2}
  */
 export interface GenerateReportsRequest {
-  /** Тип запрашиваемого отчета. Возможные значения: 2 - Уведомления об исчисленных авансовых платежах по УСН. 3 - Налоговая декларация УСН.  */
+  /** Тип запрашиваемого отчета. Возможные значения: 1 - КУДиР в формате pdf. 2 - Уведомления об исчисленных авансовых платежах по УСН (pdf + xml). 3 - Налоговая декларация УСН (pdf + xml).  */
   report_type: ReportType
-  /** Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год. Для Уведомления возможен выбор только 1-3 кварталов. Для декларации только 0 (весь год) */
+  /** Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год) */
   period_type: ReportPeriodType
   /**
    * Period Year
    * Год налогового периода
    */
   period_year: number
-}
-
-/** GetOperationsRequest */
-export interface GetOperationsRequest {
-  /**
-   * Start Date
-   * Начало периода совершения операций
-   */
-  start_date?: string | null
-  /**
-   * End Date
-   * Окончание периода совершения операций
-   */
-  end_date?: string | null
-  /**
-   * Operations Types
-   * Вид операции. Обязателен при использовании параметров description1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов.
-   */
-  operations_types?: OperationType[] | null
-  /**
-   * Sources Ids
-   * Идентификаторы источников данных
-   */
-  sources_ids?: string[] | null
-  pagination?: OperationsPagination
 }
 
 /** HTTPValidationError */
@@ -565,51 +514,6 @@ export interface IncomePercentage {
   due_date_ip: string
 }
 
-/** InfoBanner */
-export interface InfoBanner {
-  /**
-   * Id
-   * ID баннера
-   */
-  id: string
-  /** Тип баннера. Возможные значения: update_data - напоминание об обновлении данных. update_user_info - напоминание об обновлении настроек налогового учета. new_user - баннер для нового пользователя. advertisement - рекламный баннер.  */
-  banner_type: BannerType
-  /**
-   * Begin Date
-   * Начало периода отображения баннера. Формат даты - MM-DD (например, 01-31).
-   */
-  begin_date?: string | null
-  /**
-   * End Date
-   * Конец периода отображения баннера. Формат даты - MM-DD (например, 01-31).
-   */
-  end_date?: string | null
-  /**
-   * Title
-   * Заголовок баннера
-   */
-  title: string
-  /**
-   * Description
-   * Описание баннера. В описании баннера можно использовать предзаполняемые значения как на фронтенде, так и на стороне бэкенда. Значения необходимо обозначать в формате {key}. Поддерживаемые на данный момент ключи: year - Текущий год. last_year - Прошлый год. Заполнение ключей не из списка поддерживаемых осуществляется на стороне фронта.
-   */
-  description: string
-  /**
-   * Show For User
-   * Отображать ли баннер пользователям
-   */
-  show_for_user: boolean
-}
-
-/** InfoBannersResponse */
-export interface InfoBannersResponse {
-  /**
-   * Banners
-   * Информационные баннеры во всей системе
-   */
-  banners: InfoBanner[]
-}
-
 /** InnInfo */
 export interface InnInfo {
   /**
@@ -618,15 +522,15 @@ export interface InnInfo {
    */
   full_name: string
   /**
-   * Lastname
-   * Фамилия
-   */
-  lastname: string
-  /**
    * Firstname
    * Имя
    */
   firstname: string
+  /**
+   * Lastname
+   * Фамилия
+   */
+  lastname: string
   /**
    * Patronymic
    * Отчество
@@ -686,15 +590,15 @@ export interface InnInfoWithDisabled {
    */
   full_name: string
   /**
-   * Lastname
-   * Фамилия
-   */
-  lastname: string
-  /**
    * Firstname
    * Имя
    */
   firstname: string
+  /**
+   * Lastname
+   * Фамилия
+   */
+  lastname: string
   /**
    * Patronymic
    * Отчество
@@ -779,11 +683,6 @@ export interface MarketplaceCredentials {
 /** MarketplaceInfo */
 export interface MarketplaceInfo {
   /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /**
    * Marketplace Id
    * Клиентский идентификатор Озон
    */
@@ -846,12 +745,7 @@ export interface NoticeInfo {
 
 /** OFDInfo */
 export interface OFDInfo {
-  /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД. */
+  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа. Яндекс.ОФД. СБИС. Такском. Контур.  */
   ofd_name: OFDSource
   /**
    * Last Info
@@ -870,11 +764,11 @@ export interface OFDInfo {
 export enum OFDSource {
   ValueОФДРу = "ОФД.ру",
   ValueПервыйОФД = "Первый ОФД",
-  ValueПлатформаОФД = "Платформа ОФД",
-  ValueЯндексОФД = "Яндекс ОФД",
-  ValueСБИСОФД = "СБИС ОФД",
-  ValueТакскомОФД = "Такском ОФД",
-  ValueКонтурОФД = "Контур ОФД",
+  ValueПлатформа = "Платформа",
+  ValueЯндексОФД = "Яндекс.ОФД",
+  ValueСБИС = "СБИС",
+  ValueТакском = "Такском",
+  ValueКонтур = "Контур",
 }
 
 /** OFDType */
@@ -895,16 +789,6 @@ export interface Operation {
    * Номер счета операции
    */
   account_number?: string | null
-  /**
-   * Source Id
-   * ID источника, по которому у клиента прошла операция
-   */
-  source_id: string
-  /**
-   * Source Name
-   * Наименование источника, по счету которого у клиента прошла операция.
-   */
-  source_name: string
   /**
    * Counterparty Name
    * Наименование контрагента
@@ -1000,7 +884,7 @@ export enum OperationDebitDescription {
 
 /**
  * OperationMarkup
- * @example {"amount":500.9,"operation_type":2}
+ * @example {"amount":500.9,"debit_description":"Личные средства предпринимателя","operation_type":2}
  */
 export interface OperationMarkup {
   /**
@@ -1025,26 +909,6 @@ export enum OperationType {
   Value2 = 2,
   Value3 = 3,
   Value4 = 4,
-}
-
-/** OperationsPagination */
-export interface OperationsPagination {
-  /**
-   * Page Number
-   * Номер страницы
-   */
-  page_number: number
-  /**
-   * Row Count
-   * Количество записей на странице
-   */
-  row_count: number
-  /**
-   * Request Id
-   * Уникальный ID операции. Необходим для корректной работы фильтрации. Остается неизменным при пагинации, сбрасывается при изменении фильтров
-   * @format uuid
-   */
-  request_id: string
 }
 
 /**
@@ -1228,7 +1092,7 @@ export interface PendingOFD {
   reason: string
   /** Тип синхронизации. Возможные значения: 1 - Отчет по чекам (как при подгрузке табличной формы). 2 - API ОФД (как при автозагрузке) */
   ofd_type: OFDType
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd */
+  /** Источник ОФД. Возможные значения:1. ofd_type = 1: Платформа, Яндекс, СБИС, Такском, Контур. 2. ofd_type = 2: ОФД.ру Первый.ОФД */
   ofd_source: OFDSource
 }
 
@@ -1256,12 +1120,6 @@ export enum RateReasonType {
   Nothing = "nothing",
   Crimea = "crimea",
   TaxHolidays = "tax_holidays",
-}
-
-/** ReportFormat */
-export enum ReportFormat {
-  Pdf = "pdf",
-  Xml = "xml",
 }
 
 /** ReportInfo */
@@ -1296,15 +1154,6 @@ export enum ReportPeriodType {
   Value6 = 6,
   Value9 = 9,
   Value0 = 0,
-}
-
-/** ReportResponse */
-export interface ReportResponse {
-  /**
-   * Report Code
-   * ID сформированного уведомления / декларации
-   */
-  report_code: string
 }
 
 /** ReportStatus */
@@ -1409,11 +1258,6 @@ export interface SourcesInfo {
    */
   ofd?: OFDInfo[]
   /**
-   * Source By Hand Id
-   * ID факта ручного ввода операций
-   */
-  source_by_hand_id?: string | null
-  /**
    * Comment
    * Комментарий
    */
@@ -1456,11 +1300,6 @@ export interface TaskInfo {
    * @format date
    */
   due_date: string
-  /**
-   * Tax Base
-   * Налоговая база
-   */
-  tax_base?: number | null
   /**
    * Due Amount
    * Сумма к уплате по данной задаче
@@ -1620,7 +1459,7 @@ export interface TaxSystemInfo {
   rate_reason?: string | null
   /**
    * Tax Date Begin
-   * Дата начала работы в сервисе
+   * Дата начала применения СНО
    * @format date
    */
   tax_date_begin: string
@@ -1710,20 +1549,6 @@ export interface USNTaxes {
   usn_0: USNTaxInfo
 }
 
-/** UpdateOperationMarkup */
-export interface UpdateOperationMarkup {
-  /**
-   * Вид операции.
-   * 1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов.
-   */
-  operation_type: OperationType
-  /**
-   * Amount
-   * Сумма, участвующая в разметке операции
-   */
-  amount: number
-}
-
 /**
  * UpdateReportRequest
  * @example {"period_type":1,"period_year":2023,"report_code":"000000010","report_status":2,"report_type":2}
@@ -1731,7 +1556,7 @@ export interface UpdateOperationMarkup {
 export interface UpdateReportRequest {
   /** Тип запрашиваемого отчета. Возможные значения: 1 - КУДиР. 2 - Уведомления об исчисленных авансовых платежах по УСН. 3 - Налоговая декларация УСН.  */
   report_type: ReportType
-  /** Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год. Для Уведомления возможен выбор только 1-3 кварталов. Для декларации только 0 (весь год) */
+  /** Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.Для КУДиР возможен выбор любого периода. Для Уведомления только 1-3 кварталы. Для декларации только 0 (весь год) */
   period_type: ReportPeriodType
   /**
    * Period Year
@@ -2101,7 +1926,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.2
+ * @version 0.1.0
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2448,21 +2273,42 @@ export class Api<
      * @description Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.
      *
      * @tags Operations
-     * @name GetOperationsOperationsPost
+     * @name GetOperationsOperationsGet
      * @summary Получить список размеченных операций
-     * @request POST:/operations
+     * @request GET:/operations
      * @secure
      */
-    getOperationsOperationsPost: (
-      data: GetOperationsRequest,
+    getOperationsOperationsGet: (
+      query: {
+        /** Account Number */
+        account_number?: string | null
+        /** Start Date */
+        start_date?: string | null
+        /** End Date */
+        end_date?: string | null
+        /** Operation Type */
+        operation_type?: OperationType | null
+        /** Debit Description */
+        debit_description?: OperationDebitDescription | null
+        /** Credit Description */
+        credit_description?: OperationCreditDescription | null
+        /** Page Number */
+        page_number: number
+        /** Row Count */
+        row_count: number
+        /**
+         * Request Id
+         * @format uuid
+         */
+        request_id: string
+      },
       params: RequestParams = {}
     ) =>
       this.request<OperationsResponse, HTTPValidationError | void>({
         path: `/operations`,
-        method: "POST",
-        body: data,
+        method: "GET",
+        query: query,
         secure: true,
-        type: ContentType.Json,
         format: "json",
         ...params,
       }),
@@ -2478,7 +2324,10 @@ export class Api<
      */
     deleteOperationOperationsDelete: (
       query: {
-        /** Operation Id */
+        /**
+         * Operation Id
+         * @format uuid
+         */
         operation_id: string
       },
       params: RequestParams = {}
@@ -2549,10 +2398,13 @@ export class Api<
      */
     updateOperationOperationsMarkupPut: (
       query: {
-        /** Operation Id */
+        /**
+         * Operation Id
+         * @format uuid
+         */
         operation_id: string
       },
-      data: UpdateOperationMarkup,
+      data: OperationMarkup,
       params: RequestParams = {}
     ) =>
       this.request<any, HTTPValidationError | void>({
@@ -2688,7 +2540,7 @@ export class Api<
       data: GenerateENSOrder,
       params: RequestParams = {}
     ) =>
-      this.request<void, HTTPValidationError | void>({
+      this.request<string, HTTPValidationError>({
         path: `/taxes/ens_order/txt`,
         method: "POST",
         body: data,
@@ -2784,7 +2636,7 @@ export class Api<
   }
   reports = {
     /**
-     * @description Данный метод реализует генерацию отчетности пользователя (уведомления и декларации). Сгенерированная отчетность при этом запросе хранится на сервере и возвращается пользователю отдельным запросом. Актуальность сформированной отчетности зависит от статуса расчета налоговой базы (taxes/calculation).
+     * @description Данный метод реализует генерацию отчетности пользователя. Актуальность сформированной отчетности зависит  от статуса расчета налоговой базы (taxes/calculation).
      *
      * @tags Reports
      * @name GenerateReportsReportsPost
@@ -2796,121 +2648,12 @@ export class Api<
       data: GenerateReportsRequest,
       params: RequestParams = {}
     ) =>
-      this.request<ReportResponse, HTTPValidationError | void>({
+      this.request<void, HTTPValidationError | void>({
         path: `/reports`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * @description Данный метод реализует генерацию и возврат КУДиР пользователя. Сгенерированная отчетность при этом НЕ хранится на сервере. Актуальность сформированной отчетности зависит  от статуса расчета налоговой базы (taxes/calculation).
-     *
-     * @tags Reports
-     * @name GetKudirReportReportsKudirGet
-     * @summary Получить КУДиР за выбранный период
-     * @request GET:/reports/kudir
-     * @secure
-     */
-    getKudirReportReportsKudirGet: (
-      query: {
-        /**
-         * Period Type
-         * Тип налогового периода. Возможные значения: 1 - 1 квартал. 2 - 2 квартал. 3 - 3 квартал. 4 - 4 квартал. 6 - полугодие. 9 - 9 месяцев. 0 - весь год.
-         */
-        period_type: ReportPeriodType
-        /**
-         * Period Year
-         * Год налогового периода
-         */
-        period_year: number
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<void, HTTPValidationError | void>({
-        path: `/reports/kudir`,
-        method: "GET",
-        query: query,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * @description Данный метод возвращает сгенерированный файл в отчетности в формате pdf / xml.
-     *
-     * @tags Reports
-     * @name GetReportByIdReportsReportIdReportFormatGet
-     * @summary Получить сгенерированный файл отчетности в выбранном формате
-     * @request GET:/reports/{report_id}.{report_format}
-     * @secure
-     */
-    getReportByIdReportsReportIdReportFormatGet: (
-      reportId: string,
-      reportFormat: ReportFormat,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, HTTPValidationError | void>({
-        path: `/reports/${reportId}.${reportFormat}`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-  }
-  banners = {
-    /**
-     * No description
-     *
-     * @tags Banners
-     * @name GetUserBannersBannersGet
-     * @summary Получить информационные баннеры пользователя
-     * @request GET:/banners
-     * @secure
-     */
-    getUserBannersBannersGet: (
-      query: {
-        /**
-         * Current Date
-         * Текущая дата на клиенте. Требуется, чтобы избежать разницы временных зон
-         * @format date
-         */
-        current_date: string
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<InfoBannersResponse, HTTPValidationError | void>({
-        path: `/banners`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * @description Данный метод реализует обновление статуса баннера пользователя - на данный момент возможность скрыть баннер.
-     *
-     * @tags Banners
-     * @name UpdateUserBannerStateBannersPut
-     * @summary Обновить статус информационного баннера у пользователя
-     * @request PUT:/banners
-     * @secure
-     */
-    updateUserBannerStateBannersPut: (
-      query: {
-        /** Banner Id */
-        banner_id: string
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<any, HTTPValidationError | void>({
-        path: `/banners`,
-        method: "PUT",
-        query: query,
-        secure: true,
-        format: "json",
         ...params,
       }),
   }
