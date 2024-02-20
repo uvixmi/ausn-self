@@ -16,6 +16,7 @@ import { useEffect, useState } from "react"
 import { PaymentModal } from "./payment-modal"
 import { useDispatch } from "react-redux"
 import {
+  InfoBanner,
   ReportFormat,
   SourcesInfo,
   TaskResponse,
@@ -28,9 +29,14 @@ import { formatDateString, taxesQuarterHeading } from "./utils"
 import { EnsPaymentModal } from "./ens-payment-modal"
 import { AnalysisEnsModal } from "./analysis-ens-modal"
 import { AllDoneBlock } from "./all-done-block"
-import { DownloadOutlined, LoadingOutlined } from "@ant-design/icons"
+import {
+  DownloadOutlined,
+  LoadingOutlined,
+  CloseOutlined,
+} from "@ant-design/icons"
 import { formatToPayDate } from "../../main-page/utils"
 import { setAmount } from "./payment-modal/slice"
+import { convertDateFormat, convertReverseFormat } from "./payment-modal/utils"
 
 export const ActionsPage = () => {
   const [isPaymentOpen, setPaymentOpen] = useState(false)
@@ -99,6 +105,7 @@ export const ActionsPage = () => {
     Authorization: `Bearer ${token}`,
   }
 
+  const [banners, setBanners] = useState<InfoBanner[] | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     const fetchSources = async () => {
@@ -112,6 +119,15 @@ export const ActionsPage = () => {
         headers,
       })
       setSources(sourcesResponse.data)
+      const bannersResponse = await api.banners.getUserBannersBannersGet(
+        {
+          current_date: convertDateFormat(new Date().toLocaleDateString()),
+        },
+        {
+          headers,
+        }
+      )
+      setBanners(bannersResponse.data.banners)
     }
     fetchSources()
   }, [])
@@ -217,6 +233,22 @@ export const ActionsPage = () => {
   const handleSentPayment = (amount: string) => {
     dispatch(setAmount({ amount, index: 0 }))
     setPaymentOpen(true)
+  }
+
+  const deleteBanner = async (id: string) => {
+    await api.banners.updateUserBannerStateBannersPut(
+      { banner_id: id },
+      { headers }
+    )
+    const bannersResponse = await api.banners.getUserBannersBannersGet(
+      {
+        current_date: convertDateFormat(new Date().toLocaleDateString()),
+      },
+      {
+        headers,
+      }
+    )
+    setBanners(bannersResponse.data.banners)
   }
 
   return (
@@ -463,7 +495,7 @@ export const ActionsPage = () => {
                 </div>
               ))}
           </div>
-          <AllDoneBlock type="report" />
+          {tasks?.tasks.length == 0 && <AllDoneBlock type="report" />}
         </Content>
         <Sider
           className={styles["right-sider-wrapper"]}
@@ -471,21 +503,62 @@ export const ActionsPage = () => {
           breakpoint="lg"
           collapsedWidth="0"
         >
-          <div className={styles["update-wrapper"]}>
-            <div className={styles["update-inner"]}>
-              <div className={styles["update-text-inner"]}>
-                <LampImage />
-                <Title style={{ marginBottom: 0, marginTop: "8px" }} level={5}>
-                  {CONTENT.UPDATE_DATA_HEADING}
-                </Title>
-              </div>
-              <div className={styles["update-text-inner"]}>
-                <Text className={styles["update-text"]}>
-                  {CONTENT.UPDATE_DATA_TEXT}
-                </Text>
-                <Text className={styles["update-taxes-link"]}>
-                  {CONTENT.UPDATE_TAXES_LINK}
-                </Text>
+          <div className={styles["sider-inner-wrapper"]}>
+            {banners?.map((item) => {
+              return (
+                <div className={styles["update-wrapper"]}>
+                  <div className={styles["update-inner"]}>
+                    <div className={styles["update-text-inner"]}>
+                      <div>
+                        <Title
+                          style={{ marginBottom: 0, marginTop: "8px" }}
+                          level={5}
+                        >
+                          {item.title}
+                        </Title>
+                        <Text className={styles["update-text"]}>
+                          {item.description}
+                        </Text>
+                      </div>
+                    </div>
+                    <Button
+                      className={styles["delete-banner"]}
+                      style={{ border: "none", boxShadow: "none" }}
+                      onClick={() => deleteBanner("dsdds")}
+                    >
+                      <CloseOutlined />
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
+
+            <div className={styles["update-wrapper"]}>
+              <div className={styles["update-inner"]}>
+                <div className={styles["update-text-inner"]}>
+                  <LampImage />
+                  <Title
+                    style={{ marginBottom: 0, marginTop: "8px" }}
+                    level={5}
+                  >
+                    {CONTENT.UPDATE_DATA_HEADING}
+                  </Title>
+                </div>
+                <div className={styles["update-text-inner"]}>
+                  <Text className={styles["update-text"]}>
+                    {CONTENT.UPDATE_DATA_TEXT}
+                  </Text>
+                  <Text className={styles["update-taxes-link"]}>
+                    {CONTENT.UPDATE_TAXES_LINK}
+                  </Text>
+                </div>
+                <Button
+                  className={styles["delete-banner"]}
+                  style={{ border: "none", boxShadow: "none" }}
+                  onClick={() => {}}
+                >
+                  <CloseOutlined />
+                </Button>
               </div>
             </div>
           </div>

@@ -696,7 +696,9 @@ export const TaxesPage = () => {
         breakpoint="lg"
         collapsedWidth="0"
       >
-        <Text>{CONTENT.CLIENT_NAME}</Text>
+        {
+          //<Text>{CONTENT.CLIENT_NAME}</Text>
+        }
         <Title level={3}>{CONTENT.HEADING_DATA_SOURCES}</Title>
         <div className={styles["sider-buttons"]}>
           <Button className={styles["default-button"]}>
