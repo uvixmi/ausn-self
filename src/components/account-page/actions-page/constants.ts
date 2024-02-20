@@ -25,3 +25,8 @@ export const CONTENT = {
   UPDATE_DATA_TEXT:
     "Закончился I квартал 2024 года, для корректного расчета добавьте все источники данных в разделе",
 }
+
+export const LINK_MAP: Record<string, string> = {
+  "/taxes": "Налоговая база",
+  "/settings": "Настройки",
+}

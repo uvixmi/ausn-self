@@ -8,7 +8,7 @@ import {
   message,
 } from "antd"
 import Link from "antd/es/typography/Link"
-import { CONTENT } from "./constants"
+import { CONTENT, LINK_MAP } from "./constants"
 import styles from "./styles.module.scss"
 import LampImage from "./images/lamp"
 import cn from "classnames"
@@ -16,6 +16,7 @@ import { useEffect, useState } from "react"
 import { PaymentModal } from "./payment-modal"
 import { useDispatch } from "react-redux"
 import {
+  BannerType,
   InfoBanner,
   ReportFormat,
   SourcesInfo,
@@ -24,7 +25,7 @@ import {
 } from "../../../api/myApi"
 import { AppDispatch } from "../../main-page/store"
 import Cookies from "js-cookie"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { formatDateString, taxesQuarterHeading } from "./utils"
 import { EnsPaymentModal } from "./ens-payment-modal"
 import { AnalysisEnsModal } from "./analysis-ens-modal"
@@ -37,6 +38,22 @@ import {
 import { formatToPayDate } from "../../main-page/utils"
 import { setAmount } from "./payment-modal/slice"
 import { convertDateFormat, convertReverseFormat } from "./payment-modal/utils"
+
+export interface InfoBannerLinked {
+  id: string
+
+  banner_type: BannerType
+
+  begin_date?: string | null
+
+  end_date?: string | null
+
+  title: string
+
+  description: string[]
+
+  show_for_user: boolean
+}
 
 export const ActionsPage = () => {
   const [isPaymentOpen, setPaymentOpen] = useState(false)
@@ -105,7 +122,7 @@ export const ActionsPage = () => {
     Authorization: `Bearer ${token}`,
   }
 
-  const [banners, setBanners] = useState<InfoBanner[] | null>(null)
+  const [banners, setBanners] = useState<InfoBannerLinked[] | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     const fetchSources = async () => {
@@ -127,7 +144,13 @@ export const ActionsPage = () => {
           headers,
         }
       )
-      setBanners(bannersResponse.data.banners)
+      const linkedBanners = bannersResponse.data.banners.map((item) => {
+        const regex = /(\{link:[^\}]+\})/g
+        const parts = item.description.split(regex)
+        return { ...item, description: parts }
+      })
+      console.log(linkedBanners)
+      setBanners(linkedBanners)
     }
     fetchSources()
   }, [])
@@ -135,7 +158,7 @@ export const ActionsPage = () => {
   const [isForming, setIsForming] = useState(false)
   const [tasCodeForming, setTaskCodeForming] = useState("")
   const [formedSuccess, setFormedSucces] = useState([""])
-
+  const navigate = useNavigate()
   const handleFormReport = async (task_code: string, year: number) => {
     setIsForming(true)
     setTaskCodeForming(task_code)
@@ -155,6 +178,12 @@ export const ActionsPage = () => {
       await api.reports.generateReportsReportsPost(data, { headers })
       setIsForming(false)
       setFormedSucces([...formedSuccess, task_code])
+      try {
+        const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
+        setTasks(tasksResponse.data)
+      } catch (error) {
+        errorTasks()
+      }
     } catch (error) {
       setIsForming(false)
       errorReport()
@@ -229,6 +258,12 @@ export const ActionsPage = () => {
       report_status: 4,
     }
     await api.tasks.updateReportStatusTasksStatusPut(data, { headers })
+    try {
+      const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
+      setTasks(tasksResponse.data)
+    } catch (error) {
+      errorTasks()
+    }
   }
 
   const handleSentPayment = (amount: string) => {
@@ -249,7 +284,13 @@ export const ActionsPage = () => {
         headers,
       }
     )
-    setBanners(bannersResponse.data.banners)
+    const linkedBanners = bannersResponse.data.banners.map((item) => {
+      const regex = /(\{link:[^\}]+\})/g
+      const parts = item.description.split(regex)
+      return { ...item, description: parts }
+    })
+    console.log(linkedBanners)
+    setBanners(linkedBanners)
   }
 
   return (
@@ -512,14 +553,33 @@ export const ActionsPage = () => {
                     <div className={styles["update-text-inner"]}>
                       <div>
                         <Title
-                          style={{ marginBottom: 0, marginTop: "8px" }}
+                          style={{
+                            marginBottom: 0,
+                            marginTop: "8px",
+                            maxWidth: "200px",
+                          }}
                           level={5}
                         >
                           {item.title}
                         </Title>
-                        <Text className={styles["update-text"]}>
-                          {item.description}
-                        </Text>
+                        {item.description.map((text) => {
+                          if (text.startsWith("{") && text.endsWith("}")) {
+                            const link = text.slice("{link:".length, -1)
+                            return (
+                              <Link
+                                className={styles["update-text"]}
+                                onClick={() => navigate(link)}
+                              >
+                                {LINK_MAP[link]}
+                              </Link>
+                            )
+                          } else
+                            return (
+                              <Text className={styles["update-text"]}>
+                                {text}
+                              </Text>
+                            )
+                        })}
                       </div>
                     </div>
                     <Button
@@ -534,7 +594,7 @@ export const ActionsPage = () => {
               )
             })}
 
-            <div className={styles["update-wrapper"]}>
+            {/* <div className={styles["update-wrapper"]}>
               <div className={styles["update-inner"]}>
                 <div className={styles["update-text-inner"]}>
                   <LampImage />
@@ -561,7 +621,7 @@ export const ActionsPage = () => {
                   <CloseOutlined />
                 </Button>
               </div>
-            </div>
+            </div>*/}
           </div>
         </Sider>
         <PaymentModal

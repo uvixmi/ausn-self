@@ -192,9 +192,25 @@
   text-align: center;
 }
 
+.non-source-button {
+  border-radius: 2px;
+  max-width: 250px;
+  background-color: #6159ff;
+  color: #ffffff;
+
+  border: 1px solid #d1d1d1;
+  text-align: center;
+}
+
 .plus-icon {
   font-size: 10px;
   color: #6159ff;
+  align-self: center;
+}
+
+.plus-non-icon {
+  font-size: 10px;
+  color: #fff;
   align-self: center;
 }
 
@@ -406,4 +422,26 @@
   letter-spacing: 0em;
 
   color: #8c8c8c;
+}
+
+.non-taxes {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  align-items: center;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.non-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: center;
+}
+
+.non-wrapper {
+  width: 50%;
+  text-align: center;
 }

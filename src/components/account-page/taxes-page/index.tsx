@@ -53,6 +53,7 @@ import {
   convertReverseFormat,
 } from "../actions-page/payment-modal/utils"
 import { DeleteOperationModal } from "./delete-modal"
+import { NonTaxesImage } from "./images/non-operations"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -557,6 +558,7 @@ export const TaxesPage = () => {
             </Link>
           </div>
         </div>*/}
+
         <div className={styles["income-table"]}>
           <div className={styles["income-header-wrapper"]}>
             <Select
@@ -598,46 +600,47 @@ export const TaxesPage = () => {
                   </div>
                 ))}
               </div>
-              {Object.entries(groupedOperations).map(([date, operations]) => (
-                <div key={date}>
-                  <div className={styles["table-date-row"]}>
-                    {formatToPayDate(date)}
-                  </div>
-                  <div>
-                    {operations.map((operation, index) => (
-                      <div
-                        className={cn(styles["table-info-row"], {
-                          [styles["hovered-row"]]:
-                            hoveredIndex === operation.id,
-                        })}
-                        key={operation.id}
-                        onMouseEnter={() => {
-                          setHoveredIndex(operation.id),
-                            setHoveredAmount(operation.amount_doc)
-                        }}
-                        onMouseLeave={() => {
-                          setHoveredIndex(null), setHoveredAmount(null)
-                        }}
-                      >
-                        <div className={styles["source-inner"]}>
-                          <Text className={styles["source-title"]}>
-                            {operation.counterparty_name}
-                          </Text>
-                          <Text className={styles["source-text"]}>
-                            {operation.purpose}
-                          </Text>
-                        </div>
-                        <div className={styles["operation-type-inner"]}>
-                          <Select
-                            options={optionsTypes}
-                            defaultValue={operation.markup.operation_type}
-                            className={"type-item-select"}
-                            style={{ minWidth: "100px" }}
-                            onChange={(value) => {
-                              handleChangeMarkup(value)
-                            }}
-                          />
-                          {/* <TypeOperation
+              {Object.entries(groupedOperations).length > 0 ? (
+                Object.entries(groupedOperations).map(([date, operations]) => (
+                  <div key={date}>
+                    <div className={styles["table-date-row"]}>
+                      {formatToPayDate(date)}
+                    </div>
+                    <div>
+                      {operations.map((operation, index) => (
+                        <div
+                          className={cn(styles["table-info-row"], {
+                            [styles["hovered-row"]]:
+                              hoveredIndex === operation.id,
+                          })}
+                          key={operation.id}
+                          onMouseEnter={() => {
+                            setHoveredIndex(operation.id),
+                              setHoveredAmount(operation.amount_doc)
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredIndex(null), setHoveredAmount(null)
+                          }}
+                        >
+                          <div className={styles["source-inner"]}>
+                            <Text className={styles["source-title"]}>
+                              {operation.counterparty_name}
+                            </Text>
+                            <Text className={styles["source-text"]}>
+                              {operation.purpose}
+                            </Text>
+                          </div>
+                          <div className={styles["operation-type-inner"]}>
+                            <Select
+                              options={optionsTypes}
+                              defaultValue={operation.markup.operation_type}
+                              className={"type-item-select"}
+                              style={{ minWidth: "100px" }}
+                              onChange={(value) => {
+                                handleChangeMarkup(value)
+                              }}
+                            />
+                            {/* <TypeOperation
                               type={
                                 operation.markup.operation_type > 0
                                   ? operation.markup.operation_type
@@ -645,46 +648,63 @@ export const TaxesPage = () => {
                               }
                             />
                             */}
-                        </div>
-                        <div className={styles["amount-inner"]}>
-                          <div
-                            className={cn(styles["amount-part"], {
-                              [styles["amount-part-hovered"]]:
-                                hoveredIndex === operation.id,
-                            })}
-                          >
-                            <Text className={styles["currency-income"]}>
-                              {operation.markup.amount > 0
-                                ? getCurrency(
-                                    operation.markup.amount,
-                                    operation.category
-                                  )
-                                : getCurrency(
-                                    operation.amount_doc,
-                                    operation.category
-                                  )}
-                            </Text>
-                            <Text>
-                              {getSourceText(
-                                operation.source_name,
-                                operation.account_number
-                              )}
-                            </Text>
                           </div>
-                          {hoveredIndex === operation.id && (
-                            <Button
-                              className={styles["delete-icon"]}
-                              onClick={() => setIsDeleteModalOpen(true)}
+                          <div className={styles["amount-inner"]}>
+                            <div
+                              className={cn(styles["amount-part"], {
+                                [styles["amount-part-hovered"]]:
+                                  hoveredIndex === operation.id,
+                              })}
                             >
-                              <DeleteOutlined />
-                            </Button>
-                          )}
+                              <Text className={styles["currency-income"]}>
+                                {operation.markup.amount > 0
+                                  ? getCurrency(
+                                      operation.markup.amount,
+                                      operation.category
+                                    )
+                                  : getCurrency(
+                                      operation.amount_doc,
+                                      operation.category
+                                    )}
+                              </Text>
+                              <Text>
+                                {getSourceText(
+                                  operation.source_name,
+                                  operation.account_number
+                                )}
+                              </Text>
+                            </div>
+                            {hoveredIndex === operation.id && (
+                              <Button
+                                className={styles["delete-icon"]}
+                                onClick={() => setIsDeleteModalOpen(true)}
+                              >
+                                <DeleteOutlined />
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className={styles["non-taxes"]}>
+                  <NonTaxesImage />
+                  <div className={styles["non-wrapper"]}>
+                    <Text className={styles["non-text"]}>
+                      {CONTENT.TEXT_NON_TAXES}
+                    </Text>
+                  </div>
+                  <Button className={styles["non-source-button"]}>
+                    <PlusOutlined
+                      className={styles["plus-non-icon"]}
+                      style={{ marginInlineStart: "4px" }}
+                    />
+                    {CONTENT.BUTTON_ADD_SOURCE_NON}
+                  </Button>
                 </div>
-              ))}
+              )}
               <div ref={bottomBlockRef} style={{ height: "1px" }} />
             </div>
           </div>

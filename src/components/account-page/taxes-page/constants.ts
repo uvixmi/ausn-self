@@ -21,6 +21,7 @@ export const CONTENT = {
   BUTTON_ENS_TEXT: "Пополнить ЕНС",
   BUTTON_SIDER_ADD_TEXT: "Добавить",
   BUTTON_SIDER_EDIT_TEXT: "Редактировать",
+  BUTTON_ADD_SOURCE_NON: "Добавить источники данных",
   ENS_ANALYSIS_TEXT: "Анализ ЕНС доступен на платном тарифе",
   TEXT_DETAILS: "Подробнее",
   SELECT_ACCOUNT_NUMBER: "Номер счета",
@@ -47,4 +48,6 @@ export const CONTENT = {
   NOTIFICATION_PROCESSING_SUCCESS: "Операция удалена",
   NOTIFICATION_PROCESSING_FAILED:
     "Ошибка удаления операции, попробуйте еще раз",
+  TEXT_NON_TAXES:
+    "Расчет налогов в сервисе производится на основании анализа операций из различных источников данных. Важно внести все источники и своевременно подгружать информацию из них.",
 }
