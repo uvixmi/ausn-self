@@ -154,15 +154,11 @@ export const ActionsPage = () => {
           { headers }
         )
 
-      const text = await response.text()
-
+      const blob = await response.blob()
       const downloadLink = document.createElement("a")
-      downloadLink.href = window.URL.createObjectURL(
-        new Blob([text], {
-          type: "text/plain",
-        })
-      )
-      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+
+      downloadLink.href = window.URL.createObjectURL(blob)
+      downloadLink.download = "Новый_отчет.xml"
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -181,15 +177,11 @@ export const ActionsPage = () => {
           { headers }
         )
 
-      const text = await response.text()
-
+      const blob = await response.blob()
       const downloadLink = document.createElement("a")
-      downloadLink.href = window.URL.createObjectURL(
-        new Blob([text], {
-          type: "text/plain",
-        })
-      )
-      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+
+      downloadLink.href = window.URL.createObjectURL(blob)
+      downloadLink.download = "Новый_отчет.pdf"
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
