@@ -1,3 +1,11 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .left-sider-wrapper {
   background-color: #fff;
   width: 200px;
@@ -261,23 +269,27 @@
 .table-info-row {
   display: flex;
   width: 100%;
+  justify-content: space-between;
+  gap: 2%;
   &:hover {
     background-color: #f0f0ff;
   }
 }
 
 .source-inner {
-  width: 50%;
+  width: 48%;
   padding: 13px 8px;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .operation-type-inner {
-  width: 18%;
+  width: 20%;
   padding: 13px 8px;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .source-title {
@@ -308,11 +320,16 @@
 }
 
 .type-inner {
-  padding: 4px 12px;
+  padding: 2px 6px;
   border-radius: 100px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+
+  @media screen and (min-width: $xl) {
+    gap: 8px;
+    padding: 4px 12px;
+  }
 }
 
 .type-inner-select {
@@ -332,11 +349,16 @@
 }
 
 .type-text {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 16px;
   letter-spacing: 0em;
   text-align: left;
+
+  @media screen and (min-width: $xl) {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .type-income {
@@ -364,7 +386,7 @@
 }
 
 .amount-inner {
-  width: 32%;
+  width: 24%;
   display: flex;
   align-items: flex-end;
   padding: 13px 8px;
@@ -444,4 +466,17 @@
 .non-wrapper {
   width: 50%;
   text-align: center;
+}
+
+.source-account-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: right;
+  color: #8c8c8c;
+}
+
+.type-select-inner {
+  width: 100%;
 }

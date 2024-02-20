@@ -1,11 +1,12 @@
 .type-item-select .ant-select-selector {
   border: none !important;
   padding: 0 !important;
+  border-radius: 100px !important;
 }
 
 .type-item-select .ant-select-selection-item {
   border: none !important;
-  padding: 8px !important;
+  padding-inline-end: 0px !important;
 }
 
 .type-item-select .ant-select-selector .ant-select-selection-search-input {

@@ -568,6 +568,7 @@ export const TaxesPage = () => {
               style={{ borderRadius: "4px" }}
               onChange={handleSourcesChange}
               mode="multiple"
+              maxTagCount={1}
             />
             <Select
               placeholder={CONTENT.SELECT_OPERATION_TYPE}
@@ -576,6 +577,7 @@ export const TaxesPage = () => {
               options={optionsTypesSelect}
               onChange={handleOperationTypesChange}
               mode="multiple"
+              maxTagCount={1}
             />
             <DatePicker.RangePicker
               locale={locale}
@@ -634,8 +636,10 @@ export const TaxesPage = () => {
                             <Select
                               options={optionsTypes}
                               defaultValue={operation.markup.operation_type}
-                              className={"type-item-select"}
-                              style={{ minWidth: "100px" }}
+                              className={cn(
+                                "type-item-select",
+                                styles["type-select-inner"]
+                              )}
                               onChange={(value) => {
                                 handleChangeMarkup(value)
                               }}
@@ -667,7 +671,7 @@ export const TaxesPage = () => {
                                       operation.category
                                     )}
                               </Text>
-                              <Text>
+                              <Text className={styles["source-account-text"]}>
                                 {getSourceText(
                                   operation.source_name,
                                   operation.account_number
