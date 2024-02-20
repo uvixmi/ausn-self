@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.2"
+    "version": "0.1.4"
   },
   "paths": {
     "/auth": {
@@ -749,7 +749,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSourceResponse"
+                }
               }
             }
           },
@@ -799,7 +801,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSourceResponse"
+                }
               }
             }
           },
@@ -1695,6 +1699,22 @@
               "title": "Period Year"
             },
             "description": "Год налогового периода"
+          },
+          {
+            "name": "kudir_format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/KudirFormat"
+                }
+              ],
+              "description": "Формат КУДиР. Возможные значения: pdf. xlsx.",
+              "default": "pdf",
+              "title": "Kudir Format"
+            },
+            "description": "Формат КУДиР. Возможные значения: pdf. xlsx."
           }
         ],
         "responses": {
@@ -1940,75 +1960,6 @@
         ],
         "title": "AccountDetails"
       },
-      "AccountInfo": {
-        "properties": {
-          "source_id": {
-            "type": "string",
-            "title": "Source Id",
-            "default": "ID источника данных"
-          },
-          "account_number": {
-            "type": "string",
-            "title": "Account Number",
-            "description": "Номер счета пользователя"
-          },
-          "bank_bik": {
-            "type": "string",
-            "title": "Bank Bik",
-            "description": "БИК банка"
-          },
-          "bank_name": {
-            "type": "string",
-            "title": "Bank Name",
-            "description": "Наименование банка"
-          },
-          "last_info": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Last Info",
-            "description": "Дата последней операции по счету"
-          },
-          "disable_date": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Disable Date",
-            "description": "Дата закрытия счета."
-          },
-          "is_integrated": {
-            "type": "boolean",
-            "title": "Is Integrated",
-            "description": "Признак интегрированного счета"
-          },
-          "is_main": {
-            "type": "boolean",
-            "title": "Is Main",
-            "description": "Признак основного банковского счета"
-          }
-        },
-        "type": "object",
-        "required": [
-          "account_number",
-          "bank_bik",
-          "bank_name",
-          "is_integrated",
-          "is_main"
-        ],
-        "title": "AccountInfo"
-      },
       "AccountInfoFromFile": {
         "properties": {
           "start_date": {
@@ -2024,13 +1975,23 @@
           "account_number": {
             "type": "string",
             "title": "Account Number"
+          },
+          "bank_name": {
+            "type": "string",
+            "title": "Bank Name"
+          },
+          "bank_bik": {
+            "type": "string",
+            "title": "Bank Bik"
           }
         },
         "type": "object",
         "required": [
           "start_date",
           "end_date",
-          "account_number"
+          "account_number",
+          "bank_name",
+          "bank_bik"
         ],
         "title": "AccountInfoFromFile"
       },
@@ -2042,17 +2003,6 @@
           3
         ],
         "title": "AccountIntegrationType"
-      },
-      "AccountType": {
-        "type": "integer",
-        "enum": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "title": "AccountType"
       },
       "BannerType": {
         "type": "string",
@@ -2282,12 +2232,9 @@
             "description": "Данные для доступа к подключению счета"
           },
           "account_details": {
-            "anyOf": [
+            "allOf": [
               {
                 "$ref": "#/components/schemas/AccountDetails"
-              },
-              {
-                "type": "null"
               }
             ],
             "description": "Информация по счету пользователя"
@@ -2296,7 +2243,8 @@
         "type": "object",
         "required": [
           "integration_type",
-          "account_credentials"
+          "account_credentials",
+          "account_details"
         ],
         "title": "CreateAccountIntegration"
       },
@@ -2414,6 +2362,20 @@
           "doc_number": "123",
           "purpose": "Доход от продажи оборудования"
         }
+      },
+      "CreateSourceResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "CreateSourceResponse"
       },
       "CreateTaxPaymentOperation": {
         "properties": {
@@ -3134,74 +3096,13 @@
         ],
         "title": "InnInfoToSave"
       },
-      "InnInfoWithDisabled": {
-        "properties": {
-          "full_name": {
-            "type": "string",
-            "title": "Full Name",
-            "description": "Полное имя"
-          },
-          "lastname": {
-            "type": "string",
-            "title": "Lastname",
-            "description": "Фамилия"
-          },
-          "firstname": {
-            "type": "string",
-            "title": "Firstname",
-            "description": "Имя"
-          },
-          "patronymic": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Patronymic",
-            "description": "Отчество"
-          },
-          "fns_code": {
-            "type": "string",
-            "title": "Fns Code",
-            "description": "Код ИФНС"
-          },
-          "fns_description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Fns Description",
-            "description": "Название ИФНС"
-          },
-          "fns_reg_date": {
-            "type": "string",
-            "format": "date",
-            "title": "Fns Reg Date",
-            "description": "Дата регистрации ИП в ФНС"
-          },
-          "is_disabled": {
-            "type": "boolean",
-            "title": "Is Disabled",
-            "description": "Статус отключенного клиента"
-          }
-        },
-        "type": "object",
-        "required": [
-          "full_name",
-          "lastname",
-          "firstname",
-          "fns_code",
-          "fns_reg_date",
-          "is_disabled"
+      "KudirFormat": {
+        "type": "string",
+        "enum": [
+          "pdf",
+          "xlsx"
         ],
-        "title": "InnInfoWithDisabled"
+        "title": "KudirFormat"
       },
       "LeadInfoToSave": {
         "properties": {
@@ -3307,56 +3208,14 @@
         ],
         "title": "MarketplaceCredentials"
       },
-      "MarketplaceInfo": {
-        "properties": {
-          "source_id": {
-            "type": "string",
-            "title": "Source Id",
-            "default": "ID источника данных"
-          },
-          "marketplace_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Marketplace Id",
-            "description": "Клиентский идентификатор Озон"
-          },
-          "marketplace_name": {
-            "type": "string",
-            "title": "Marketplace Name",
-            "description": "Наименование маркетплейса. Возможные значения: Ozon. Wildberries. Яндекс Маркет."
-          },
-          "last_info": {
-            "type": "string",
-            "format": "date",
-            "title": "Last Info",
-            "description": "Дата последней успешной интеграции"
-          },
-          "disable_date": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Disable Date",
-            "description": "Дата отключения интеграции."
-          }
-        },
-        "type": "object",
-        "required": [
-          "marketplace_name",
-          "last_info"
+      "MarketplaceName": {
+        "type": "string",
+        "enum": [
+          "Яндекс Маркет",
+          "Wildberries",
+          "Ozon"
         ],
-        "title": "MarketplaceInfo"
+        "title": "MarketplaceName"
       },
       "MarketplaceType": {
         "type": "integer",
@@ -3407,48 +3266,6 @@
           "usn_4_kv"
         ],
         "title": "NoticeInfo"
-      },
-      "OFDInfo": {
-        "properties": {
-          "source_id": {
-            "type": "string",
-            "title": "Source Id",
-            "default": "ID источника данных"
-          },
-          "ofd_name": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OFDSource"
-              }
-            ],
-            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД."
-          },
-          "last_info": {
-            "type": "string",
-            "format": "date",
-            "title": "Last Info",
-            "description": "Дата последней успешной интеграции"
-          },
-          "disable_date": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Disable Date",
-            "description": "Дата отключения."
-          }
-        },
-        "type": "object",
-        "required": [
-          "ofd_name",
-          "last_info"
-        ],
-        "title": "OFDInfo"
       },
       "OFDSource": {
         "type": "string",
@@ -3634,6 +3451,19 @@
       },
       "OperationMarkup": {
         "properties": {
+          "operation_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OperationType"
+              }
+            ],
+            "description": "Вид операции. \n1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount",
+            "description": "Сумма, участвующая в разметке операции"
+          },
           "description": {
             "anyOf": [
               {
@@ -3650,6 +3480,10 @@
           }
         },
         "type": "object",
+        "required": [
+          "operation_type",
+          "amount"
+        ],
         "title": "OperationMarkup",
         "example": {
           "amount": 500.9,
@@ -3871,150 +3705,6 @@
           "payer_name"
         ],
         "title": "PaymentOrder"
-      },
-      "PendingAccount": {
-        "properties": {
-          "state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RequestState"
-              }
-            ],
-            "description": "Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу)."
-          },
-          "reason": {
-            "type": "string",
-            "title": "Reason",
-            "description": "Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи."
-          },
-          "account_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AccountType"
-              }
-            ],
-            "description": "Тип добавляемого счета. Возможные значения: 1 - файл с банковской выпиской. 2 - Директ-банк. 3 - API-метод. 4 - ЛК банка.5 - Прямое добавление счета."
-          },
-          "account_details": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AccountDetails"
-              }
-            ],
-            "description": "Информация по счету пользователя"
-          }
-        },
-        "type": "object",
-        "required": [
-          "state",
-          "reason",
-          "account_type",
-          "account_details"
-        ],
-        "title": "PendingAccount"
-      },
-      "PendingMarketplace": {
-        "properties": {
-          "state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RequestState"
-              }
-            ],
-            "description": "Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу)."
-          },
-          "reason": {
-            "type": "string",
-            "title": "Reason",
-            "description": "Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи."
-          },
-          "marketplace_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MarketplaceType"
-              }
-            ],
-            "description": "Тип синхронизации. Возможные значения: 1 - Яндекс OAuth. 2 - ЛК Wildberries. 3 - ЛК Ozon."
-          }
-        },
-        "type": "object",
-        "required": [
-          "state",
-          "reason",
-          "marketplace_type"
-        ],
-        "title": "PendingMarketplace"
-      },
-      "PendingOFD": {
-        "properties": {
-          "state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RequestState"
-              }
-            ],
-            "description": "Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу)."
-          },
-          "reason": {
-            "type": "string",
-            "title": "Reason",
-            "description": "Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи."
-          },
-          "ofd_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OFDType"
-              }
-            ],
-            "description": "Тип синхронизации. Возможные значения: 1 - Отчет по чекам (как при подгрузке табличной формы). 2 - API ОФД (как при автозагрузке)"
-          },
-          "ofd_source": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/OFDSource"
-              }
-            ],
-            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd"
-          }
-        },
-        "type": "object",
-        "required": [
-          "state",
-          "reason",
-          "ofd_type",
-          "ofd_source"
-        ],
-        "title": "PendingOFD"
-      },
-      "PendingSources": {
-        "properties": {
-          "accounts": {
-            "items": {
-              "$ref": "#/components/schemas/PendingAccount"
-            },
-            "type": "array",
-            "title": "Accounts",
-            "description": "Список счетов в состоянии подключения"
-          },
-          "ofd": {
-            "items": {
-              "$ref": "#/components/schemas/PendingOFD"
-            },
-            "type": "array",
-            "title": "Ofd",
-            "description": "Список ОФД в состоянии подключения"
-          },
-          "marketplaces": {
-            "items": {
-              "$ref": "#/components/schemas/PendingMarketplace"
-            },
-            "type": "array",
-            "title": "Marketplaces",
-            "description": "Список маркетплейсов в состоянии подключения"
-          }
-        },
-        "type": "object",
-        "title": "PendingSources"
       },
       "RateReasonType": {
         "type": "string",
@@ -4295,66 +3985,9 @@
           ]
         }
       },
-      "SourceType": {
-        "type": "string",
-        "enum": [
-          "account",
-          "ofd",
-          "marketplace"
-        ],
-        "title": "SourceType"
-      },
-      "SourcesInfo": {
+      "Source": {
         "properties": {
-          "client": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/InnInfoWithDisabled"
-              }
-            ],
-            "description": "Информация о пользователе (может содержать обновленные данные)"
-          },
-          "tax_system_info": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TaxSystemInfo"
-              }
-            ],
-            "description": "Информация о системе налогообложения"
-          },
-          "pending_sources": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PendingSources"
-              }
-            ],
-            "description": "Список источников в процессе подключения"
-          },
-          "accounts": {
-            "items": {
-              "$ref": "#/components/schemas/AccountInfo"
-            },
-            "type": "array",
-            "title": "Accounts",
-            "description": "Список подключенных счетов"
-          },
-          "marketplaces": {
-            "items": {
-              "$ref": "#/components/schemas/MarketplaceInfo"
-            },
-            "type": "array",
-            "title": "Marketplaces",
-            "description": "Список подключенных маркетплейсов"
-          },
-          "ofd": {
-            "items": {
-              "$ref": "#/components/schemas/OFDInfo"
-            },
-            "type": "array",
-            "title": "Ofd",
-            "description": "Список подключенных ОФД"
-          },
-          "source_by_hand_id": {
+          "id": {
             "anyOf": [
               {
                 "type": "string"
@@ -4363,8 +3996,159 @@
                 "type": "null"
               }
             ],
-            "title": "Source By Hand Id",
-            "description": "ID факта ручного ввода операций"
+            "title": "Id",
+            "description": "ID источника данных. Отсутствует при state = [in_progress, failed]"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SourceType"
+              }
+            ],
+            "description": "Тип источника. Возможные значения: "
+          },
+          "name": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OFDSource"
+              },
+              {
+                "$ref": "#/components/schemas/MarketplaceName"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Name",
+            "description": "Наименование источника.  "
+          },
+          "sub_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sub Name",
+            "description": "Дополнительное наименование. Если type = 1 - номер счета, если type = 3 и name = Ozon - клиентский идентификатор Озон."
+          },
+          "bank_bik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Bik",
+            "description": "БИК банка"
+          },
+          "last_info": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Info",
+            "description": "Дата последней операции по источнику"
+          },
+          "disable_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disable Date",
+            "description": "Дата закрытия источника."
+          },
+          "is_integrated": {
+            "type": "boolean",
+            "title": "Is Integrated",
+            "description": "Признак интегрированного источника"
+          },
+          "is_main": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Main",
+            "description": "Признак основного источника (банковского счета)"
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RequestState"
+              }
+            ],
+            "description": "Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу)."
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "Описание статуса подключения источника. Может содержать результат выполнения в случае неудачи."
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link",
+            "description": "Ссылка на продолжение интеграции, является отдельным промежуточным результатом добавления интегрируемого источника."
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "name",
+          "is_integrated"
+        ],
+        "title": "Source"
+      },
+      "SourceType": {
+        "type": "string",
+        "enum": [
+          "account",
+          "ofd",
+          "marketplace",
+          "hand"
+        ],
+        "title": "SourceType"
+      },
+      "SourcesInfo": {
+        "properties": {
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array",
+            "title": "Sources",
+            "description": "Список источников"
           },
           "comment": {
             "anyOf": [
@@ -4380,10 +4164,6 @@
           }
         },
         "type": "object",
-        "required": [
-          "client",
-          "tax_system_info"
-        ],
         "title": "SourcesInfo",
         "example": {
           "clients": [
@@ -5009,54 +4789,6 @@
             }
           }
         }
-      },
-      "TaxSystemInfo": {
-        "properties": {
-          "tax_system": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TaxSystemType"
-              }
-            ],
-            "description": "Система налогообложения. Возможные значения: usn_d - УСН Доходы. usn_d_r - УСН Доходы-Расходы. patent - Патент. eshn - ЕСХН. osn - Общая система НО. "
-          },
-          "tax_rate": {
-            "type": "integer",
-            "title": "Tax Rate",
-            "description": "Налоговая ставка"
-          },
-          "rate_reason": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rate Reason",
-            "description": "Обоснование сниженной налоговой ставки"
-          },
-          "tax_date_begin": {
-            "type": "string",
-            "format": "date",
-            "title": "Tax Date Begin",
-            "description": "Дата начала работы в сервисе"
-          },
-          "oktmo": {
-            "type": "string",
-            "title": "Oktmo",
-            "description": "Код ОКТМО"
-          }
-        },
-        "type": "object",
-        "required": [
-          "tax_system",
-          "tax_rate",
-          "tax_date_begin",
-          "oktmo"
-        ],
-        "title": "TaxSystemInfo"
       },
       "TaxSystemType": {
         "type": "string",

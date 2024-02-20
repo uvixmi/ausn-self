@@ -37,50 +37,6 @@ export interface AccountDetails {
   bank_bik: string
 }
 
-/** AccountInfo */
-export interface AccountInfo {
-  /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /**
-   * Account Number
-   * Номер счета пользователя
-   */
-  account_number: string
-  /**
-   * Bank Bik
-   * БИК банка
-   */
-  bank_bik: string
-  /**
-   * Bank Name
-   * Наименование банка
-   */
-  bank_name: string
-  /**
-   * Last Info
-   * Дата последней операции по счету
-   */
-  last_info?: string | null
-  /**
-   * Disable Date
-   * Дата закрытия счета.
-   */
-  disable_date?: string | null
-  /**
-   * Is Integrated
-   * Признак интегрированного счета
-   */
-  is_integrated: boolean
-  /**
-   * Is Main
-   * Признак основного банковского счета
-   */
-  is_main: boolean
-}
-
 /** AccountInfoFromFile */
 export interface AccountInfoFromFile {
   /**
@@ -95,6 +51,10 @@ export interface AccountInfoFromFile {
   end_date: string
   /** Account Number */
   account_number: string
+  /** Bank Name */
+  bank_name: string
+  /** Bank Bik */
+  bank_bik: string
 }
 
 /** AccountIntegrationType */
@@ -102,15 +62,6 @@ export enum AccountIntegrationType {
   Value1 = 1,
   Value2 = 2,
   Value3 = 3,
-}
-
-/** AccountType */
-export enum AccountType {
-  Value1 = 1,
-  Value2 = 2,
-  Value3 = 3,
-  Value4 = 4,
-  Value5 = 5,
 }
 
 /** BannerType */
@@ -205,7 +156,7 @@ export interface CreateAccountIntegration {
   /** Данные для доступа к подключению счета */
   account_credentials: AccountCredentials
   /** Информация по счету пользователя */
-  account_details?: AccountDetails | null
+  account_details: AccountDetails
 }
 
 /** CreateAccountResponse */
@@ -259,6 +210,15 @@ export interface CreateOperation {
    * Номер документа
    */
   doc_number: string | null
+}
+
+/** CreateSourceResponse */
+export interface CreateSourceResponse {
+  /**
+   * Request Id
+   * @format uuid
+   */
+  request_id: string
 }
 
 /** CreateTaxPaymentOperation */
@@ -678,49 +638,10 @@ export interface InnInfoToSave {
   start_year: number
 }
 
-/** InnInfoWithDisabled */
-export interface InnInfoWithDisabled {
-  /**
-   * Full Name
-   * Полное имя
-   */
-  full_name: string
-  /**
-   * Lastname
-   * Фамилия
-   */
-  lastname: string
-  /**
-   * Firstname
-   * Имя
-   */
-  firstname: string
-  /**
-   * Patronymic
-   * Отчество
-   */
-  patronymic?: string | null
-  /**
-   * Fns Code
-   * Код ИФНС
-   */
-  fns_code: string
-  /**
-   * Fns Description
-   * Название ИФНС
-   */
-  fns_description?: string | null
-  /**
-   * Fns Reg Date
-   * Дата регистрации ИП в ФНС
-   * @format date
-   */
-  fns_reg_date: string
-  /**
-   * Is Disabled
-   * Статус отключенного клиента
-   */
-  is_disabled: boolean
+/** KudirFormat */
+export enum KudirFormat {
+  Pdf = "pdf",
+  Xlsx = "xlsx",
 }
 
 /** LeadInfoToSave */
@@ -776,34 +697,11 @@ export interface MarketplaceCredentials {
   password: string
 }
 
-/** MarketplaceInfo */
-export interface MarketplaceInfo {
-  /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /**
-   * Marketplace Id
-   * Клиентский идентификатор Озон
-   */
-  marketplace_id?: string | null
-  /**
-   * Marketplace Name
-   * Наименование маркетплейса. Возможные значения: Ozon. Wildberries. Яндекс Маркет.
-   */
-  marketplace_name: string
-  /**
-   * Last Info
-   * Дата последней успешной интеграции
-   * @format date
-   */
-  last_info: string
-  /**
-   * Disable Date
-   * Дата отключения интеграции.
-   */
-  disable_date?: string | null
+/** MarketplaceName */
+export enum MarketplaceName {
+  ValueЯндексМаркет = "Яндекс Маркет",
+  Wildberries = "Wildberries",
+  Ozon = "Ozon",
 }
 
 /** MarketplaceType */
@@ -842,28 +740,6 @@ export interface NoticeInfo {
    * Исчислено налога УСН за 4 квартал
    */
   usn_4_kv: number
-}
-
-/** OFDInfo */
-export interface OFDInfo {
-  /**
-   * Source Id
-   * @default "ID источника данных"
-   */
-  source_id?: string
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД. */
-  ofd_name: OFDSource
-  /**
-   * Last Info
-   * Дата последней успешной интеграции
-   * @format date
-   */
-  last_info: string
-  /**
-   * Disable Date
-   * Дата отключения.
-   */
-  disable_date?: string | null
 }
 
 /** OFDSource */
@@ -1008,15 +884,13 @@ export interface OperationMarkup {
    * 1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов.
    */
   operation_type: OperationType
-  /** Описание операций 'Поступления'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type! */
-  debit_description?: OperationDebitDescription | null
-  /** Описание операций 'Списания'. Возможно использование только одного параметра description! При использовании обязательно задание параметра operation_type! */
-  credit_description?: OperationCreditDescription | null
   /**
    * Amount
    * Сумма, участвующая в разметке операции
    */
   amount: number
+  /** Description */
+  description?: OperationDebitDescription | OperationCreditDescription | null
 }
 
 /** OperationType */
@@ -1189,68 +1063,6 @@ export interface PaymentOrder {
   document_date?: string
 }
 
-/** PendingAccount */
-export interface PendingAccount {
-  /** Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу). */
-  state: RequestState
-  /**
-   * Reason
-   * Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи.
-   */
-  reason: string
-  /** Тип добавляемого счета. Возможные значения: 1 - файл с банковской выпиской. 2 - Директ-банк. 3 - API-метод. 4 - ЛК банка.5 - Прямое добавление счета. */
-  account_type: AccountType
-  /** Информация по счету пользователя */
-  account_details: AccountDetails
-}
-
-/** PendingMarketplace */
-export interface PendingMarketplace {
-  /** Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу). */
-  state: RequestState
-  /**
-   * Reason
-   * Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи.
-   */
-  reason: string
-  /** Тип синхронизации. Возможные значения: 1 - Яндекс OAuth. 2 - ЛК Wildberries. 3 - ЛК Ozon. */
-  marketplace_type: MarketplaceType
-}
-
-/** PendingOFD */
-export interface PendingOFD {
-  /** Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу). */
-  state: RequestState
-  /**
-   * Reason
-   * Описание статуса подключения источника. Может содержать промежуточное значение или же результат выполнения в случае неудачи.
-   */
-  reason: string
-  /** Тип синхронизации. Возможные значения: 1 - Отчет по чекам (как при подгрузке табличной формы). 2 - API ОФД (как при автозагрузке) */
-  ofd_type: OFDType
-  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd */
-  ofd_source: OFDSource
-}
-
-/** PendingSources */
-export interface PendingSources {
-  /**
-   * Accounts
-   * Список счетов в состоянии подключения
-   */
-  accounts?: PendingAccount[]
-  /**
-   * Ofd
-   * Список ОФД в состоянии подключения
-   */
-  ofd?: PendingOFD[]
-  /**
-   * Marketplaces
-   * Список маркетплейсов в состоянии подключения
-   */
-  marketplaces?: PendingMarketplace[]
-}
-
 /** RateReasonType */
 export enum RateReasonType {
   Nothing = "nothing",
@@ -1375,11 +1187,70 @@ export interface SNOReferencesResponse {
   references: SNOReference[]
 }
 
+/** Source */
+export interface Source {
+  /**
+   * Id
+   * ID источника данных. Отсутствует при state = [in_progress, failed]
+   */
+  id?: string | null
+  /** Тип источника. Возможные значения:  */
+  type: SourceType
+  /**
+   * Name
+   * Наименование источника.
+   */
+  name: OFDSource | MarketplaceName | string
+  /**
+   * Sub Name
+   * Дополнительное наименование. Если type = 1 - номер счета, если type = 3 и name = Ozon - клиентский идентификатор Озон.
+   */
+  sub_name?: string | null
+  /**
+   * Bank Bik
+   * БИК банка
+   */
+  bank_bik?: string | null
+  /**
+   * Last Info
+   * Дата последней операции по источнику
+   */
+  last_info?: string | null
+  /**
+   * Disable Date
+   * Дата закрытия источника.
+   */
+  disable_date?: string | null
+  /**
+   * Is Integrated
+   * Признак интегрированного источника
+   */
+  is_integrated: boolean
+  /**
+   * Is Main
+   * Признак основного источника (банковского счета)
+   */
+  is_main?: boolean | null
+  /** Статус подключения источника. Список возможных значений: in_progress - в процессе. failed - ошибка. completed - завершен (источники в данном статусе не идут в выдачу). */
+  state?: RequestState
+  /**
+   * Reason
+   * Описание статуса подключения источника. Может содержать результат выполнения в случае неудачи.
+   */
+  reason?: string | null
+  /**
+   * Link
+   * Ссылка на продолжение интеграции, является отдельным промежуточным результатом добавления интегрируемого источника.
+   */
+  link?: string | null
+}
+
 /** SourceType */
 export enum SourceType {
   Account = "account",
   Ofd = "ofd",
   Marketplace = "marketplace",
+  Hand = "hand",
 }
 
 /**
@@ -1387,32 +1258,11 @@ export enum SourceType {
  * @example {"clients":[{"accounts":[{"account_number":"40817810570000123456","bank_bik":"044525092","bank_name":"АО КБ Модульбанк","last_operation":"2023-09-06"}],"firstname":"Василий","fns":{"code":"0550","description":"Межрайонная инспекция ФНС России № 4 по Республике Дагестан"},"fns_reg_date":"2020-09-17","inn":"027710159721","lastname":"Пупкин","marketplaces":[{"marketplace_name":"Озон","marketplace_update":"2023-10-01"}],"patronymic":"Петрович","tax":{"oktmo":"12345678","tax_date_begin":"2022-01-01","tax_rate":6,"tax_system":"Usn6"}}]}
  */
 export interface SourcesInfo {
-  /** Информация о пользователе (может содержать обновленные данные) */
-  client: InnInfoWithDisabled
-  /** Информация о системе налогообложения */
-  tax_system_info: TaxSystemInfo
-  /** Список источников в процессе подключения */
-  pending_sources?: PendingSources
   /**
-   * Accounts
-   * Список подключенных счетов
+   * Sources
+   * Список источников
    */
-  accounts?: AccountInfo[]
-  /**
-   * Marketplaces
-   * Список подключенных маркетплейсов
-   */
-  marketplaces?: MarketplaceInfo[]
-  /**
-   * Ofd
-   * Список подключенных ОФД
-   */
-  ofd?: OFDInfo[]
-  /**
-   * Source By Hand Id
-   * ID факта ручного ввода операций
-   */
-  source_by_hand_id?: string | null
+  sources?: Source[]
   /**
    * Comment
    * Комментарий
@@ -1602,33 +1452,6 @@ export interface TaxCalculationResponse {
   contributions: ContributionsInfo
   /** Сальдо ЕНС */
   ens_balance: ENSBalanceInfo
-}
-
-/** TaxSystemInfo */
-export interface TaxSystemInfo {
-  /** Система налогообложения. Возможные значения: usn_d - УСН Доходы. usn_d_r - УСН Доходы-Расходы. patent - Патент. eshn - ЕСХН. osn - Общая система НО.  */
-  tax_system: TaxSystemType
-  /**
-   * Tax Rate
-   * Налоговая ставка
-   */
-  tax_rate: number
-  /**
-   * Rate Reason
-   * Обоснование сниженной налоговой ставки
-   */
-  rate_reason?: string | null
-  /**
-   * Tax Date Begin
-   * Дата начала работы в сервисе
-   * @format date
-   */
-  tax_date_begin: string
-  /**
-   * Oktmo
-   * Код ОКТМО
-   */
-  oktmo: string
 }
 
 /** TaxSystemType */
@@ -2101,7 +1924,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.2
+ * @version 0.1.4
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2409,7 +2232,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<any, HTTPValidationError | void>({
+      this.request<CreateSourceResponse, HTTPValidationError | void>({
         path: `/sources/ofd`,
         method: "POST",
         query: query,
@@ -2433,7 +2256,7 @@ export class Api<
       data: CreateMarketplaceRequest,
       params: RequestParams = {}
     ) =>
-      this.request<any, HTTPValidationError | void>({
+      this.request<CreateSourceResponse, HTTPValidationError | void>({
         path: `/sources/marketplace`,
         method: "POST",
         body: data,
@@ -2688,7 +2511,7 @@ export class Api<
       data: GenerateENSOrder,
       params: RequestParams = {}
     ) =>
-      this.request<void, HTTPValidationError | void>({
+      this.request<string, HTTPValidationError>({
         path: `/taxes/ens_order/txt`,
         method: "POST",
         body: data,
@@ -2827,6 +2650,12 @@ export class Api<
          * Год налогового периода
          */
         period_year: number
+        /**
+         * Kudir Format
+         * Формат КУДиР. Возможные значения: pdf. xlsx.
+         * @default "pdf"
+         */
+        kudir_format?: KudirFormat
       },
       params: RequestParams = {}
     ) =>

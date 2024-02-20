@@ -40,4 +40,11 @@ export const CONTENT = {
   CLIENT_NAME: "ИП Ягодкин И. В.",
   DEFAULT_DATE: "20.09.2023",
   DEFAULT_DATE_STRING: "сентябрь 2023",
+  HEADING_HAND_SOURCERS: "Ручная загрузка",
+  HEADING_AUTO_SOURCERS: "Автоматическая загрузка",
+  NOTIFICATION_MARKUP_SUCCESS: "Тип операции изменен",
+  NOTIFICATION_MARKUP_FAILED: "Ошибка изменения типа операции",
+  NOTIFICATION_PROCESSING_SUCCESS: "Операция удалена",
+  NOTIFICATION_PROCESSING_FAILED:
+    "Ошибка удаления операции, попробуйте еще раз",
 }

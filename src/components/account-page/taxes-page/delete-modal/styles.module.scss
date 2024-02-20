@@ -1,0 +1,29 @@
+.button-item-enter {
+  border-radius: 4px;
+  background: red;
+  color: #fff;
+  height: 32px;
+  margin: 16px 0 16px 0;
+  width: 50%;
+}
+
+.button-item-cancel {
+  border-radius: 4px;
+  background: #fff;
+  color: #6159ff;
+  height: 32px;
+  margin: 16px 0 16px 0;
+  width: 50%;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 10px;
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+  gap: 5px;
+}

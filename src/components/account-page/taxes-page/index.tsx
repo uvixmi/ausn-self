@@ -1,18 +1,23 @@
 import {
   Button,
-  ConfigProvider,
   DatePicker,
   Layout,
   List,
   Select,
   Table,
   Typography,
+  message,
 } from "antd"
 import Link from "antd/es/typography/Link"
 import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import cn from "classnames"
-import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons"
+import {
+  CheckCircleOutlined,
+  InfoCircleOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from "@ant-design/icons"
 import { useEffect, useRef, useState } from "react"
 import { v4 as uuid, v4 } from "uuid"
 import { useDispatch } from "react-redux"
@@ -38,6 +43,16 @@ import { NonIcon } from "./type-operation/icons/non"
 import dayjs from "dayjs"
 import "dayjs/locale/ru"
 import locale from "antd/lib/date-picker/locale/ru_RU"
+import { TrashIcon } from "./type-operation/icons/trash-icon"
+import { InProgressIcon } from "./type-operation/icons/in-progress"
+import { FailedIcon } from "./type-operation/icons/failed"
+import { CompletedHandIcon } from "./type-operation/icons/completed-hand"
+import { CompletedAutoIcon } from "./type-operation/icons/completed-auto"
+import {
+  convertDateFormat,
+  convertReverseFormat,
+} from "../actions-page/payment-modal/utils"
+import { DeleteOperationModal } from "./delete-modal"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -81,6 +96,65 @@ export const TaxesPage = () => {
     useState<OperationsResponse | null>(null)
 
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+
+  const optionsTypesSelect = [
+    {
+      label: (
+        <div
+          className={cn(styles["type-inner-select"], [styles["type-income"]])}
+        >
+          <IncomeIcon />
+          <Text
+            className={cn(styles["type-text-select"], [styles["type-income"]])}
+          >
+            {"Доход"}
+          </Text>
+        </div>
+      ),
+      value: 1,
+    },
+    {
+      label: (
+        <div className={cn(styles["type-inner-select"], [styles["type-non"]])}>
+          <NonIcon />
+          <Text
+            className={cn(styles["type-text-select"], [styles["type-non"]])}
+          >
+            {"Не учитывается"}
+          </Text>
+        </div>
+      ),
+      value: 2,
+    },
+    {
+      label: (
+        <div className={cn(styles["type-inner-select"], [styles["type-back"]])}>
+          <BackIcon />
+          <Text
+            className={cn(styles["type-text-select"], [styles["type-back"]])}
+          >
+            {"Возврат"}
+          </Text>
+        </div>
+      ),
+      value: 3,
+    },
+    {
+      label: (
+        <div
+          className={cn(styles["type-inner-select"], [styles["type-taxes"]])}
+        >
+          <TaxesIcon />
+          <Text
+            className={cn(styles["type-text-select"], [styles["type-taxes"]])}
+          >
+            {"Налоги и взносы"}
+          </Text>
+        </div>
+      ),
+      value: 4,
+    },
+  ]
 
   const optionsTypes = [
     {
@@ -129,42 +203,23 @@ export const TaxesPage = () => {
     },
   ]
 
-  const optionsSourcesOne =
-    (sources?.accounts &&
-      sources.accounts.map((item) => {
+  const optionsSources =
+    sources?.sources &&
+    sources.sources
+      .filter((item) => item.id)
+      .map((item) => {
+        const subName = item.sub_name ? " *" + item.sub_name?.slice(-4) : ""
         return {
-          label: item.bank_name + " *" + item.account_number.slice(-4),
-          value: item.account_number,
+          label: item.name + subName,
+          value: item.id,
         }
-      })) ||
-    []
+      })
 
-  const optionsMarketplaces =
-    (sources?.marketplaces &&
-      sources?.marketplaces.map((item) => {
-        return {
-          label: item.marketplace_name,
-          value: item.marketplace_id,
-        }
-      })) ||
-    []
-
-  const optionsOFDs =
-    (sources?.ofd &&
-      sources?.ofd.map((item) => {
-        return {
-          label: item.ofd_name,
-          value: item.ofd_name,
-        }
-      })) ||
-    []
-
-  const optionsSources = [
-    ...optionsSourcesOne,
-    ...optionsMarketplaces,
-    ...optionsOFDs,
-  ].filter(Boolean)
-
+  const sourcesAutoSider =
+    sources && sources.sources?.filter((item) => item.is_integrated)
+  const sourcesHandSider =
+    sources && sources.sources?.filter((item) => !item.is_integrated)
+  const [deleteModalOpen, setIsDeleteModalOpen] = useState(false)
   useEffect(() => {
     const fetchOperations = async () => {
       const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
@@ -194,26 +249,59 @@ export const TaxesPage = () => {
 
   // Обработчики изменений фильтров, если необходимо
   const handleSourcesChange = (selectedSources: string[]) => {
+    setPagination({
+      page_number: 1,
+      row_count: 30,
+      request_id: v4(),
+    })
     setSelectedSources(selectedSources)
-    // Дополнительные действия при изменении выбора источников
+    if (selectedSources.length === 0) setEndOfPage(false)
+  }
+
+  const handleChangeMarkup = async (newMarkup: number) => {
+    try {
+      if (hoveredIndex && hoveredAmount) {
+        await api.operations.updateOperationOperationsMarkupPut(
+          { operation_id: hoveredIndex },
+          { operation_type: newMarkup, amount: hoveredAmount },
+          { headers }
+        )
+        successMarkup()
+      }
+    } catch (error) {
+      errorMarkup()
+    }
   }
 
   const handleOperationTypesChange = (
     selectedOperationTypes: OperationType[]
   ) => {
+    setPagination({
+      page_number: 1,
+      row_count: 30,
+      request_id: v4(),
+    })
     setSelectedOperationTypes(selectedOperationTypes)
-    // Дополнительные действия при изменении выбора типов операций
+    if (selectedOperationTypes.length === 0) setEndOfPage(false)
   }
 
-  const handleDateRangeChange = (
-    startDate: string | null,
-    endDate: string | null
-  ) => {
-    setSelectedStartDate(startDate)
-    setSelectedEndDate(endDate)
-    // Дополнительные действия при изменении дат
+  const handleDateRangeChange = (dateStrings: string[]) => {
+    if (dateStrings[0] != "" && dateStrings[1] != "") {
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
+
+      setSelectedStartDate(convertDateFormat(dateStrings[0]))
+      setSelectedEndDate(convertDateFormat(dateStrings[1]))
+    } else {
+      setEndOfPage(false)
+      setSelectedStartDate("")
+      setSelectedEndDate("")
+    }
   }
-  const isFetching = useRef(false)
+  const [isFetching, setIsFetching] = useState(false)
   const [endOfPage, setEndOfPage] = useState(false)
   const handleScroll = () => {
     if (bottomBlockRef.current && !endOfPage) {
@@ -221,8 +309,8 @@ export const TaxesPage = () => {
         window.innerHeight + window.scrollY >=
         bottomBlockRef.current.getBoundingClientRect().bottom
 
-      if (isBottom && !isFetching.current) {
-        isFetching.current = true
+      if (isBottom && !isFetching) {
+        setIsFetching(true)
 
         if (!endOfPage) {
           setPagination((prevPagination) => ({
@@ -232,6 +320,23 @@ export const TaxesPage = () => {
         }
       }
     }
+  }
+
+  const [messageApi, contextHolder] = message.useMessage()
+  const successMarkup = () => {
+    messageApi.open({
+      type: "success",
+      content: CONTENT.NOTIFICATION_MARKUP_SUCCESS,
+      style: { textAlign: "right" },
+    })
+  }
+
+  const errorMarkup = () => {
+    messageApi.open({
+      type: "error",
+      content: CONTENT.NOTIFICATION_MARKUP_FAILED,
+      style: { textAlign: "right" },
+    })
   }
 
   const [groupedOperations, setGroupedOperations] = useState<
@@ -265,21 +370,45 @@ export const TaxesPage = () => {
 
           setEndOfPage(true)
         }
-        setOperationsData((prevData) => ({
-          ...prevData,
-          operations: [
-            ...(prevData?.operations || []),
-            ...operations.data.operations,
-          ],
-          pages_count: operations.data.pages_count,
-        }))
+        if (
+          pagination.page_number === 1 &&
+          operations.data.operations.length === 0
+        ) {
+          setOperationsData((prevData) => ({
+            operations: [...operations.data.operations],
+            pages_count: operations.data.pages_count,
+          }))
+          setIsFetching(false)
+        } else if (pagination.page_number === 1) {
+          setOperationsData((prevData) => ({
+            operations: [...operations.data.operations],
+            pages_count: operations.data.pages_count,
+          }))
+          setIsFetching(false)
+        } else {
+          setOperationsData((prevData) => ({
+            ...prevData,
+            operations: [
+              ...(prevData?.operations || []),
+              ...operations.data.operations,
+            ],
+            pages_count: operations.data.pages_count,
+          }))
+          setIsFetching(false)
+        }
       } catch (error) {
         console.error("Error fetching operations:", error)
+        setIsFetching(false)
       }
     }
     fetchOperations()
-    isFetching.current = false
-  }, [pagination])
+  }, [
+    pagination,
+    selectedSources,
+    selectedOperationTypes,
+    selectedStartDate,
+    selectedEndDate,
+  ])
 
   useEffect(() => {
     const updatedGroupedOperations: Record<string, Operation[]> = {}
@@ -298,19 +427,26 @@ export const TaxesPage = () => {
   }, [operationsData])
 
   useEffect(() => {
-    const updateScroll = () => {
-      handleScroll()
-    }
+    if (!isFetching) {
+      const updateScroll = () => {
+        handleScroll()
+      }
 
-    window.addEventListener("scroll", updateScroll)
+      window.addEventListener("scroll", updateScroll)
 
-    return () => {
-      window.removeEventListener("scroll", updateScroll)
+      return () => {
+        window.removeEventListener("scroll", updateScroll)
+      }
     }
   }, [isFetching])
 
+  const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
+  const [hoveredAmount, setHoveredAmount] = useState<number | null>(null)
+  const [selectedOperation, setSelectedOperation] = useState(null)
+
   return (
     <>
+      {contextHolder}
       <Content className={styles["content-wrapper"]}>
         <Title level={2} className={styles["heading-text"]}>
           {CONTENT.HEADING_INCOME}
@@ -435,7 +571,9 @@ export const TaxesPage = () => {
               placeholder={CONTENT.SELECT_OPERATION_TYPE}
               className={styles["operation-select"]}
               style={{ borderRadius: "4px" }}
-              options={optionsTypes}
+              options={optionsTypesSelect}
+              onChange={handleOperationTypesChange}
+              mode="multiple"
             />
             <DatePicker.RangePicker
               locale={locale}
@@ -443,6 +581,9 @@ export const TaxesPage = () => {
               placeholder={["от", "до"]}
               className={styles["datepicker-item"]}
               style={{ borderRadius: "4px" }}
+              onChange={(dates, dateStrings) =>
+                handleDateRangeChange(dateStrings)
+              }
             />
           </div>
           {
@@ -463,10 +604,20 @@ export const TaxesPage = () => {
                     {formatToPayDate(date)}
                   </div>
                   <div>
-                    {operations.map((operation) => (
+                    {operations.map((operation, index) => (
                       <div
-                        className={styles["table-info-row"]}
+                        className={cn(styles["table-info-row"], {
+                          [styles["hovered-row"]]:
+                            hoveredIndex === operation.id,
+                        })}
                         key={operation.id}
+                        onMouseEnter={() => {
+                          setHoveredIndex(operation.id),
+                            setHoveredAmount(operation.amount_doc)
+                        }}
+                        onMouseLeave={() => {
+                          setHoveredIndex(null), setHoveredAmount(null)
+                        }}
                       >
                         <div className={styles["source-inner"]}>
                           <Text className={styles["source-title"]}>
@@ -479,12 +630,12 @@ export const TaxesPage = () => {
                         <div className={styles["operation-type-inner"]}>
                           <Select
                             options={optionsTypes}
-                            defaultValue={optionsTypes.filter(
-                              (item) =>
-                                item.value === operation.markup.operation_type
-                            )}
+                            defaultValue={operation.markup.operation_type}
                             className={"type-item-select"}
                             style={{ minWidth: "100px" }}
+                            onChange={(value) => {
+                              handleChangeMarkup(value)
+                            }}
                           />
                           {/* <TypeOperation
                               type={
@@ -496,23 +647,38 @@ export const TaxesPage = () => {
                             */}
                         </div>
                         <div className={styles["amount-inner"]}>
-                          <Text className={styles["currency-income"]}>
-                            {operation.markup.amount > 0
-                              ? getCurrency(
-                                  operation.markup.amount,
-                                  operation.category
-                                )
-                              : getCurrency(
-                                  operation.amount_doc,
-                                  operation.category
-                                )}
-                          </Text>
-                          <Text>
-                            {getSourceText(
-                              operation.source_name,
-                              operation.account_number
-                            )}
-                          </Text>
+                          <div
+                            className={cn(styles["amount-part"], {
+                              [styles["amount-part-hovered"]]:
+                                hoveredIndex === operation.id,
+                            })}
+                          >
+                            <Text className={styles["currency-income"]}>
+                              {operation.markup.amount > 0
+                                ? getCurrency(
+                                    operation.markup.amount,
+                                    operation.category
+                                  )
+                                : getCurrency(
+                                    operation.amount_doc,
+                                    operation.category
+                                  )}
+                            </Text>
+                            <Text>
+                              {getSourceText(
+                                operation.source_name,
+                                operation.account_number
+                              )}
+                            </Text>
+                          </div>
+                          {hoveredIndex === operation.id && (
+                            <Button
+                              className={styles["delete-icon"]}
+                              onClick={() => setIsDeleteModalOpen(true)}
+                            >
+                              <DeleteOutlined />
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -526,7 +692,7 @@ export const TaxesPage = () => {
       </Content>
       <Sider
         className={styles["right-sider-wrapper"]}
-        width={320}
+        width={340}
         breakpoint="lg"
         collapsedWidth="0"
       >
@@ -534,52 +700,98 @@ export const TaxesPage = () => {
         <Title level={3}>{CONTENT.HEADING_DATA_SOURCES}</Title>
         <div className={styles["sider-buttons"]}>
           <Button className={styles["default-button"]}>
+            <PlusOutlined
+              className={styles["plus-icon"]}
+              style={{ marginInlineStart: "4px" }}
+            />
             {CONTENT.BUTTON_SIDER_ADD_TEXT}
           </Button>
-          <Button className={styles["default-button"]}>
-            {CONTENT.BUTTON_SIDER_EDIT_TEXT}
-          </Button>
         </div>
-        <Title level={4}>{CONTENT.HEADING_BANKS}</Title>
+        <Title level={4}>{CONTENT.HEADING_HAND_SOURCERS}</Title>
         <List
-          dataSource={data_banks}
+          dataSource={sourcesHandSider}
           renderItem={(item) => (
             <List.Item
               className={styles["list-item-right"]}
               style={{ borderBlockEnd: "none" }}
             >
-              <Text>{item}</Text>
-              <Text>{CONTENT.DEFAULT_DATE}</Text>
+              <div className={styles["source-name"]}>
+                {item.state === "in_progress" ? (
+                  <InProgressIcon />
+                ) : item.state === "failed" ? (
+                  <FailedIcon />
+                ) : item.state === "completed" &&
+                  item.is_integrated === false ? (
+                  <CompletedHandIcon />
+                ) : item.state === "completed" &&
+                  item.is_integrated === true ? (
+                  <CompletedAutoIcon />
+                ) : null}
+                <Text className={styles["source-text-left"]}>{item.name} </Text>
+                <Text className={styles["source-text-right"]}>
+                  {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                </Text>
+              </div>
+
+              {item.state === "completed" && !item.disable_date ? (
+                <Text>
+                  {item.last_info && convertReverseFormat(item.last_info)}
+                </Text>
+              ) : item.state === "completed" && item.disable_date ? (
+                <Text>{convertReverseFormat(item.disable_date)}</Text>
+              ) : item.state === "failed" ? (
+                <Link>{"Повторить"}</Link>
+              ) : item.state === "in_progress" && item.link ? (
+                <Link>{"Подключить"}</Link>
+              ) : null}
             </List.Item>
           )}
         />
-        <Title level={4}>{CONTENT.HEADING_CASHIERS}</Title>
+        <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
         <List
-          dataSource={data_cashiers}
+          dataSource={sourcesAutoSider}
           renderItem={(item) => (
             <List.Item
               className={styles["list-item-right"]}
               style={{ borderBlockEnd: "none" }}
             >
-              <Text>{item}</Text>
-              <Text>{CONTENT.DEFAULT_DATE}</Text>
-            </List.Item>
-          )}
-        />
-        <Title level={4}>{CONTENT.HEADING_MARKETPLACES}</Title>
-        <List
-          dataSource={data_marketplaces}
-          renderItem={(item) => (
-            <List.Item
-              className={styles["list-item-right"]}
-              style={{ borderBlockEnd: "none" }}
-            >
-              <Text>{item}</Text>
-              <Text>{CONTENT.DEFAULT_DATE_STRING}</Text>
+              <div className={styles["source-name"]}>
+                {item.state === "in_progress" ? (
+                  <InProgressIcon />
+                ) : item.state === "failed" ? (
+                  <FailedIcon />
+                ) : item.state === "completed" &&
+                  item.is_integrated === false ? (
+                  <CompletedHandIcon />
+                ) : item.state === "completed" &&
+                  item.is_integrated === true ? (
+                  <CompletedAutoIcon />
+                ) : null}
+                <Text className={styles["source-text-left"]}>{item.name} </Text>
+                <Text className={styles["source-text-right"]}>
+                  {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                </Text>
+              </div>
+              {item.state === "completed" && !item.disable_date ? (
+                <Text>
+                  {item.last_info && convertReverseFormat(item.last_info)}
+                </Text>
+              ) : item.state === "completed" && item.disable_date ? (
+                <Text>{convertReverseFormat(item.disable_date)}</Text>
+              ) : item.state === "failed" ? (
+                <Link>{"Повторить"}</Link>
+              ) : item.state === "in_progress" && item.link ? (
+                <Link>{"Подключить"}</Link>
+              ) : null}
             </List.Item>
           )}
         />
       </Sider>
+      <DeleteOperationModal
+        isOpen={deleteModalOpen}
+        setOpen={setIsDeleteModalOpen}
+        id={hoveredIndex}
+      />
     </>
   )
 }

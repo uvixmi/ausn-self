@@ -15,7 +15,12 @@ import cn from "classnames"
 import { useEffect, useState } from "react"
 import { PaymentModal } from "./payment-modal"
 import { useDispatch } from "react-redux"
-import { SourcesInfo, TaskResponse, api } from "../../../api/myApi"
+import {
+  ReportFormat,
+  SourcesInfo,
+  TaskResponse,
+  api,
+} from "../../../api/myApi"
 import { AppDispatch } from "../../main-page/store"
 import Cookies from "js-cookie"
 import { useLocation } from "react-router-dom"
@@ -140,11 +145,58 @@ export const ActionsPage = () => {
     }
   }
 
-  const downloadXmlReport = async () => {
-    errorDownload()
+  const downloadXmlReport = async (report_code: string) => {
+    try {
+      const response =
+        await api.reports.getReportByIdReportsReportIdReportFormatGet(
+          report_code,
+          ReportFormat.Xml,
+          { headers }
+        )
+
+      const text = await response.text()
+
+      const downloadLink = document.createElement("a")
+      downloadLink.href = window.URL.createObjectURL(
+        new Blob([text], {
+          type: "text/plain",
+        })
+      )
+      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    } catch (error) {
+      console.error("Error during API call:", error)
+      errorDownload()
+    }
   }
 
-  const downloadPdfReport = async () => {
+  const downloadPdfReport = async (report_code: string) => {
+    try {
+      const response =
+        await api.reports.getReportByIdReportsReportIdReportFormatGet(
+          report_code,
+          ReportFormat.Pdf,
+          { headers }
+        )
+
+      const text = await response.text()
+
+      const downloadLink = document.createElement("a")
+      downloadLink.href = window.URL.createObjectURL(
+        new Blob([text], {
+          type: "text/plain",
+        })
+      )
+      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+    } catch (error) {
+      console.error("Error during API call:", error)
+      errorDownload()
+    }
     errorDownload()
   }
 
@@ -325,14 +377,20 @@ export const ActionsPage = () => {
                           <div className={styles["row-item-buttons"]}>
                             <Button
                               className={styles["download-button"]}
-                              onClick={downloadXmlReport}
+                              onClick={() =>
+                                item.report_code &&
+                                downloadXmlReport(item.report_code)
+                              }
                             >
                               <Text>{".xml"}</Text>
                               <DownloadOutlined />
                             </Button>
                             <Button
                               className={styles["download-button"]}
-                              onClick={downloadPdfReport}
+                              onClick={() =>
+                                item.report_code &&
+                                downloadPdfReport(item.report_code)
+                              }
                             >
                               <Text>{".pdf"}</Text>
                               <DownloadOutlined />

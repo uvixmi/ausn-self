@@ -50,8 +50,6 @@ export const EnsPaymentModal = ({
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
-  const [account, setAccount] = useState("")
-
   const clear = () => {
     setReason("")
     setAmount(0)
@@ -84,14 +82,31 @@ export const EnsPaymentModal = ({
     })
   }
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+  const optionsAddSources = [
+    { label: <Button>{"Добавить счет"}</Button>, value: null },
+  ]
   const options =
-    sources?.accounts &&
-    sources?.accounts.map((item) => {
-      return {
-        label: item.bank_name + " ***" + item.account_number.slice(-4),
-        value: item.account_number,
-      }
-    })
+    sources?.sources &&
+    sources.sources
+      .filter(
+        (item) =>
+          item.id &&
+          item.type === "account" &&
+          item.state === "completed" &&
+          item.name !== "Ручной ввод"
+      )
+      .map((item) => {
+        return {
+          label: item.name + " *" + item.sub_name?.slice(-4),
+          value: item.id,
+        }
+      })
+
+  const defaultAccount =
+    (sources?.sources && sources.sources?.find((item) => item.is_main)?.id) ||
+    ""
+
+  const [account, setAccount] = useState<string>(defaultAccount)
 
   useEffect(() => {
     if (token && isOpen) {
@@ -263,13 +278,18 @@ export const EnsPaymentModal = ({
                   >
                     {CONTENT.TEXT_ACCOUNT_NUMBER}
                   </Text>
-                  <Select
-                    style={{ borderRadius: 0 }}
-                    options={options}
-                    className={"modal-select"}
-                    placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
-                    onChange={(value) => setAccount(value)}
-                  />
+                  {options?.length && options?.length > 0 ? (
+                    <Select
+                      style={{ borderRadius: 0 }}
+                      options={options}
+                      defaultValue={defaultAccount}
+                      className={"modal-select"}
+                      placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
+                      onChange={(value) => setAccount(value)}
+                    />
+                  ) : (
+                    <Button>{"Добавить счет"}</Button>
+                  )}
                 </div>
               </div>
               <div className={styles["inputs-row"]}>
