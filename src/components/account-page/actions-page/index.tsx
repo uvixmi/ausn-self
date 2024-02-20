@@ -178,6 +178,7 @@ export const ActionsPage = () => {
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
+      successDownload()
     } catch (error) {
       console.error("Error during API call:", error)
       errorDownload()
@@ -201,11 +202,11 @@ export const ActionsPage = () => {
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
+      successDownload()
     } catch (error) {
       console.error("Error during API call:", error)
       errorDownload()
     }
-    errorDownload()
   }
 
   const handleSentReport = async (
