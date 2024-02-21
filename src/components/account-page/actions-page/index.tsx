@@ -585,7 +585,7 @@ export const ActionsPage = () => {
                     <Button
                       className={styles["delete-banner"]}
                       style={{ border: "none", boxShadow: "none" }}
-                      onClick={() => deleteBanner("dsdds")}
+                      onClick={() => deleteBanner(item.id)}
                     >
                       <CloseOutlined />
                     </Button>
