@@ -36,8 +36,22 @@ export const PaymentModal = ({
 
   const { payments } = useSelector((state: RootState) => state.payments)
 
+  const [amountInputs, setAmountInputs] = useState([{ amount: "" }])
+
   const handleAmount = (amount: string, index: number) => {
-    dispatch(setAmount({ amount, index }))
+    const reg = /^-?\d+(\.\d{0,2})?$/
+
+    if (reg.test(amount) || amount === "-") {
+      setAmountInputs((prevAmountInputs) => {
+        const updatedAmountInputs = [...prevAmountInputs]
+        updatedAmountInputs[index] = { amount }
+        return updatedAmountInputs
+      })
+      if (amount[amount.length - 1] !== ".")
+        dispatch(setAmount({ amount: amount, index }))
+
+      if (amount === "") dispatch(setAmount({ amount: "", index }))
+    }
   }
 
   const handleDate = (date: string, index: number) => {
@@ -145,6 +159,9 @@ export const PaymentModal = ({
                       className={styles["delete-payment"]}
                       onClick={() => {
                         deletePay(index)
+                        setAmountInputs((prevAmountInputs) =>
+                          prevAmountInputs.filter((_, i) => i !== index)
+                        )
                       }}
                     >
                       <CloseOutlined />
@@ -163,7 +180,7 @@ export const PaymentModal = ({
                     </Text>
                     <Input
                       style={{ borderRadius: 0 }}
-                      value={item.amount}
+                      value={amountInputs[index].amount}
                       onChange={(event) =>
                         handleAmount(event.target.value, index)
                       }
@@ -234,7 +251,10 @@ export const PaymentModal = ({
             ))}
             <Button
               className={styles["add-payment-inner"]}
-              onClick={() => dispatch(addPayment())}
+              onClick={() => {
+                dispatch(addPayment())
+                setAmountInputs([...amountInputs, { amount: "" }])
+              }}
             >
               {CONTENT.BUTTON_ADD_PAYMENT}
               <PlusOutlined
