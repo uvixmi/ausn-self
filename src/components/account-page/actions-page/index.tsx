@@ -557,7 +557,9 @@ export const ActionsPage = () => {
                 </div>
               ))}
           </div>
-          {tasks?.tasks.length == 0 && <AllDoneBlock type="report" />}
+          {(tasks?.tasks.length == 0 || !tasks) && (
+            <AllDoneBlock type="report" />
+          )}
         </Content>
         <Sider
           className={styles["right-sider-wrapper"]}
