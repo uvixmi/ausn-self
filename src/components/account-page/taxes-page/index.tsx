@@ -54,6 +54,7 @@ import {
 } from "../actions-page/payment-modal/utils"
 import { DeleteOperationModal } from "./delete-modal"
 import { NonTaxesImage } from "./images/non-operations"
+import { PencilIcon } from "./type-operation/icons/pencil"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -737,6 +738,10 @@ export const TaxesPage = () => {
                               }
                             />
                             */}
+                            {(operation.markup_mode_code === 2 ||
+                              operation.markup_mode_code === 3) && (
+                              <PencilIcon />
+                            )}
                           </div>
                           <div className={styles["amount-inner"]}>
                             <div
