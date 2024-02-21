@@ -256,6 +256,7 @@ export const TaxesPage = () => {
       request_id: v4(),
     })
     setSelectedSources(selectedSources)
+    setIsFetching(true)
     if (selectedSources.length === 0) setEndOfPage(false)
   }
 
@@ -283,6 +284,7 @@ export const TaxesPage = () => {
       request_id: v4(),
     })
     setSelectedOperationTypes(selectedOperationTypes)
+    setIsFetching(true)
     if (selectedOperationTypes.length === 0) setEndOfPage(false)
   }
 
@@ -296,15 +298,17 @@ export const TaxesPage = () => {
 
       setSelectedStartDate(convertDateFormat(dateStrings[0]))
       setSelectedEndDate(convertDateFormat(dateStrings[1]))
+      setIsFetching(true)
     } else {
       setEndOfPage(false)
       setSelectedStartDate("")
       setSelectedEndDate("")
+      setIsFetching(true)
     }
   }
-  const [isFetching, setIsFetching] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
   const [endOfPage, setEndOfPage] = useState(false)
-  const handleScroll = () => {
+  /*const handleScroll = () => {
     if (bottomBlockRef.current && !endOfPage) {
       const isBottom =
         window.innerHeight + window.scrollY >=
@@ -314,6 +318,7 @@ export const TaxesPage = () => {
         setIsFetching(true)
 
         if (!endOfPage) {
+          debugger
           setPagination((prevPagination) => ({
             ...prevPagination,
             page_number: prevPagination.page_number + 1,
@@ -322,6 +327,75 @@ export const TaxesPage = () => {
       }
     }
   }
+*/
+  const handleUpdateScroll = (e: Event) => {
+    if (
+      e instanceof Event &&
+      e.target instanceof Document &&
+      e.target.documentElement.scrollHeight -
+        (e.target.documentElement.scrollTop + window.innerHeight) <
+        100 &&
+      operationsData?.pages_count !== 0
+    ) {
+      setIsFetching(true)
+    }
+  }
+  useEffect(() => {
+    const fetchOperations = async () => {
+      if (isFetching) {
+        const filters: GetOperationsRequest = {
+          start_date: selectedStartDate || undefined,
+          end_date: selectedEndDate || undefined,
+          operations_types:
+            selectedOperationTypes.length > 0
+              ? selectedOperationTypes
+              : undefined,
+          sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
+          pagination: { ...pagination },
+        }
+        const operations = await api.operations.getOperationsOperationsPost(
+          filters,
+          { headers }
+        )
+
+        if (pagination.page_number === 1) {
+          setOperationsData((prevData) => ({
+            operations: [...operations.data.operations],
+            pages_count: operations.data.pages_count,
+          }))
+        } else {
+          setOperationsData((prevData) => ({
+            ...prevData,
+            operations: [
+              ...(prevData?.operations || []),
+              ...operations.data.operations,
+            ],
+            pages_count: operations.data.pages_count,
+          }))
+        }
+        setPagination((prevPagination) => ({
+          ...prevPagination,
+          page_number: prevPagination.page_number + 1,
+        }))
+        setIsFetching(false)
+      }
+    }
+    fetchOperations()
+  }, [
+    isFetching,
+    selectedEndDate,
+    selectedOperationTypes,
+    selectedSources,
+    selectedStartDate,
+  ])
+
+  useEffect(() => {
+    document.addEventListener("scroll", handleUpdateScroll)
+
+    return () => {
+      document.removeEventListener("scroll", handleUpdateScroll)
+    }
+  }, [])
 
   const [messageApi, contextHolder] = message.useMessage()
   const successMarkup = () => {
@@ -344,7 +418,7 @@ export const TaxesPage = () => {
     Record<string, Operation[]>
   >({})
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchOperations = async () => {
       try {
         if (endOfPage) {
@@ -410,7 +484,7 @@ export const TaxesPage = () => {
     selectedStartDate,
     selectedEndDate,
   ])
-
+*/
   useEffect(() => {
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
@@ -427,7 +501,7 @@ export const TaxesPage = () => {
     setGroupedOperations(updatedGroupedOperations)
   }, [operationsData])
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!isFetching) {
       const updateScroll = () => {
         handleScroll()
@@ -439,7 +513,7 @@ export const TaxesPage = () => {
         window.removeEventListener("scroll", updateScroll)
       }
     }
-  }, [isFetching])
+  }, [isFetching])*/
 
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
   const [hoveredAmount, setHoveredAmount] = useState<number | null>(null)
