@@ -36,7 +36,7 @@ export const PaymentModal = ({
 
   const { payments } = useSelector((state: RootState) => state.payments)
 
-  const [amountInputs, setAmountInputs] = useState([{ amount: "" }])
+  const [amountInputs, setAmountInputs] = useState([{ amountrrr: "" }])
 
   const handleAmount = (amount: string, index: number) => {
     const reg = /^-?\d+(\.\d{0,2})?$/
@@ -44,11 +44,14 @@ export const PaymentModal = ({
     if (reg.test(amount) || amount === "-") {
       setAmountInputs((prevAmountInputs) => {
         const updatedAmountInputs = [...prevAmountInputs]
-        updatedAmountInputs[index] = { amount }
+        updatedAmountInputs[index] = { amountrrr: amount }
+        console.log(updatedAmountInputs)
         return updatedAmountInputs
       })
-      if (amount[amount.length - 1] !== ".")
+
+      if (amount[amount.length - 1] !== ".") {
         dispatch(setAmount({ amount: amount, index }))
+      }
 
       if (amount === "") dispatch(setAmount({ amount: "", index }))
     }
@@ -109,8 +112,12 @@ export const PaymentModal = ({
     },
   ]
   const dateFormat = "DD.MM.YYYY"
+
   useEffect(() => {
-    setAmountInputs([{ amount: payAmount?.toString() || "" }])
+    setAmountInputs([{ amountrrr: payAmount?.toString() || "" }])
+  }, [isOpen])
+
+  useEffect(() => {
     const amountsPayments = payments.every((item) => item.amount !== 0)
     const datesPayments = payments.every((item) => item.date !== "")
     const yearsPayments = payments.every((item) => item.tax_period !== 0)
@@ -181,7 +188,7 @@ export const PaymentModal = ({
                     </Text>
                     <Input
                       style={{ borderRadius: 0 }}
-                      value={amountInputs[index].amount}
+                      value={amountInputs[index].amountrrr}
                       onChange={(event) =>
                         handleAmount(event.target.value, index)
                       }
@@ -253,8 +260,9 @@ export const PaymentModal = ({
             <Button
               className={styles["add-payment-inner"]}
               onClick={() => {
+                setAmountInputs([...amountInputs, { amountrrr: "" }])
+                console.log([...amountInputs, { amountrrr: "" }])
                 dispatch(addPayment())
-                setAmountInputs([...amountInputs, { amount: "" }])
               }}
             >
               {CONTENT.BUTTON_ADD_PAYMENT}

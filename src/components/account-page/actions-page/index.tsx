@@ -135,6 +135,7 @@ export const ActionsPage = () => {
       try {
         const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
         setTasks(tasksResponse.data)
+        setIsTasksLoaded(true)
       } catch (error) {
         errorTasks()
       }
@@ -144,7 +145,7 @@ export const ActionsPage = () => {
       setSources(sourcesResponse.data)
       const bannersResponse = await api.banners.getUserBannersBannersGet(
         {
-          current_date: convertDateFormat(new Date().toLocaleDateString()),
+          current_date: convertDateFormat(new Date().toLocaleDateString("ru")),
         },
         {
           headers,
@@ -243,6 +244,8 @@ export const ActionsPage = () => {
       errorDownload()
     }
   }
+
+  const [isTasksLoaded, setIsTasksLoaded] = useState(false)
 
   const handleSentReport = async (
     task_code: string,
@@ -450,14 +453,16 @@ export const ActionsPage = () => {
                             <Text className={styles["amount-heading"]}>
                               {taxesQuarterHeading(item.task_code)}
                             </Text>
-                            <Text className={styles["amount-to-pay-text"]}>
-                              {item.accrued_amount &&
-                                !item.report_code &&
-                                new Intl.NumberFormat("ru", {
-                                  style: "currency",
-                                  currency: "RUB",
-                                }).format(item.accrued_amount)}
-                            </Text>
+                            {!item.report_code && (
+                              <Text className={styles["amount-to-pay-text"]}>
+                                {(item.accrued_amount ||
+                                  item.accrued_amount === 0.0) &&
+                                  new Intl.NumberFormat("ru", {
+                                    style: "currency",
+                                    currency: "RUB",
+                                  }).format(item.accrued_amount)}
+                              </Text>
+                            )}
                           </div>
                         )}
                       </div>
@@ -561,7 +566,7 @@ export const ActionsPage = () => {
                 </div>
               ))}
           </div>
-          {(tasks?.tasks.length == 0 || !tasks) && (
+          {(tasks?.tasks.length == 0 || !tasks) && isTasksLoaded && (
             <AllDoneBlock type="report" />
           )}
         </Content>
