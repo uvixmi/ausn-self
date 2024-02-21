@@ -448,6 +448,7 @@ export const ActionsPage = () => {
                             </Text>
                             <Text className={styles["amount-to-pay-text"]}>
                               {item.accrued_amount &&
+                                !item.report_code &&
                                 new Intl.NumberFormat("ru", {
                                   style: "currency",
                                   currency: "RUB",

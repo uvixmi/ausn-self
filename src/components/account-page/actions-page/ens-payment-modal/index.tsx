@@ -136,7 +136,7 @@ export const EnsPaymentModal = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
     const reg = /^-?\d+(\.\d{0,2})?$/
-    console.log(reg.test(inputValue))
+
     if (reg.test(inputValue) || inputValue === "-") {
       setAmountInput(inputValue)
       if (inputValue[inputValue.length - 1] !== ".")
