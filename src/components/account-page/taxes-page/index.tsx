@@ -335,7 +335,7 @@ export const TaxesPage = () => {
       e.target.documentElement.scrollHeight -
         (e.target.documentElement.scrollTop + window.innerHeight) <
         100 &&
-      operationsData?.pages_count !== 0
+      operationsData?.pages_count !== pagination.page_number
     ) {
       setIsFetching(true)
     }
