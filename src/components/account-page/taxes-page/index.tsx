@@ -5,6 +5,7 @@ import {
   List,
   Select,
   Table,
+  Tooltip,
   Typography,
   message,
 } from "antd"
@@ -875,7 +876,9 @@ export const TaxesPage = () => {
                 {item.state === "in_progress" ? (
                   <InProgressIcon />
                 ) : item.state === "failed" ? (
-                  <FailedIcon />
+                  <Tooltip title={item.reason}>
+                    <FailedIcon />
+                  </Tooltip>
                 ) : item.state === "completed" &&
                   item.is_integrated === false ? (
                   <CompletedHandIcon />
@@ -897,7 +900,7 @@ export const TaxesPage = () => {
               ) : item.state === "failed" ? (
                 <Link>{"Повторить"}</Link>
               ) : item.state === "in_progress" && item.link ? (
-                <Link>{"Подключить"}</Link>
+                <Link href={item.link}>{"Подключить"}</Link>
               ) : null}
             </List.Item>
           )}
