@@ -284,7 +284,7 @@ export const EnsPaymentModal = ({
                       options={options}
                       defaultValue={defaultAccount}
                       className={"modal-select"}
-                      placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
+                      placeholder={CONTENT.ACCOUNT}
                       onChange={(value) => setAccount(value)}
                     />
                   ) : (

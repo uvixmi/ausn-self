@@ -62,7 +62,6 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       style={{
         borderRadius: "0",
       }}
-      centered
       onOk={closeModal}
       onCancel={closeModal}
       footer={null}

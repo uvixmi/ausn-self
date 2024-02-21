@@ -18,6 +18,7 @@ export const CONTENT = {
   MARKETPLACE_WILDBERRIES: "Wildberries",
   MARKETPLACE_OZON: "Озон",
   BUTTON_ADD_PAYMENT_TEXT: "Добавить уплату",
+  BUTTON_ADD_OPERATION: "Добавить операцию",
   BUTTON_ENS_TEXT: "Пополнить ЕНС",
   BUTTON_SIDER_ADD_TEXT: "Добавить",
   BUTTON_SIDER_EDIT_TEXT: "Редактировать",

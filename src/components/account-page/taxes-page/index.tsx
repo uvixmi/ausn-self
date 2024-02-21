@@ -523,9 +523,20 @@ export const TaxesPage = () => {
     <>
       {contextHolder}
       <Content className={styles["content-wrapper"]}>
-        <Title level={2} className={styles["heading-text"]}>
-          {CONTENT.HEADING_INCOME}
-        </Title>
+        <div className={styles["title-button-header"]}>
+          <Title level={2} className={styles["heading-text"]}>
+            {CONTENT.HEADING_INCOME}
+          </Title>
+          <Button
+            className={cn(styles["buttons-row-item"], styles["button-make"])}
+          >
+            <PlusOutlined
+              className={styles["plus-icon"]}
+              style={{ marginInlineStart: "4px" }}
+            />
+            {CONTENT.BUTTON_ADD_OPERATION}
+          </Button>
+        </div>
         {/* <div className={styles["cards-wrapper"]}>
           <div className={styles["card-item"]}>
             <div className={styles["card-inner"]}>

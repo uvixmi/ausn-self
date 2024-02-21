@@ -474,3 +474,17 @@ $xxl: 2560px;
 .type-select-inner {
   width: 100%;
 }
+
+.title-button-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-make {
+  border: 1px solid #9984ff;
+  color: #9984ff;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+}

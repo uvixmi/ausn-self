@@ -4,6 +4,7 @@ import {
   Layout,
   Progress,
   Spin,
+  Tooltip,
   Typography,
   message,
 } from "antd"
@@ -34,10 +35,15 @@ import {
   DownloadOutlined,
   LoadingOutlined,
   CloseOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons"
 import { formatToPayDate } from "../../main-page/utils"
 import { setAmount } from "./payment-modal/slice"
-import { convertDateFormat, convertReverseFormat } from "./payment-modal/utils"
+import {
+  convertDateFormat,
+  convertReverseFormat,
+  getCurrentDate,
+} from "./payment-modal/utils"
 
 export interface InfoBannerLinked {
   id: string
@@ -149,7 +155,7 @@ export const ActionsPage = () => {
         const parts = item.description.split(regex)
         return { ...item, description: parts }
       })
-      console.log(linkedBanners)
+
       setBanners(linkedBanners)
     }
     fetchSources()
@@ -289,7 +295,7 @@ export const ActionsPage = () => {
       const parts = item.description.split(regex)
       return { ...item, description: parts }
     })
-    console.log(linkedBanners)
+
     setBanners(linkedBanners)
   }
 
@@ -301,6 +307,9 @@ export const ActionsPage = () => {
             Message: {
               contentBg: "#000000",
               colorText: "#fff",
+            },
+            Progress: {
+              defaultColor: "#6159ff",
             },
           },
         }}
@@ -399,7 +408,11 @@ export const ActionsPage = () => {
                                     : 3
                                 }
                                 showInfo={false}
-                                status={item.due_date ? "exception" : undefined}
+                                status={
+                                  item.due_date <= getCurrentDate()
+                                    ? "exception"
+                                    : undefined
+                                }
                               />
                             )}
                             <div className={styles["amount-pay"]}>
@@ -421,6 +434,12 @@ export const ActionsPage = () => {
                             <Text className={styles["declaration-text"]}>
                               {CONTENT.TEXT_DECLARATION}
                             </Text>
+                            <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
+                              <InfoCircleOutlined
+                                className={styles["sider-icon"]}
+                                size={24}
+                              />
+                            </Tooltip>
                           </div>
                         ) : (
                           <div className={styles["amount-pay"]}>
