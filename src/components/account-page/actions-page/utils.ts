@@ -32,11 +32,13 @@ export const taxesQuarterHeading = (quarter: string) => {
       ? "II"
       : quarterText === "3"
       ? "III"
-      : "IV"
+      : ""
 
   const yearText =
     CONTENT.TAXES_QUARTER_END + new Date().getFullYear().toString()
-  return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${yearText}`
+  if (quarterText === "1" || quarterText === "2" || quarterText === "3")
+    return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${yearText}`
+  else return ""
 }
 
 export const getCurrency = (value: number, category?: string) => {
