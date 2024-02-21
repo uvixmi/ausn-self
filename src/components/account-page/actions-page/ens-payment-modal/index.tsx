@@ -25,6 +25,7 @@ export const EnsPaymentModal = ({
   setOpen,
   setDueAmount,
   payAmount,
+  defaultAccount,
 }: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
   const dispatch = useDispatch()
@@ -102,11 +103,7 @@ export const EnsPaymentModal = ({
         }
       })
 
-  const defaultAccount =
-    (sources?.sources && sources.sources?.find((item) => item.is_main)?.id) ||
-    ""
-
-  const [account, setAccount] = useState<string>(defaultAccount)
+  const [account, setAccount] = useState(defaultAccount)
 
   useEffect(() => {
     if (token && isOpen) {
@@ -136,7 +133,7 @@ export const EnsPaymentModal = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
     const reg = /^-?\d+(\.\d{0,2})?$/
-
+    console.log(reg.test(inputValue))
     if (reg.test(inputValue) || inputValue === "-") {
       setAmountInput(inputValue)
       if (inputValue[inputValue.length - 1] !== ".")
@@ -204,40 +201,42 @@ export const EnsPaymentModal = ({
     },
   ]
   const handlePayment = async () => {
-    const data = {
-      account_number: account,
-      purpose: reason,
-      amount: amount,
-    }
+    if (account) {
+      const data = {
+        account_number: account,
+        purpose: reason,
+        amount: amount,
+      }
 
-    try {
-      loadingProcess()
-      const response = await api.taxes.generateEnsOrderTxtTaxesEnsOrderTxtPost(
-        data,
-        { headers }
-      )
+      try {
+        loadingProcess()
+        const response =
+          await api.taxes.generateEnsOrderTxtTaxesEnsOrderTxtPost(data, {
+            headers,
+          })
 
-      successProcess()
-      const text = await response.text()
+        successProcess()
+        const text = await response.text()
 
-      const downloadLink = document.createElement("a")
-      downloadLink.href = window.URL.createObjectURL(
-        new Blob([text], {
-          type: "text/plain",
-        })
-      )
-      downloadLink.setAttribute("download", "Новое платежное поручение.txt")
-      document.body.appendChild(downloadLink)
-      downloadLink.click()
-      document.body.removeChild(downloadLink)
+        const downloadLink = document.createElement("a")
+        downloadLink.href = window.URL.createObjectURL(
+          new Blob([text], {
+            type: "text/plain",
+          })
+        )
+        downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
 
-      setOpen(false)
-      clear()
-    } catch (error) {
-      console.error("Error during API call:", error)
-      errorProcess()
-      setOpen(false)
-      clear()
+        setOpen(false)
+        clear()
+      } catch (error) {
+        console.error("Error during API call:", error)
+        errorProcess()
+        setOpen(false)
+        clear()
+      }
     }
   }
 
@@ -284,7 +283,7 @@ export const EnsPaymentModal = ({
                       options={options}
                       defaultValue={defaultAccount}
                       className={"modal-select"}
-                      placeholder={CONTENT.ACCOUNT}
+                      placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
                       onChange={(value) => setAccount(value)}
                     />
                   ) : (

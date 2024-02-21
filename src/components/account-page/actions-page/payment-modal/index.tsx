@@ -110,6 +110,7 @@ export const PaymentModal = ({
   ]
   const dateFormat = "DD.MM.YYYY"
   useEffect(() => {
+    setAmountInputs([{ amount: payAmount?.toString() || "" }])
     const amountsPayments = payments.every((item) => item.amount !== 0)
     const datesPayments = payments.every((item) => item.date !== "")
     const yearsPayments = payments.every((item) => item.tax_period !== 0)

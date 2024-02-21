@@ -274,6 +274,7 @@ export const ActionsPage = () => {
 
   const handleSentPayment = (amount: string) => {
     dispatch(setAmount({ amount, index: 0 }))
+    setDueAmount(parseFloat(amount))
     setPaymentOpen(true)
   }
 
@@ -298,6 +299,9 @@ export const ActionsPage = () => {
 
     setBanners(linkedBanners)
   }
+
+  const defaultAccount =
+    sources?.sources && sources.sources?.find((item) => item.is_main)?.id
 
   return (
     <>
@@ -656,6 +660,7 @@ export const ActionsPage = () => {
           setOpen={setEnsOpen}
           payAmount={dueAmount}
           setDueAmount={setDueAmount}
+          defaultAccount={defaultAccount}
         />
         <AnalysisEnsModal isOpen={isAnalysisOpen} setOpen={setAnalysisOpen} />
       </ConfigProvider>
