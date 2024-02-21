@@ -99,11 +99,11 @@ export const EnsPaymentModal = ({
       .map((item) => {
         return {
           label: item.name + " *" + item.sub_name?.slice(-4),
-          value: item.id,
+          value: item.sub_name,
         }
       })
 
-  const [account, setAccount] = useState(defaultAccount)
+  const [account, setAccount] = useState("")
 
   useEffect(() => {
     if (token && isOpen) {
@@ -119,6 +119,7 @@ export const EnsPaymentModal = ({
           headers,
         })
         setSources(sourcesResponse.data)
+        setAccount(defaultAccount || "")
       }
       fetchSources()
     }
@@ -133,7 +134,7 @@ export const EnsPaymentModal = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
     const reg = /^-?\d+(\.\d{0,2})?$/
-    console.log(reg.test(inputValue))
+
     if (reg.test(inputValue) || inputValue === "-") {
       setAmountInput(inputValue)
       if (inputValue[inputValue.length - 1] !== ".")
@@ -201,6 +202,7 @@ export const EnsPaymentModal = ({
     },
   ]
   const handlePayment = async () => {
+    console.log(account)
     if (account) {
       const data = {
         account_number: account,

@@ -301,7 +301,7 @@ export const ActionsPage = () => {
   }
 
   const defaultAccount =
-    sources?.sources && sources.sources?.find((item) => item.is_main)?.id
+    sources?.sources && sources.sources?.find((item) => item.is_main)?.sub_name
 
   return (
     <>
