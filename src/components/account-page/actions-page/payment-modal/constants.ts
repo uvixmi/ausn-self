@@ -15,4 +15,6 @@ export const CONTENT = {
   BUTTON_PAY_MORE: "Добавить уплату взноса",
   TEXT_REMARK: "* поля, обязательные для заполнения",
   NEXT_PAYMENT: "Дополнительный платеж",
+  NOTIFICATION_PROCESSING_SUCCESS: "Уплата налогов и взносов добавлена",
+  NOTIFCATION_PROCESSING_ERROR: "Ошибка добавления уплаты. Попробуйте еще раз",
 }

@@ -116,7 +116,7 @@ export const EnsPaymentModal = ({
         setEnsRequsites(tasksResponse.data)
         setReason(tasksResponse.data.purpose || "")
         payAmount && setAmount(payAmount)
-        payAmount && setAmountInput(payAmount.toString())
+        payAmount && setAmountInput(numberWithSpaces(payAmount.toString()))
         const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
           headers,
         })
@@ -204,7 +204,6 @@ export const EnsPaymentModal = ({
     },
   ]
   const handlePayment = async () => {
-    console.log(account)
     if (account) {
       const data = {
         account_number: account,

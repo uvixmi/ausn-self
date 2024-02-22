@@ -1,4 +1,12 @@
-import { Button, DatePicker, Input, Modal, Select, Typography } from "antd"
+import {
+  Button,
+  DatePicker,
+  Input,
+  Modal,
+  Select,
+  Typography,
+  message,
+} from "antd"
 import { PlusOutlined, CloseOutlined } from "@ant-design/icons"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
@@ -36,6 +44,22 @@ export const PaymentModal = ({
   const { Title, Text } = Typography
   dayjs.locale("ru")
   const dispatch = useDispatch()
+  const [messageApi, contextHolder] = message.useMessage()
+  const successProcess = () => {
+    messageApi.open({
+      type: "success",
+      content: CONTENT.NOTIFICATION_PROCESSING_SUCCESS,
+      style: { textAlign: "right" },
+    })
+  }
+
+  const errorProcess = () => {
+    messageApi.open({
+      type: "error",
+      content: CONTENT.NOTIFCATION_PROCESSING_ERROR,
+      style: { textAlign: "right" },
+    })
+  }
 
   const { payments } = useSelector((state: RootState) => state.payments)
 
@@ -97,10 +121,12 @@ export const PaymentModal = ({
         { headers }
       )
       setOpen(false)
+      successProcess()
       dispatch(clear())
       fetchTasks()
     } catch (error) {
       setOpen(false)
+      errorProcess()
       dispatch(clear())
     }
   }
@@ -122,7 +148,9 @@ export const PaymentModal = ({
   const dateFormat = "DD.MM.YYYY"
 
   useEffect(() => {
-    setAmountInputs([{ amountrrr: payAmount?.toString() || "" }])
+    setAmountInputs([
+      { amountrrr: numberWithSpaces(payAmount?.toString() || "") },
+    ])
   }, [isOpen])
 
   useEffect(() => {
@@ -138,98 +166,100 @@ export const PaymentModal = ({
   }, [payments])
 
   return (
-    <Modal
-      open={isOpen}
-      style={{
-        top: 0,
-        marginRight: 0,
-        borderRadius: "0",
-      }}
-      onOk={() => {
-        setOpen(false)
-        dispatch(clear())
-      }}
-      mask={false}
-      onCancel={() => {
-        setOpen(false)
-        dispatch(clear())
-      }}
-      footer={null}
-      className={cn(styles["ant-modal"], "modal-payment")}
-    >
-      <div className={styles["modal-style"]}>
-        <div className={styles["modal-inner"]}>
-          <div className={styles["payment-wrapper"]}>
-            <Title level={3}>{CONTENT.HEADING_MODAL}</Title>
-            <Text className={styles["text-description"]}>
-              {CONTENT.DESCRIPTION_MODAL}
-            </Text>
-            {payments.map((item, index) => (
-              <div className={styles["payment-inner"]}>
-                {index != 0 && (
-                  <div className={styles["title-next"]}>
-                    <Title
-                      level={3}
-                      style={{ marginBottom: 0, marginTop: "8px" }}
-                    >
-                      {CONTENT.NEXT_PAYMENT}
-                    </Title>
-                    <Button
-                      className={styles["delete-payment"]}
-                      onClick={() => {
-                        deletePay(index)
-                        setAmountInputs((prevAmountInputs) =>
-                          prevAmountInputs.filter((_, i) => i !== index)
-                        )
-                      }}
-                    >
-                      <CloseOutlined />
-                    </Button>
-                  </div>
-                )}
-                <div className={styles["inputs-row"]}>
-                  <div className={styles["input-item"]}>
-                    <Text
-                      className={cn(
-                        styles["text-description"],
-                        styles["default-text"]
-                      )}
-                    >
-                      {CONTENT.TEXT_AMOUNT}
-                    </Text>
-                    <Input
-                      style={{ borderRadius: 0, height: "32px" }}
-                      value={amountInputs[index].amountrrr}
-                      onChange={(event) =>
-                        handleAmount(event.target.value, index)
-                      }
-                    />
-                  </div>
-                  <div className={styles["input-item"]}>
-                    <Text
-                      className={cn(
-                        styles["text-description"],
-                        styles["default-text"]
-                      )}
-                    >
-                      {CONTENT.TEXT_DATE}
-                    </Text>
+    <>
+      {contextHolder}
+      <Modal
+        open={isOpen}
+        style={{
+          top: 0,
+          marginRight: 0,
+          borderRadius: "0",
+        }}
+        onOk={() => {
+          setOpen(false)
+          dispatch(clear())
+        }}
+        mask={false}
+        onCancel={() => {
+          setOpen(false)
+          dispatch(clear())
+        }}
+        footer={null}
+        className={cn(styles["ant-modal"], "modal-payment")}
+      >
+        <div className={styles["modal-style"]}>
+          <div className={styles["modal-inner"]}>
+            <div className={styles["payment-wrapper"]}>
+              <Title level={3}>{CONTENT.HEADING_MODAL}</Title>
+              <Text className={styles["text-description"]}>
+                {CONTENT.DESCRIPTION_MODAL}
+              </Text>
+              {payments.map((item, index) => (
+                <div className={styles["payment-inner"]}>
+                  {index != 0 && (
+                    <div className={styles["title-next"]}>
+                      <Title
+                        level={3}
+                        style={{ marginBottom: 0, marginTop: "8px" }}
+                      >
+                        {CONTENT.NEXT_PAYMENT}
+                      </Title>
+                      <Button
+                        className={styles["delete-payment"]}
+                        onClick={() => {
+                          deletePay(index)
+                          setAmountInputs((prevAmountInputs) =>
+                            prevAmountInputs.filter((_, i) => i !== index)
+                          )
+                        }}
+                      >
+                        <CloseOutlined />
+                      </Button>
+                    </div>
+                  )}
+                  <div className={styles["inputs-row"]}>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_AMOUNT}
+                      </Text>
+                      <Input
+                        style={{ borderRadius: 0, height: "32px" }}
+                        value={amountInputs[index].amountrrr}
+                        onChange={(event) =>
+                          handleAmount(event.target.value, index)
+                        }
+                      />
+                    </div>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_DATE}
+                      </Text>
 
-                    <DatePicker
-                      style={{ borderRadius: 0, height: "32px" }}
-                      locale={locale}
-                      format={dateFormat}
-                      maxDate={dayjs(formatDateString(), dateFormat)}
-                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                      value={item.date ? dayjs(item.date, dateFormat) : null}
-                      onChange={(value, dateString) =>
-                        typeof dateString === "string" &&
-                        handleDate(dateString, index)
-                      }
-                    />
+                      <DatePicker
+                        style={{ borderRadius: 0, height: "32px" }}
+                        locale={locale}
+                        format={dateFormat}
+                        maxDate={dayjs(formatDateString(), dateFormat)}
+                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                        value={item.date ? dayjs(item.date, dateFormat) : null}
+                        onChange={(value, dateString) =>
+                          typeof dateString === "string" &&
+                          handleDate(dateString, index)
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-                {/*
+                  {/*
                 <div className={styles["select-item"]}>
                   <Text
                     className={cn(
@@ -249,55 +279,58 @@ export const PaymentModal = ({
                     }}
                   />
                 </div>*/}
-                <div className={styles["select-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
-                  >
-                    {CONTENT.TEXT_PAYMENT_NUMBER}
-                  </Text>
-                  <Input
-                    style={{ borderRadius: 0 }}
-                    value={item.doc_number ? item.doc_number : ""}
-                    onChange={(event) =>
-                      handleDocNumber(event.target.value, index)
-                    }
-                  />
-                  <Text className={styles["input-description"]}>
-                    {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
-                  </Text>
+                  <div className={styles["select-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_PAYMENT_NUMBER}
+                    </Text>
+                    <Input
+                      style={{ borderRadius: 0 }}
+                      value={item.doc_number ? item.doc_number : ""}
+                      onChange={(event) =>
+                        handleDocNumber(event.target.value, index)
+                      }
+                    />
+                    <Text className={styles["input-description"]}>
+                      {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            ))}
-            <Button
-              className={styles["add-payment-inner"]}
-              onClick={() => {
-                setAmountInputs([...amountInputs, { amountrrr: "" }])
-                console.log([...amountInputs, { amountrrr: "" }])
-                dispatch(addPayment())
-              }}
-            >
-              {CONTENT.BUTTON_ADD_PAYMENT}
-              <PlusOutlined
-                className={styles["plus-icon"]}
-                style={{ marginInlineStart: "4px" }}
-              />
-            </Button>
-          </div>
-          <div className={styles["footer-button"]}>
-            <Button
-              className={styles["pay-inner"]}
-              onClick={handlePay}
-              disabled={isButtonDisabled}
-            >
-              {CONTENT.BUTTON_PAY}
-            </Button>
-            <Text className={styles["remark-text"]}>{CONTENT.TEXT_REMARK}</Text>
+              ))}
+              <Button
+                className={styles["add-payment-inner"]}
+                onClick={() => {
+                  setAmountInputs([...amountInputs, { amountrrr: "" }])
+
+                  dispatch(addPayment())
+                }}
+              >
+                {CONTENT.BUTTON_ADD_PAYMENT}
+                <PlusOutlined
+                  className={styles["plus-icon"]}
+                  style={{ marginInlineStart: "4px" }}
+                />
+              </Button>
+            </div>
+            <div className={styles["footer-button"]}>
+              <Button
+                className={styles["pay-inner"]}
+                onClick={handlePay}
+                disabled={isButtonDisabled}
+              >
+                {CONTENT.BUTTON_PAY}
+              </Button>
+              <Text className={styles["remark-text"]}>
+                {CONTENT.TEXT_REMARK}
+              </Text>
+            </div>
           </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </>
   )
 }
