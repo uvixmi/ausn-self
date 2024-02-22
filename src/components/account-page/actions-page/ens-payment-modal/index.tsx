@@ -20,6 +20,7 @@ import Cookies from "js-cookie"
 import { ENSInfo, SourcesInfo, api } from "../../../../api/myApi"
 import * as iconv from "iconv-lite"
 import { numberWithSpaces } from "../payment-modal/utils"
+import { formatDateString } from "../utils"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -227,7 +228,10 @@ export const EnsPaymentModal = ({
             type: "text/plain",
           })
         )
-        downloadLink.setAttribute("download", "Новое платежное поручение.txt")
+        downloadLink.setAttribute(
+          "download",
+          `Платежное поручение ЕНС ${formatDateString()}.txt`
+        )
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
