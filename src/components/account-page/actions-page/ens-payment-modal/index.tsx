@@ -19,6 +19,7 @@ import TextArea from "antd/es/input/TextArea"
 import Cookies from "js-cookie"
 import { ENSInfo, SourcesInfo, api } from "../../../../api/myApi"
 import * as iconv from "iconv-lite"
+import { numberWithSpaces } from "../payment-modal/utils"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -134,14 +135,14 @@ export const EnsPaymentModal = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value: inputValue } = e.target
+    const amount = inputValue.replace(/\s/g, "")
     const reg = /^-?\d+(\.\d{0,2})?$/
 
-    if (reg.test(inputValue) || inputValue === "-") {
-      setAmountInput(inputValue)
-      if (inputValue[inputValue.length - 1] !== ".")
-        setAmount(parseFloat(inputValue))
+    if (reg.test(amount) || amount === "-" || amount === "") {
+      setAmountInput(numberWithSpaces(amount))
+      if (amount[amount.length - 1] !== ".") setAmount(parseFloat(amount))
 
-      if (inputValue === "") setAmount(0)
+      if (amount === "") setAmount(0)
     }
   }
   const collapseItems = [
