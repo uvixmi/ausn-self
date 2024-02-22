@@ -22,6 +22,7 @@ import {
   ReportFormat,
   SourcesInfo,
   TaskResponse,
+  TaskType,
   api,
 } from "../../../api/myApi"
 import { AppDispatch } from "../../main-page/store"
@@ -227,7 +228,7 @@ export const ActionsPage = () => {
 
       downloadLink.href = window.URL.createObjectURL(blob)
 
-      downloadLink.download = `${title} от ${report_date}.xml`
+      downloadLink.download = `${title}от ${report_date}.xml`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -255,7 +256,7 @@ export const ActionsPage = () => {
       const downloadLink = document.createElement("a")
 
       downloadLink.href = window.URL.createObjectURL(blob)
-      downloadLink.download = `${title} от ${report_date}.pdf`
+      downloadLink.download = `${title}от ${report_date}.pdf`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -368,237 +369,245 @@ export const ActionsPage = () => {
           </div>
           <div>
             {tasks &&
-              tasks.tasks.map((item, index) => (
-                <div className={styles["row-item"]} key={index}>
-                  <div className={styles["row-inner"]}>
-                    <div className={styles["info-part"]}>
-                      <div className={styles["info-title"]}>
-                        <div className={styles["date-title-overdue"]}>
-                          <Text
-                            className={cn(styles["text-date"], {
-                              [styles["alert-date"]]:
-                                new Date() > new Date(item.due_date),
-                            })}
-                          >
-                            {"до " + formatToPayDate(item.due_date)}
-                          </Text>
-                          {new Date() > new Date(item.due_date) && (
-                            <div className={styles["warning-overdue"]}>
-                              <Text
-                                className={cn(styles["text-date"], [
-                                  styles["alert-date"],
-                                ])}
-                              >
-                                {CONTENT.OVERDUE_WARNING}
-                              </Text>
-                            </div>
-                          )}
-                        </div>
-                        <Title level={4} style={{ margin: 0 }}>
-                          {item.title}
-                        </Title>
-                      </div>
-                      <Text className={styles["text-description"]}>
-                        {item.description}
-                      </Text>
-                    </div>
-                    <div className={styles["amount-part"]}>
-                      <div className={styles["amount-info"]}>
-                        {item.type !== "report" && item.due_amount ? (
-                          <>
-                            <div className={styles["amount-pay"]}>
-                              <Text className={styles["amount-heading"]}>
-                                {CONTENT.TEXT_AMOUNT_ALREADY_PAID}
-                              </Text>
-                              <Text className={styles["amount-paid-text"]}>
-                                {item.paid_amount &&
-                                  new Intl.NumberFormat("ru", {
-                                    style: "currency",
-                                    currency: "RUB",
-                                  }).format(item.paid_amount)}
-                                {" из "}
-                                {item.accrued_amount &&
-                                  new Intl.NumberFormat("ru", {
-                                    style: "currency",
-                                    currency: "RUB",
-                                  }).format(item.accrued_amount)}
-                              </Text>
-                            </div>
-
-                            {item.accrued_amount && (
-                              <Progress
-                                percent={
-                                  item.paid_amount &&
-                                  (item.paid_amount / item.accrued_amount) *
-                                    100 >
-                                    3
-                                    ? (item.paid_amount / item.accrued_amount) *
-                                      100
-                                    : 3
-                                }
-                                showInfo={false}
-                                status={
-                                  item.due_date <= getCurrentDate()
-                                    ? "exception"
-                                    : undefined
-                                }
-                              />
-                            )}
-                            <div className={styles["amount-pay"]}>
-                              <Text className={styles["amount-heading"]}>
-                                {CONTENT.TEXT_AMOUNT_TO_PAY}
-                              </Text>
-                              {item.due_amount && (
-                                <Text className={styles["amount-to-pay-text"]}>
-                                  {new Intl.NumberFormat("ru", {
-                                    style: "currency",
-                                    currency: "RUB",
-                                  }).format(item.due_amount)}
+              tasks.tasks
+                .filter((item) => item.type !== TaskType.Other)
+                .map((item, index) => (
+                  <div className={styles["row-item"]} key={index}>
+                    <div className={styles["row-inner"]}>
+                      <div className={styles["info-part"]}>
+                        <div className={styles["info-title"]}>
+                          <div className={styles["date-title-overdue"]}>
+                            <Text
+                              className={cn(styles["text-date"], {
+                                [styles["alert-date"]]:
+                                  new Date() > new Date(item.due_date),
+                              })}
+                            >
+                              {"до " + formatToPayDate(item.due_date)}
+                            </Text>
+                            {new Date() > new Date(item.due_date) && (
+                              <div className={styles["warning-overdue"]}>
+                                <Text
+                                  className={cn(styles["text-date"], [
+                                    styles["alert-date"],
+                                  ])}
+                                >
+                                  {CONTENT.OVERDUE_WARNING}
                                 </Text>
-                              )}
-                            </div>
-                          </>
-                        ) : item.task_code === "ZDP" && !item.report_code ? (
-                          <div className={styles["declaration-wrapper"]}>
-                            <Text className={styles["declaration-text"]}>
-                              {CONTENT.TEXT_DECLARATION}
-                            </Text>
-                            <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
-                              <InfoCircleOutlined
-                                className={styles["sider-icon"]}
-                                size={24}
-                              />
-                            </Tooltip>
+                              </div>
+                            )}
                           </div>
-                        ) : (
-                          <div className={styles["amount-pay"]}>
-                            <Text className={styles["amount-heading"]}>
-                              {taxesQuarterHeading(item.task_code)}
-                            </Text>
-                            {item.type === "report" &&
-                              item.task_code !== "ZDP" && (
-                                <Text className={styles["amount-to-pay-text"]}>
-                                  {(item.accrued_amount ||
-                                    item.accrued_amount === 0.0) &&
+                          <Title level={4} style={{ margin: 0 }}>
+                            {item.title}
+                          </Title>
+                        </div>
+                        <Text className={styles["text-description"]}>
+                          {item.description}
+                        </Text>
+                      </div>
+                      <div className={styles["amount-part"]}>
+                        <div className={styles["amount-info"]}>
+                          {item.type !== "report" && item.due_amount ? (
+                            <>
+                              <div className={styles["amount-pay"]}>
+                                <Text className={styles["amount-heading"]}>
+                                  {CONTENT.TEXT_AMOUNT_ALREADY_PAID}
+                                </Text>
+                                <Text className={styles["amount-paid-text"]}>
+                                  {item.paid_amount &&
+                                    new Intl.NumberFormat("ru", {
+                                      style: "currency",
+                                      currency: "RUB",
+                                    }).format(item.paid_amount)}
+                                  {" из "}
+                                  {item.accrued_amount &&
                                     new Intl.NumberFormat("ru", {
                                       style: "currency",
                                       currency: "RUB",
                                     }).format(item.accrued_amount)}
                                 </Text>
+                              </div>
+
+                              {item.accrued_amount && (
+                                <Progress
+                                  percent={
+                                    item.paid_amount &&
+                                    (item.paid_amount / item.accrued_amount) *
+                                      100 >
+                                      3
+                                      ? (item.paid_amount /
+                                          item.accrued_amount) *
+                                        100
+                                      : 3
+                                  }
+                                  showInfo={false}
+                                  status={
+                                    item.due_date <= getCurrentDate()
+                                      ? "exception"
+                                      : undefined
+                                  }
+                                />
                               )}
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles["row-item-buttons"]}>
-                        {(item.type === "report" && item.report_code) ||
-                        formedSuccess.includes(item.task_code) ? (
-                          <div className={styles["row-item-buttons"]}>
+                              <div className={styles["amount-pay"]}>
+                                <Text className={styles["amount-heading"]}>
+                                  {CONTENT.TEXT_AMOUNT_TO_PAY}
+                                </Text>
+                                {item.due_amount && (
+                                  <Text
+                                    className={styles["amount-to-pay-text"]}
+                                  >
+                                    {new Intl.NumberFormat("ru", {
+                                      style: "currency",
+                                      currency: "RUB",
+                                    }).format(item.due_amount)}
+                                  </Text>
+                                )}
+                              </div>
+                            </>
+                          ) : item.task_code === "ZDP" && !item.report_code ? (
+                            <div className={styles["declaration-wrapper"]}>
+                              <Text className={styles["declaration-text"]}>
+                                {CONTENT.TEXT_DECLARATION}
+                              </Text>
+                              <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
+                                <InfoCircleOutlined
+                                  className={styles["sider-icon"]}
+                                  size={24}
+                                />
+                              </Tooltip>
+                            </div>
+                          ) : (
+                            <div className={styles["amount-pay"]}>
+                              <Text className={styles["amount-heading"]}>
+                                {taxesQuarterHeading(item.task_code)}
+                              </Text>
+                              {item.type === "report" &&
+                                item.task_code !== "ZDP" && (
+                                  <Text
+                                    className={styles["amount-to-pay-text"]}
+                                  >
+                                    {(item.accrued_amount ||
+                                      item.accrued_amount === 0.0) &&
+                                      new Intl.NumberFormat("ru", {
+                                        style: "currency",
+                                        currency: "RUB",
+                                      }).format(item.accrued_amount)}
+                                  </Text>
+                                )}
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles["row-item-buttons"]}>
+                          {(item.type === "report" && item.report_code) ||
+                          formedSuccess.includes(item.task_code) ? (
+                            <div className={styles["row-item-buttons"]}>
+                              <Button
+                                className={styles["download-button"]}
+                                onClick={() =>
+                                  item.report_code &&
+                                  downloadXmlReport(
+                                    item.report_code,
+                                    item.title,
+                                    formatDateString(item.report_update)
+                                  )
+                                }
+                              >
+                                <Text>{".xml"}</Text>
+                                <DownloadOutlined />
+                              </Button>
+                              <Button
+                                className={styles["download-button"]}
+                                onClick={() =>
+                                  item.report_code &&
+                                  downloadPdfReport(
+                                    item.report_code,
+                                    item.title,
+                                    formatDateString(item.report_update)
+                                  )
+                                }
+                              >
+                                <Text>{".pdf"}</Text>
+                                <DownloadOutlined />
+                              </Button>
+                            </div>
+                          ) : (
                             <Button
-                              className={styles["download-button"]}
+                              className={styles["amount-button"]}
                               onClick={() =>
-                                item.report_code &&
-                                downloadXmlReport(
-                                  item.report_code,
-                                  item.title,
-                                  formatDateString(item.report_update)
-                                )
+                                item.type === "report"
+                                  ? handleFormReport(item.task_code, item.year)
+                                  : openEnsModal(item.due_amount)
                               }
                             >
-                              <Text>{".xml"}</Text>
-                              <DownloadOutlined />
-                            </Button>
-                            <Button
-                              className={styles["download-button"]}
-                              onClick={() =>
-                                item.report_code &&
-                                downloadPdfReport(
-                                  item.report_code,
-                                  item.title,
-                                  formatDateString(item.report_update)
+                              {item.type === "fixed_fees" ||
+                              item.type === "usn" ||
+                              item.type === "income_percentage" ? (
+                                CONTENT.BUTTON_TO_PAY
+                              ) : item.type === "report" ? (
+                                isForming &&
+                                item.task_code === tasCodeForming ? (
+                                  <Spin indicator={antIcon} />
+                                ) : (
+                                  CONTENT.BUTTON_FORM
                                 )
-                              }
-                            >
-                              <Text>{".pdf"}</Text>
-                              <DownloadOutlined />
+                              ) : (
+                                ""
+                              )}
                             </Button>
-                          </div>
-                        ) : (
+                          )}
                           <Button
-                            className={styles["amount-button"]}
+                            className={styles["paid-button"]}
                             onClick={() =>
                               item.type === "report"
-                                ? handleFormReport(item.task_code, item.year)
-                                : openEnsModal(item.due_amount)
+                                ? handleSentReport(
+                                    item.task_code,
+                                    item.year,
+                                    item.report_code
+                                  )
+                                : item.due_amount &&
+                                  handleSentPayment(
+                                    item.due_amount.toString(),
+                                    item.year
+                                  )
                             }
                           >
-                            {item.type === "fixed_fees" ||
-                            item.type === "usn" ||
-                            item.type === "income_percentage" ? (
-                              CONTENT.BUTTON_TO_PAY
-                            ) : item.type === "report" ? (
-                              isForming && item.task_code === tasCodeForming ? (
-                                <Spin indicator={antIcon} />
-                              ) : (
-                                CONTENT.BUTTON_FORM
-                              )
-                            ) : (
-                              ""
-                            )}
+                            {item.type === "report"
+                              ? CONTENT.BUTTON_PASSED
+                              : CONTENT.BUTTON_PAID}
                           </Button>
-                        )}
-                        <Button
-                          className={styles["paid-button"]}
-                          onClick={() =>
-                            item.type === "report"
-                              ? handleSentReport(
-                                  item.task_code,
-                                  item.year,
-                                  item.report_code
-                                )
-                              : item.due_amount &&
-                                handleSentPayment(
-                                  item.due_amount.toString(),
-                                  item.year
-                                )
-                          }
-                        >
-                          {item.type === "report"
-                            ? CONTENT.BUTTON_PASSED
-                            : CONTENT.BUTTON_PAID}
-                        </Button>
-                      </div>
-                      {((item.type === "report" &&
-                        item.report_code &&
-                        item.report_update) ||
-                        formedSuccess.includes(item.task_code)) && (
-                        <div className={styles["amount-pay"]}>
-                          {formedSuccess.includes(item.task_code) ? (
-                            <Text className={styles["amount-heading"]}>
-                              {CONTENT.TITLE_FORMED + formatDateString("")}
-                            </Text>
-                          ) : (
-                            item.report_update && (
-                              <Text className={styles["amount-heading"]}>
-                                {CONTENT.TITLE_FORMED +
-                                  formatDateString(item.report_update)}
-                              </Text>
-                            )
-                          )}
-                          <Link
-                            className={styles["link-details"]}
-                            underline
-                            onClick={() =>
-                              handleFormReport(item.task_code, item.year)
-                            }
-                          >
-                            {CONTENT.BUTTON_UPDATE}
-                          </Link>
                         </div>
-                      )}
+                        {((item.type === "report" &&
+                          item.report_code &&
+                          item.report_update) ||
+                          formedSuccess.includes(item.task_code)) && (
+                          <div className={styles["amount-pay"]}>
+                            {formedSuccess.includes(item.task_code) ? (
+                              <Text className={styles["amount-heading"]}>
+                                {CONTENT.TITLE_FORMED + formatDateString("")}
+                              </Text>
+                            ) : (
+                              item.report_update && (
+                                <Text className={styles["amount-heading"]}>
+                                  {CONTENT.TITLE_FORMED +
+                                    formatDateString(item.report_update)}
+                                </Text>
+                              )
+                            )}
+                            <Link
+                              className={styles["link-details"]}
+                              underline
+                              onClick={() =>
+                                handleFormReport(item.task_code, item.year)
+                              }
+                            >
+                              {CONTENT.BUTTON_UPDATE}
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
           </div>
           {(tasks?.tasks.filter((item) => item.type === "report").length ===
             0 ||
