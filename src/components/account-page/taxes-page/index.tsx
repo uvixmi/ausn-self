@@ -713,10 +713,10 @@ export const TaxesPage = () => {
                         >
                           <div className={styles["source-inner"]}>
                             <Text className={styles["source-title"]}>
-                              {operation.counterparty_name}
+                              {operation.counterparty_name || "Нет контрагента"}
                             </Text>
                             <Text className={styles["source-text"]}>
-                              {operation.purpose}
+                              {operation.purpose || "Нет данных"}
                             </Text>
                           </div>
                           <div className={styles["operation-type-inner"]}>

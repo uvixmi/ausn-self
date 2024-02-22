@@ -232,6 +232,7 @@ $xxl: 2560px;
   width: 100%;
   justify-content: space-between;
   padding: 4px 8px;
+  gap: 2%;
 }
 
 .table-header-title {
@@ -246,10 +247,10 @@ $xxl: 2560px;
   }
 
   &:nth-child(2) {
-    width: 18%;
+    width: 16%;
   }
   &:nth-child(3) {
-    width: 38%;
+    width: 28%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
