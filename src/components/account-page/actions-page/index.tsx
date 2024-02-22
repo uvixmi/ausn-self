@@ -128,6 +128,16 @@ export const ActionsPage = () => {
     Authorization: `Bearer ${token}`,
   }
 
+  const fetchTasksModal = async () => {
+    try {
+      const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
+      setTasks(tasksResponse.data)
+      setIsTasksLoaded(true)
+    } catch (error) {
+      errorTasks()
+    }
+  }
+
   const [banners, setBanners] = useState<InfoBannerLinked[] | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
@@ -161,6 +171,8 @@ export const ActionsPage = () => {
     }
     fetchSources()
   }, [])
+
+  const [taskYear, setTaskYear] = useState(2020)
 
   const [isForming, setIsForming] = useState(false)
   const [tasCodeForming, setTaskCodeForming] = useState("")
@@ -197,7 +209,11 @@ export const ActionsPage = () => {
     }
   }
 
-  const downloadXmlReport = async (report_code: string) => {
+  const downloadXmlReport = async (
+    report_code: string,
+    title: string,
+    report_date: string
+  ) => {
     try {
       const response =
         await api.reports.getReportByIdReportsReportIdReportFormatGet(
@@ -210,7 +226,8 @@ export const ActionsPage = () => {
       const downloadLink = document.createElement("a")
 
       downloadLink.href = window.URL.createObjectURL(blob)
-      downloadLink.download = "Новый_отчет.xml"
+
+      downloadLink.download = `${title} от ${report_date}.xml`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -221,7 +238,11 @@ export const ActionsPage = () => {
     }
   }
 
-  const downloadPdfReport = async (report_code: string) => {
+  const downloadPdfReport = async (
+    report_code: string,
+    title: string,
+    report_date: string
+  ) => {
     try {
       const response =
         await api.reports.getReportByIdReportsReportIdReportFormatGet(
@@ -234,7 +255,7 @@ export const ActionsPage = () => {
       const downloadLink = document.createElement("a")
 
       downloadLink.href = window.URL.createObjectURL(blob)
-      downloadLink.download = "Новый_отчет.pdf"
+      downloadLink.download = `${title} от ${report_date}.pdf`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -275,8 +296,9 @@ export const ActionsPage = () => {
     }
   }
 
-  const handleSentPayment = (amount: string) => {
+  const handleSentPayment = (amount: string, year: number) => {
     dispatch(setAmount({ amount, index: 0 }))
+    setTaskYear(year)
     setDueAmount(parseFloat(amount))
     setPaymentOpen(true)
   }
@@ -453,16 +475,17 @@ export const ActionsPage = () => {
                             <Text className={styles["amount-heading"]}>
                               {taxesQuarterHeading(item.task_code)}
                             </Text>
-                            {!item.report_code && (
-                              <Text className={styles["amount-to-pay-text"]}>
-                                {(item.accrued_amount ||
-                                  item.accrued_amount === 0.0) &&
-                                  new Intl.NumberFormat("ru", {
-                                    style: "currency",
-                                    currency: "RUB",
-                                  }).format(item.accrued_amount)}
-                              </Text>
-                            )}
+                            {item.type === "report" &&
+                              item.task_code !== "ZDP" && (
+                                <Text className={styles["amount-to-pay-text"]}>
+                                  {(item.accrued_amount ||
+                                    item.accrued_amount === 0.0) &&
+                                    new Intl.NumberFormat("ru", {
+                                      style: "currency",
+                                      currency: "RUB",
+                                    }).format(item.accrued_amount)}
+                                </Text>
+                              )}
                           </div>
                         )}
                       </div>
@@ -474,7 +497,11 @@ export const ActionsPage = () => {
                               className={styles["download-button"]}
                               onClick={() =>
                                 item.report_code &&
-                                downloadXmlReport(item.report_code)
+                                downloadXmlReport(
+                                  item.report_code,
+                                  item.title,
+                                  formatDateString(item.report_update)
+                                )
                               }
                             >
                               <Text>{".xml"}</Text>
@@ -484,7 +511,11 @@ export const ActionsPage = () => {
                               className={styles["download-button"]}
                               onClick={() =>
                                 item.report_code &&
-                                downloadPdfReport(item.report_code)
+                                downloadPdfReport(
+                                  item.report_code,
+                                  item.title,
+                                  formatDateString(item.report_update)
+                                )
                               }
                             >
                               <Text>{".pdf"}</Text>
@@ -525,7 +556,10 @@ export const ActionsPage = () => {
                                   item.report_code
                                 )
                               : item.due_amount &&
-                                handleSentPayment(item.due_amount.toString())
+                                handleSentPayment(
+                                  item.due_amount.toString(),
+                                  item.year
+                                )
                           }
                         >
                           {item.type === "report"
@@ -566,9 +600,14 @@ export const ActionsPage = () => {
                 </div>
               ))}
           </div>
-          {(tasks?.tasks.length == 0 || !tasks) && isTasksLoaded && (
-            <AllDoneBlock type="report" />
-          )}
+          {(tasks?.tasks.filter((item) => item.type === "report").length ===
+            0 ||
+            !tasks) &&
+            isTasksLoaded && <AllDoneBlock type="report" />}
+          {(tasks?.tasks.filter((item) => item.type !== "report").length ===
+            0 ||
+            !tasks) &&
+            isTasksLoaded && <AllDoneBlock type="usn" />}
         </Content>
         <Sider
           className={styles["right-sider-wrapper"]}
@@ -659,6 +698,8 @@ export const ActionsPage = () => {
           isOpen={isPaymentOpen}
           setOpen={setPaymentOpen}
           payAmount={dueAmount}
+          fetchTasks={fetchTasksModal}
+          taskYear={taskYear}
         />
         <EnsPaymentModal
           isOpen={isEnsOpen}

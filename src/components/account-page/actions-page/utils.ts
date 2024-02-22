@@ -1,6 +1,6 @@
 import { CONTENT } from "./constants"
 
-export const formatDateString = (inputDate: string | undefined): string => {
+export const formatDateString = (inputDate?: string | null): string => {
   if (inputDate) {
     const date = new Date(inputDate)
 

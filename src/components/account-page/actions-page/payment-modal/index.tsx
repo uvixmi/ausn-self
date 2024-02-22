@@ -23,12 +23,15 @@ import {
 import { RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
-import { convertDateFormat } from "./utils"
+import { convertDateFormat, numberWithSpaces } from "./utils"
+import { formatDateString } from "../utils"
 
 export const PaymentModal = ({
   isOpen,
   setOpen,
   payAmount,
+  fetchTasks,
+  taskYear,
 }: ConfirmModalProps) => {
   const { Title, Text } = Typography
   dayjs.locale("ru")
@@ -38,14 +41,16 @@ export const PaymentModal = ({
 
   const [amountInputs, setAmountInputs] = useState([{ amountrrr: "" }])
 
-  const handleAmount = (amount: string, index: number) => {
+  const handleAmount = (amountIn: string, index: number) => {
+    const amount = amountIn.replace(/\s/g, "")
     const reg = /^-?\d+(\.\d{0,2})?$/
-
-    if (reg.test(amount) || amount === "-") {
+    if (reg.test(amount) || amount === "-" || amount === "") {
       setAmountInputs((prevAmountInputs) => {
         const updatedAmountInputs = [...prevAmountInputs]
-        updatedAmountInputs[index] = { amountrrr: amount }
-        console.log(updatedAmountInputs)
+        updatedAmountInputs[index] = {
+          amountrrr: numberWithSpaces(amount),
+        }
+
         return updatedAmountInputs
       })
 
@@ -57,11 +62,13 @@ export const PaymentModal = ({
     }
   }
 
+  const handleYear = (index: number) => {
+    dispatch(setYear({ tax_period: taskYear, index }))
+  }
+
   const handleDate = (date: string, index: number) => {
     dispatch(setDate({ date, index }))
-  }
-  const handleYear = (tax_period: number, index: number) => {
-    dispatch(setYear({ tax_period, index }))
+    handleYear(index)
   }
 
   const handleDocNumber = (doc_number: string, index: number) => {
@@ -91,6 +98,7 @@ export const PaymentModal = ({
       )
       setOpen(false)
       dispatch(clear())
+      fetchTasks()
     } catch (error) {
       setOpen(false)
       dispatch(clear())
@@ -120,8 +128,11 @@ export const PaymentModal = ({
   useEffect(() => {
     const amountsPayments = payments.every((item) => item.amount !== 0)
     const datesPayments = payments.every((item) => item.date !== "")
-    const yearsPayments = payments.every((item) => item.tax_period !== 0)
-    if (amountsPayments && datesPayments && yearsPayments)
+    //const yearsPayments = payments.every((item) => item.tax_period !== 0)
+    if (
+      amountsPayments &&
+      datesPayments //&& yearsPayments
+    )
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [payments])
@@ -187,7 +198,7 @@ export const PaymentModal = ({
                       {CONTENT.TEXT_AMOUNT}
                     </Text>
                     <Input
-                      style={{ borderRadius: 0 }}
+                      style={{ borderRadius: 0, height: "32px" }}
                       value={amountInputs[index].amountrrr}
                       onChange={(event) =>
                         handleAmount(event.target.value, index)
@@ -205,17 +216,20 @@ export const PaymentModal = ({
                     </Text>
 
                     <DatePicker
-                      style={{ borderRadius: 0 }}
+                      style={{ borderRadius: 0, height: "32px" }}
                       locale={locale}
                       format={dateFormat}
+                      maxDate={dayjs(formatDateString(), dateFormat)}
                       placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
                       value={item.date ? dayjs(item.date, dateFormat) : null}
                       onChange={(value, dateString) =>
+                        typeof dateString === "string" &&
                         handleDate(dateString, index)
                       }
                     />
                   </div>
                 </div>
+                {/*
                 <div className={styles["select-item"]}>
                   <Text
                     className={cn(
@@ -234,7 +248,7 @@ export const PaymentModal = ({
                       handleYear(value, index)
                     }}
                   />
-                </div>
+                </div>*/}
                 <div className={styles["select-item"]}>
                   <Text
                     className={cn(

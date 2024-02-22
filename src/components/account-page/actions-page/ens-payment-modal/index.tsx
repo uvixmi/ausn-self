@@ -94,7 +94,8 @@ export const EnsPaymentModal = ({
           item.id &&
           item.type === "account" &&
           item.state === "completed" &&
-          item.name !== "Ручной ввод"
+          item.name !== "Ручной ввод" &&
+          !item.disable_date
       )
       .map((item) => {
         return {
