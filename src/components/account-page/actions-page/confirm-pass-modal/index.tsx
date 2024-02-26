@@ -38,7 +38,7 @@ export const ConfirmPassModal = ({
     user.data.fns_code && user.data.fns_description
       ? CONTENT.FIRST_LINE +
         user.data.fns_code +
-        "-" +
+        " - " +
         user.data.fns_description
       : CONTENT.FIRST_LINE
   const handleSentReport = async (
