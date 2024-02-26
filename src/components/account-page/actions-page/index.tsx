@@ -45,6 +45,7 @@ import {
   convertReverseFormat,
   getCurrentDate,
 } from "./payment-modal/utils"
+import { ConfirmPassModal } from "./confirm-pass-modal"
 
 export interface InfoBannerLinked {
   id: string
@@ -139,6 +140,13 @@ export const ActionsPage = () => {
     }
   }
 
+  const [isConfirmPass, setIsConfirmPass] = useState(false)
+  const [сonfirmTaskCode, setConfirmTaskCode] = useState("")
+  const [confirmYear, setConfirmYear] = useState(0)
+  const [confirmReportCode, setConfirmReportCode] = useState<
+    string | null | undefined
+  >("")
+
   const [banners, setBanners] = useState<InfoBannerLinked[] | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
@@ -154,21 +162,27 @@ export const ActionsPage = () => {
         headers,
       })
       setSources(sourcesResponse.data)
-      const bannersResponse = await api.banners.getUserBannersBannersGet(
-        {
-          current_date: convertDateFormat(new Date().toLocaleDateString("ru")),
-        },
-        {
-          headers,
-        }
-      )
-      const linkedBanners = bannersResponse.data.banners.map((item) => {
-        const regex = /(\{link:[^\}]+\})/g
-        const parts = item.description.split(regex)
-        return { ...item, description: parts }
-      })
+      try {
+        const bannersResponse = await api.banners.getUserBannersBannersGet(
+          {
+            current_date: convertDateFormat(
+              new Date().toLocaleDateString("ru")
+            ),
+          },
+          {
+            headers,
+          }
+        )
+        const linkedBanners = bannersResponse.data.banners.map((item) => {
+          const regex = /(\{link:[^\}]+\})/g
+          const parts = item.description.split(regex)
+          return { ...item, description: parts }
+        })
 
-      setBanners(linkedBanners)
+        setBanners(linkedBanners)
+      } catch (error) {
+        console.log("Ошибка даты")
+      }
     }
     fetchSources()
   }, [])
@@ -228,7 +242,7 @@ export const ActionsPage = () => {
 
       downloadLink.href = window.URL.createObjectURL(blob)
 
-      downloadLink.download = `${title}от ${report_date}.xml`
+      downloadLink.download = `${title} от ${report_date}.xml`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -274,27 +288,10 @@ export const ActionsPage = () => {
     period_year: number,
     report_code?: string | null
   ) => {
-    const data = {
-      report_type: task_code === "ZDP" ? 3 : 2,
-      period_type:
-        task_code === "ZDP"
-          ? 0
-          : task_code === "UV1"
-          ? 1
-          : task_code === "UV2"
-          ? 2
-          : 3,
-      period_year: period_year,
-      report_code: report_code ? report_code : undefined,
-      report_status: 4,
-    }
-    await api.tasks.updateReportStatusTasksStatusPut(data, { headers })
-    try {
-      const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-      setTasks(tasksResponse.data)
-    } catch (error) {
-      errorTasks()
-    }
+    setConfirmTaskCode(task_code)
+    setConfirmYear(period_year)
+    setConfirmReportCode(report_code)
+    setIsConfirmPass(true)
   }
 
   const handleSentPayment = (amount: string, year: number) => {
@@ -703,6 +700,14 @@ export const ActionsPage = () => {
             </div>*/}
           </div>
         </Sider>
+        <ConfirmPassModal
+          isOpen={isConfirmPass}
+          setOpen={setIsConfirmPass}
+          setTasks={setTasks}
+          task_code={сonfirmTaskCode}
+          year={confirmYear}
+          report_code={confirmReportCode}
+        />
         <PaymentModal
           isOpen={isPaymentOpen}
           setOpen={setPaymentOpen}

@@ -4,6 +4,6 @@ export const getSourceText = (
 ) => {
   const last4Digits = accountNumber
     ? `${sourceName} *${accountNumber.slice(-4)}`
-    : "Нет счета"
+    : sourceName
   return last4Digits
 }

@@ -1,0 +1,44 @@
+.button-item-enter {
+  border-radius: 4px;
+  background: #6159ff;
+  color: #fff;
+  height: 44px;
+  margin: 16px 0 16px 0;
+  width: 50%;
+}
+
+.button-item-cancel {
+  border-radius: 4px;
+  background: #fff;
+  color: #6159ff;
+  height: 44px;
+  margin: 16px 0 16px 0;
+  width: 50%;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 10px;
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  gap: 28px;
+}
+
+.text-style {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.modal-wrapper {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

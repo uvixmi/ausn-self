@@ -421,6 +421,8 @@ $xxl: 2560px;
   display: flex;
   gap: 4px;
   align-items: center;
+  justify-content: space-between;
+  width: 70%;
 }
 
 .source-text-left {
@@ -488,5 +490,11 @@ $xxl: 2560px;
   color: #9984ff;
   border-radius: 0;
   display: flex;
+  align-items: center;
+}
+
+.left-source-name {
+  display: flex;
+  gap: 10px;
   align-items: center;
 }

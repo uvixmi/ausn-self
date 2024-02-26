@@ -219,9 +219,15 @@ export const TaxesPage = () => {
       })
 
   const sourcesAutoSider =
-    sources && sources.sources?.filter((item) => item.is_integrated)
+    sources &&
+    sources.sources?.filter(
+      (item) => item.is_integrated && item.name !== "Ручной ввод"
+    )
   const sourcesHandSider =
-    sources && sources.sources?.filter((item) => !item.is_integrated)
+    sources &&
+    sources.sources?.filter(
+      (item) => !item.is_integrated && item.name !== "Ручной ввод"
+    )
   const [deleteModalOpen, setIsDeleteModalOpen] = useState(false)
   useEffect(() => {
     const fetchOperations = async () => {
@@ -824,87 +830,122 @@ export const TaxesPage = () => {
             {CONTENT.BUTTON_SIDER_ADD_TEXT}
           </Button>
         </div>
-        <Title level={4}>{CONTENT.HEADING_HAND_SOURCERS}</Title>
-        <List
-          dataSource={sourcesHandSider}
-          renderItem={(item) => (
-            <List.Item
-              className={styles["list-item-right"]}
-              style={{ borderBlockEnd: "none" }}
-            >
-              <div className={styles["source-name"]}>
-                {item.state === "in_progress" ? (
-                  <InProgressIcon />
-                ) : item.state === "failed" ? (
-                  <FailedIcon />
-                ) : item.state === "completed" &&
-                  item.is_integrated === false ? (
-                  <CompletedHandIcon />
-                ) : item.state === "completed" &&
-                  item.is_integrated === true ? (
-                  <CompletedAutoIcon />
-                ) : null}
-                <Text className={styles["source-text-left"]}>{item.name} </Text>
-                <Text className={styles["source-text-right"]}>
-                  {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
-                </Text>
-              </div>
+        {sourcesHandSider && sourcesHandSider.length > 0 && (
+          <>
+            <Title level={4}>{CONTENT.HEADING_HAND_SOURCERS}</Title>
+            <List
+              dataSource={sourcesHandSider}
+              renderItem={(item) => (
+                <List.Item
+                  className={styles["list-item-right"]}
+                  style={{ borderBlockEnd: "none" }}
+                >
+                  <div className={styles["source-name"]}>
+                    <div className={styles["left-source-name"]}>
+                      {item.state === "in_progress" ? (
+                        <InProgressIcon />
+                      ) : item.state === "failed" ? (
+                        <FailedIcon />
+                      ) : item.state === "completed" &&
+                        item.is_integrated === false ? (
+                        <CompletedHandIcon />
+                      ) : item.state === "completed" &&
+                        item.is_integrated === true ? (
+                        <CompletedAutoIcon />
+                      ) : null}
+                      {item.name.length > 11 ? (
+                        <Tooltip title={item.name}>
+                          <Text className={styles["source-text-left"]}>
+                            {item.name.slice(0, 9)}
+                            {"..."}
+                          </Text>
+                        </Tooltip>
+                      ) : (
+                        <Text className={styles["source-text-left"]}>
+                          {item.name}{" "}
+                        </Text>
+                      )}
+                    </div>
+                    <Text className={styles["source-text-right"]}>
+                      {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                    </Text>
+                  </div>
 
-              {item.state === "completed" && !item.disable_date ? (
-                <Text>
-                  {item.last_info && convertReverseFormat(item.last_info)}
-                </Text>
-              ) : item.state === "completed" && item.disable_date ? (
-                <Text>{convertReverseFormat(item.disable_date)}</Text>
-              ) : item.state === "failed" ? (
-                <Link>{"Повторить"}</Link>
-              ) : item.state === "in_progress" && item.link ? (
-                <Link>{"Подключить"}</Link>
-              ) : null}
-            </List.Item>
-          )}
-        />
-        <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
-        <List
-          dataSource={sourcesAutoSider}
-          renderItem={(item) => (
-            <List.Item
-              className={styles["list-item-right"]}
-              style={{ borderBlockEnd: "none" }}
-            >
-              <div className={styles["source-name"]}>
-                {item.state === "in_progress" ? (
-                  <InProgressIcon />
-                ) : item.state === "failed" ? (
-                  <Tooltip title={item.reason}>
-                    <FailedIcon />
-                  </Tooltip>
-                ) : item.state === "completed" &&
-                  item.is_integrated === false ? (
-                  <CompletedHandIcon />
-                ) : item.state === "completed" &&
-                  item.is_integrated === true ? (
-                  <CompletedAutoIcon />
-                ) : null}
-                <Text className={styles["source-text-left"]}>{item.name} </Text>
-                <Text className={styles["source-text-right"]}>
-                  {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
-                </Text>
-              </div>
-              {item.state === "completed" && !item.disable_date ? (
-                <Text>
-                  {item.last_info && convertReverseFormat(item.last_info)}
-                </Text>
-              ) : item.state === "completed" && item.disable_date ? (
-                <Text>{convertReverseFormat(item.disable_date)}</Text>
-              ) : item.state === "failed" ? (
-                <Link>{"Повторить"}</Link>
-              ) : item.state === "in_progress" && item.link ? (
-                <Link href={item.link}>{"Подключить"}</Link>
-              ) : null}
-            </List.Item>
-          )}
-        />
+                  {item.state === "completed" && !item.disable_date ? (
+                    <Text>
+                      {item.last_info && convertReverseFormat(item.last_info)}
+                    </Text>
+                  ) : item.state === "completed" && item.disable_date ? (
+                    <Text>{convertReverseFormat(item.disable_date)}</Text>
+                  ) : item.state === "failed" ? (
+                    <Link>{"Повторить"}</Link>
+                  ) : item.state === "in_progress" && item.link ? (
+                    <Link>{"Подключить"}</Link>
+                  ) : null}
+                </List.Item>
+              )}
+            />
+          </>
+        )}
+        {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
+          <>
+            <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
+            <List
+              dataSource={sourcesAutoSider}
+              renderItem={(item) => (
+                <List.Item
+                  className={styles["list-item-right"]}
+                  style={{ borderBlockEnd: "none" }}
+                >
+                  <div className={styles["source-name"]}>
+                    <div className={styles["left-source-name"]}>
+                      {item.state === "in_progress" ? (
+                        <InProgressIcon />
+                      ) : item.state === "failed" ? (
+                        <Tooltip title={item.reason}>
+                          <FailedIcon />
+                        </Tooltip>
+                      ) : item.state === "completed" &&
+                        item.is_integrated === false ? (
+                        <CompletedHandIcon />
+                      ) : item.state === "completed" &&
+                        item.is_integrated === true ? (
+                        <CompletedAutoIcon />
+                      ) : null}
+
+                      {item.name.length > 11 ? (
+                        <Tooltip title={item.name}>
+                          <Text className={styles["source-text-left"]}>
+                            {item.name.slice(0, 9)}
+                            {"..."}
+                          </Text>
+                        </Tooltip>
+                      ) : (
+                        <Text className={styles["source-text-left"]}>
+                          {item.name}{" "}
+                        </Text>
+                      )}
+                      <Text className={styles["source-text-right"]}>
+                        {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                      </Text>
+                    </div>
+                  </div>
+                  {item.state === "completed" && !item.disable_date ? (
+                    <Text>
+                      {item.last_info && convertReverseFormat(item.last_info)}
+                    </Text>
+                  ) : item.state === "completed" && item.disable_date ? (
+                    <Text>{convertReverseFormat(item.disable_date)}</Text>
+                  ) : item.state === "failed" ? (
+                    <Link>{"Повторить"}</Link>
+                  ) : item.state === "in_progress" && item.link ? (
+                    <Link href={item.link}>{"Подключить"}</Link>
+                  ) : null}
+                </List.Item>
+              )}
+            />
+          </>
+        )}
       </Sider>
       <DeleteOperationModal
         isOpen={deleteModalOpen}
