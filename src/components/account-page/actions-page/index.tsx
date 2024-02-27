@@ -270,7 +270,7 @@ export const ActionsPage = () => {
       const downloadLink = document.createElement("a")
 
       downloadLink.href = window.URL.createObjectURL(blob)
-      downloadLink.download = `${title}от ${report_date}.pdf`
+      downloadLink.download = `${title} от ${report_date}.pdf`
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)

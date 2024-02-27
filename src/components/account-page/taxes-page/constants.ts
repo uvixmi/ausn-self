@@ -42,6 +42,8 @@ export const CONTENT = {
   CLIENT_NAME: "ИП Ягодкин И. В.",
   DEFAULT_DATE: "20.09.2023",
   DEFAULT_DATE_STRING: "сентябрь 2023",
+  HAND_LOAD_INFO_TOOLTIP:
+    "Важно загрузить все операции за квартал. Только в этом случае расчет налога за период может быть корректным.",
   HEADING_HAND_SOURCERS: "Ручная загрузка",
   HEADING_AUTO_SOURCERS: "Автоматическая загрузка",
   NOTIFICATION_MARKUP_SUCCESS: "Тип операции изменен",

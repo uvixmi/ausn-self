@@ -832,7 +832,15 @@ export const TaxesPage = () => {
         </div>
         {sourcesHandSider && sourcesHandSider.length > 0 && (
           <>
-            <Title level={4}>{CONTENT.HEADING_HAND_SOURCERS}</Title>
+            <Title level={4}>
+              {CONTENT.HEADING_HAND_SOURCERS + " "}
+              <Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
+                <InfoCircleOutlined
+                  className={styles["sider-icon"]}
+                  size={24}
+                />
+              </Tooltip>
+            </Title>
             <List
               dataSource={sourcesHandSider}
               renderItem={(item) => (
