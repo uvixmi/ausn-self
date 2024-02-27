@@ -8,18 +8,13 @@ interface NonTaxesImageProps
   className?: string
 }
 
-export const NonTaxesImage = ({
-  className = "",
-  ...props
-}: NonTaxesImageProps) => (
+export const NonTaxesImage = ({ ...props }: NonTaxesImageProps) => (
   <svg
     width="302"
     height="265"
     viewBox="0 0 302 265"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
-    className={`${className} arrow-color-icon`}
   >
     <path
       d="M60.3999 82.947C60.3999 82.947 42.337 29.5605 105.341 36.0763C168.345 42.5921 138.242 18.9623 162.05 4.2985C185.857 -10.3653 256.005 35.2551 226.658 79.2567C197.31 123.258 273.558 83.0073 289.464 149.177C299.279 190.011 274.927 220.066 254.838 237.103"

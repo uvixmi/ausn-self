@@ -10,7 +10,7 @@ import {
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { CONTENT } from "./constants"
 import cn from "classnames"
 import "./styles.scss"
@@ -21,6 +21,7 @@ import { ENSInfo, SourcesInfo, api } from "../../../../api/myApi"
 import * as iconv from "iconv-lite"
 import { numberWithSpaces } from "../payment-modal/utils"
 import { formatDateString } from "../utils"
+import { RootState } from "../../../main-page/store"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -84,13 +85,16 @@ export const EnsPaymentModal = ({
       style: { textAlign: "right" },
     })
   }
-  const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+
+  const sources = useSelector(
+    (state: RootState) => state.sources.sourcesInfo?.sources
+  )
   const optionsAddSources = [
     { label: <Button>{"Добавить счет"}</Button>, value: null },
   ]
   const options =
-    sources?.sources &&
-    sources.sources
+    sources &&
+    sources
       .filter(
         (item) =>
           item.id &&
@@ -118,13 +122,11 @@ export const EnsPaymentModal = ({
         setReason(tasksResponse.data.purpose || "")
         payAmount && setAmount(payAmount)
         payAmount && setAmountInput(numberWithSpaces(payAmount.toString()))
-        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-          headers,
-        })
-        setSources(sourcesResponse.data)
+
         setAccount(defaultAccount || "")
       }
       fetchSources()
+      console.log(sources)
     }
   }, [isOpen])
 

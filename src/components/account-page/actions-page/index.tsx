@@ -11,21 +11,18 @@ import {
 import Link from "antd/es/typography/Link"
 import { CONTENT, LINK_MAP } from "./constants"
 import styles from "./styles.module.scss"
-import LampImage from "./images/lamp"
 import cn from "classnames"
 import { useEffect, useState } from "react"
 import { PaymentModal } from "./payment-modal"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import {
   BannerType,
-  InfoBanner,
   ReportFormat,
-  SourcesInfo,
   TaskResponse,
   TaskType,
   api,
 } from "../../../api/myApi"
-import { AppDispatch } from "../../main-page/store"
+import { AppDispatch, RootState } from "../../main-page/store"
 import Cookies from "js-cookie"
 import { useLocation, useNavigate } from "react-router-dom"
 import { formatDateString, taxesQuarterHeading } from "./utils"
@@ -40,12 +37,11 @@ import {
 } from "@ant-design/icons"
 import { formatToPayDate } from "../../main-page/utils"
 import { setAmount } from "./payment-modal/slice"
-import {
-  convertDateFormat,
-  convertReverseFormat,
-  getCurrentDate,
-} from "./payment-modal/utils"
+import { convertDateFormat, getCurrentDate } from "./payment-modal/utils"
 import { ConfirmPassModal } from "./confirm-pass-modal"
+import { fetchSourcesInfo } from "../client/sources/thunks"
+import { fetchTasks } from "../client/tasks/thunks"
+import { fetchBanners } from "../client/banners/thunks"
 
 export interface InfoBannerLinked {
   id: string
@@ -67,7 +63,7 @@ export const ActionsPage = () => {
   const [isPaymentOpen, setPaymentOpen] = useState(false)
   const [isEnsOpen, setEnsOpen] = useState(false)
   const [isAnalysisOpen, setAnalysisOpen] = useState(false)
-
+  const dispatch = useDispatch<AppDispatch>()
   const antIcon = (
     <LoadingOutlined
       style={{
@@ -89,9 +85,15 @@ export const ActionsPage = () => {
   const { Sider, Content } = Layout
   const { Title, Text } = Typography
 
-  const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
-  const [tasks, setTasks] = useState<TaskResponse | undefined>(undefined)
+  const sources = useSelector(
+    (state: RootState) => state.sources.sourcesInfo?.sources
+  )
 
+  const tasks = useSelector((state: RootState) => state.tasks.tasks?.tasks)
+  const tasksLoaded = useSelector((state: RootState) => state.tasks.loading)
+  const fetchedBanners = useSelector(
+    (state: RootState) => state.banners.banners?.banners
+  )
   const token = Cookies.get("token")
   const location = useLocation()
 
@@ -132,8 +134,7 @@ export const ActionsPage = () => {
 
   const fetchTasksModal = async () => {
     try {
-      const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-      setTasks(tasksResponse.data)
+      dispatch(fetchTasks())
       setIsTasksLoaded(true)
     } catch (error) {
       errorTasks()
@@ -147,33 +148,23 @@ export const ActionsPage = () => {
     string | null | undefined
   >("")
 
-  const [banners, setBanners] = useState<InfoBannerLinked[] | null>(null)
-  const dispatch = useDispatch<AppDispatch>()
+  const [banners, setBanners] = useState<InfoBannerLinked[] | null | undefined>(
+    null
+  )
+
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-        setTasks(tasksResponse.data)
+        dispatch(fetchTasks())
         setIsTasksLoaded(true)
       } catch (error) {
         errorTasks()
       }
-      const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-        headers,
-      })
-      setSources(sourcesResponse.data)
+
+      dispatch(fetchSourcesInfo())
       try {
-        const bannersResponse = await api.banners.getUserBannersBannersGet(
-          {
-            current_date: convertDateFormat(
-              new Date().toLocaleDateString("ru")
-            ),
-          },
-          {
-            headers,
-          }
-        )
-        const linkedBanners = bannersResponse.data.banners.map((item) => {
+        await dispatch(fetchBanners())
+        const linkedBanners = fetchedBanners?.map((item) => {
           const regex = /(\{link:[^\}]+\})/g
           const parts = item.description.split(regex)
           return { ...item, description: parts }
@@ -213,8 +204,7 @@ export const ActionsPage = () => {
       setIsForming(false)
       setFormedSucces([...formedSuccess, task_code])
       try {
-        const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-        setTasks(tasksResponse.data)
+        dispatch(fetchTasks())
       } catch (error) {
         errorTasks()
       }
@@ -324,7 +314,7 @@ export const ActionsPage = () => {
   }
 
   const defaultAccount =
-    sources?.sources && sources.sources?.find((item) => item.is_main)?.sub_name
+    sources && sources?.find((item) => item.is_main)?.sub_name
 
   return (
     <>
@@ -366,7 +356,7 @@ export const ActionsPage = () => {
           </div>
           <div>
             {tasks &&
-              tasks.tasks
+              tasks
                 .filter((item) => item.type !== TaskType.Other)
                 .map((item, index) => (
                   <div className={styles["row-item"]} key={index}>
@@ -606,14 +596,12 @@ export const ActionsPage = () => {
                   </div>
                 ))}
           </div>
-          {(tasks?.tasks.filter((item) => item.type === "report").length ===
-            0 ||
+          {(tasks?.filter((item) => item.type === "report").length === 0 ||
             !tasks) &&
-            isTasksLoaded && <AllDoneBlock type="report" />}
-          {(tasks?.tasks.filter((item) => item.type !== "report").length ===
-            0 ||
+            tasksLoaded === "succeeded" && <AllDoneBlock type="report" />}
+          {(tasks?.filter((item) => item.type !== "report").length === 0 ||
             !tasks) &&
-            isTasksLoaded && <AllDoneBlock type="usn" />}
+            tasksLoaded === "succeeded" && <AllDoneBlock type="usn" />}
         </Content>
         <Sider
           className={styles["right-sider-wrapper"]}
@@ -669,41 +657,11 @@ export const ActionsPage = () => {
                 </div>
               )
             })}
-
-            {/* <div className={styles["update-wrapper"]}>
-              <div className={styles["update-inner"]}>
-                <div className={styles["update-text-inner"]}>
-                  <LampImage />
-                  <Title
-                    style={{ marginBottom: 0, marginTop: "8px" }}
-                    level={5}
-                  >
-                    {CONTENT.UPDATE_DATA_HEADING}
-                  </Title>
-                </div>
-                <div className={styles["update-text-inner"]}>
-                  <Text className={styles["update-text"]}>
-                    {CONTENT.UPDATE_DATA_TEXT}
-                  </Text>
-                  <Text className={styles["update-taxes-link"]}>
-                    {CONTENT.UPDATE_TAXES_LINK}
-                  </Text>
-                </div>
-                <Button
-                  className={styles["delete-banner"]}
-                  style={{ border: "none", boxShadow: "none" }}
-                  onClick={() => {}}
-                >
-                  <CloseOutlined />
-                </Button>
-              </div>
-            </div>*/}
           </div>
         </Sider>
         <ConfirmPassModal
           isOpen={isConfirmPass}
           setOpen={setIsConfirmPass}
-          setTasks={setTasks}
           task_code={сonfirmTaskCode}
           year={confirmYear}
           report_code={confirmReportCode}

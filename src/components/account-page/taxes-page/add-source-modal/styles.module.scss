@@ -1,0 +1,161 @@
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 16px;
+}
+
+.button-source-item {
+  width: 440px;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.button-source-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.text-description {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #8c8c8c;
+}
+
+.text-title {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #505050;
+}
+
+.upload-icon {
+  color: #6159ff;
+  font-size: 24px;
+}
+
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dragger-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+}
+
+.dragger-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.arrow-left-icon {
+  height: 8px;
+  color: #6159ff;
+}
+
+.button-back {
+  width: 440px;
+  height: 34px;
+  padding: 5px 16px;
+  border-radius: 2px;
+  border: 1px solid #d1d1d1;
+  display: flex;
+  gap: 4px;
+}
+
+.button-back-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #6159ff;
+}
+
+.upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 20px 16px;
+}
+
+.upload-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bank-integration-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.bank-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bank-item {
+  width: 216px;
+  padding: 16px;
+  border-radius: 2px;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.bank-logo {
+  width: 48px;
+  height: 48px;
+  background-size: cover;
+}
+
+.bank-title {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #141414;
+}
+
+.cashier-item {
+  width: 141px;
+  padding: 16px;
+  border-radius: 2px;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: fit-content;
+}

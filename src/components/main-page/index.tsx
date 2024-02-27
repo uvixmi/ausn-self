@@ -15,6 +15,7 @@ import { ActionsPage } from "../account-page/actions-page"
 import { TaxesPage } from "../account-page/taxes-page"
 import { SettingsPage } from "../account-page/settings-page"
 import { ReportsPage } from "../account-page/reports-page"
+import { fetchSourcesInfo } from "../account-page/client/sources/thunks"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -32,7 +33,9 @@ export const MainPage = () => {
   const token = Cookies.get("token")
 
   useEffect(() => {
-    if (!role) dispatch(fetchCurrentUser())
+    if (!role) {
+      dispatch(fetchCurrentUser())
+    }
   }, [dispatch])
 
   useEffect(() => {

@@ -22,6 +22,7 @@ import { useAuth } from "../../AuthContext"
 import Cookies from "js-cookie"
 import { v4 as uuid } from "uuid"
 import cn from "classnames"
+import { fetchSourcesInfo } from "./client/sources/thunks"
 
 export const AccountPage = ({
   token_type,
@@ -166,17 +167,18 @@ export const AccountPage = ({
         "-" +
         new Intl.NumberFormat("ru", {
           style: "currency",
-          currency: "RUB", // Change this
+          currency: "RUB",
         }).format(10050000.23),
     },
   ]
 
-  const [tasks, setTasks] = useState<TaskResponse | undefined>(undefined)
-
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (!loaded) dispatch(fetchCurrentUser())
+    if (!loaded) {
+      dispatch(fetchCurrentUser())
+      dispatch(fetchSourcesInfo())
+    }
   }, [dispatch, loaded])
 
   const navigate = useNavigate()

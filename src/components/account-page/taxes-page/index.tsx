@@ -56,6 +56,9 @@ import {
 import { DeleteOperationModal } from "./delete-modal"
 import { NonTaxesImage } from "./images/non-operations"
 import { PencilIcon } from "./type-operation/icons/pencil"
+import { AddSourceModal } from "./add-source-modal"
+import { ArrowCounterIcon } from "./type-operation/icons/arrow-counter"
+import { fetchSourcesInfo } from "../client/sources/thunks"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -78,15 +81,6 @@ export const TaxesPage = () => {
       key: "sum",
       dataIndex: "sum",
     },
-  ]
-
-  const data_banks = [CONTENT.BANK_SBER, CONTENT.BANK_VTB, CONTENT.BANK_ALPHA]
-
-  const data_cashiers = [CONTENT.CASHIERS_FIRST]
-
-  const data_marketplaces = [
-    CONTENT.MARKETPLACE_WILDBERRIES,
-    CONTENT.MARKETPLACE_OZON,
   ]
 
   const dispatch = useDispatch<AppDispatch>()
@@ -256,7 +250,6 @@ export const TaxesPage = () => {
 
   const bottomBlockRef = useRef<HTMLDivElement>(null)
 
-  // Обработчики изменений фильтров, если необходимо
   const handleSourcesChange = (selectedSources: string[]) => {
     setPagination({
       page_number: 1,
@@ -316,26 +309,8 @@ export const TaxesPage = () => {
   }
   const [isFetching, setIsFetching] = useState(true)
   const [endOfPage, setEndOfPage] = useState(false)
-  /*const handleScroll = () => {
-    if (bottomBlockRef.current && !endOfPage) {
-      const isBottom =
-        window.innerHeight + window.scrollY >=
-        bottomBlockRef.current.getBoundingClientRect().bottom
+  const [isAddSourceOpen, setIsAddSourceOpen] = useState(false)
 
-      if (isBottom && !isFetching) {
-        setIsFetching(true)
-
-        if (!endOfPage) {
-          debugger
-          setPagination((prevPagination) => ({
-            ...prevPagination,
-            page_number: prevPagination.page_number + 1,
-          }))
-        }
-      }
-    }
-  }
-*/
   const handleUpdateScroll = (e: Event) => {
     if (
       e instanceof Event &&
@@ -426,73 +401,6 @@ export const TaxesPage = () => {
     Record<string, Operation[]>
   >({})
 
-  /*useEffect(() => {
-    const fetchOperations = async () => {
-      try {
-        if (endOfPage) {
-          console.log("Достигнут конец страницы")
-          return
-        }
-        const filters: GetOperationsRequest = {
-          start_date: selectedStartDate || undefined,
-          end_date: selectedEndDate || undefined,
-          operations_types:
-            selectedOperationTypes.length > 0
-              ? selectedOperationTypes
-              : undefined,
-          sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
-          pagination: { ...pagination },
-        }
-
-        const operations = await api.operations.getOperationsOperationsPost(
-          filters,
-          { headers }
-        )
-        if (operations.data.pages_count === 0) {
-          console.log("Достигнут конец страницы")
-
-          setEndOfPage(true)
-        }
-        if (
-          pagination.page_number === 1 &&
-          operations.data.operations.length === 0
-        ) {
-          setOperationsData((prevData) => ({
-            operations: [...operations.data.operations],
-            pages_count: operations.data.pages_count,
-          }))
-          setIsFetching(false)
-        } else if (pagination.page_number === 1) {
-          setOperationsData((prevData) => ({
-            operations: [...operations.data.operations],
-            pages_count: operations.data.pages_count,
-          }))
-          setIsFetching(false)
-        } else {
-          setOperationsData((prevData) => ({
-            ...prevData,
-            operations: [
-              ...(prevData?.operations || []),
-              ...operations.data.operations,
-            ],
-            pages_count: operations.data.pages_count,
-          }))
-          setIsFetching(false)
-        }
-      } catch (error) {
-        console.error("Error fetching operations:", error)
-        setIsFetching(false)
-      }
-    }
-    fetchOperations()
-  }, [
-    pagination,
-    selectedSources,
-    selectedOperationTypes,
-    selectedStartDate,
-    selectedEndDate,
-  ])
-*/
   useEffect(() => {
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
@@ -508,20 +416,6 @@ export const TaxesPage = () => {
 
     setGroupedOperations(updatedGroupedOperations)
   }, [operationsData])
-
-  /*useEffect(() => {
-    if (!isFetching) {
-      const updateScroll = () => {
-        handleScroll()
-      }
-
-      window.addEventListener("scroll", updateScroll)
-
-      return () => {
-        window.removeEventListener("scroll", updateScroll)
-      }
-    }
-  }, [isFetching])*/
 
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
   const [hoveredAmount, setHoveredAmount] = useState<number | null>(null)
@@ -545,112 +439,6 @@ export const TaxesPage = () => {
             {CONTENT.BUTTON_ADD_OPERATION}
           </Button>
         </div>
-        {/* <div className={styles["cards-wrapper"]}>
-          <div className={styles["card-item"]}>
-            <div className={styles["card-inner"]}>
-              <div className={styles["taxes-heading"]}>
-                <Text>{CONTENT.CARD_TAXES_HEADING}</Text>
-                <Text>
-                  {CONTENT.CARD_TAXES_DATE} <InfoCircleOutlined />
-                </Text>
-              </div>
-              <div className={styles["amount-inner"]}>
-                <Text className={styles["currency-amount"]}>
-                  {new Intl.NumberFormat("ru", {
-                    style: "currency",
-                    currency: "RUB", // Change this
-                  }).format(1000)}
-                </Text>
-                <Text style={{ whiteSpace: "nowrap" }}>
-                  {CONTENT.CARD_TAXES_PAID +
-                    new Intl.NumberFormat("ru", {
-                      style: "currency",
-                      currency: "RUB", // Change this
-                    }).format(100500.23)}
-                </Text>
-              </div>
-              <Button
-                className={cn(styles["taxes-button"], {
-                  [styles["button-paid"]]: true,
-                })}
-                disabled
-              >
-                <CheckCircleOutlined />
-                {CONTENT.CARD_TAXES_BUTTON_PAID}
-              </Button>
-            </div>
-          </div>
-          <div className={cn(styles["card-item"], styles["card-fix"])}>
-            <div className={styles["card-inner"]}>
-              <div className={styles["taxes-heading"]}>
-                <Text>{CONTENT.CARD_FIX_PAYMENT}</Text>
-                <Text>
-                  {CONTENT.CARD_FIX_PAYMENT_DATE} <InfoCircleOutlined />
-                </Text>
-              </div>
-              <div className={styles["amount-inner"]}>
-                <Text className={styles["currency-amount"]}>
-                  {new Intl.NumberFormat("ru", {
-                    style: "currency",
-                    currency: "RUB", // Change this
-                  }).format(1000)}
-                </Text>
-                <Text style={{ whiteSpace: "nowrap" }}>
-                  {CONTENT.CARD_TAXES_PAID +
-                    new Intl.NumberFormat("ru", {
-                      style: "currency",
-                      currency: "RUB", // Change this
-                    }).format(18564.12)}
-                </Text>
-              </div>
-              <Button className={styles["taxes-button"]}>
-                {CONTENT.BUTTON_ADD_PAYMENT_TEXT}
-              </Button>
-            </div>
-          </div>
-          <div className={cn(styles["card-item"], styles["card-super"])}>
-            <div className={styles["card-inner"]}>
-              <div className={styles["taxes-heading"]}>
-                <Text>{CONTENT.CARD_SUPER_PROFITS}</Text>
-                <Text>
-                  {CONTENT.CARD_SUPER_PROFITS_DATE} <InfoCircleOutlined />
-                </Text>
-              </div>
-              <div className={styles["amount-inner"]}>
-                <Text className={styles["currency-amount"]}>
-                  {new Intl.NumberFormat("ru", {
-                    style: "currency",
-                    currency: "RUB", // Change this
-                  }).format(1000)}
-                </Text>
-                <Text style={{ whiteSpace: "nowrap" }}>
-                  {CONTENT.CARD_TAXES_PAID +
-                    new Intl.NumberFormat("ru", {
-                      style: "currency",
-                      currency: "RUB", // Change this
-                    }).format(6500)}
-                </Text>
-              </div>
-              <Button className={styles["taxes-button"]}>
-                {CONTENT.BUTTON_ADD_PAYMENT_TEXT}
-              </Button>
-            </div>
-          </div>
-                  </div>
-        <div className={styles["remark-wrapper"]}>
-          <Button className={styles["remark-button"]}>
-            {CONTENT.BUTTON_ENS_TEXT}
-          </Button>
-          <div className={styles["remark-text"]}>
-            <Text>{CONTENT.ENS_ANALYSIS_TEXT}</Text>
-            <Link
-              className={styles["link-details"]}
-              style={{ color: "#6159ff", whiteSpace: "nowrap" }}
-            >
-              {CONTENT.TEXT_DETAILS}
-            </Link>
-          </div>
-        </div>*/}
 
         <div className={styles["income-table"]}>
           <div className={styles["income-header-wrapper"]}>
@@ -683,9 +471,7 @@ export const TaxesPage = () => {
               }
             />
           </div>
-          {
-            //<Table columns={columns} dataSource={dataSource} pagination={false} />
-          }
+
           <div className={styles["operations-table-wrapper"]}>
             <div className={styles["operations-table-inner"]}>
               <div className={styles["table-header"]}>
@@ -725,30 +511,28 @@ export const TaxesPage = () => {
                               {operation.purpose || "Нет данных"}
                             </Text>
                           </div>
-                          <div className={styles["operation-type-inner"]}>
-                            <Select
-                              options={optionsTypes}
-                              defaultValue={operation.markup.operation_type}
-                              className={cn(
-                                "type-item-select",
-                                styles["type-select-inner"]
+                          <div className={styles["operation-type-wrapper"]}>
+                            <div className={styles["operation-type-inner"]}>
+                              <Select
+                                options={optionsTypes}
+                                defaultValue={operation.markup.operation_type}
+                                dropdownStyle={{
+                                  width: "max-content",
+                                }}
+                                className={cn(
+                                  "type-item-select",
+                                  styles["type-select-inner"]
+                                )}
+                                onChange={(value) => {
+                                  handleChangeMarkup(value)
+                                }}
+                              />
+
+                              {(operation.markup_mode_code === 2 ||
+                                operation.markup_mode_code === 3) && (
+                                <PencilIcon />
                               )}
-                              onChange={(value) => {
-                                handleChangeMarkup(value)
-                              }}
-                            />
-                            {/* <TypeOperation
-                              type={
-                                operation.markup.operation_type > 0
-                                  ? operation.markup.operation_type
-                                  : 5
-                              }
-                            />
-                            */}
-                            {(operation.markup_mode_code === 2 ||
-                              operation.markup_mode_code === 3) && (
-                              <PencilIcon />
-                            )}
+                            </div>
                           </div>
                           <div className={styles["amount-inner"]}>
                             <div
@@ -775,14 +559,14 @@ export const TaxesPage = () => {
                                 )}
                               </Text>
                             </div>
-                            {hoveredIndex === operation.id && (
+                            {
                               <Button
                                 className={styles["delete-icon"]}
                                 onClick={() => setIsDeleteModalOpen(true)}
                               >
                                 <DeleteOutlined />
                               </Button>
-                            )}
+                            }
                           </div>
                         </div>
                       ))}
@@ -817,12 +601,21 @@ export const TaxesPage = () => {
         breakpoint="lg"
         collapsedWidth="0"
       >
-        {
-          //<Text>{CONTENT.CLIENT_NAME}</Text>
-        }
-        <Title level={3}>{CONTENT.HEADING_DATA_SOURCES}</Title>
+        <Title level={3}>
+          {CONTENT.HEADING_DATA_SOURCES}{" "}
+          <Button
+            onClick={() => dispatch(fetchSourcesInfo())}
+            className={styles["refresh-sources"]}
+          >
+            <ArrowCounterIcon />
+          </Button>
+        </Title>
+
         <div className={styles["sider-buttons"]}>
-          <Button className={styles["default-button"]}>
+          <Button
+            className={styles["default-button"]}
+            onClick={() => setIsAddSourceOpen(true)}
+          >
             <PlusOutlined
               className={styles["plus-icon"]}
               style={{ marginInlineStart: "4px" }}
@@ -960,6 +753,7 @@ export const TaxesPage = () => {
         setOpen={setIsDeleteModalOpen}
         id={hoveredIndex}
       />
+      <AddSourceModal isOpen={isAddSourceOpen} setOpen={setIsAddSourceOpen} />
     </>
   )
 }

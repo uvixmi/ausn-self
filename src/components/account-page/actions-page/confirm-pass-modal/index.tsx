@@ -6,13 +6,13 @@ import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "./constants"
 import { useNavigate } from "react-router-dom"
-import { useSelector } from "react-redux"
-import { RootState } from "../../../main-page/store"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "../../../main-page/store"
+import { fetchTasks } from "../../client/tasks/thunks"
 
 export const ConfirmPassModal = ({
   isOpen,
   setOpen,
-  setTasks,
   task_code,
   year,
   report_code,
@@ -33,6 +33,7 @@ export const ConfirmPassModal = ({
     })
   }
 
+  const dispatch = useDispatch<AppDispatch>()
   const user = useSelector((state: RootState) => state.user)
   const fnsText =
     user.data.fns_code && user.data.fns_description
@@ -62,8 +63,7 @@ export const ConfirmPassModal = ({
     }
     await api.tasks.updateReportStatusTasksStatusPut(data, { headers })
     try {
-      const tasksResponse = await api.tasks.getTasksTasksGet({ headers })
-      setTasks(tasksResponse.data)
+      dispatch(fetchTasks())
     } catch (error) {
       errorTasks()
     }
