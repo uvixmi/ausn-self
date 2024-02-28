@@ -1,7 +1,8 @@
 import { Button, Modal, Typography, message } from "antd"
 import { AddSourceModalProps } from "./types"
 import styles from "./styles.module.scss"
-import { api } from "../../../../api/myApi"
+import "./styles.scss"
+import { CreateAccountResponse, api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "./constants"
 import { BankBalanceIcon } from "../type-operation/icons/bank_balance"
@@ -24,6 +25,12 @@ import taxcom from "./bank-logos/taxcom.png"
 import wb from "./bank-logos/wb.png"
 import yamarket from "./bank-logos/yamarket.png"
 import yaofd from "./bank-logos/yaofd.png"
+import { RcFile } from "antd/lib/upload"
+import { FileLoadingIcon } from "../images/file-loading"
+import { FileLoadedIcon } from "../images/file-loaded"
+import cn from "classnames"
+import { formatDateString } from "../../actions-page/utils"
+import { CloseSaveModal } from "./close-save-modal"
 
 export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   const { Title, Text } = Typography
@@ -31,6 +38,9 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   const headers = {
     Authorization: `Bearer ${token}`,
   }
+
+  const [fileIsLoading, setFileIsLoading] = useState("")
+  const [fileName, setFileName] = useState("")
 
   const [messageApi, contextHolder] = message.useMessage()
   const successProcess = () => {
@@ -49,27 +59,67 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
     })
   }
 
-  const deleteOperation = async (id: string) => {
+  const [buttonMode, setButtonMode] = useState("default")
+
+  const [accountFromFile, setAccountFromFile] =
+    useState<CreateAccountResponse | null>(null)
+
+  const handleFileUpload = async (file: RcFile) => {
     try {
-      await api.operations.deleteOperationOperationsDelete(
-        { operation_id: id },
-        { headers }
-      )
-      successProcess()
+      const data = {
+        account_file: file,
+      }
+
+      const response =
+        await api.operations.createOperationsFromFileOperationsFilePost(data, {
+          headers,
+        })
+      setAccountFromFile(response.data)
+      // Обработайте данные ответа здесь или выполните необходимые действия
+      message.success("Файл успешно загружен!")
     } catch (error) {
-      errorProcess()
+      console.error("Ошибка загрузки файла:", error)
+      // Обработайте ошибку, покажите сообщение об ошибке и т. д.
+      message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
     }
   }
 
-  const [buttonMode, setButtonMode] = useState("default")
+  const uploadOperation = async (file: RcFile) => {
+    try {
+      const data = {
+        account_file: file,
+      }
 
+      await api.operations.createOperationsFromFileOperationsFilePost(data)
+
+      // Дополнительная обработка успешного ответа
+    } catch (error) {
+      console.error("Ошибка загрузки файла:", error)
+      // Обработка ошибки
+    }
+  }
+
+  const closeModal = () => {
+    setOpen(false)
+    setAccountFromFile(null)
+    setButtonMode("default")
+    setFileIsLoading("")
+    setFileName("")
+  }
+
+  const closeAddSource = () => {
+    if (fileIsLoading === "loading") setIsCloseSave(true)
+    else closeModal()
+  }
+
+  const [isCloseSave, setIsCloseSave] = useState(false)
   return (
     <>
       {contextHolder}
       <Modal
         open={isOpen}
-        onOk={() => setOpen(false)}
-        onCancel={() => setOpen(false)}
+        onOk={closeAddSource}
+        onCancel={closeAddSource}
         footer={null}
       >
         {buttonMode === "default" ? (
@@ -148,32 +198,128 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
               <Title level={3} style={{ marginTop: "0", marginBottom: "0" }}>
                 {CONTENT.TITLE_ADD_SOURCE}
               </Title>
-              <Text className={styles["text-title"]}>
-                {buttonMode === "bank_statement"
-                  ? CONTENT.TEXT_UPLOAD_BANK_STATEMENT
-                  : buttonMode === "bank_integration"
-                  ? CONTENT.TEXT_UPLOAD_BANK_INTEGRATION
-                  : buttonMode === "online_cashier"
-                  ? CONTENT.TEXT_UPLOAD_ONLINE_CASHIER
-                  : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
-              </Text>
+              {fileIsLoading !== "loaded" ? (
+                <Text className={styles["text-title"]}>
+                  {buttonMode === "bank_statement"
+                    ? CONTENT.TEXT_UPLOAD_BANK_STATEMENT
+                    : buttonMode === "bank_integration"
+                    ? CONTENT.TEXT_UPLOAD_BANK_INTEGRATION
+                    : buttonMode === "online_cashier"
+                    ? CONTENT.TEXT_UPLOAD_ONLINE_CASHIER
+                    : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
+                </Text>
+              ) : (
+                <div className={styles["account-data"]}>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.DATA_ACCOUNT +
+                      accountFromFile?.account_info_from_file?.account_number}
+                  </Text>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.DATA_BANKNAME +
+                      accountFromFile?.account_info_from_file?.bank_name}
+                  </Text>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.DATA_STATEMENT_BEGIN +
+                      formatDateString(
+                        accountFromFile?.account_info_from_file?.start_date
+                      )}
+                  </Text>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.DATA_STATEMENT_END +
+                      formatDateString(
+                        accountFromFile?.account_info_from_file?.end_date
+                      )}
+                  </Text>
+                </div>
+              )}
             </div>
             {buttonMode === "bank_statement" ? (
-              <Dragger style={{ backgroundColor: "white" }}>
-                <div className={styles["dragger-inner"]}>
-                  <DownloadOutlined className={styles["upload-icon"]} />
-                  <div className={styles["dragger-text"]}>
-                    <Text
-                      className={styles["text-title"]}
-                      style={{ color: "#141414" }}
-                    >
-                      {CONTENT.TEXT_UPLOAD_TITLE}
-                    </Text>
-                    <Text className={styles["text-description"]}>
-                      {CONTENT.TEXT_UPLOAD_DESCRIPTION}
-                    </Text>
+              <Dragger
+                style={{
+                  backgroundColor: "white",
+                }}
+                accept=".txt"
+                showUploadList={false}
+                maxCount={1}
+                disabled={fileIsLoading === "loaded"}
+                className={cn({
+                  ["dragger-loading"]: fileIsLoading === "loading",
+                  ["dragger-loaded"]: fileIsLoading === "loaded",
+                })}
+                customRequest={async ({ file, onSuccess, onError }) => {
+                  try {
+                    // Проверьте тип файла на .txt
+                    if (file instanceof Blob && file.type !== "text/plain") {
+                      throw new Error("Разрешены только файлы .txt!")
+                    }
+                    const uploadFile = file as RcFile
+                    setFileName(uploadFile.name)
+                    setFileIsLoading("loading")
+                    // Выполните загрузку файла
+                    await handleFileUpload(uploadFile)
+
+                    // Убедитесь, что onSuccess определен, прежде чем вызывать его
+                    if (onSuccess) {
+                      onSuccess({}, {} as XMLHttpRequest)
+                      setFileIsLoading("loaded")
+                    }
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } catch (error: any) {
+                    console.error("Ошибка загрузки файла:", error)
+                    setFileIsLoading("")
+                    // Убедитесь, что onError определен, прежде чем вызывать его
+                    if (onError) {
+                      onError(error as ProgressEvent<EventTarget>)
+                    }
+                  }
+                }}
+              >
+                {fileIsLoading === "" ? (
+                  <div className={styles["dragger-inner"]}>
+                    <DownloadOutlined className={styles["upload-icon"]} />
+                    <div className={styles["dragger-text"]}>
+                      <Text
+                        className={styles["text-title"]}
+                        style={{ color: "#141414" }}
+                      >
+                        {CONTENT.TEXT_UPLOAD_TITLE}
+                      </Text>
+                      <Text className={styles["text-description"]}>
+                        {CONTENT.TEXT_UPLOAD_DESCRIPTION}
+                      </Text>
+                    </div>
                   </div>
-                </div>
+                ) : fileIsLoading === "loading" ? (
+                  <div className={styles["dragger-inner-loading"]}>
+                    <FileLoadingIcon className={styles["loading-icon"]} />
+                    <div className={styles["dragger-text"]}>
+                      <Text
+                        className={styles["text-title"]}
+                        style={{ color: "#6159FF" }}
+                      >
+                        {CONTENT.TEXT_LOADING_TITLE}
+                      </Text>
+                      <Text className={styles["text-description"]}>
+                        {fileName}
+                      </Text>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={styles["dragger-inner"]}>
+                    <FileLoadedIcon />
+                    <div className={styles["dragger-text"]}>
+                      <Text
+                        className={styles["text-title"]}
+                        style={{ color: "#141414" }}
+                      >
+                        {CONTENT.TEXT_LOADED_TITLE}
+                      </Text>
+                      <Text className={styles["text-description"]}>
+                        {CONTENT.TEXT_LOADED_DESCRIPTION}
+                      </Text>
+                    </div>
+                  </div>
+                )}
               </Dragger>
             ) : buttonMode === "bank_integration" ? (
               <div className={styles["bank-integration-wrapper"]}>
@@ -347,6 +493,11 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
           </div>
         )}
       </Modal>
+      <CloseSaveModal
+        isOpen={isCloseSave}
+        setOpen={setIsCloseSave}
+        close={closeModal}
+      />
     </>
   )
 }

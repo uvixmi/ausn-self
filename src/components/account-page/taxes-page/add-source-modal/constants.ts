@@ -14,6 +14,10 @@ export const CONTENT = {
   TEXT_UPLOAD_BANK_STATEMENT:
     "Подгрузите выписку в формате .txt (1С), сформированную в ЛК банка. Файл должен содержать все входящие и исходящие операции по одному счету ИП",
   TEXT_UPLOAD_TITLE: "Выберите или перетащите файлы",
+  TEXT_LOADING_TITLE: "Загрузка..",
+  TEXT_LOADED_TITLE: "Документ загружен",
+  TEXT_LOADED_DESCRIPTION:
+    "После успешной обработки данные отобразятся в разделе Операции",
   TEXT_UPLOAD_DESCRIPTION: "Загрузите файл в формате .txt",
   BUTTON_BACK: "Назад",
   TEXT_UPLOAD_BANK_INTEGRATION: "Выберите банк",
@@ -35,4 +39,8 @@ export const CONTENT = {
   MARKETPLACE_WB: "Wildberries",
   MARKETPLACE_YANDEX: "Яндекс.Маркет",
   MARKETPLACE_OTHER: "Другой маркетплейс",
+  DATA_ACCOUNT: "Номер счета: ",
+  DATA_BANKNAME: "Наименование банка: ",
+  DATA_STATEMENT_BEGIN: "Дата начала выписки: ",
+  DATA_STATEMENT_END: "Дата окончания выписки: ",
 }

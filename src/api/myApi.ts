@@ -2351,7 +2351,7 @@ export class Api<
       data: BodyCreateOperationsFromFileOperationsFilePost,
       params: RequestParams = {}
     ) =>
-      this.request<any, HTTPValidationError | void>({
+      this.request<CreateAccountResponse, HTTPValidationError>({
         path: `/operations/file`,
         method: "POST",
         body: data,
