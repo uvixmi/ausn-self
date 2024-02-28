@@ -4,6 +4,7 @@ import styles from "./styles.module.scss"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "../constants"
+import { useEffect } from "react"
 
 export const DeleteOperationModal = ({
   isOpen,
@@ -70,7 +71,7 @@ export const DeleteOperationModal = ({
           </Button>
 
           <Button
-            key="back"
+            key="delete"
             onClick={() => {
               setOpen(false), id && deleteOperation(id)
             }}

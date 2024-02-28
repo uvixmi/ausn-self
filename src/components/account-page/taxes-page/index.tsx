@@ -499,9 +499,6 @@ export const TaxesPage = () => {
                             setHoveredIndex(operation.id),
                               setHoveredAmount(operation.amount_doc)
                           }}
-                          onMouseLeave={() => {
-                            setHoveredIndex(null), setHoveredAmount(null)
-                          }}
                         >
                           <div className={styles["source-inner"]}>
                             <Text className={styles["source-title"]}>
