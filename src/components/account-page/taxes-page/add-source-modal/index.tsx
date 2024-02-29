@@ -31,6 +31,8 @@ import { FileLoadedIcon } from "../images/file-loaded"
 import cn from "classnames"
 import { formatDateString } from "../../actions-page/utils"
 import { CloseSaveModal } from "./close-save-modal"
+import { isErrorResponse } from "./utils"
+import { FileErrorIcon } from "../images/file-error"
 
 export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   const { Title, Text } = Typography
@@ -60,6 +62,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   }
 
   const [buttonMode, setButtonMode] = useState("default")
+  const [errorText, setErrorText] = useState("")
 
   const [accountFromFile, setAccountFromFile] =
     useState<CreateAccountResponse | null>(null)
@@ -75,9 +78,15 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
           headers,
         })
       setAccountFromFile(response.data)
-      // Обработайте данные ответа здесь или выполните необходимые действия
+      setFileIsLoading("loaded")
       message.success("Файл успешно загружен!")
     } catch (error) {
+      if (isErrorResponse(error)) {
+        // Если объект ошибки соответствует интерфейсу ErrorResponse
+        setErrorText(error.error.detail.message)
+        console.log(error.error.detail.message)
+        setFileIsLoading("error")
+      }
       console.error("Ошибка загрузки файла:", error)
       // Обработайте ошибку, покажите сообщение об ошибке и т. д.
       message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
@@ -245,10 +254,10 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                 className={cn({
                   ["dragger-loading"]: fileIsLoading === "loading",
                   ["dragger-loaded"]: fileIsLoading === "loaded",
+                  ["dragger-error"]: fileIsLoading === "error",
                 })}
                 customRequest={async ({ file, onSuccess, onError }) => {
                   try {
-                    // Проверьте тип файла на .txt
                     if (file instanceof Blob && file.type !== "text/plain") {
                       throw new Error("Разрешены только файлы .txt!")
                     }
@@ -258,15 +267,13 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                     // Выполните загрузку файла
                     await handleFileUpload(uploadFile)
 
-                    // Убедитесь, что onSuccess определен, прежде чем вызывать его
                     if (onSuccess) {
                       onSuccess({}, {} as XMLHttpRequest)
-                      setFileIsLoading("loaded")
                     }
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   } catch (error: any) {
                     console.error("Ошибка загрузки файла:", error)
-                    setFileIsLoading("")
+
                     // Убедитесь, что onError определен, прежде чем вызывать его
                     if (onError) {
                       onError(error as ProgressEvent<EventTarget>)
@@ -301,6 +308,21 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       </Text>
                       <Text className={styles["text-description"]}>
                         {fileName}
+                      </Text>
+                    </div>
+                  </div>
+                ) : fileIsLoading === "error" ? (
+                  <div className={styles["dragger-inner"]}>
+                    <FileErrorIcon />
+                    <div className={styles["dragger-text"]}>
+                      <Text
+                        className={styles["text-title"]}
+                        style={{ color: "#141414" }}
+                      >
+                        {CONTENT.TEXT_ERROR_TITLE}
+                      </Text>
+                      <Text className={styles["text-description"]}>
+                        {errorText}
                       </Text>
                     </div>
                   </div>

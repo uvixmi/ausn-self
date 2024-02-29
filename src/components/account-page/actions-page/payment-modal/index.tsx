@@ -205,7 +205,7 @@ export const PaymentModal = ({
                   {CONTENT.DESCRIPTION_MODAL}
                 </Text>
                 {payments.map((item, index) => (
-                  <div className={styles["payment-inner"]}>
+                  <div className={styles["payment-inner"]} key={index}>
                     {index != 0 && (
                       <div className={styles["title-next"]}>
                         <Title

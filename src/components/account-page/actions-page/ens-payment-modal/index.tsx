@@ -126,7 +126,6 @@ export const EnsPaymentModal = ({
         setAccount(defaultAccount || "")
       }
       fetchSources()
-      console.log(sources)
     }
   }, [isOpen])
 

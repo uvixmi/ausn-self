@@ -475,8 +475,8 @@ export const TaxesPage = () => {
           <div className={styles["operations-table-wrapper"]}>
             <div className={styles["operations-table-inner"]}>
               <div className={styles["table-header"]}>
-                {columns.map((item) => (
-                  <div className={styles["table-header-title"]}>
+                {columns.map((item, index) => (
+                  <div className={styles["table-header-title"]} key={index}>
                     {item.title}
                   </div>
                 ))}
