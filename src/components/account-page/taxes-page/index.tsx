@@ -59,6 +59,7 @@ import { PencilIcon } from "./type-operation/icons/pencil"
 import { AddSourceModal } from "./add-source-modal"
 import { ArrowCounterIcon } from "./type-operation/icons/arrow-counter"
 import { fetchSourcesInfo } from "../client/sources/thunks"
+import { AddOperationModal } from "./add-operation-modal"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -419,7 +420,7 @@ export const TaxesPage = () => {
 
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
   const [hoveredAmount, setHoveredAmount] = useState<number | null>(null)
-  const [selectedOperation, setSelectedOperation] = useState(null)
+  const [addOperation, setAddOperation] = useState(false)
 
   return (
     <>
@@ -431,6 +432,7 @@ export const TaxesPage = () => {
           </Title>
           <Button
             className={cn(styles["buttons-row-item"], styles["button-make"])}
+            onClick={() => setAddOperation(true)}
           >
             <PlusOutlined
               className={styles["plus-icon"]}
@@ -751,6 +753,7 @@ export const TaxesPage = () => {
         id={hoveredIndex}
       />
       <AddSourceModal isOpen={isAddSourceOpen} setOpen={setIsAddSourceOpen} />
+      <AddOperationModal isOpen={addOperation} setOpen={setAddOperation} />
     </>
   )
 }

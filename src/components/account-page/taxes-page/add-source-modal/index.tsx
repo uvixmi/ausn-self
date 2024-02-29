@@ -82,13 +82,11 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
       message.success("Файл успешно загружен!")
     } catch (error) {
       if (isErrorResponse(error)) {
-        // Если объект ошибки соответствует интерфейсу ErrorResponse
         setErrorText(error.error.detail.message)
         console.log(error.error.detail.message)
         setFileIsLoading("error")
       }
       console.error("Ошибка загрузки файла:", error)
-      // Обработайте ошибку, покажите сообщение об ошибке и т. д.
       message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
     }
   }
@@ -218,28 +216,30 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                     : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
                 </Text>
               ) : (
-                <div className={styles["account-data"]}>
-                  <Text className={styles["text-title"]}>
-                    {CONTENT.DATA_ACCOUNT +
-                      accountFromFile?.account_info_from_file?.account_number}
-                  </Text>
-                  <Text className={styles["text-title"]}>
-                    {CONTENT.DATA_BANKNAME +
-                      accountFromFile?.account_info_from_file?.bank_name}
-                  </Text>
-                  <Text className={styles["text-title"]}>
-                    {CONTENT.DATA_STATEMENT_BEGIN +
-                      formatDateString(
-                        accountFromFile?.account_info_from_file?.start_date
-                      )}
-                  </Text>
-                  <Text className={styles["text-title"]}>
-                    {CONTENT.DATA_STATEMENT_END +
-                      formatDateString(
-                        accountFromFile?.account_info_from_file?.end_date
-                      )}
-                  </Text>
-                </div>
+                buttonMode === "bank_statement" && (
+                  <div className={styles["account-data"]}>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.DATA_ACCOUNT +
+                        accountFromFile?.account_info_from_file?.account_number}
+                    </Text>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.DATA_BANKNAME +
+                        accountFromFile?.account_info_from_file?.bank_name}
+                    </Text>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.DATA_STATEMENT_BEGIN +
+                        formatDateString(
+                          accountFromFile?.account_info_from_file?.start_date
+                        )}
+                    </Text>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.DATA_STATEMENT_END +
+                        formatDateString(
+                          accountFromFile?.account_info_from_file?.end_date
+                        )}
+                    </Text>
+                  </div>
+                )
               )}
             </div>
             {buttonMode === "bank_statement" ? (

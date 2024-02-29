@@ -157,12 +157,7 @@ export const PaymentModal = ({
   useEffect(() => {
     const amountsPayments = payments.every((item) => item.amount !== 0)
     const datesPayments = payments.every((item) => item.date !== "")
-    //const yearsPayments = payments.every((item) => item.tax_period !== 0)
-    if (
-      amountsPayments &&
-      datesPayments //&& yearsPayments
-    )
-      setIsButtonDisabled(false)
+    if (amountsPayments && datesPayments) setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [payments])
 
