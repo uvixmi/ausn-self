@@ -35,6 +35,7 @@ $xxl: 2560px;
 
   @media screen and (min-width: $l) {
     justify-content: center;
+    column-gap: 80px;
   }
 }
 
@@ -48,7 +49,7 @@ $xxl: 2560px;
   @media screen and (min-width: $s) {
     margin: 40px 0;
     min-width: 250px;
-    max-width: 440px;
+    max-width: 520px;
     gap: 32px;
   }
 }
@@ -140,10 +141,13 @@ $xxl: 2560px;
 }
 .stepper-wrapper {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   margin-right: 30px;
   height: 100%;
+
+  @media screen and (min-width: $s) {
+    margin-top: 140px;
+  }
 }
 
 .button-back {

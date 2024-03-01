@@ -10,6 +10,7 @@ export const DeleteOperationModal = ({
   isOpen,
   setOpen,
   id,
+  setWasDeleted,
 }: DeleteOperationModalProps) => {
   const { Title, Text } = Typography
   const token = Cookies.get("token")
@@ -41,6 +42,7 @@ export const DeleteOperationModal = ({
         { headers }
       )
       successProcess()
+      setWasDeleted(true)
     } catch (error) {
       errorProcess()
     }

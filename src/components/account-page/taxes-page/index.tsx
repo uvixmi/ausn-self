@@ -19,7 +19,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from "@ant-design/icons"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { v4 as uuid, v4 } from "uuid"
 import { useDispatch } from "react-redux"
 import "./styles.scss"
@@ -302,9 +302,14 @@ export const TaxesPage = () => {
       setSelectedEndDate(convertDateFormat(dateStrings[1]))
       setIsFetching(true)
     } else {
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
       setEndOfPage(false)
-      setSelectedStartDate("")
-      setSelectedEndDate("")
+      setSelectedStartDate(null)
+      setSelectedEndDate(null)
       setIsFetching(true)
     }
   }
@@ -324,54 +329,58 @@ export const TaxesPage = () => {
       setIsFetching(true)
     }
   }
-  useEffect(() => {
-    const fetchOperations = async () => {
-      if (isFetching) {
-        const filters: GetOperationsRequest = {
-          start_date: selectedStartDate || undefined,
-          end_date: selectedEndDate || undefined,
-          operations_types:
-            selectedOperationTypes.length > 0
-              ? selectedOperationTypes
-              : undefined,
-          sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
-          pagination: { ...pagination },
-        }
-        const operations = await api.operations.getOperationsOperationsPost(
-          filters,
-          { headers }
-        )
 
-        if (pagination.page_number === 1) {
-          setOperationsData((prevData) => ({
-            operations: [...operations.data.operations],
-            pages_count: operations.data.pages_count,
-          }))
-        } else {
-          setOperationsData((prevData) => ({
-            ...prevData,
-            operations: [
-              ...(prevData?.operations || []),
-              ...operations.data.operations,
-            ],
-            pages_count: operations.data.pages_count,
-          }))
-        }
-        setPagination((prevPagination) => ({
-          ...prevPagination,
-          page_number: prevPagination.page_number + 1,
-        }))
-        setIsFetching(false)
+  const fetchOperations = useCallback(async () => {
+    if (isFetching) {
+      const filters: GetOperationsRequest = {
+        start_date: selectedStartDate || undefined,
+        end_date: selectedEndDate || undefined,
+        operations_types:
+          selectedOperationTypes.length > 0
+            ? selectedOperationTypes
+            : undefined,
+        sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
+        pagination: { ...pagination },
       }
+
+      const operations = await api.operations.getOperationsOperationsPost(
+        filters,
+        { headers }
+      )
+
+      if (pagination.page_number === 1) {
+        setOperationsData((prevData) => ({
+          operations: [...operations.data.operations],
+          pages_count: operations.data.pages_count,
+        }))
+      } else {
+        setOperationsData((prevData) => ({
+          ...prevData,
+          operations: [
+            ...(prevData?.operations || []),
+            ...operations.data.operations,
+          ],
+          pages_count: operations.data.pages_count,
+        }))
+      }
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        page_number: prevPagination.page_number + 1,
+      }))
+      setIsFetching(false)
     }
-    fetchOperations()
   }, [
     isFetching,
     selectedEndDate,
     selectedOperationTypes,
     selectedSources,
     selectedStartDate,
+    pagination,
   ])
+
+  useEffect(() => {
+    fetchOperations()
+  }, [fetchOperations])
 
   useEffect(() => {
     document.addEventListener("scroll", handleUpdateScroll)
@@ -421,6 +430,20 @@ export const TaxesPage = () => {
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
   const [hoveredAmount, setHoveredAmount] = useState<number | null>(null)
   const [addOperation, setAddOperation] = useState(false)
+
+  const [wasDeleted, setWasDeleted] = useState(false)
+
+  useEffect(() => {
+    if (wasDeleted === true) {
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
+      setWasDeleted(false)
+      setIsFetching(true)
+    }
+  }, [wasDeleted])
 
   return (
     <>
@@ -751,6 +774,7 @@ export const TaxesPage = () => {
         isOpen={deleteModalOpen}
         setOpen={setIsDeleteModalOpen}
         id={hoveredIndex}
+        setWasDeleted={setWasDeleted}
       />
       <AddSourceModal isOpen={isAddSourceOpen} setOpen={setIsAddSourceOpen} />
       <AddOperationModal isOpen={addOperation} setOpen={setAddOperation} />

@@ -33,6 +33,9 @@ import { formatDateString } from "../../actions-page/utils"
 import { CloseSaveModal } from "./close-save-modal"
 import { isErrorResponse } from "./utils"
 import { FileErrorIcon } from "../images/file-error"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "../../../main-page/store"
+import { fetchSourcesInfo } from "../../client/sources/thunks"
 
 export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   const { Title, Text } = Typography
@@ -41,6 +44,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
     Authorization: `Bearer ${token}`,
   }
 
+  const dispatch = useDispatch<AppDispatch>()
   const [fileIsLoading, setFileIsLoading] = useState("")
   const [fileName, setFileName] = useState("")
 
@@ -80,6 +84,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
       setAccountFromFile(response.data)
       setFileIsLoading("loaded")
       message.success("Файл успешно загружен!")
+      dispatch(fetchSourcesInfo())
     } catch (error) {
       if (isErrorResponse(error)) {
         setErrorText(error.error.detail.message)
@@ -88,21 +93,6 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
       }
       console.error("Ошибка загрузки файла:", error)
       message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
-    }
-  }
-
-  const uploadOperation = async (file: RcFile) => {
-    try {
-      const data = {
-        account_file: file,
-      }
-
-      await api.operations.createOperationsFromFileOperationsFilePost(data)
-
-      // Дополнительная обработка успешного ответа
-    } catch (error) {
-      console.error("Ошибка загрузки файла:", error)
-      // Обработка ошибки
     }
   }
 
