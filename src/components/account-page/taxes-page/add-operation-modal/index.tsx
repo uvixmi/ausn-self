@@ -28,6 +28,7 @@ import {
 export const AddOperationModal = ({
   isOpen,
   setOpen,
+  setWasDeleted,
 }: AddOperationModalProps) => {
   const { Title, Text, Link } = Typography
   const dispatch = useDispatch()
@@ -149,6 +150,7 @@ export const AddOperationModal = ({
           headers,
         })
         successProcess()
+        setWasDeleted(true)
         closeModal()
       } catch (error) {
         failedProcess()
@@ -216,6 +218,7 @@ export const AddOperationModal = ({
                 >
                   {CONTENT.INPUT_COUNTERPARTY_TITLE}
                 </Text>
+
                 <Input
                   placeholder={CONTENT.INPUT_PLACEHOLDER}
                   style={{ borderRadius: "4px" }}
@@ -233,6 +236,7 @@ export const AddOperationModal = ({
                 >
                   {CONTENT.INPUT_DIRECT_TITLE}
                 </Text>
+
                 <Input
                   placeholder={CONTENT.INPUT_PLACEHOLDER}
                   style={{ borderRadius: "4px" }}
@@ -251,6 +255,7 @@ export const AddOperationModal = ({
                   >
                     {CONTENT.INPUT_AMOUNT_TITLE}
                   </Text>
+
                   <Input
                     placeholder={CONTENT.INPUT_PLACEHOLDER}
                     style={{ borderRadius: "4px" }}
@@ -267,6 +272,7 @@ export const AddOperationModal = ({
                   >
                     {CONTENT.DATEPICKER_TITLE}
                   </Text>
+
                   <DatePicker
                     placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
                     style={{ borderRadius: "4px", height: "32px" }}

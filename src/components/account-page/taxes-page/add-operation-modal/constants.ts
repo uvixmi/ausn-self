@@ -10,6 +10,7 @@ export const CONTENT = {
   INPUT_DOCUMENT_TITLE: "Номер платежного документа",
   INPUT_DOCUMENT_HINT:
     "Заполните, если доход получен в банке, по которому не подгружена выписка",
+  INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
   DATEPICKER_TITLE: "Дата операции",
   INPUT_PLACEHOLDER: "Введите",
   DATEPICKER_PLACEHOLDER: "Укажите дату",

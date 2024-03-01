@@ -777,7 +777,11 @@ export const TaxesPage = () => {
         setWasDeleted={setWasDeleted}
       />
       <AddSourceModal isOpen={isAddSourceOpen} setOpen={setIsAddSourceOpen} />
-      <AddOperationModal isOpen={addOperation} setOpen={setAddOperation} />
+      <AddOperationModal
+        isOpen={addOperation}
+        setOpen={setAddOperation}
+        setWasDeleted={setWasDeleted}
+      />
     </>
   )
 }
