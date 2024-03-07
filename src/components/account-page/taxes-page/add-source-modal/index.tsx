@@ -1,14 +1,14 @@
-import { Button, Modal, Typography, message } from "antd"
+import { Button, Form, Input, Modal, Typography, message } from "antd"
 import { AddSourceModalProps } from "./types"
 import styles from "./styles.module.scss"
 import "./styles.scss"
-import { CreateAccountResponse, api } from "../../../../api/myApi"
+import { CreateAccountResponse, OFDSource, api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "./constants"
 import { BankBalanceIcon } from "../type-operation/icons/bank_balance"
 import { OnlineCashierIcon } from "../type-operation/icons/online-cashier"
 import { MarketplaceIcon } from "../type-operation/icons/marketplace"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Dragger from "antd/es/upload/Dragger"
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons"
 import alpha from "./bank-logos/alpha.png"
@@ -36,8 +36,13 @@ import { FileErrorIcon } from "../images/file-error"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
+import Link from "antd/es/typography/Link"
 
-export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
+export const AddSourceModal = ({
+  isOpen,
+  setOpen,
+  setAddOperation,
+}: AddSourceModalProps) => {
   const { Title, Text } = Typography
   const token = Cookies.get("token")
   const headers = {
@@ -49,18 +54,18 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   const [fileName, setFileName] = useState("")
 
   const [messageApi, contextHolder] = message.useMessage()
-  const successProcess = () => {
+  const successProcess = (text: string) => {
     messageApi.open({
       type: "success",
-      content: CONTENT.NOTIFICATION_PROCESSING_SUCCESS,
+      content: text,
       style: { textAlign: "right" },
     })
   }
 
-  const errorProcess = () => {
+  const errorProcess = (text: string) => {
     messageApi.open({
       type: "error",
-      content: CONTENT.NOTIFICATION_PROCESSING_FAILED,
+      content: text,
       style: { textAlign: "right" },
     })
   }
@@ -102,6 +107,15 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
     setButtonMode("default")
     setFileIsLoading("")
     setFileName("")
+    setBankToIntegrate("")
+    setIntegrateAccount("")
+    setIntegrateBik("")
+    setIntegrateLogin("")
+    setIntegratePassword("")
+    setMarketplaceMode("")
+    setOfdMode("")
+    setOtherMarketplace("")
+    setOtherOfd("")
   }
 
   const closeAddSource = () => {
@@ -110,6 +124,193 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
   }
 
   const [isCloseSave, setIsCloseSave] = useState(false)
+
+  const [bankToIntegrate, setBankToIntegrate] = useState("")
+
+  const handleAlpha = () => {
+    setBankToIntegrate("alpha")
+  }
+
+  const handleOtherBank = () => {
+    setBankToIntegrate("other")
+  }
+
+  const sendAlphaSource = async () => {
+    const data = {
+      integration_type: 2,
+    }
+    try {
+      await api.sources.createUserAccountIntegrationSourcesAccountIntegrationPost(
+        data,
+        { headers }
+      )
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_ALPHA_FAILED)
+    } finally {
+      setOpen(false)
+    }
+  }
+
+  const [integrateLogin, setIntegrateLogin] = useState("")
+  const [integratePassword, setIntegratePassword] = useState("")
+  const [integrateBik, setIntegrateBik] = useState("")
+  const [integrateAccount, setIntegrateAccount] = useState("")
+  const [isIntegrateButtonDisabled, setIsIntegrateButtonDisabled] =
+    useState(true)
+
+  useEffect(() => {
+    if (
+      integrateLogin !== "" &&
+      integratePassword !== "" &&
+      integrateBik.length == 9 &&
+      integrateAccount.length == 20
+    )
+      setIsIntegrateButtonDisabled(false)
+    else setIsIntegrateButtonDisabled(true)
+  }, [integrateLogin, integratePassword, integrateBik, integrateAccount])
+
+  const sendOtherSource = async () => {
+    const data = {
+      integration_type: 1,
+      account_credentials: {
+        login: integrateLogin,
+        password: integratePassword,
+      },
+      account_details: {
+        bank_bik: integrateBik,
+        account_number: integrateAccount,
+      },
+    }
+    try {
+      await api.sources.createUserAccountIntegrationSourcesAccountIntegrationPost(
+        data,
+        { headers }
+      )
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+
+  const [marketplaceLogin, setMarketplaceLogin] = useState("login")
+  const [marketplacePassword, setMarketplacePassword] = useState("password")
+  const sendYandexMarketplaceSource = async () => {
+    const data = {
+      marketplace_type: 1,
+    }
+    try {
+      await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
+        headers,
+      })
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+  const sendOtherMarketplaceSource = async (type: number) => {
+    const data = {
+      marketplace_type: type,
+      marketplace_credentials: {
+        login: marketplaceId,
+        password: marketplaceKey,
+      },
+    }
+    try {
+      await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
+        headers,
+      })
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+
+  const sendOFDSource = async (file: RcFile, ofd_source: OFDSource) => {
+    try {
+      const response = await api.sources.createClientOfdSourcesOfdPost(
+        { ofd_file: file, ofd_type: 1, ofd_source },
+        undefined,
+        {
+          headers,
+        }
+      )
+      setAccountFromFile(response.data)
+      setFileIsLoading("loaded")
+      message.success("Файл успешно загружен!")
+      dispatch(fetchSourcesInfo())
+    } catch (error) {
+      if (isErrorResponse(error)) {
+        setErrorText(error.error.detail.message)
+        console.log(error.error.detail.message)
+        setFileIsLoading("error")
+      }
+      console.error("Ошибка загрузки файла:", error)
+      message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
+    }
+  }
+
+  const sendOtherOFDSource = async () => {}
+
+  const [ofdLogin, setOfdLogin] = useState("")
+  const [ofdPassword, setOfdPassword] = useState("")
+
+  const sendApiOFDSource = async (ofd_source: OFDSource) => {
+    try {
+      await api.sources.createClientOfdSourcesOfdPost(
+        { ofd_type: 2, ofd_source },
+        { login: ofdLogin, password: ofdPassword },
+        {
+          headers,
+        }
+      )
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+
+  const [ofdMode, setOfdMode] = useState<OFDSource | "" | "other">("")
+  const [otherOfd, setOtherOfd] = useState("")
+
+  const [marketplaceMode, setMarketplaceMode] = useState("")
+  const [marketplaceId, setMarketplaceId] = useState("")
+  const [marketplaceKey, setMarketplaceKey] = useState("")
+
+  const [otherMarketplace, setOtherMarketplace] = useState("")
+
+  const [integrateLoginError, setIntegrateLoginError] = useState(false)
+  const [integratePasswordError, setIntegratePasswordError] = useState(false)
+  const [integrateBikError, setIntegrateBikError] = useState(false)
+  const [integrateAccountError, setIntegrateAccountError] = useState(false)
+
+  const [isButtonMarketplaceDisabled, setIsButtonMarketplaceDisabled] =
+    useState(true)
+
+  useEffect(() => {
+    if (marketplaceMode === "3")
+      if (marketplaceId !== "" && marketplaceKey !== "")
+        setIsButtonMarketplaceDisabled(false)
+      else setIsButtonMarketplaceDisabled(true)
+    else if (marketplaceMode === "2")
+      if (marketplaceKey !== "") setIsButtonMarketplaceDisabled(false)
+      else setIsButtonMarketplaceDisabled(true)
+  }, [marketplaceId, marketplaceKey, marketplaceMode])
+
+  const [isOfdButtonDisabled, setIsOfdButtonDisabled] = useState(true)
+
+  useEffect(() => {
+    if (ofdLogin !== "" && ofdPassword !== "") setIsOfdButtonDisabled(false)
+    else setIsOfdButtonDisabled(true)
+  }, [ofdLogin, ofdPassword])
+
   return (
     <>
       {contextHolder}
@@ -200,9 +401,26 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                   {buttonMode === "bank_statement"
                     ? CONTENT.TEXT_UPLOAD_BANK_STATEMENT
                     : buttonMode === "bank_integration"
-                    ? CONTENT.TEXT_UPLOAD_BANK_INTEGRATION
+                    ? bankToIntegrate === ""
+                      ? CONTENT.TEXT_UPLOAD_BANK_INTEGRATION
+                      : bankToIntegrate === "alpha"
+                      ? CONTENT.TEXT_ALPHA_INTEGRATE
+                      : CONTENT.TEXT_OTHER_INTEGRATE
                     : buttonMode === "online_cashier"
-                    ? CONTENT.TEXT_UPLOAD_ONLINE_CASHIER
+                    ? ofdMode === ""
+                      ? CONTENT.TEXT_UPLOAD_ONLINE_CASHIER
+                      : ofdMode === OFDSource.ValueПервыйОФД ||
+                        ofdMode === OFDSource.ValueОФДРу
+                      ? CONTENT.TEXT_OFD_DESCRIPTION
+                      : ofdMode === OFDSource.ValueПлатформаОФД ||
+                        ofdMode === OFDSource.ValueЯндексОФД ||
+                        ofdMode === OFDSource.ValueСБИСОФД ||
+                        ofdMode === OFDSource.ValueТакскомОФД ||
+                        ofdMode === OFDSource.ValueКонтурОФД
+                      ? CONTENT.TEXT_OFD_DIFFERENT_DESCRIPTION
+                      : ""
+                    : marketplaceMode !== ""
+                    ? CONTENT.TEXT_OTHER_INTEGRATE
                     : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
                 </Text>
               ) : (
@@ -281,7 +499,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       >
                         {CONTENT.TEXT_UPLOAD_TITLE}
                       </Text>
-                      <Text className={styles["text-description"]}>
+                      <Text className={styles["text-description-dragger"]}>
                         {CONTENT.TEXT_UPLOAD_DESCRIPTION}
                       </Text>
                     </div>
@@ -296,7 +514,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       >
                         {CONTENT.TEXT_LOADING_TITLE}
                       </Text>
-                      <Text className={styles["text-description"]}>
+                      <Text className={styles["text-description-dragger"]}>
                         {fileName}
                       </Text>
                     </div>
@@ -311,7 +529,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       >
                         {CONTENT.TEXT_ERROR_TITLE}
                       </Text>
-                      <Text className={styles["text-description"]}>
+                      <Text className={styles["text-description-dragger"]}>
                         {errorText}
                       </Text>
                     </div>
@@ -326,7 +544,7 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       >
                         {CONTENT.TEXT_LOADED_TITLE}
                       </Text>
-                      <Text className={styles["text-description"]}>
+                      <Text className={styles["text-description-dragger"]}>
                         {CONTENT.TEXT_LOADED_DESCRIPTION}
                       </Text>
                     </div>
@@ -334,130 +552,655 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                 )}
               </Dragger>
             ) : buttonMode === "bank_integration" ? (
-              <div className={styles["bank-integration-wrapper"]}>
-                <div className={styles["bank-row"]}>
-                  <Button className={styles["bank-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${alpha})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.BANK_ALPHA}
-                    </Text>
-                  </Button>
-                  <Button className={styles["bank-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${modul})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.BANK_MODUL}
-                    </Text>
-                  </Button>
+              bankToIntegrate === "" ? (
+                <div className={styles["bank-integration-wrapper"]}>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={handleAlpha}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${alpha})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.BANK_ALPHA}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={handleOtherBank}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${modul})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.BANK_MODUL}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={handleOtherBank}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${tinkoff})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.BANK_TINKOFF}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={handleOtherBank}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${tochka})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.BANK_TOCHKA}
+                      </Text>
+                    </Button>
+                  </div>
                 </div>
-                <div className={styles["bank-row"]}>
-                  <Button className={styles["bank-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${tinkoff})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.BANK_TINKOFF}
-                    </Text>
-                  </Button>
-                  <Button className={styles["bank-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${tochka})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.BANK_TOCHKA}
-                    </Text>
-                  </Button>
+              ) : bankToIntegrate === "alpha" ? (
+                <div>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.ALPHA_INTEGRATE_DESCRIPTION}
+                  </Text>
+                  <div className={styles["buttons-generate"]}>
+                    <Button
+                      onClick={() => setBankToIntegrate("")}
+                      className={styles["generate-back"]}
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </Button>
+                    <Button
+                      onClick={sendAlphaSource}
+                      className={styles["generate-button"]}
+                    >
+                      {CONTENT.BUTTON_GENERATE_LINK}
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className={styles["otherbanks-wrapper"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_LOGIN}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={integrateLoginError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        integrateLoginError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <Input
+                        value={integrateLogin}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          setIntegrateLogin(event.target.value)
+                          if (event.target.value !== "")
+                            setIntegrateLoginError(false)
+                          else setIntegrateLoginError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_PASSWORD}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={integratePasswordError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        integratePasswordError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <Input
+                        value={integratePassword}
+                        type="password"
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          setIntegratePassword(event.target.value)
+                          if (event.target.value !== "")
+                            setIntegratePasswordError(false)
+                          else setIntegratePasswordError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_BANK_BIK}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={integrateBikError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        integrateBikError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <Input
+                        value={integrateBik}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          const numericValue = event.target.value.replace(
+                            /\D/g,
+                            ""
+                          )
+                          setIntegrateBik(numericValue)
+                          if (event.target.value !== "")
+                            setIntegrateBikError(false)
+                          else setIntegrateBikError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_BANK_ACCOUNT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={integrateAccountError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        integrateAccountError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <Input
+                        value={integrateAccount}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          const numericValue = event.target.value.replace(
+                            /\D/g,
+                            ""
+                          )
+                          setIntegrateAccount(numericValue)
+                          if (event.target.value !== "")
+                            setIntegrateAccountError(false)
+                          else setIntegrateAccountError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.TEXT_OTHER_INTEGRATE_DESCRIPTION}
+                    </Text>
+                    <Link
+                      className={styles["instructions"]}
+                      style={{ color: "#6159ff" }}
+                      target="_blink"
+                      href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                    >
+                      {CONTENT.LINK_INSTRUCTIONS}
+                    </Link>
+                  </div>
+                  <div className={styles["buttons-generate-inner"]}>
+                    <Button
+                      onClick={() => setBankToIntegrate("")}
+                      className={styles["generate-back"]}
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </Button>
+                    <Button
+                      onClick={sendOtherSource}
+                      className={styles["generate-button"]}
+                      disabled={isIntegrateButtonDisabled}
+                    >
+                      {CONTENT.BUTTON_INTEGRATE_BANK}
+                    </Button>
+                  </div>
+                </div>
+              )
             ) : buttonMode === "online_cashier" ? (
+              ofdMode === "" ? (
+                <div className={styles["bank-integration-wrapper"]}>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueОФДРу)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${ofdru})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_OFD}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueПервыйОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${firstofd})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_FIRST}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueПлатформаОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${platform})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_PLATFORM}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueЯндексОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${yaofd})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_YANDEX}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueСБИСОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${sbis})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIES_SBIS}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueТакскомОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${taxcom})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_TAXCOM}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode(OFDSource.ValueКонтурОФД)}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${kontur})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_KONTUR}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["cashier-item"]}
+                      onClick={() => setOfdMode("other")}
+                    >
+                      <OnlineCashierIcon className={styles["bank-logo"]} />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.CASHIER_OTHER}
+                      </Text>
+                    </Button>
+                  </div>
+                </div>
+              ) : ofdMode === OFDSource.ValueОФДРу ||
+                ofdMode === OFDSource.ValueПервыйОФД ? (
+                <div className={styles["bank-integration-wrapper"]}>
+                  <div className={styles["otherbanks-wrapper"]}>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_OFD_LOGIN}{" "}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+                      <Input
+                        value={ofdLogin}
+                        onChange={(event) => setOfdLogin(event.target.value)}
+                      />
+                    </div>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_PASSWORD}{" "}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+                      <Input
+                        value={ofdPassword}
+                        type="password"
+                        onChange={(event) => setOfdPassword(event.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Text className={styles["text-title"]}>
+                      {CONTENT.TEXT_OFD_SOURCE_DESCRIPTION}
+                    </Text>
+                    <Link
+                      className={styles["instructions"]}
+                      style={{ color: "#6159ff" }}
+                      target="_blink"
+                      href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                    >
+                      {CONTENT.LINK_INSTRUCTIONS}
+                    </Link>
+                  </div>
+                  <div className={styles["buttons-generate"]}>
+                    <Button
+                      onClick={() => {
+                        setOfdMode("")
+                        setOfdPassword("")
+                        setOfdLogin("")
+                      }}
+                      className={styles["generate-back"]}
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </Button>
+                    <Button
+                      onClick={() => sendApiOFDSource(ofdMode)}
+                      className={styles["generate-button"]}
+                      disabled={isOfdButtonDisabled}
+                    >
+                      {CONTENT.BUTTON_INTEGRATE_BANK}
+                    </Button>
+                  </div>
+                </div>
+              ) : ofdMode === OFDSource.ValueПлатформаОФД ||
+                ofdMode === OFDSource.ValueЯндексОФД ||
+                ofdMode === OFDSource.ValueСБИСОФД ||
+                ofdMode === OFDSource.ValueТакскомОФД ||
+                ofdMode === OFDSource.ValueКонтурОФД ? (
+                <div>
+                  <Dragger
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                    accept=".xls, .xlsx"
+                    showUploadList={false}
+                    maxCount={1}
+                    disabled={fileIsLoading === "loaded"}
+                    className={cn({
+                      ["dragger-loading"]: fileIsLoading === "loading",
+                      ["dragger-loaded"]: fileIsLoading === "loaded",
+                      ["dragger-error"]: fileIsLoading === "error",
+                    })}
+                    customRequest={async ({ file, onSuccess, onError }) => {
+                      try {
+                        if (!(file instanceof Blob)) {
+                          throw new Error(
+                            "Разрешены только файлы .xls и .xlsx!"
+                          )
+                        }
+                        const uploadFile = file as unknown as RcFile
+                        setFileName(uploadFile.name)
+                        console.log(uploadFile.name)
+                        setFileIsLoading("loading")
+
+                        await sendOFDSource(uploadFile, ofdMode)
+
+                        if (onSuccess) {
+                          onSuccess({}, {} as XMLHttpRequest)
+                        }
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      } catch (error: any) {
+                        console.error("Ошибка загрузки файла:", error)
+
+                        if (onError) {
+                          onError(error as ProgressEvent<EventTarget>)
+                        }
+                      }
+                    }}
+                  >
+                    {fileIsLoading === "" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <DownloadOutlined className={styles["upload-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414" }}
+                          >
+                            {CONTENT.TEXT_UPLOAD_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.TEXT_UPLOAD_DESCRIPTION}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "loading" ? (
+                      <div className={styles["dragger-inner-loading"]}>
+                        <FileLoadingIcon className={styles["loading-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#6159FF" }}
+                          >
+                            {CONTENT.TEXT_LOADING_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {fileName}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "error" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <FileErrorIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414" }}
+                          >
+                            {CONTENT.TEXT_ERROR_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {errorText}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles["dragger-inner"]}>
+                        <FileLoadedIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414" }}
+                          >
+                            {CONTENT.TEXT_LOADED_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.TEXT_LOADED_DESCRIPTION}
+                          </Text>
+                        </div>
+                      </div>
+                    )}
+                  </Dragger>
+                  <div className={styles["buttons-generate"]}>
+                    <Button
+                      onClick={() => setOfdMode("")}
+                      className={styles["generate-back"]}
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.TEXT_OFD_OTHER}
+                  </Text>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_OFD_OTHER_INPUT}
+                    </Text>
+                    <div className={styles["bank-row"]}>
+                      <Input
+                        value={otherOfd}
+                        onChange={(event) => setOtherOfd(event.target.value)}
+                      />
+                      <Button
+                        className={styles["send-button"]}
+                        onClick={closeModal}
+                      >
+                        <Text className={styles["button-back-text"]}>
+                          {CONTENT.BUTTON_OFD_OTHER_SEND}
+                        </Text>
+                      </Button>
+                    </div>
+                  </div>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.TEXT_OFD_OTHER_DESCRIPTION}
+                  </Text>
+                  <div className={styles["buttons-generate"]}>
+                    <Button
+                      onClick={() => setOfdMode("")}
+                      className={styles["generate-back"]}
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["generate-button"]}
+                      disabled={isIntegrateButtonDisabled}
+                      onClick={() => {
+                        closeModal()
+                        setAddOperation(true)
+                      }}
+                    >
+                      {CONTENT.BUTTON_OFD_OTHER_ADD}
+                    </Button>
+                  </div>
+                </div>
+              )
+            ) : marketplaceMode === "" ? (
               <div className={styles["bank-integration-wrapper"]}>
                 <div className={styles["bank-row"]}>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${ofdru})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_OFD}
-                    </Text>
-                  </Button>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${firstofd})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_FIRST}
-                    </Text>
-                  </Button>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${platform})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_PLATFORM}
-                    </Text>
-                  </Button>
-                </div>
-                <div className={styles["bank-row"]}>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${yaofd})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_YANDEX}
-                    </Text>
-                  </Button>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${sbis})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIES_SBIS}
-                    </Text>
-                  </Button>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${taxcom})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_TAXCOM}
-                    </Text>
-                  </Button>
-                </div>
-                <div className={styles["bank-row"]}>
-                  <Button className={styles["cashier-item"]}>
-                    <div
-                      className={styles["bank-logo"]}
-                      style={{ backgroundImage: `url(${kontur})` }}
-                    ></div>
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_KONTUR}
-                    </Text>
-                  </Button>
-                  <Button className={styles["cashier-item"]}>
-                    <OnlineCashierIcon className={styles["bank-logo"]} />
-                    <Text className={styles["bank-title"]}>
-                      {CONTENT.CASHIER_OTHER}
-                    </Text>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className={styles["bank-integration-wrapper"]}>
-                <div className={styles["bank-row"]}>
-                  <Button className={styles["bank-item"]}>
+                  <Button
+                    className={styles["bank-item"]}
+                    onClick={() => setMarketplaceMode("3")}
+                  >
                     <div
                       className={styles["bank-logo"]}
                       style={{ backgroundImage: `url(${ozon})` }}
@@ -466,7 +1209,10 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       {CONTENT.MARKETPLACE_OZON}
                     </Text>
                   </Button>
-                  <Button className={styles["bank-item"]}>
+                  <Button
+                    className={styles["bank-item"]}
+                    onClick={() => setMarketplaceMode("2")}
+                  >
                     <div
                       className={styles["bank-logo"]}
                       style={{ backgroundImage: `url(${wb})` }}
@@ -477,7 +1223,10 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                   </Button>
                 </div>
                 <div className={styles["bank-row"]}>
-                  <Button className={styles["bank-item"]}>
+                  <Button
+                    className={styles["bank-item"]}
+                    onClick={() => setMarketplaceMode("1")}
+                  >
                     <div
                       className={styles["bank-logo"]}
                       style={{ backgroundImage: `url(${yamarket})` }}
@@ -486,7 +1235,10 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                       {CONTENT.MARKETPLACE_YANDEX}
                     </Text>
                   </Button>
-                  <Button className={styles["bank-item"]}>
+                  <Button
+                    className={styles["bank-item"]}
+                    onClick={() => setMarketplaceMode("4")}
+                  >
                     <MarketplaceIcon className={styles["bank-logo"]} />
                     <Text className={styles["bank-title"]}>
                       {CONTENT.MARKETPLACE_OTHER}
@@ -494,14 +1246,197 @@ export const AddSourceModal = ({ isOpen, setOpen }: AddSourceModalProps) => {
                   </Button>
                 </div>
               </div>
+            ) : marketplaceMode === "3" ? (
+              <div className={styles["wrapper-marketplace"]}>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.TEXT_MARKETPLACE_ID_INPUT}
+                  </Text>
+                  <Input
+                    value={marketplaceId}
+                    onChange={(event) => setMarketplaceId(event.target.value)}
+                  />
+                </div>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                  </Text>
+                  <Input
+                    value={marketplaceKey}
+                    onChange={(event) => setMarketplaceKey(event.target.value)}
+                  />
+                </div>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
+                </Text>
+                <div className={styles["buttons-generate-inner"]}>
+                  <Button
+                    onClick={() => {
+                      setMarketplaceMode("")
+                      setMarketplaceKey("")
+                      setMarketplaceId("")
+                    }}
+                    className={styles["generate-back"]}
+                  >
+                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
+                    <Text className={styles["button-back-text"]}>
+                      {CONTENT.BUTTON_BACK}
+                    </Text>
+                  </Button>
+                  <Button
+                    className={styles["generate-button"]}
+                    onClick={() => sendOtherMarketplaceSource(3)}
+                    disabled={isButtonMarketplaceDisabled}
+                  >
+                    {CONTENT.BUTTON_INTEGRATE_BANK}
+                  </Button>
+                </div>
+              </div>
+            ) : marketplaceMode === "2" ? (
+              <div className={styles["wrapper-marketplace"]}>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                  </Text>
+                  <Input
+                    value={marketplaceKey}
+                    onChange={(event) => setMarketplaceKey(event.target.value)}
+                  />
+                </div>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
+                </Text>
+                <div className={styles["buttons-generate"]}>
+                  <Button
+                    onClick={() => {
+                      setMarketplaceMode("")
+                      setMarketplaceKey("")
+                    }}
+                    className={styles["generate-back"]}
+                  >
+                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
+                    <Text className={styles["button-back-text"]}>
+                      {CONTENT.BUTTON_BACK}
+                    </Text>
+                  </Button>
+                  <Button
+                    className={styles["generate-button"]}
+                    onClick={() => sendOtherMarketplaceSource(2)}
+                    disabled={isButtonMarketplaceDisabled}
+                  >
+                    {CONTENT.BUTTON_INTEGRATE_BANK}
+                  </Button>
+                </div>
+              </div>
+            ) : marketplaceMode === "1" ? (
+              <div className={styles["wrapper-marketplace"]}>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_YANDEX}
+                </Text>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_YANDEX_DESCRIPTION}
+                </Text>
+                <div className={styles["buttons-generate"]}>
+                  <Button
+                    onClick={() => setMarketplaceMode("")}
+                    className={styles["generate-back"]}
+                  >
+                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
+                    <Text className={styles["button-back-text"]}>
+                      {CONTENT.BUTTON_BACK}
+                    </Text>
+                  </Button>
+                  <Button
+                    className={styles["generate-button"]}
+                    onClick={sendYandexMarketplaceSource}
+                  >
+                    {CONTENT.BUTTON_GENERATE_LINK}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className={styles["wrapper-other"]}>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_OTHER}
+                </Text>
+
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.TEXT_MARKETPLACE_OTHER_INPUT}
+                  </Text>
+                  <div className={styles["bank-row"]}>
+                    <Input
+                      value={otherMarketplace}
+                      onChange={(event) =>
+                        setOtherMarketplace(event.target.value)
+                      }
+                    />
+                    <Button
+                      className={styles["send-button"]}
+                      onClick={closeModal}
+                    >
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_OFD_OTHER_SEND}
+                      </Text>
+                    </Button>
+                  </div>
+                </div>
+                <Text className={styles["text-title"]}>
+                  {CONTENT.TEXT_MARKETPLACE_OTHER_DESCRIPTION}
+                </Text>
+                <div className={styles["buttons-generate"]}>
+                  <Button
+                    onClick={() => setMarketplaceMode("")}
+                    className={styles["generate-back"]}
+                  >
+                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
+                    <Text className={styles["button-back-text"]}>
+                      {CONTENT.BUTTON_BACK}
+                    </Text>
+                  </Button>
+                  <Button
+                    className={styles["generate-button"]}
+                    onClick={() => {
+                      closeModal()
+                      setAddOperation(true)
+                    }}
+                  >
+                    {CONTENT.BUTTON_OFD_OTHER_ADD}
+                  </Button>
+                </div>
+              </div>
             )}
 
-            <Button onClick={() => setButtonMode("default")}>
-              <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
-              <Text className={styles["button-back-text"]}>
-                {CONTENT.BUTTON_BACK}
-              </Text>
-            </Button>
+            {bankToIntegrate === "" &&
+              ofdMode === "" &&
+              marketplaceMode === "" && (
+                <Button onClick={() => setButtonMode("default")}>
+                  <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
+                  <Text className={styles["button-back-text"]}>
+                    {CONTENT.BUTTON_BACK}
+                  </Text>
+                </Button>
+              )}
           </div>
         )}
       </Modal>

@@ -1,3 +1,11 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .list-wrapper {
   display: flex;
   flex-direction: column;
@@ -23,6 +31,16 @@
 }
 
 .text-description {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #8c8c8c;
+}
+
+.text-description-dragger {
   font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
@@ -190,4 +208,107 @@
   align-items: center;
   flex-direction: column;
   height: fit-content;
+}
+
+.buttons-generate {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.buttons-generate-inner {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.generate-back {
+  border-radius: 4px;
+  height: 100%;
+  width: 100%;
+}
+
+.wrapper-marketplace {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.wrapper-other {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.send-button {
+  border-radius: 4px;
+  height: 100%;
+}
+
+.generate-button {
+  border-radius: 4px;
+  background: #6159ff;
+  color: #fff;
+  height: 100%;
+  width: 100%;
+}
+
+.text-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.005em;
+  text-align: left;
+  color: #505050;
+}
+
+.default-text {
+  color: #141414;
+}
+.input-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.otherbanks-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.necessary {
+  color: #cf133c;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.instructions {
+  color: #6159ff;
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.error-text {
+  font-size: 8px;
+  line-height: 8px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }

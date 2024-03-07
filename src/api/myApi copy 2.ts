@@ -53,8 +53,6 @@ export interface AccountInfoFromFile {
   account_number: string
   /** Bank Name */
   bank_name: string
-  /** Bank Short Name */
-  bank_short_name?: string | null
   /** Bank Bik */
   bank_bik: string
 }
@@ -155,10 +153,10 @@ export interface ContributionsInfo {
 export interface CreateAccountIntegration {
   /** Тип интеграции счета. Возможные значения: 1 - Директ-банк. 2 - API-метод. 3 - ЛК банка.  */
   integration_type: AccountIntegrationType
-  /** Данные для доступа к подключению счета. Необязательно для API-метода. */
-  account_credentials?: AccountCredentials | null
-  /** Информация по счету пользователя. Необязательно для API-метода */
-  account_details?: AccountDetails | null
+  /** Данные для доступа к подключению счета */
+  account_credentials: AccountCredentials
+  /** Информация по счету пользователя */
+  account_details: AccountDetails
 }
 
 /** CreateAccountResponse */
@@ -291,14 +289,29 @@ export interface CreateUserLead {
 export interface DisableSource {
   /**
    * Disable Date
-   * Дата отключения интеграции. Необязательна, если отключается источник с ошибкой
+   * Дата отключения интеграции
+   * @format date
    */
-  disable_date?: string | null
+  disable_date: string
+  /** Тип источника. Возможные значения: account - банковский счет. ofd - онлайн-касса. marketplace - маркетплейс. */
+  source_type: SourceType
   /**
-   * Source Id
-   * ID отключаемого источника
+   * Account Number
+   * Номер счета. Обязателен при source_type = account
    */
-  source_id: string
+  account_number?: string | null
+  /** Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd */
+  ofd_name?: OFDSource | null
+  /**
+   * Marketplace Name
+   * Наименование маркетплейса. Возможные значения: Ozon. Wildberries. Яндекс Маркет. Обязателен при source_type = marketplace.
+   */
+  marketplace_name?: string | null
+  /**
+   * Marketplace Id
+   * Клиентский идентификатор Озон. Обязателен при source_type = marketplace и marketplace_name = Ozon.
+   */
+  marketplace_id?: string | null
 }
 
 /** DueDate */
@@ -473,7 +486,7 @@ export interface GetOperationsRequest {
    * Идентификаторы источников данных
    */
   sources_ids?: string[] | null
-  pagination: OperationsPagination
+  pagination?: OperationsPagination
 }
 
 /** HTTPValidationError */
@@ -1189,11 +1202,6 @@ export interface Source {
    */
   name: OFDSource | MarketplaceName | string
   /**
-   * Short Name
-   * Коротокое название источника. Пока реализовано только для банков.
-   */
-  short_name?: string | null
-  /**
    * Sub Name
    * Дополнительное наименование. Если type = 1 - номер счета, если type = 3 и name = Ozon - клиентский идентификатор Озон.
    */
@@ -1627,11 +1635,6 @@ export interface User {
    */
   fns_reg_date?: string | null
   /**
-   * Tax Date Begin
-   * Дата начала работы в сервисе
-   */
-  tax_date_begin?: string | null
-  /**
    * Email
    * Электронная почта пользователя
    */
@@ -1647,12 +1650,6 @@ export interface User {
    * @default false
    */
   is_lead?: boolean | null
-  /**
-   * Is Disabled
-   * Отключена ли бухгалтерия у пользователя
-   * @default false
-   */
-  is_disabled?: boolean | null
   /**
    * Created At
    * Дата создания пользователя
@@ -1927,7 +1924,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.8
+ * @version 0.1.4
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -1992,7 +1989,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<InnInfo, void | HTTPValidationError>({
+      this.request<InnInfo, HTTPValidationError | void>({
         path: `/users/registration/inn_info`,
         method: "GET",
         query: query,
@@ -2014,7 +2011,7 @@ export class Api<
       data: InnInfoToSave,
       params: RequestParams = {}
     ) =>
-      this.request<User, void | HTTPValidationError>({
+      this.request<User, HTTPValidationError | void>({
         path: `/users/registration/tax_info`,
         method: "PUT",
         body: data,

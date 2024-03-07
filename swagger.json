@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.4"
+    "version": "0.1.8"
   },
   "paths": {
     "/auth": {
@@ -48,7 +48,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -100,7 +101,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -145,6 +147,36 @@
               }
             }
           },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По ИНН: {inn} не получены реквизиты из сервиса",
+                  "error_key": "inn_not_found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "Пользователь с ИНН {inn} уже зарегистрирован.",
+                      "error_key": "users_conflict"
+                    },
+                    {
+                      "message": "Пользователь {curr_u.email} уже имеет сохраненный ИНН в ЛК.",
+                      "error_key": "user_inn_conflict"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -160,7 +192,19 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сервис заполнения по ИНН недоступен",
+                  "error_key": "inn_service_not_available"
                 }
               }
             }
@@ -197,6 +241,36 @@
               }
             }
           },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По ИНН: {inn} не получены реквизиты из сервиса",
+                  "error_key": "inn_not_found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "Пользователь с ИНН {inn} уже зарегистрирован.",
+                      "error_key": "users_conflict"
+                    },
+                    {
+                      "message": "Пользователь {curr_u.email} уже имеет сохраненный ИНН в ЛК.",
+                      "error_key": "user_inn_conflict"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -212,7 +286,19 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сервис заполнения по ИНН недоступен",
+                  "error_key": "inn_service_not_available"
                 }
               }
             }
@@ -269,7 +355,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -306,7 +393,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -361,7 +449,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -416,7 +505,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -451,7 +541,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -488,7 +579,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -543,7 +635,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -600,7 +693,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -657,7 +751,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -770,7 +865,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -822,7 +918,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -884,7 +981,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -938,7 +1036,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -988,7 +1087,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1024,7 +1124,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/AccountInfoFromFile"
+                }
               }
             }
           },
@@ -1043,7 +1145,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1114,7 +1217,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1164,7 +1268,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1201,7 +1306,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1261,7 +1367,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1293,7 +1400,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1350,7 +1458,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1403,7 +1512,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1440,7 +1550,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1503,7 +1614,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1535,7 +1647,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1590,7 +1703,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1647,7 +1761,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1736,7 +1851,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1795,7 +1911,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1855,7 +1972,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1909,7 +2027,8 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации "
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
                 }
               }
             }
@@ -1979,6 +2098,17 @@
           "bank_name": {
             "type": "string",
             "title": "Bank Name"
+          },
+          "bank_short_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Short Name"
           },
           "bank_bik": {
             "type": "string",
@@ -2224,27 +2354,31 @@
             "description": "Тип интеграции счета. Возможные значения: 1 - Директ-банк. 2 - API-метод. 3 - ЛК банка. "
           },
           "account_credentials": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/AccountCredentials"
+              },
+              {
+                "type": "null"
               }
             ],
-            "description": "Данные для доступа к подключению счета"
+            "description": "Данные для доступа к подключению счета. Необязательно для API-метода."
           },
           "account_details": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/AccountDetails"
+              },
+              {
+                "type": "null"
               }
             ],
-            "description": "Информация по счету пользователя"
+            "description": "Информация по счету пользователя. Необязательно для API-метода"
           }
         },
         "type": "object",
         "required": [
-          "integration_type",
-          "account_credentials",
-          "account_details"
+          "integration_type"
         ],
         "title": "CreateAccountIntegration"
       },
@@ -2509,71 +2643,27 @@
       "DisableSource": {
         "properties": {
           "disable_date": {
-            "type": "string",
-            "format": "date",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Disable Date",
-            "description": "Дата отключения интеграции"
+            "description": "Дата отключения интеграции. Необязательна, если отключается источник с ошибкой"
           },
-          "source_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SourceType"
-              }
-            ],
-            "description": "Тип источника. Возможные значения: account - банковский счет. ofd - онлайн-касса. marketplace - маркетплейс."
-          },
-          "account_number": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Account Number",
-            "description": "Номер счета. Обязателен при source_type = account"
-          },
-          "ofd_name": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OFDSource"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Наименование ОФД. Возможные значения: Первый ОФД. ОФД.ру. Платформа ОФД. Яндекс ОФД. СБИС ОФД. Такском ОФД. Контур ОФД.Обязателен при source_type = ofd"
-          },
-          "marketplace_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Marketplace Name",
-            "description": "Наименование маркетплейса. Возможные значения: Ozon. Wildberries. Яндекс Маркет. Обязателен при source_type = marketplace."
-          },
-          "marketplace_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Marketplace Id",
-            "description": "Клиентский идентификатор Озон. Обязателен при source_type = marketplace и marketplace_name = Ozon."
+          "source_id": {
+            "type": "string",
+            "title": "Source Id",
+            "description": "ID отключаемого источника"
           }
         },
         "type": "object",
         "required": [
-          "disable_date",
-          "source_type"
+          "source_id"
         ],
         "title": "DisableSource"
       },
@@ -2842,6 +2932,9 @@
           }
         },
         "type": "object",
+        "required": [
+          "pagination"
+        ],
         "title": "GetOperationsRequest"
       },
       "HTTPValidationError": {
@@ -4022,6 +4115,18 @@
             "title": "Name",
             "description": "Наименование источника.  "
           },
+          "short_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Name",
+            "description": "Коротокое название источника. Пока реализовано только для банков."
+          },
           "sub_name": {
             "anyOf": [
               {
@@ -5153,6 +5258,19 @@
             "title": "Fns Reg Date",
             "description": "Дата регистрации ИП в ФНС"
           },
+          "tax_date_begin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Date Begin",
+            "description": "Дата начала работы в сервисе"
+          },
           "email": {
             "anyOf": [
               {
@@ -5188,6 +5306,19 @@
             ],
             "title": "Is Lead",
             "description": "Является ли пользователь лидом",
+            "default": false
+          },
+          "is_disabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Disabled",
+            "description": "Отключена ли бухгалтерия у пользователя",
             "default": false
           },
           "created_at": {

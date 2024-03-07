@@ -78,6 +78,13 @@ export const AddOperationModal = ({
 
       if (amount === "") setAmount(0)
     }
+    if (
+      parseFloat(amount) > 0 &&
+      parseFloat(amount) <= 9999999999999.99 &&
+      inputValue !== ""
+    )
+      setAmountError(false)
+    else setAmountError(true)
   }
 
   const [dateOperation, setDateOperation] = useState("")
@@ -168,7 +175,24 @@ export const AddOperationModal = ({
     setAmountInput("")
     setDateOperation("")
     setDocument("")
+
+    setAmountError(false)
+    setCounterpartyError(false)
+    setPurposeError(false)
+    setDateError(false)
   }
+
+  const [counterpartyError, setCounterpartyError] = useState(false)
+  const [purposeError, setPurposeError] = useState(false)
+  const [amountError, setAmountError] = useState(false)
+
+  const [dateError, setDateError] = useState(false)
+
+  useEffect(() => {
+    if (dateOperation !== "") setDateError(false)
+    else setDateError(true)
+    console.log(dateOperation)
+  }, [dateOperation])
 
   return (
     <>
@@ -218,14 +242,38 @@ export const AddOperationModal = ({
                 >
                   {CONTENT.INPUT_COUNTERPARTY_TITLE}
                 </Text>
-
-                <Input
-                  placeholder={CONTENT.INPUT_PLACEHOLDER}
-                  style={{ borderRadius: "4px" }}
-                  value={counterparty}
-                  disabled={income === 4}
-                  onChange={(event) => setCounterparty(event.target.value)}
-                />
+                <Form.Item
+                  className={styles["form-inn"]}
+                  validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                  help={
+                    counterpartyError ? (
+                      <div>
+                        <Text className={styles["error-text"]}>
+                          {CONTENT.INPUT_ERROR_HINT}
+                        </Text>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  }
+                >
+                  <Input
+                    placeholder={CONTENT.INPUT_PLACEHOLDER}
+                    style={{ borderRadius: "4px" }}
+                    value={counterparty}
+                    disabled={income === 4}
+                    onChange={(event) => {
+                      setCounterparty(event.target.value)
+                      if (
+                        event.target.value !== "" &&
+                        event.target.value.length > 0 &&
+                        event.target.value.length < 256
+                      )
+                        setCounterpartyError(false)
+                      else setCounterpartyError(true)
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div className={styles["input-item"]}>
                 <Text
@@ -236,14 +284,39 @@ export const AddOperationModal = ({
                 >
                   {CONTENT.INPUT_DIRECT_TITLE}
                 </Text>
+                <Form.Item
+                  className={styles["form-inn"]}
+                  validateStatus={purposeError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                  help={
+                    purposeError ? (
+                      <div>
+                        <Text className={styles["error-text"]}>
+                          {CONTENT.INPUT_ERROR_HINT}
+                        </Text>
+                      </div>
+                    ) : (
+                      ""
+                    )
+                  }
+                >
+                  <Input
+                    placeholder={CONTENT.INPUT_PLACEHOLDER}
+                    style={{ borderRadius: "4px" }}
+                    value={direct}
+                    disabled={income === 4}
+                    onChange={(event) => {
+                      setDirect(event.target.value)
 
-                <Input
-                  placeholder={CONTENT.INPUT_PLACEHOLDER}
-                  style={{ borderRadius: "4px" }}
-                  value={direct}
-                  disabled={income === 4}
-                  onChange={(event) => setDirect(event.target.value)}
-                />
+                      if (
+                        event.target.value !== "" &&
+                        event.target.value.length > 0 &&
+                        event.target.value.length < 256
+                      )
+                        setPurposeError(false)
+                      else setPurposeError(true)
+                    }}
+                  />
+                </Form.Item>
               </div>
               <div className={styles["inputs-row"]}>
                 <div className={styles["input-item"]}>
@@ -255,13 +328,28 @@ export const AddOperationModal = ({
                   >
                     {CONTENT.INPUT_AMOUNT_TITLE}
                   </Text>
-
-                  <Input
-                    placeholder={CONTENT.INPUT_PLACEHOLDER}
-                    style={{ borderRadius: "4px" }}
-                    value={amountInput}
-                    onChange={handleChange}
-                  />
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={amountError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      amountError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <Input
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      style={{ borderRadius: "4px" }}
+                      value={amountInput}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
                 </div>
                 <div className={styles["input-item"]}>
                   <Text
@@ -272,20 +360,35 @@ export const AddOperationModal = ({
                   >
                     {CONTENT.DATEPICKER_TITLE}
                   </Text>
-
-                  <DatePicker
-                    placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                    style={{ borderRadius: "4px", height: "32px" }}
-                    locale={locale}
-                    format={dateFormat}
-                    value={
-                      dateOperation ? dayjs(dateOperation, dateFormat) : null
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={dateError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      dateError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
                     }
-                    onChange={(value, dateString) =>
-                      typeof dateString === "string" &&
-                      setDateOperation(dateString)
-                    }
-                  />
+                  >
+                    <DatePicker
+                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                      style={{ borderRadius: "4px", height: "32px" }}
+                      locale={locale}
+                      format={dateFormat}
+                      value={
+                        dateOperation ? dayjs(dateOperation, dateFormat) : null
+                      }
+                      onChange={(value, dateString) => {
+                        typeof dateString === "string" &&
+                          setDateOperation(dateString)
+                      }}
+                    />
+                  </Form.Item>
                 </div>
               </div>
               <div className={styles["input-item"]}>

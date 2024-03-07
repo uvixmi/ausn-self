@@ -1,3 +1,11 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .text-description {
   font-family: "Inter";
   font-size: 14px;
@@ -142,4 +150,15 @@
   letter-spacing: 0em;
   text-align: left;
   color: #8c8c8c;
+}
+
+.error-text {
+  font-size: 8px;
+  line-height: 8px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }

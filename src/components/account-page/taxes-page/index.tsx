@@ -679,8 +679,7 @@ export const TaxesPage = () => {
                       {item.name.length > 11 ? (
                         <Tooltip title={item.name}>
                           <Text className={styles["source-text-left"]}>
-                            {item.name.slice(0, 9)}
-                            {"..."}
+                            {item.short_name}
                           </Text>
                         </Tooltip>
                       ) : (
@@ -776,7 +775,11 @@ export const TaxesPage = () => {
         id={hoveredIndex}
         setWasDeleted={setWasDeleted}
       />
-      <AddSourceModal isOpen={isAddSourceOpen} setOpen={setIsAddSourceOpen} />
+      <AddSourceModal
+        isOpen={isAddSourceOpen}
+        setOpen={setIsAddSourceOpen}
+        setAddOperation={setAddOperation}
+      />
       <AddOperationModal
         isOpen={addOperation}
         setOpen={setAddOperation}
