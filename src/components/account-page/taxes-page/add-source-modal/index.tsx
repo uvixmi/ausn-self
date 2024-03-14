@@ -2,7 +2,13 @@ import { Button, Form, Input, Modal, Typography, message } from "antd"
 import { AddSourceModalProps } from "./types"
 import styles from "./styles.module.scss"
 import "./styles.scss"
-import { CreateAccountResponse, OFDSource, api } from "../../../../api/myApi"
+import {
+  AccountInfoFromFile,
+  CreateAccountResponse,
+  CreateSourceResponse,
+  OFDSource,
+  api,
+} from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "./constants"
 import { BankBalanceIcon } from "../type-operation/icons/bank_balance"
@@ -42,6 +48,8 @@ export const AddSourceModal = ({
   isOpen,
   setOpen,
   setAddOperation,
+  completedSource,
+  setCompletedSource,
 }: AddSourceModalProps) => {
   const { Title, Text } = Typography
   const token = Cookies.get("token")
@@ -73,8 +81,9 @@ export const AddSourceModal = ({
   const [buttonMode, setButtonMode] = useState("default")
   const [errorText, setErrorText] = useState("")
 
-  const [accountFromFile, setAccountFromFile] =
-    useState<CreateAccountResponse | null>(null)
+  const [accountFromFile, setAccountFromFile] = useState<
+    AccountInfoFromFile | CreateSourceResponse | null
+  >(null)
 
   const handleFileUpload = async (file: RcFile) => {
     try {
@@ -116,6 +125,7 @@ export const AddSourceModal = ({
     setOfdMode("")
     setOtherMarketplace("")
     setOtherOfd("")
+    setCompletedSource(null)
   }
 
   const closeAddSource = () => {
@@ -311,6 +321,15 @@ export const AddSourceModal = ({
     else setIsOfdButtonDisabled(true)
   }, [ofdLogin, ofdPassword])
 
+  useEffect(() => {
+    if (completedSource !== null) {
+      if (completedSource === 1) setButtonMode("bank_statement")
+    }
+    if (completedSource === 2) {
+      setButtonMode("online_cashier")
+    }
+  }, [completedSource])
+
   return (
     <>
       {contextHolder}
@@ -427,24 +446,26 @@ export const AddSourceModal = ({
                 buttonMode === "bank_statement" && (
                   <div className={styles["account-data"]}>
                     <Text className={styles["text-title"]}>
-                      {CONTENT.DATA_ACCOUNT +
-                        accountFromFile?.account_info_from_file?.account_number}
+                      {accountFromFile &&
+                        "account_number" in accountFromFile &&
+                        CONTENT.DATA_ACCOUNT + accountFromFile.account_number}
                     </Text>
                     <Text className={styles["text-title"]}>
-                      {CONTENT.DATA_BANKNAME +
-                        accountFromFile?.account_info_from_file?.bank_name}
+                      {accountFromFile &&
+                        "account_number" in accountFromFile &&
+                        CONTENT.DATA_BANKNAME + accountFromFile.bank_name}
                     </Text>
                     <Text className={styles["text-title"]}>
-                      {CONTENT.DATA_STATEMENT_BEGIN +
-                        formatDateString(
-                          accountFromFile?.account_info_from_file?.start_date
-                        )}
+                      {accountFromFile &&
+                        "start_date" in accountFromFile &&
+                        CONTENT.DATA_STATEMENT_BEGIN +
+                          formatDateString(accountFromFile?.start_date)}
                     </Text>
                     <Text className={styles["text-title"]}>
-                      {CONTENT.DATA_STATEMENT_END +
-                        formatDateString(
-                          accountFromFile?.account_info_from_file?.end_date
-                        )}
+                      {accountFromFile &&
+                        "end_date" in accountFromFile &&
+                        CONTENT.DATA_STATEMENT_END +
+                          formatDateString(accountFromFile?.end_date)}
                     </Text>
                   </div>
                 )
@@ -955,7 +976,9 @@ export const AddSourceModal = ({
                       </Text>
                       <Input
                         value={ofdLogin}
+                        id="ofdLogin"
                         onChange={(event) => setOfdLogin(event.target.value)}
+                        autoComplete="off"
                       />
                     </div>
                     <div className={styles["input-item"]}>
@@ -974,6 +997,7 @@ export const AddSourceModal = ({
                         value={ofdPassword}
                         type="password"
                         onChange={(event) => setOfdPassword(event.target.value)}
+                        autoComplete="new-password"
                       />
                     </div>
                   </div>
@@ -1072,7 +1096,7 @@ export const AddSourceModal = ({
                             {CONTENT.TEXT_UPLOAD_TITLE}
                           </Text>
                           <Text className={styles["text-description-dragger"]}>
-                            {CONTENT.TEXT_UPLOAD_DESCRIPTION}
+                            {CONTENT.TEXT_UPLOAD_DESCRIPTION_OFD_XLSX}
                           </Text>
                         </div>
                       </div>

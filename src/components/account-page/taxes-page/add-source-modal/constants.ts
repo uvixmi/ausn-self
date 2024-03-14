@@ -2,6 +2,7 @@ export const CONTENT = {
   TITLE_ADD_SOURCE: "Добавить данные",
   TITLE_BANK_STATEMENT: "Выписка из банка",
   DESCRIPTION_BANK_STATEMENT: "Загрузить выписку в формате 1С (.txt)",
+  TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
   DESCRIPTION_BANK_INTEGRATION: "Альфа-Банк, Модульбанк, Тинькофф, Точка",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",

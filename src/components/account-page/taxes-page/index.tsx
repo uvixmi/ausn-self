@@ -60,6 +60,8 @@ import { AddSourceModal } from "./add-source-modal"
 import { ArrowCounterIcon } from "./type-operation/icons/arrow-counter"
 import { fetchSourcesInfo } from "../client/sources/thunks"
 import { AddOperationModal } from "./add-operation-modal"
+import { DeleteSourceIcon } from "./type-operation/icons/delete-source"
+import { OffSourceModal } from "./off-source-modal"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -445,6 +447,24 @@ export const TaxesPage = () => {
     }
   }, [wasDeleted])
 
+  const [isDeletedSource, setIsDeletedSource] = useState(false)
+  const [offSourceTitle, setOffSourceTitle] = useState("")
+  const [typeSource, setTypeSource] = useState(0)
+  const [typeSourceName, setTypeSourceName] = useState("")
+  const [accountSource, setAccountSource] = useState("")
+  const [offSourceId, setOffSourceId] = useState<string | undefined | null>("")
+  const [sourceCompleted, setSourceCompleted] = useState<number | null>(null)
+
+  const handleCompletedSource = (completedSource: number | null) => {
+    setSourceCompleted(completedSource)
+    if (completedSource === 1) {
+      setIsAddSourceOpen(true)
+    }
+    if (completedSource === 2) {
+      setIsAddSourceOpen(true)
+    }
+  }
+
   return (
     <>
       {contextHolder}
@@ -663,47 +683,134 @@ export const TaxesPage = () => {
                   className={styles["list-item-right"]}
                   style={{ borderBlockEnd: "none" }}
                 >
-                  <div className={styles["source-name"]}>
-                    <div className={styles["left-source-name"]}>
-                      {item.state === "in_progress" ? (
-                        <InProgressIcon />
-                      ) : item.state === "failed" ? (
-                        <FailedIcon />
-                      ) : item.state === "completed" &&
-                        item.is_integrated === false ? (
-                        <CompletedHandIcon />
-                      ) : item.state === "completed" &&
-                        item.is_integrated === true ? (
-                        <CompletedAutoIcon />
-                      ) : null}
-                      {item.name.length > 11 ? (
-                        <Tooltip title={item.name}>
-                          <Text className={styles["source-text-left"]}>
-                            {item.short_name}
-                          </Text>
-                        </Tooltip>
-                      ) : (
+                  <div className={styles["left-source-name"]}>
+                    {item.state === "in_progress" ? (
+                      <InProgressIcon />
+                    ) : item.state === "failed" ? (
+                      <FailedIcon />
+                    ) : item.state === "completed" &&
+                      item.is_integrated === false ? (
+                      <Tooltip title={CONTENT.ADD_SOURCE_COMPLETED}>
+                        <Button
+                          className={styles["source-completed-icon"]}
+                          onClick={() =>
+                            handleCompletedSource(
+                              item.type === "account"
+                                ? 1
+                                : item.type === "ofd"
+                                ? 2
+                                : null
+                            )
+                          }
+                        >
+                          <CompletedHandIcon />
+                        </Button>
+                      </Tooltip>
+                    ) : item.state === "completed" &&
+                      item.is_integrated === true ? (
+                      <CompletedAutoIcon />
+                    ) : null}
+                    {item.name.length > 11 ? (
+                      <Tooltip title={item.name}>
                         <Text className={styles["source-text-left"]}>
-                          {item.name}{" "}
+                          {item.short_name}
                         </Text>
-                      )}
-                    </div>
+                      </Tooltip>
+                    ) : (
+                      <Text className={styles["source-text-left"]}>
+                        {item.name}{" "}
+                      </Text>
+                    )}
+
                     <Text className={styles["source-text-right"]}>
                       {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
                     </Text>
                   </div>
-
-                  {item.state === "completed" && !item.disable_date ? (
-                    <Text>
-                      {item.last_info && convertReverseFormat(item.last_info)}
-                    </Text>
-                  ) : item.state === "completed" && item.disable_date ? (
-                    <Text>{convertReverseFormat(item.disable_date)}</Text>
-                  ) : item.state === "failed" ? (
-                    <Link>{"Повторить"}</Link>
-                  ) : item.state === "in_progress" && item.link ? (
-                    <Link>{"Подключить"}</Link>
-                  ) : null}
+                  <div className={styles["source-date-inner"]}>
+                    <div className={styles["source-date-part"]}>
+                      {item.state === "completed" && !item.disable_date ? (
+                        <Text>
+                          {item.last_info &&
+                            convertReverseFormat(item.last_info)}
+                        </Text>
+                      ) : item.state === "completed" && item.disable_date ? (
+                        <Text>{convertReverseFormat(item.disable_date)}</Text>
+                      ) : item.state === "failed" ? (
+                        <Link>{"Повторить"}</Link>
+                      ) : item.state === "in_progress" && item.link ? (
+                        <Link>{"Подключить"}</Link>
+                      ) : null}
+                      {!(item.state == "in_progress" && !item.link) && (
+                        <Tooltip
+                          title={
+                            item.is_integrated === false &&
+                            item.state === "completed" &&
+                            (item.type === "account" || item.type === "ofd")
+                              ? CONTENT.OFF_SOURCE
+                              : item.state === "failed"
+                              ? CONTENT.DELETE_SOURCE
+                              : item.is_integrated === true &&
+                                item.state === "in_progress" &&
+                                !!item.link
+                              ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                              : item.is_integrated === true &&
+                                item.state === "completed"
+                              ? CONTENT.OFF_INTEGRATION_SOURCE
+                              : ""
+                          }
+                        >
+                          <Button
+                            className={styles["source-delete-icon"]}
+                            onClick={() => {
+                              setIsDeletedSource(true)
+                              setOffSourceTitle(
+                                item.is_integrated === false &&
+                                  item.state === "completed" &&
+                                  (item.type === "account" ||
+                                    item.type === "ofd")
+                                  ? CONTENT.OFF_SOURCE
+                                  : item.state === "failed"
+                                  ? CONTENT.DELETE_SOURCE
+                                  : item.is_integrated === true &&
+                                    item.state === "in_progress" &&
+                                    !!item.link
+                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                  : item.is_integrated === true &&
+                                    item.state === "completed"
+                                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                                  : ""
+                              )
+                              setTypeSource(
+                                item.is_integrated === false &&
+                                  item.state === "completed" &&
+                                  item.type === "account"
+                                  ? 1
+                                  : item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    item.type === "ofd"
+                                  ? 2
+                                  : item.state === "failed"
+                                  ? 3
+                                  : item.is_integrated === true &&
+                                    item.state === "in_progress" &&
+                                    !!item.link
+                                  ? 4
+                                  : item.is_integrated === true &&
+                                    item.state === "completed"
+                                  ? 5
+                                  : 0
+                              )
+                              setTypeSourceName(item.name)
+                              setAccountSource(item.sub_name || "")
+                              setOffSourceId(item.id)
+                            }}
+                          >
+                            <DeleteSourceIcon />
+                          </Button>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </div>
                 </List.Item>
               )}
             />
@@ -719,50 +826,121 @@ export const TaxesPage = () => {
                   className={styles["list-item-right"]}
                   style={{ borderBlockEnd: "none" }}
                 >
-                  <div className={styles["source-name"]}>
-                    <div className={styles["left-source-name"]}>
-                      {item.state === "in_progress" ? (
-                        <InProgressIcon />
-                      ) : item.state === "failed" ? (
-                        <Tooltip title={item.reason}>
-                          <FailedIcon />
-                        </Tooltip>
-                      ) : item.state === "completed" &&
-                        item.is_integrated === false ? (
-                        <CompletedHandIcon />
-                      ) : item.state === "completed" &&
-                        item.is_integrated === true ? (
-                        <CompletedAutoIcon />
-                      ) : null}
+                  <div className={styles["left-source-name"]}>
+                    {item.state === "in_progress" ? (
+                      <InProgressIcon />
+                    ) : item.state === "failed" ? (
+                      <Tooltip title={item.reason}>
+                        <FailedIcon />
+                      </Tooltip>
+                    ) : item.state === "completed" &&
+                      item.is_integrated === false ? (
+                      <CompletedHandIcon />
+                    ) : item.state === "completed" &&
+                      item.is_integrated === true ? (
+                      <CompletedAutoIcon />
+                    ) : null}
 
-                      {item.name.length > 11 ? (
-                        <Tooltip title={item.name}>
-                          <Text className={styles["source-text-left"]}>
-                            {item.name.slice(0, 9)}
-                            {"..."}
-                          </Text>
-                        </Tooltip>
-                      ) : (
+                    {item.name.length > 11 ? (
+                      <Tooltip title={item.name}>
                         <Text className={styles["source-text-left"]}>
-                          {item.name}{" "}
+                          {item.name.slice(0, 9)}
+                          {"..."}
                         </Text>
-                      )}
-                      <Text className={styles["source-text-right"]}>
-                        {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                      </Tooltip>
+                    ) : (
+                      <Text className={styles["source-text-left"]}>
+                        {item.name}{" "}
                       </Text>
+                    )}
+                    <Text className={styles["source-text-right"]}>
+                      {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                    </Text>
+                  </div>
+                  <div className={styles["source-date-inner"]}>
+                    <div className={styles["source-date-part"]}>
+                      {item.state === "completed" && !item.disable_date ? (
+                        <Text>
+                          {item.last_info &&
+                            convertReverseFormat(item.last_info)}
+                        </Text>
+                      ) : item.state === "completed" && item.disable_date ? (
+                        <Text>{convertReverseFormat(item.disable_date)}</Text>
+                      ) : item.state === "failed" ? (
+                        <Link>{"Повторить"}</Link>
+                      ) : item.state === "in_progress" && item.link ? (
+                        <Link href={item.link}>{"Подключить"}</Link>
+                      ) : null}
+                      {!(item.state == "in_progress" && !item.link) && (
+                        <Tooltip
+                          title={
+                            item.is_integrated === false &&
+                            item.state === "completed" &&
+                            (item.type === "account" || item.type === "ofd")
+                              ? CONTENT.OFF_SOURCE
+                              : item.state === "failed"
+                              ? CONTENT.DELETE_SOURCE
+                              : item.is_integrated === true &&
+                                item.state === "in_progress" &&
+                                !!item.link
+                              ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                              : item.is_integrated === true &&
+                                item.state === "completed"
+                              ? CONTENT.OFF_INTEGRATION_SOURCE
+                              : ""
+                          }
+                        >
+                          <Button
+                            className={styles["source-delete-icon"]}
+                            onClick={() => {
+                              setIsDeletedSource(true)
+                              setOffSourceTitle(
+                                item.is_integrated === false &&
+                                  item.state === "completed" &&
+                                  (item.type === "account" ||
+                                    item.type === "ofd")
+                                  ? CONTENT.OFF_SOURCE
+                                  : item.state === "failed"
+                                  ? CONTENT.DELETE_SOURCE
+                                  : item.is_integrated === true &&
+                                    item.state === "in_progress" &&
+                                    !!item.link
+                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                  : item.is_integrated === true &&
+                                    item.state === "completed"
+                                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                                  : ""
+                              )
+                              setTypeSource(
+                                item.is_integrated === false &&
+                                  item.state === "completed" &&
+                                  item.type === "account"
+                                  ? 1
+                                  : item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    item.type === "ofd"
+                                  ? 2
+                                  : item.state === "failed"
+                                  ? 3
+                                  : item.is_integrated === true &&
+                                    item.state === "in_progress" &&
+                                    !!item.link
+                                  ? 4
+                                  : item.is_integrated === true &&
+                                    item.state === "completed"
+                                  ? 5
+                                  : 0
+                              )
+                              setTypeSourceName(item.name)
+                              setOffSourceId(item.id)
+                            }}
+                          >
+                            <DeleteSourceIcon />
+                          </Button>
+                        </Tooltip>
+                      )}
                     </div>
                   </div>
-                  {item.state === "completed" && !item.disable_date ? (
-                    <Text>
-                      {item.last_info && convertReverseFormat(item.last_info)}
-                    </Text>
-                  ) : item.state === "completed" && item.disable_date ? (
-                    <Text>{convertReverseFormat(item.disable_date)}</Text>
-                  ) : item.state === "failed" ? (
-                    <Link>{"Повторить"}</Link>
-                  ) : item.state === "in_progress" && item.link ? (
-                    <Link href={item.link}>{"Подключить"}</Link>
-                  ) : null}
                 </List.Item>
               )}
             />
@@ -779,11 +957,23 @@ export const TaxesPage = () => {
         isOpen={isAddSourceOpen}
         setOpen={setIsAddSourceOpen}
         setAddOperation={setAddOperation}
+        completedSource={sourceCompleted}
+        setCompletedSource={setSourceCompleted}
       />
       <AddOperationModal
         isOpen={addOperation}
         setOpen={setAddOperation}
         setWasDeleted={setWasDeleted}
+      />
+      <OffSourceModal
+        isOpen={isDeletedSource}
+        setOpen={setIsDeletedSource}
+        setWasDeleted={setIsDeletedSource}
+        titleModal={offSourceTitle}
+        typeSource={typeSource}
+        source={typeSourceName}
+        account={accountSource}
+        source_id={offSourceId}
       />
     </>
   )

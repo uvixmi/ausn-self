@@ -516,3 +516,55 @@ $xxl: 2560px;
   border: none;
   padding: 0;
 }
+
+.source-date-inner {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+  padding-right: 4px;
+}
+
+.source-date-part {
+  transition: margin-right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.source-date-inner:hover .source-date-part {
+  margin-right: 20px;
+}
+
+.source-delete-icon {
+  position: absolute;
+  top: 60%;
+  right: -10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    right 0.3s ease,
+    opacity 0.3s ease;
+  border: none;
+  padding: 5px;
+}
+
+.source-date-inner:hover .source-delete-icon {
+  right: 0px;
+  opacity: 1;
+}
+
+.source-completed-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.source-completed-icon {
+  padding: 6px 0 0;
+  margin: 0;
+  border: none;
+  height: auto;
+}

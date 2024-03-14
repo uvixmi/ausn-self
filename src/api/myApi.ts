@@ -66,6 +66,30 @@ export enum AccountIntegrationType {
   Value3 = 3,
 }
 
+/** BankReferenceResponse */
+export interface BankReferenceResponse {
+  /**
+   * Bik
+   * БИК банка
+   */
+  bik: string
+  /**
+   * Bank Name
+   * Наименование банка
+   */
+  bank_name: string
+  /**
+   * Bank Short Name
+   * Короткое наименование банка
+   */
+  bank_short_name?: string | null
+  /**
+   * Cor Account
+   * Корреспондентский счет
+   */
+  cor_account: string
+}
+
 /** BannerType */
 export enum BannerType {
   UpdateData = "update_data",
@@ -138,9 +162,9 @@ export interface ChangeTax {
    * Rate Reason
    * Обоснование сниженной налоговой ставки. Формат XXXXYYYYZZZZ, где: XXXX - номер статьи, в которой указана сниженная ставка. YYYY - номер пункта. ZZZZ - номер подпункта. Допускаются цифры и символы.НЕ допускаются пробелы. Обязательно к заполнению, если передано: tax_system = usn_d И tax_rate < 6 ИЛИ tax_system = usn_d_r И tax_rate < 15
    */
-  rate_reason: string | null
+  rate_reason?: string | null
   /** Причина снижения ставки. Возможные значения: crimea - Предприниматели Крыма и Севастополя. holidays - ИП на налоговых каникулах. */
-  reason_type: RateReasonType | null
+  reason_type?: RateReasonType | null
 }
 
 /** ContributionsInfo */
@@ -181,11 +205,16 @@ export interface CreateMarketplaceRequest {
 
 /**
  * CreateOperation
- * @example {"amount":25000.9,"category":"debet","counterparty_name":"ИП Варягин","date":"2023-10-30","doc_number":"123","purpose":"Доход от продажи оборудования"}
+ * @example {"amount":25000.9,"category":"debet","counterparty_name":"ИП Варягин","date":"2023-10-30","doc_number":"123","operation_type":1,"purpose":"Доход от продажи оборудования"}
  */
 export interface CreateOperation {
-  /** Признак дебетования */
+  /** Признак дебетования. = credit - списание с расчетного счета клиента. = debet - поступление на расчетный счет клиента */
   category: OperationCategory
+  /**
+   * Operation Type
+   * Признак налоговой базы. Возможные значения: Если category = debet: 1 - Доход. 2 - Не влияет на налоговую базу. Если category = credit: 2 - Не влияет на налоговую базу. 3 - Возврат покупателю.
+   */
+  operation_type: 1 | 2 | 3
   /**
    * Counterparty Name
    * Наименование контрагента
@@ -211,7 +240,7 @@ export interface CreateOperation {
    * Doc Number
    * Номер документа
    */
-  doc_number: string | null
+  doc_number?: string | null
 }
 
 /** CreateSourceResponse */
@@ -235,7 +264,7 @@ export interface CreateTaxPaymentOperation {
    * Doc Number
    * Номер документа
    */
-  doc_number: string | null
+  doc_number?: string | null
   /**
    * Tax Period
    * Год уплаты налога
@@ -282,9 +311,14 @@ export interface CreateUserLead {
    * Phone Number
    * Телефон пользователя
    */
-  phone_number: string
+  phone_number?: string | null
   /** Причина интереса пользователя */
   reason: LeadReason
+  /**
+   * Description
+   * Описание интереса пользователя
+   */
+  description?: string | null
 }
 
 /** DisableSource */
@@ -512,49 +546,13 @@ export interface IncomePercentage {
   due_date_ip: string
 }
 
-/** InfoBanner */
-export interface InfoBanner {
-  /**
-   * Id
-   * ID баннера
-   */
-  id: string
-  /** Тип баннера. Возможные значения: update_data - напоминание об обновлении данных. update_user_info - напоминание об обновлении настроек налогового учета. new_user - баннер для нового пользователя. advertisement - рекламный баннер.  */
-  banner_type: BannerType
-  /**
-   * Begin Date
-   * Начало периода отображения баннера. Формат даты - MM-DD (например, 01-31).
-   */
-  begin_date?: string | null
-  /**
-   * End Date
-   * Конец периода отображения баннера. Формат даты - MM-DD (например, 01-31).
-   */
-  end_date?: string | null
-  /**
-   * Title
-   * Заголовок баннера
-   */
-  title: string
-  /**
-   * Description
-   * Описание баннера. В описании баннера можно использовать предзаполняемые значения как на фронтенде, так и на стороне бэкенда. Значения необходимо обозначать в формате {key}. Поддерживаемые на данный момент ключи: year - Текущий год. last_year - Прошлый год. Заполнение ключей не из списка поддерживаемых осуществляется на стороне фронта.
-   */
-  description: string
-  /**
-   * Show For User
-   * Отображать ли баннер пользователям
-   */
-  show_for_user: boolean
-}
-
 /** InfoBannersResponse */
 export interface InfoBannersResponse {
   /**
    * Banners
    * Информационные баннеры во всей системе
    */
-  banners: InfoBanner[]
+  banners: UserInfoBanner[]
 }
 
 /** InnInfo */
@@ -667,6 +665,9 @@ export interface LeadInfoToSave {
 /** LeadReason */
 export enum LeadReason {
   Ens = "ens",
+  Marketplace = "marketplace",
+  Ofd = "ofd",
+  ServiceDisable = "service_disable",
   Other = "other",
 }
 
@@ -788,7 +789,7 @@ export interface Operation {
    * Валюта операции
    */
   currency_code?: string | null
-  /** Признак дебетования */
+  /** Признак дебетования. = credit - списание с расчетного счета клиента. = debet - поступление на расчетный счет клиента */
   category: OperationCategory
   /**
    * Date
@@ -951,7 +952,7 @@ export interface PaymentOrder {
   /**
    * Payer Kpp
    * КПП плательщика
-   * @default 0
+   * @default "0"
    */
   payer_kpp?: string
   /**
@@ -1072,7 +1073,7 @@ export interface ReportInfo {
   code?: string | null
   /** Тип отчета. Возможные значения: notice_1_kv - Уведомление за 1 квартал. notice_2_kv - Уведомление за 2 квартал. notice_3_kv - Уведомление за 3 квартал. declaration - Декларация.  */
   type: TaskReportType
-  /** Новый статус отчета. Возможные значения: 0 - отчет не сформирован. 1 - отчет сформирован и передан пользователю. 2 - отчет отправлен в ФНС. 3 - отчет принят ФНС. 4 - отчет не принят ФНС (ошибка в отчете).  */
+  /** Новый статус отчета. Возможные значения: 0 - отчет НЕ сформирован. 1 - отчет сформирован и передан клиенту. 2 - отчет принят ФНС (через ЭЦП). 3 - отчет НЕ принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно). */
   report_status: ReportStatus
   /**
    * Date Update
@@ -1356,12 +1357,12 @@ export interface TaskReference {
   description: string
   /**
    * Date Begin
-   * Дата начала демонстрации задачи
+   * Дата начала демонстрации задачи. Формат - MM-DD.
    */
   date_begin?: string | null
   /**
    * Date End
-   * Дата окончания демонстрации задачи
+   * Дата окончания демонстрации задачи. Формат - MM-DD.
    */
   date_end?: string | null
   /**
@@ -1444,6 +1445,41 @@ export interface TaxCalculationResponse {
   contributions: ContributionsInfo
   /** Сальдо ЕНС */
   ens_balance: ENSBalanceInfo
+}
+
+/** TaxLimit */
+export interface TaxLimit {
+  /**
+   * Year
+   * Год, за который установлены лимиты
+   */
+  year: number
+  /**
+   * Fixed Fees
+   * Фиксированные взносы за ИП
+   */
+  fixed_fees: number
+  /**
+   * Income Percentage
+   * Предельная величина взносов 1% с дохода
+   */
+  income_percentage: number
+  /**
+   * Rate Increase
+   * Сумма лимита на повышение ставки УСН
+   */
+  rate_increase: number
+  /**
+   * Max Income
+   * Сумма максимального дохода УСН
+   */
+  max_income: number
+}
+
+/** TaxLimitsResponse */
+export interface TaxLimitsResponse {
+  /** Limits */
+  limits: TaxLimit[]
 }
 
 /** TaxSystemType */
@@ -1558,7 +1594,7 @@ export interface UpdateReportRequest {
    * Код отчета в БРН. Передается обязательно, если по отчету ранее формировались документы (если по этому отчету в методе GET-/reports_info возвращается поле code). Не передается, если отчета НЕТ в разделе “Уведомления об исчисленных суммах налога”
    */
   report_code?: string | null
-  /** Новый статус отчета. Возможные значения: 2 - отчет отправлен в ФНС. 3 - отчет принят ФНС. 4 - отчет не принят ФНС (ошибка в отчете).  */
+  /** Новый статус отчета. Возможные значения: 2 - отчет принят в ФНС (через ЭЦП). 3 - отчет не принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно).  */
   report_status: UpdateRepostStatus
 }
 
@@ -1602,6 +1638,11 @@ export interface User {
    */
   inn?: string | null
   /**
+   * Tax System
+   * Применяемая СНО
+   */
+  tax_system?: string | null
+  /**
    * Tax Rate
    * Налоговая ставка
    */
@@ -1611,6 +1652,16 @@ export interface User {
    * Обоснование сниженной налоговой ставки
    */
   rate_reason?: string | null
+  /**
+   * Tax Date Begin
+   * Дата начала работы в сервисе
+   */
+  tax_date_begin?: string | null
+  /**
+   * Oktmo
+   * Код ОКТМО
+   */
+  oktmo?: string | null
   /**
    * Fns Code
    * Код ИФНС
@@ -1626,11 +1677,6 @@ export interface User {
    * Дата регистрации ИП в ФНС
    */
   fns_reg_date?: string | null
-  /**
-   * Tax Date Begin
-   * Дата начала работы в сервисе
-   */
-  tax_date_begin?: string | null
   /**
    * Email
    * Электронная почта пользователя
@@ -1665,6 +1711,17 @@ export interface User {
    * @format date-time
    */
   updated_at: string
+}
+
+/** UserInfoBanner */
+export interface UserInfoBanner {
+  /** Id */
+  id: string
+  banner_type: BannerType
+  /** Title */
+  title: string
+  /** Description */
+  description: string
 }
 
 /** ValidationError */
@@ -1927,7 +1984,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.8
+ * @version 0.1.12
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2354,7 +2411,7 @@ export class Api<
       data: BodyCreateOperationsFromFileOperationsFilePost,
       params: RequestParams = {}
     ) =>
-      this.request<CreateAccountResponse, HTTPValidationError>({
+      this.request<AccountInfoFromFile, HTTPValidationError | void>({
         path: `/operations/file`,
         method: "POST",
         body: data,
@@ -2365,7 +2422,7 @@ export class Api<
       }),
 
     /**
-     * @description Данный метод реализует обновление разметки операции пользователем. Для операций дохода/расхода (operation_type) есть разница в допустимых значениях описания операции (debit/credit_description).
+     * @description Данный метод реализует обновление разметки операции пользователем.
      *
      * @tags Operations
      * @name UpdateOperationOperationsMarkupPut
@@ -2740,6 +2797,63 @@ export class Api<
       this.request<any, HTTPValidationError | void>({
         path: `/banners`,
         method: "PUT",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  }
+  references = {
+    /**
+     * @description Метод возвращает информацию по банку по БИК.
+     *
+     * @tags References
+     * @name GetBankInfoReferencesBankInfoGet
+     * @summary Получить информацию по банку по БИК
+     * @request GET:/references/bank_info
+     * @secure
+     */
+    getBankInfoReferencesBankInfoGet: (
+      query: {
+        /**
+         * Bik
+         * БИК банка
+         */
+        bik: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<BankReferenceResponse, HTTPValidationError | void>({
+        path: `/references/bank_info`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод возвращает лимиты по налогам и взносам. При отправке пустого списка years, вернутся лимиты за текущий год - 1, текущий год и текущий год + 1
+     *
+     * @tags References
+     * @name GetTaxLimitsReferencesTaxLimitsGet
+     * @summary Получить лимиты по налогам и взносам
+     * @request GET:/references/tax_limits
+     * @secure
+     */
+    getTaxLimitsReferencesTaxLimitsGet: (
+      query?: {
+        /**
+         * Years
+         * Годы, за которые необходимо предоставить лимиты.
+         */
+        years?: number[]
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<TaxLimitsResponse, HTTPValidationError | void>({
+        path: `/references/tax_limits`,
+        method: "GET",
         query: query,
         secure: true,
         format: "json",

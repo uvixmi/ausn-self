@@ -55,8 +55,6 @@ export interface InfoBannerLinked {
   title: string
 
   description: string[]
-
-  show_for_user: boolean
 }
 
 export const ActionsPage = () => {

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.8"
+    "version": "0.1.12"
   },
   "paths": {
     "/auth": {
@@ -1165,7 +1165,7 @@
           "Operations"
         ],
         "summary": "Переразметить операцию",
-        "description": "Данный метод реализует обновление разметки операции пользователем. Для операций дохода/расхода (operation_type) есть разница в допустимых значениях описания операции (debit/credit_description).",
+        "description": "Данный метод реализует обновление разметки операции пользователем.",
         "operationId": "update_operation_operations_markup_put",
         "security": [
           {
@@ -2035,6 +2035,131 @@
           }
         }
       }
+    },
+    "/references/bank_info": {
+      "get": {
+        "tags": [
+          "References"
+        ],
+        "summary": "Получить информацию по банку по БИК",
+        "description": "Метод возвращает информацию по банку по БИК.",
+        "operationId": "get_bank_info_references_bank_info_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bik",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "БИК банка",
+              "title": "Bik"
+            },
+            "description": "БИК банка"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankReferenceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/references/tax_limits": {
+      "get": {
+        "tags": [
+          "References"
+        ],
+        "summary": "Получить лимиты по налогам и взносам",
+        "description": "Метод возвращает лимиты по налогам и взносам. При отправке пустого списка years, вернутся лимиты за текущий год - 1, текущий год и текущий год + 1",
+        "operationId": "get_tax_limits_references_tax_limits_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "years",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Годы, за которые необходимо предоставить лимиты.",
+              "title": "Years"
+            },
+            "description": "Годы, за которые необходимо предоставить лимиты."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaxLimitsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2133,6 +2258,44 @@
           3
         ],
         "title": "AccountIntegrationType"
+      },
+      "BankReferenceResponse": {
+        "properties": {
+          "bik": {
+            "type": "string",
+            "title": "Bik",
+            "description": "БИК банка"
+          },
+          "bank_name": {
+            "type": "string",
+            "title": "Bank Name",
+            "description": "Наименование банка"
+          },
+          "bank_short_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Short Name",
+            "description": "Короткое наименование банка"
+          },
+          "cor_account": {
+            "type": "string",
+            "title": "Cor Account",
+            "description": "Корреспондентский счет"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bik",
+          "bank_name",
+          "cor_account"
+        ],
+        "title": "BankReferenceResponse"
       },
       "BannerType": {
         "type": "string",
@@ -2302,9 +2465,7 @@
         "type": "object",
         "required": [
           "year",
-          "tax_system",
-          "rate_reason",
-          "reason_type"
+          "tax_system"
         ],
         "title": "ChangeTax",
         "example": {
@@ -2442,7 +2603,17 @@
                 "$ref": "#/components/schemas/OperationCategory"
               }
             ],
-            "description": "Признак дебетования"
+            "description": "Признак дебетования. = credit - списание с расчетного счета клиента. = debet - поступление на расчетный счет клиента"
+          },
+          "operation_type": {
+            "type": "integer",
+            "enum": [
+              1,
+              2,
+              3
+            ],
+            "title": "Operation Type",
+            "description": "Признак налоговой базы. Возможные значения: Если category = debet: 1 - Доход. 2 - Не влияет на налоговую базу. Если category = credit: 2 - Не влияет на налоговую базу. 3 - Возврат покупателю."
           },
           "counterparty_name": {
             "type": "string",
@@ -2481,11 +2652,11 @@
         "type": "object",
         "required": [
           "category",
+          "operation_type",
           "counterparty_name",
           "purpose",
           "amount",
-          "date",
-          "doc_number"
+          "date"
         ],
         "title": "CreateOperation",
         "example": {
@@ -2494,6 +2665,7 @@
           "counterparty_name": "ИП Варягин",
           "date": "2023-10-30",
           "doc_number": "123",
+          "operation_type": 1,
           "purpose": "Доход от продажи оборудования"
         }
       },
@@ -2552,7 +2724,6 @@
         "type": "object",
         "required": [
           "date",
-          "doc_number",
           "tax_period",
           "tax_type",
           "amount"
@@ -2616,7 +2787,14 @@
       "CreateUserLead": {
         "properties": {
           "phone_number": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Phone Number",
             "description": "Телефон пользователя"
           },
@@ -2627,11 +2805,22 @@
               }
             ],
             "description": "Причина интереса пользователя"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Описание интереса пользователя"
           }
         },
         "type": "object",
         "required": [
-          "phone_number",
           "reason"
         ],
         "title": "CreateUserLead",
@@ -2989,76 +3178,11 @@
         ],
         "title": "IncomePercentage"
       },
-      "InfoBanner": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id",
-            "description": "ID баннера"
-          },
-          "banner_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/BannerType"
-              }
-            ],
-            "description": "Тип баннера. Возможные значения: update_data - напоминание об обновлении данных. update_user_info - напоминание об обновлении настроек налогового учета. new_user - баннер для нового пользователя. advertisement - рекламный баннер. "
-          },
-          "begin_date": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Begin Date",
-            "description": "Начало периода отображения баннера. Формат даты - MM-DD (например, 01-31)."
-          },
-          "end_date": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "End Date",
-            "description": "Конец периода отображения баннера. Формат даты - MM-DD (например, 01-31)."
-          },
-          "title": {
-            "type": "string",
-            "title": "Title",
-            "description": "Заголовок баннера"
-          },
-          "description": {
-            "type": "string",
-            "title": "Description",
-            "description": "Описание баннера. В описании баннера можно использовать предзаполняемые значения как на фронтенде, так и на стороне бэкенда. Значения необходимо обозначать в формате {key}. Поддерживаемые на данный момент ключи: year - Текущий год. last_year - Прошлый год. Заполнение ключей не из списка поддерживаемых осуществляется на стороне фронта."
-          },
-          "show_for_user": {
-            "type": "boolean",
-            "title": "Show For User",
-            "description": "Отображать ли баннер пользователям"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "banner_type",
-          "title",
-          "description",
-          "show_for_user"
-        ],
-        "title": "InfoBanner"
-      },
       "InfoBannersResponse": {
         "properties": {
           "banners": {
             "items": {
-              "$ref": "#/components/schemas/InfoBanner"
+              "$ref": "#/components/schemas/UserInfoBanner"
             },
             "type": "array",
             "title": "Banners",
@@ -3277,6 +3401,9 @@
         "type": "string",
         "enum": [
           "ens",
+          "marketplace",
+          "ofd",
+          "service_disable",
           "other"
         ],
         "title": "LeadReason"
@@ -3443,7 +3570,7 @@
                 "$ref": "#/components/schemas/OperationCategory"
               }
             ],
-            "description": "Признак дебетования"
+            "description": "Признак дебетования. = credit - списание с расчетного счета клиента. = debet - поступление на расчетный счет клиента"
           },
           "date": {
             "type": "string",
@@ -3692,7 +3819,7 @@
             "type": "string",
             "title": "Payer Kpp",
             "description": "КПП плательщика",
-            "default": 0
+            "default": "0"
           },
           "payer_account": {
             "type": "string",
@@ -3844,7 +3971,7 @@
                 "$ref": "#/components/schemas/ReportStatus"
               }
             ],
-            "description": "Новый статус отчета. Возможные значения: 0 - отчет не сформирован. 1 - отчет сформирован и передан пользователю. 2 - отчет отправлен в ФНС. 3 - отчет принят ФНС. 4 - отчет не принят ФНС (ошибка в отчете). "
+            "description": "Новый статус отчета. Возможные значения: 0 - отчет НЕ сформирован. 1 - отчет сформирован и передан клиенту. 2 - отчет принят ФНС (через ЭЦП). 3 - отчет НЕ принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно)."
           },
           "date_update": {
             "anyOf": [
@@ -4481,7 +4608,7 @@
               }
             ],
             "title": "Date Begin",
-            "description": "Дата начала демонстрации задачи"
+            "description": "Дата начала демонстрации задачи. Формат - MM-DD."
           },
           "date_end": {
             "anyOf": [
@@ -4493,7 +4620,7 @@
               }
             ],
             "title": "Date End",
-            "description": "Дата окончания демонстрации задачи"
+            "description": "Дата окончания демонстрации задачи. Формат - MM-DD."
           },
           "due_dates": {
             "items": {
@@ -4895,6 +5022,60 @@
           }
         }
       },
+      "TaxLimit": {
+        "properties": {
+          "year": {
+            "type": "integer",
+            "title": "Year",
+            "description": "Год, за который установлены лимиты"
+          },
+          "fixed_fees": {
+            "type": "integer",
+            "title": "Fixed Fees",
+            "description": "Фиксированные взносы за ИП"
+          },
+          "income_percentage": {
+            "type": "integer",
+            "title": "Income Percentage",
+            "description": "Предельная величина взносов 1% с дохода"
+          },
+          "rate_increase": {
+            "type": "integer",
+            "title": "Rate Increase",
+            "description": "Сумма лимита на повышение ставки УСН"
+          },
+          "max_income": {
+            "type": "integer",
+            "title": "Max Income",
+            "description": "Сумма максимального дохода УСН"
+          }
+        },
+        "type": "object",
+        "required": [
+          "year",
+          "fixed_fees",
+          "income_percentage",
+          "rate_increase",
+          "max_income"
+        ],
+        "title": "TaxLimit"
+      },
+      "TaxLimitsResponse": {
+        "properties": {
+          "limits": {
+            "items": {
+              "$ref": "#/components/schemas/TaxLimit"
+            },
+            "type": "array",
+            "title": "Limits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "limits"
+        ],
+        "title": "TaxLimitsResponse"
+      },
       "TaxSystemType": {
         "type": "string",
         "enum": [
@@ -5102,7 +5283,7 @@
                 "$ref": "#/components/schemas/UpdateRepostStatus"
               }
             ],
-            "description": "Новый статус отчета. Возможные значения: 2 - отчет отправлен в ФНС. 3 - отчет принят ФНС. 4 - отчет не принят ФНС (ошибка в отчете). "
+            "description": "Новый статус отчета. Возможные значения: 2 - отчет принят в ФНС (через ЭЦП). 3 - отчет не принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно). "
           }
         },
         "type": "object",
@@ -5197,6 +5378,18 @@
             "title": "Inn",
             "description": "ИНН пользователя"
           },
+          "tax_system": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax System",
+            "description": "Применяемая СНО"
+          },
           "tax_rate": {
             "anyOf": [
               {
@@ -5220,6 +5413,31 @@
             ],
             "title": "Rate Reason",
             "description": "Обоснование сниженной налоговой ставки"
+          },
+          "tax_date_begin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Date Begin",
+            "description": "Дата начала работы в сервисе"
+          },
+          "oktmo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oktmo",
+            "description": "Код ОКТМО"
           },
           "fns_code": {
             "anyOf": [
@@ -5257,19 +5475,6 @@
             ],
             "title": "Fns Reg Date",
             "description": "Дата регистрации ИП в ФНС"
-          },
-          "tax_date_begin": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tax Date Begin",
-            "description": "Дата начала работы в сервисе"
           },
           "email": {
             "anyOf": [
@@ -5341,6 +5546,33 @@
           "updated_at"
         ],
         "title": "User"
+      },
+      "UserInfoBanner": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "banner_type": {
+            "$ref": "#/components/schemas/BannerType"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "banner_type",
+          "title",
+          "description"
+        ],
+        "title": "UserInfoBanner"
       },
       "ValidationError": {
         "properties": {

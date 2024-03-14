@@ -1,0 +1,77 @@
+.modal-wrapper {
+  padding: 20px 16px;
+}
+
+.button-item-enter {
+  border-radius: 4px;
+  color: #cf133c;
+  height: 32px;
+  border: 1px solid #cf133c;
+  width: 50%;
+}
+
+.button-item-cancel {
+  border-radius: 4px;
+  background: #fff;
+  color: #6159ff;
+  height: 32px;
+  width: 50%;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+  gap: 16px;
+}
+
+.list-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-source {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #505050;
+}
+
+.text-input {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #141414;
+}
+
+.necessary {
+  color: #cf133c;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.text-date {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #6159ff;
+}

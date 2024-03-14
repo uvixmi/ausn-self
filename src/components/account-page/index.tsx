@@ -39,8 +39,6 @@ export const AccountPage = ({
     { title: CONTENT.SIDER_HEADING_EVENTS, to: "/main" },
     { title: CONTENT.SIDER_HEADING_TAXES, to: "/taxes" },
     { title: CONTENT.SIDER_HEADING_REPORTS, to: "/reports" },
-    { title: CONTENT.SIDER_HEADING_DOCUMENTS, to: "/documents" },
-    { title: CONTENT.SIDER_HEADING_PERSONAL, to: "/personal" },
   ]
 
   const settings = [
@@ -48,129 +46,7 @@ export const AccountPage = ({
     { title: CONTENT.SIDER_SUPPORT, to: "/support" },
   ]
 
-  const data_banks = [CONTENT.BANK_SBER, CONTENT.BANK_VTB, CONTENT.BANK_ALPHA]
-
-  const data_cashiers = [CONTENT.CASHIERS_FIRST]
-
-  const data_marketplaces = [
-    CONTENT.MARKETPLACE_WILDBERRIES,
-    CONTENT.MARKETPLACE_OZON,
-  ]
-
   const { Title, Text } = Typography
-
-  const columns = [
-    {
-      title: "Банк",
-      dataIndex: `bankName`,
-      key: "bankName",
-    },
-    {
-      title: "Дата",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Источник",
-      dataIndex: "source",
-      key: "source",
-    },
-    {
-      title: "Тип операции",
-      key: "operationType",
-      dataIndex: "operationType",
-    },
-    {
-      title: "Сумма",
-      key: "sum",
-      dataIndex: "sum",
-    },
-  ]
-
-  const dataSource = [
-    {
-      key: "1",
-      bankName: "Сбербанк",
-      date: "14.05.2023",
-      source:
-        "ООО Контрагент Оплата по договору ИН-42009-1 2 от 21.01.23 за мармеладных мишек",
-      age: 32,
-      operationType: "Доход",
-      sum:
-        "+" +
-        new Intl.NumberFormat("ru", {
-          style: "currency",
-          currency: "RUB", // Change this
-        }).format(100500.23),
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      bankName: "Альфа",
-      date: "14.05.2023",
-      source:
-        "ООО Контрагент Оплата по договору ИН-42009-1 2 от 21.01.23 за мармеладных мишек",
-      age: 42,
-      operationType: "Уплата налогов и взносов",
-      sum:
-        "+" +
-        new Intl.NumberFormat("ru", {
-          style: "currency",
-          currency: "RUB", // Change this
-        }).format(100500.23),
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      bankName: "ВТБ",
-      date: "14.05.2023",
-      source:
-        "ООО Контрагент Оплата по договору ИН-42009-1 2 от 21.01.23 за мармеладных мишек",
-      age: 32,
-      operationType: "Не влияет на налоговую базу",
-      sum:
-        "-" +
-        new Intl.NumberFormat("ru", {
-          style: "currency",
-          currency: "RUB", // Change this
-        }).format(100500.23),
-      address: "Sydney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-    {
-      key: "4",
-      bankName: "МКБ",
-      date: "14.05.2023",
-      source:
-        "ООО Контрагент Оплата по договору ИН-42009-1 2 от 21.01.23 за мармеладных мишек",
-      age: 32,
-      operationType: "Возврат покупателю",
-      sum:
-        "+" +
-        new Intl.NumberFormat("ru", {
-          style: "currency",
-          currency: "RUB", // Change this
-        }).format(100500.23),
-      address: "Sydney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-    {
-      key: "5",
-      bankName: "Райффайзен",
-      source:
-        "ООО Контрагент Оплата по договору ИН-42009-1 2 от 21.01.23 за мармеладных мишек",
-      date: "14.05.2023",
-      operationType: "Доход",
-      sum:
-        "-" +
-        new Intl.NumberFormat("ru", {
-          style: "currency",
-          currency: "RUB",
-        }).format(10050000.23),
-    },
-  ]
 
   const dispatch = useDispatch<AppDispatch>()
 

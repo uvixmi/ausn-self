@@ -144,18 +144,21 @@ export const AddOperationModal = ({
       }
     } else {
       try {
-        const data = {
-          amount: amount,
-          date: convertDateFormat(dateOperation),
-          doc_number: document !== "" ? document : null,
-          purpose: direct,
-          counterparty_name: counterparty,
-          category:
-            income === 1 ? OperationCategory.Debet : OperationCategory.Credit,
-        }
-        await api.operations.createOperationOperationsByHandPost(data, {
-          headers,
-        })
+        await api.operations.createOperationOperationsByHandPost(
+          {
+            amount: amount,
+            date: convertDateFormat(dateOperation),
+            doc_number: document !== "" ? document : null,
+            purpose: direct,
+            counterparty_name: counterparty,
+            category:
+              income === 1 ? OperationCategory.Debet : OperationCategory.Credit,
+            operation_type: income === 1 ? 1 : 2,
+          },
+          {
+            headers,
+          }
+        )
         successProcess()
         setWasDeleted(true)
         closeModal()
