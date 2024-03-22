@@ -8,7 +8,7 @@ export const CONTENT = {
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
     "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и т.д.",
-  TITLE_MARKETPLACE_INTEGRATION: "Интерграция с маркетплейсом",
+  TITLE_MARKETPLACE_INTEGRATION: "Интеграция с маркетплейсом",
   DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries, Яндекс Маркет",
   NOTIFICATION_PROCESSING_SUCCESS: "Данные сохранены",
   NOTIFICATION_PROCESSING_FAILED: "Не удалось сохранить. Попробуйте еще раз",
@@ -52,7 +52,7 @@ export const CONTENT = {
   DATA_STATEMENT_END: "Дата окончания выписки: ",
   BUTTON_GENERATE_LINK: "Сгенерировать ссылку",
   BUTTON_INTEGRATE_BANK: "Подключить",
-  TEXT_ALPHA_INTEGRATE: "Синхронизация с Альфа банк",
+  TEXT_ALPHA_INTEGRATE: "Синхронизация с Альфа-Банк",
   TEXT_OTHER_INTEGRATE: "Укажите данные для подключения",
   TEXT_OFD_DESCRIPTION: "Укажите данные для подключения ОФД",
   TEXT_OFD_DIFFERENT_DESCRIPTION: "Подгрузите отчёт по чекам в формате .xlsx",
@@ -77,6 +77,8 @@ export const CONTENT = {
   TEXT_MARKETPLACE_KEY_INPUT: "Ключ (токен подключения)",
   TEXT_MARKETPLACE_OZON_DESCRIPTION:
     "ID клиента и ключ для подключения через API необходимо сгенерировать в ЛК OZON.",
+  TEXT_MARKETPLACE_WB_DESCRIPTION:
+    "Ключ для подключения через API необходимо сгенерировать в ЛК Wildberries",
   TEXT_MARKETPLACE_YANDEX:
     "Мы сгенерируем ссылку для предоставления доступа к данным. Ссылка отобразится в Источники данных. Для успешного подключения перейдите по ссылке и предоставьте доступ.",
   TEXT_MARKETPLACE_YANDEX_DESCRIPTION:

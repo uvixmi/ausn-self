@@ -231,7 +231,7 @@ export const AddOperationModal = ({
               </div>
               <Select
                 className={"modal-select"}
-                style={{ borderRadius: "4px" }}
+                style={{ borderRadius: "4px", marginBottom: "24px" }}
                 value={income}
                 options={options}
                 onChange={(value) => setIncome(value)}
@@ -244,6 +244,9 @@ export const AddOperationModal = ({
                   )}
                 >
                   {CONTENT.INPUT_COUNTERPARTY_TITLE}
+                  <Text className={styles["necessary"]}>
+                    {CONTENT.NECESSARY}
+                  </Text>
                 </Text>
                 <Form.Item
                   className={styles["form-inn"]}
@@ -285,7 +288,10 @@ export const AddOperationModal = ({
                     styles["default-text"]
                   )}
                 >
-                  {CONTENT.INPUT_DIRECT_TITLE}
+                  {CONTENT.INPUT_DIRECT_TITLE}{" "}
+                  <Text className={styles["necessary"]}>
+                    {CONTENT.NECESSARY}
+                  </Text>
                 </Text>
                 <Form.Item
                   className={styles["form-inn"]}
@@ -330,6 +336,9 @@ export const AddOperationModal = ({
                     )}
                   >
                     {CONTENT.INPUT_AMOUNT_TITLE}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <Form.Item
                     className={styles["form-inn"]}
@@ -361,7 +370,10 @@ export const AddOperationModal = ({
                       styles["default-text"]
                     )}
                   >
-                    {CONTENT.DATEPICKER_TITLE}
+                    {CONTENT.DATEPICKER_TITLE}{" "}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <Form.Item
                     className={styles["form-inn"]}
@@ -381,6 +393,7 @@ export const AddOperationModal = ({
                     <DatePicker
                       placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
                       style={{ borderRadius: "4px", height: "32px" }}
+                      className={styles["datepicker-style"]}
                       locale={locale}
                       format={dateFormat}
                       value={

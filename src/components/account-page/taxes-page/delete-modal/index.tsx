@@ -5,6 +5,7 @@ import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { CONTENT } from "../constants"
 import { useEffect } from "react"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const DeleteOperationModal = ({
   isOpen,
@@ -48,6 +49,8 @@ export const DeleteOperationModal = ({
     }
   }
 
+  const isMobile = useMediaQuery("(max-width: 767px)")
+
   return (
     <>
       {contextHolder}
@@ -56,10 +59,15 @@ export const DeleteOperationModal = ({
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
         footer={null}
+        width={isMobile ? 345 : undefined}
       >
-        <Title level={3}>{"Удалить операцию?"}</Title>
+        <Title level={3} className={styles["heading-text"]}>
+          {"Удалить операцию?"}
+        </Title>
         <div className={styles["list-wrapper"]}>
-          <Text>{"Удаление может повлиять на расчет налога"}</Text>
+          <Text className={styles["description-text"]}>
+            {"Удаление может повлиять на расчет налога"}
+          </Text>
         </div>
         <div className={styles["buttons-row"]}>
           <Button

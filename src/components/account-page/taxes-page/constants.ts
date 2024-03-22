@@ -58,4 +58,5 @@ export const CONTENT = {
   CANCEL_INTEGRATION_SOURCE: "Отменить интеграцию",
   OFF_INTEGRATION_SOURCE: "Отключить интеграцию",
   ADD_SOURCE_COMPLETED: "Добавить данные",
+  FILTER_HEADING: "Фильтр",
 }

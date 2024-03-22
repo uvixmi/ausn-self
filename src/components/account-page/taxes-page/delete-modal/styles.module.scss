@@ -1,10 +1,21 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .button-item-enter {
   border-radius: 4px;
   background: red;
   color: #fff;
   height: 32px;
-  margin: 16px 0 16px 0;
-  width: 50%;
+
+  @media screen and (min-width: $tablet) {
+    width: 50%;
+    margin: 16px 0;
+  }
 }
 
 .button-item-cancel {
@@ -12,13 +23,23 @@
   background: #fff;
   color: #6159ff;
   height: 32px;
-  margin: 16px 0 16px 0;
-  width: 50%;
+
+  @media screen and (min-width: $tablet) {
+    width: 50%;
+    margin: 16px 0;
+  }
 }
 
 .buttons-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  flex-direction: column;
+  margin-top: 16px;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 0;
+  }
 }
 
 .list-wrapper {
@@ -26,4 +47,27 @@
   flex-direction: column;
   margin-top: 12px;
   gap: 5px;
+}
+
+.heading-text {
+  font-family: "Inter";
+  font-size: 20px !important;
+  font-weight: 600;
+  line-height: 28px !important;
+  text-align: left;
+  color: #141414;
+  margin-top: 8px;
+
+  @media screen and (min-width: $tablet) {
+    font-size: 24px !important;
+    line-height: 32px !important;
+  }
+}
+
+.description-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
 }

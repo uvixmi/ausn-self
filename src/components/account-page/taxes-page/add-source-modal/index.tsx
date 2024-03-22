@@ -1343,7 +1343,7 @@ export const AddSourceModal = ({
                   />
                 </div>
                 <Text className={styles["text-title"]}>
-                  {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
+                  {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate"]}>
                   <Button

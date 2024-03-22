@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   DatePicker,
   Layout,
   List,
@@ -62,6 +63,7 @@ import { fetchSourcesInfo } from "../client/sources/thunks"
 import { AddOperationModal } from "./add-operation-modal"
 import { DeleteSourceIcon } from "./type-operation/icons/delete-source"
 import { OffSourceModal } from "./off-source-modal"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -465,6 +467,47 @@ export const TaxesPage = () => {
     }
   }
 
+  const isMobile = useMediaQuery("(max-width: 767px)")
+
+  const collapseItems = [
+    {
+      key: 1,
+      label: CONTENT.FILTER_HEADING,
+      children: (
+        <div className={styles["income-header-wrapper"]}>
+          <Select
+            placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
+            className={styles["account-select"]}
+            options={optionsSources}
+            style={{ borderRadius: "4px" }}
+            onChange={handleSourcesChange}
+            mode="multiple"
+            maxTagCount={1}
+          />
+          <Select
+            placeholder={CONTENT.SELECT_OPERATION_TYPE}
+            className={styles["operation-select"]}
+            style={{ borderRadius: "4px" }}
+            options={optionsTypesSelect}
+            onChange={handleOperationTypesChange}
+            mode="multiple"
+            maxTagCount={1}
+          />
+          <DatePicker.RangePicker
+            locale={locale}
+            format={dateFormat}
+            placeholder={["от", "до"]}
+            className={styles["datepicker-item"]}
+            style={{ borderRadius: "4px" }}
+            onChange={(dates, dateStrings) =>
+              handleDateRangeChange(dateStrings)
+            }
+          />
+        </div>
+      ),
+    },
+  ]
+
   return (
     <>
       {contextHolder}
@@ -486,46 +529,58 @@ export const TaxesPage = () => {
         </div>
 
         <div className={styles["income-table"]}>
-          <div className={styles["income-header-wrapper"]}>
-            <Select
-              placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
-              className={styles["account-select"]}
-              options={optionsSources}
-              style={{ borderRadius: "4px" }}
-              onChange={handleSourcesChange}
-              mode="multiple"
-              maxTagCount={1}
+          {isMobile ? (
+            <Collapse
+              items={collapseItems}
+              bordered={false}
+              className="filter-collapse"
+              ghost
+              expandIconPosition="end"
             />
-            <Select
-              placeholder={CONTENT.SELECT_OPERATION_TYPE}
-              className={styles["operation-select"]}
-              style={{ borderRadius: "4px" }}
-              options={optionsTypesSelect}
-              onChange={handleOperationTypesChange}
-              mode="multiple"
-              maxTagCount={1}
-            />
-            <DatePicker.RangePicker
-              locale={locale}
-              format={dateFormat}
-              placeholder={["от", "до"]}
-              className={styles["datepicker-item"]}
-              style={{ borderRadius: "4px" }}
-              onChange={(dates, dateStrings) =>
-                handleDateRangeChange(dateStrings)
-              }
-            />
-          </div>
+          ) : (
+            <div className={styles["income-header-wrapper"]}>
+              <Select
+                placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
+                className={styles["account-select"]}
+                options={optionsSources}
+                style={{ borderRadius: "4px" }}
+                onChange={handleSourcesChange}
+                mode="multiple"
+                maxTagCount={1}
+              />
+              <Select
+                placeholder={CONTENT.SELECT_OPERATION_TYPE}
+                className={styles["operation-select"]}
+                style={{ borderRadius: "4px" }}
+                options={optionsTypesSelect}
+                onChange={handleOperationTypesChange}
+                mode="multiple"
+                maxTagCount={1}
+              />
+              <DatePicker.RangePicker
+                locale={locale}
+                format={dateFormat}
+                placeholder={["от", "до"]}
+                className={styles["datepicker-item"]}
+                style={{ borderRadius: "4px" }}
+                onChange={(dates, dateStrings) =>
+                  handleDateRangeChange(dateStrings)
+                }
+              />
+            </div>
+          )}
 
           <div className={styles["operations-table-wrapper"]}>
             <div className={styles["operations-table-inner"]}>
-              <div className={styles["table-header"]}>
-                {columns.map((item, index) => (
-                  <div className={styles["table-header-title"]} key={index}>
-                    {item.title}
-                  </div>
-                ))}
-              </div>
+              {!isMobile && (
+                <div className={styles["table-header"]}>
+                  {columns.map((item, index) => (
+                    <div className={styles["table-header-title"]} key={index}>
+                      {item.title}
+                    </div>
+                  ))}
+                </div>
+              )}
               {Object.entries(groupedOperations).length > 0 ? (
                 Object.entries(groupedOperations).map(([date, operations]) => (
                   <div key={date}>
@@ -534,83 +589,89 @@ export const TaxesPage = () => {
                     </div>
                     <div>
                       {operations.map((operation, index) => (
-                        <div
-                          className={cn(styles["table-info-row"], {
-                            [styles["hovered-row"]]:
-                              hoveredIndex === operation.id,
-                          })}
-                          key={operation.id}
-                          onMouseEnter={() => {
-                            setHoveredIndex(operation.id),
-                              setHoveredAmount(operation.amount_doc)
-                          }}
-                        >
-                          <div className={styles["source-inner"]}>
-                            <Text className={styles["source-title"]}>
-                              {operation.counterparty_name || "Нет контрагента"}
-                            </Text>
-                            <Text className={styles["source-text"]}>
-                              {operation.purpose || "Нет данных"}
-                            </Text>
-                          </div>
-                          <div className={styles["operation-type-wrapper"]}>
-                            <div className={styles["operation-type-inner"]}>
-                              <Select
-                                options={optionsTypes}
-                                defaultValue={operation.markup.operation_type}
-                                dropdownStyle={{
-                                  width: "max-content",
-                                }}
-                                className={cn(
-                                  "type-item-select",
-                                  styles["type-select-inner"]
-                                )}
-                                onChange={(value) => {
-                                  handleChangeMarkup(value)
-                                }}
-                              />
+                        <>
+                          <div
+                            className={cn(styles["table-info-row"], {
+                              [styles["hovered-row"]]:
+                                hoveredIndex === operation.id,
+                            })}
+                            key={operation.id}
+                            onMouseEnter={() => {
+                              setHoveredIndex(operation.id),
+                                setHoveredAmount(operation.markup.amount)
+                            }}
+                          >
+                            <div className={styles["source-inner"]}>
+                              <Text className={styles["source-title"]}>
+                                {operation.counterparty_name ||
+                                  "Нет контрагента"}
+                              </Text>
+                              <Text className={styles["source-text"]}>
+                                {operation.purpose || "Нет данных"}
+                              </Text>
+                            </div>
+                            <div className={styles["operation-type-wrapper"]}>
+                              <div className={styles["operation-type-inner"]}>
+                                <Select
+                                  options={optionsTypes}
+                                  defaultValue={operation.markup.operation_type}
+                                  dropdownStyle={{
+                                    width: "max-content",
+                                  }}
+                                  className={cn(
+                                    "type-item-select",
+                                    styles["type-select-inner"]
+                                  )}
+                                  onChange={(value) => {
+                                    handleChangeMarkup(value)
+                                  }}
+                                />
 
-                              {(operation.markup_mode_code === 2 ||
-                                operation.markup_mode_code === 3) && (
-                                <PencilIcon />
-                              )}
-                            </div>
-                          </div>
-                          <div className={styles["amount-inner"]}>
-                            <div
-                              className={cn(styles["amount-part"], {
-                                [styles["amount-part-hovered"]]:
-                                  hoveredIndex === operation.id,
-                              })}
-                            >
-                              <Text className={styles["currency-income"]}>
-                                {operation.markup.amount > 0
-                                  ? getCurrency(
-                                      operation.markup.amount,
-                                      operation.category
-                                    )
-                                  : getCurrency(
-                                      operation.amount_doc,
-                                      operation.category
-                                    )}
-                              </Text>
-                              <Text className={styles["source-account-text"]}>
-                                {getSourceText(
-                                  operation.source_name,
-                                  operation.account_number
+                                {(operation.markup_mode_code === 2 ||
+                                  operation.markup_mode_code === 3) && (
+                                  <PencilIcon />
                                 )}
-                              </Text>
+                              </div>
                             </div>
-                            {
-                              <Button
-                                className={styles["delete-icon"]}
-                                onClick={() => setIsDeleteModalOpen(true)}
+                            <div className={styles["amount-inner"]}>
+                              <div
+                                className={cn(styles["amount-part"], {
+                                  [styles["amount-part-hovered"]]:
+                                    hoveredIndex === operation.id,
+                                })}
                               >
-                                <DeleteOutlined />
-                              </Button>
-                            }
+                                <Text className={styles["currency-income"]}>
+                                  {operation.markup.amount > 0
+                                    ? getCurrency(
+                                        operation.markup.amount,
+                                        operation.category
+                                      )
+                                    : getCurrency(
+                                        operation.amount_doc,
+                                        operation.category
+                                      )}
+                                </Text>
+                                <Text className={styles["source-account-text"]}>
+                                  {getSourceText(
+                                    operation.source_name,
+                                    operation.account_number
+                                  )}
+                                </Text>
+                              </div>
+                              {
+                                <Button
+                                  className={styles["delete-icon"]}
+                                  onClick={() => setIsDeleteModalOpen(true)}
+                                >
+                                  <DeleteOutlined />
+                                </Button>
+                              }
+                            </div>
                           </div>
-                        </div>
+                          {isMobile && (
+                            <div className={styles["divider"]}></div>
+                          )}
+                        </>
                       ))}
                     </div>
                   </div>
@@ -637,316 +698,318 @@ export const TaxesPage = () => {
           </div>
         </div>
       </Content>
-      <Sider
-        className={styles["right-sider-wrapper"]}
-        width={340}
-        breakpoint="lg"
-        collapsedWidth="0"
-      >
-        <Title level={3}>
-          {CONTENT.HEADING_DATA_SOURCES}{" "}
-          <Button
-            onClick={() => dispatch(fetchSourcesInfo())}
-            className={styles["refresh-sources"]}
-          >
-            <ArrowCounterIcon />
-          </Button>
-        </Title>
+      {!isMobile && (
+        <Sider
+          className={styles["right-sider-wrapper"]}
+          width={340}
+          breakpoint="lg"
+          collapsedWidth="0"
+        >
+          <Title level={3}>
+            {CONTENT.HEADING_DATA_SOURCES}{" "}
+            <Button
+              onClick={() => dispatch(fetchSourcesInfo())}
+              className={styles["refresh-sources"]}
+            >
+              <ArrowCounterIcon />
+            </Button>
+          </Title>
 
-        <div className={styles["sider-buttons"]}>
-          <Button
-            className={styles["default-button"]}
-            onClick={() => setIsAddSourceOpen(true)}
-          >
-            <PlusOutlined
-              className={styles["plus-icon"]}
-              style={{ marginInlineStart: "4px" }}
-            />
-            {CONTENT.BUTTON_SIDER_ADD_TEXT}
-          </Button>
-        </div>
-        {sourcesHandSider && sourcesHandSider.length > 0 && (
-          <>
-            <Title level={4}>
-              {CONTENT.HEADING_HAND_SOURCERS + " "}
-              <Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
-                <InfoCircleOutlined
-                  className={styles["sider-icon"]}
-                  size={24}
-                />
-              </Tooltip>
-            </Title>
-            <List
-              dataSource={sourcesHandSider}
-              renderItem={(item) => (
-                <List.Item
-                  className={styles["list-item-right"]}
-                  style={{ borderBlockEnd: "none" }}
-                >
-                  <div className={styles["left-source-name"]}>
-                    {item.state === "in_progress" ? (
-                      <InProgressIcon />
-                    ) : item.state === "failed" ? (
-                      <FailedIcon />
-                    ) : item.state === "completed" &&
-                      item.is_integrated === false ? (
-                      <Tooltip title={CONTENT.ADD_SOURCE_COMPLETED}>
-                        <Button
-                          className={styles["source-completed-icon"]}
-                          onClick={() =>
-                            handleCompletedSource(
-                              item.type === "account"
-                                ? 1
-                                : item.type === "ofd"
-                                ? 2
-                                : null
-                            )
-                          }
-                        >
-                          <CompletedHandIcon />
-                        </Button>
-                      </Tooltip>
-                    ) : item.state === "completed" &&
-                      item.is_integrated === true ? (
-                      <CompletedAutoIcon />
-                    ) : null}
-                    {item.name.length > 11 ? (
-                      <Tooltip title={item.name}>
-                        <Text className={styles["source-text-left"]}>
-                          {item.short_name}
-                        </Text>
-                      </Tooltip>
-                    ) : (
-                      <Text className={styles["source-text-left"]}>
-                        {item.name}{" "}
-                      </Text>
-                    )}
-
-                    <Text className={styles["source-text-right"]}>
-                      {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
-                    </Text>
-                  </div>
-                  <div className={styles["source-date-inner"]}>
-                    <div className={styles["source-date-part"]}>
-                      {item.state === "completed" && !item.disable_date ? (
-                        <Text>
-                          {item.last_info &&
-                            convertReverseFormat(item.last_info)}
-                        </Text>
-                      ) : item.state === "completed" && item.disable_date ? (
-                        <Text>{convertReverseFormat(item.disable_date)}</Text>
+          <div className={styles["sider-buttons"]}>
+            <Button
+              className={styles["default-button"]}
+              onClick={() => setIsAddSourceOpen(true)}
+            >
+              <PlusOutlined
+                className={styles["plus-icon"]}
+                style={{ marginInlineStart: "4px" }}
+              />
+              {CONTENT.BUTTON_SIDER_ADD_TEXT}
+            </Button>
+          </div>
+          {sourcesHandSider && sourcesHandSider.length > 0 && (
+            <>
+              <Title level={4}>
+                {CONTENT.HEADING_HAND_SOURCERS + " "}
+                <Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
+                  <InfoCircleOutlined
+                    className={styles["sider-icon"]}
+                    size={24}
+                  />
+                </Tooltip>
+              </Title>
+              <List
+                dataSource={sourcesHandSider}
+                renderItem={(item) => (
+                  <List.Item
+                    className={styles["list-item-right"]}
+                    style={{ borderBlockEnd: "none" }}
+                  >
+                    <div className={styles["left-source-name"]}>
+                      {item.state === "in_progress" ? (
+                        <InProgressIcon />
                       ) : item.state === "failed" ? (
-                        <Link>{"Повторить"}</Link>
-                      ) : item.state === "in_progress" && item.link ? (
-                        <Link>{"Подключить"}</Link>
-                      ) : null}
-                      {!(item.state == "in_progress" && !item.link) && (
-                        <Tooltip
-                          title={
-                            item.is_integrated === false &&
-                            item.state === "completed" &&
-                            (item.type === "account" || item.type === "ofd")
-                              ? CONTENT.OFF_SOURCE
-                              : item.state === "failed"
-                              ? CONTENT.DELETE_SOURCE
-                              : item.is_integrated === true &&
-                                item.state === "in_progress" &&
-                                !!item.link
-                              ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                              : item.is_integrated === true &&
-                                item.state === "completed"
-                              ? CONTENT.OFF_INTEGRATION_SOURCE
-                              : ""
-                          }
-                        >
-                          <Button
-                            className={styles["source-delete-icon"]}
-                            onClick={() => {
-                              setIsDeletedSource(true)
-                              setOffSourceTitle(
-                                item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  (item.type === "account" ||
-                                    item.type === "ofd")
-                                  ? CONTENT.OFF_SOURCE
-                                  : item.state === "failed"
-                                  ? CONTENT.DELETE_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "in_progress" &&
-                                    !!item.link
-                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "completed"
-                                  ? CONTENT.OFF_INTEGRATION_SOURCE
-                                  : ""
-                              )
-                              setTypeSource(
-                                item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  item.type === "account"
-                                  ? 1
-                                  : item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    item.type === "ofd"
-                                  ? 2
-                                  : item.state === "failed"
-                                  ? 3
-                                  : item.is_integrated === true &&
-                                    item.state === "in_progress" &&
-                                    !!item.link
-                                  ? 4
-                                  : item.is_integrated === true &&
-                                    item.state === "completed"
-                                  ? 5
-                                  : 0
-                              )
-                              setTypeSourceName(item.name)
-                              setAccountSource(item.sub_name || "")
-                              setOffSourceId(item.id)
-                            }}
-                          >
-                            <DeleteSourceIcon />
-                          </Button>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </>
-        )}
-        {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
-          <>
-            <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
-            <List
-              dataSource={sourcesAutoSider}
-              renderItem={(item) => (
-                <List.Item
-                  className={styles["list-item-right"]}
-                  style={{ borderBlockEnd: "none" }}
-                >
-                  <div className={styles["left-source-name"]}>
-                    {item.state === "in_progress" ? (
-                      <InProgressIcon />
-                    ) : item.state === "failed" ? (
-                      <Tooltip title={item.reason}>
                         <FailedIcon />
-                      </Tooltip>
-                    ) : item.state === "completed" &&
-                      item.is_integrated === false ? (
-                      <CompletedHandIcon />
-                    ) : item.state === "completed" &&
-                      item.is_integrated === true ? (
-                      <CompletedAutoIcon />
-                    ) : null}
-
-                    {item.name.length > 11 ? (
-                      <Tooltip title={item.name}>
-                        <Text className={styles["source-text-left"]}>
-                          {item.name.slice(0, 9)}
-                          {"..."}
-                        </Text>
-                      </Tooltip>
-                    ) : (
-                      <Text className={styles["source-text-left"]}>
-                        {item.name}{" "}
-                      </Text>
-                    )}
-                    <Text className={styles["source-text-right"]}>
-                      {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
-                    </Text>
-                  </div>
-                  <div className={styles["source-date-inner"]}>
-                    <div className={styles["source-date-part"]}>
-                      {item.state === "completed" && !item.disable_date ? (
-                        <Text>
-                          {item.last_info &&
-                            convertReverseFormat(item.last_info)}
-                        </Text>
-                      ) : item.state === "completed" && item.disable_date ? (
-                        <Text>{convertReverseFormat(item.disable_date)}</Text>
-                      ) : item.state === "failed" ? (
-                        <Link>{"Повторить"}</Link>
-                      ) : item.state === "in_progress" && item.link ? (
-                        <Link href={item.link}>{"Подключить"}</Link>
-                      ) : null}
-                      {!(item.state == "in_progress" && !item.link) && (
-                        <Tooltip
-                          title={
-                            item.is_integrated === false &&
-                            item.state === "completed" &&
-                            (item.type === "account" || item.type === "ofd")
-                              ? CONTENT.OFF_SOURCE
-                              : item.state === "failed"
-                              ? CONTENT.DELETE_SOURCE
-                              : item.is_integrated === true &&
-                                item.state === "in_progress" &&
-                                !!item.link
-                              ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                              : item.is_integrated === true &&
-                                item.state === "completed"
-                              ? CONTENT.OFF_INTEGRATION_SOURCE
-                              : ""
-                          }
-                        >
+                      ) : item.state === "completed" &&
+                        item.is_integrated === false ? (
+                        <Tooltip title={CONTENT.ADD_SOURCE_COMPLETED}>
                           <Button
-                            className={styles["source-delete-icon"]}
-                            onClick={() => {
-                              setIsDeletedSource(true)
-                              setOffSourceTitle(
-                                item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  (item.type === "account" ||
-                                    item.type === "ofd")
-                                  ? CONTENT.OFF_SOURCE
-                                  : item.state === "failed"
-                                  ? CONTENT.DELETE_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "in_progress" &&
-                                    !!item.link
-                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "completed"
-                                  ? CONTENT.OFF_INTEGRATION_SOURCE
-                                  : ""
-                              )
-                              setTypeSource(
-                                item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  item.type === "account"
+                            className={styles["source-completed-icon"]}
+                            onClick={() =>
+                              handleCompletedSource(
+                                item.type === "account"
                                   ? 1
-                                  : item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    item.type === "ofd"
+                                  : item.type === "ofd"
                                   ? 2
-                                  : item.state === "failed"
-                                  ? 3
-                                  : item.is_integrated === true &&
-                                    item.state === "in_progress" &&
-                                    !!item.link
-                                  ? 4
-                                  : item.is_integrated === true &&
-                                    item.state === "completed"
-                                  ? 5
-                                  : 0
+                                  : null
                               )
-                              setTypeSourceName(item.name)
-                              setOffSourceId(item.id)
-                            }}
+                            }
                           >
-                            <DeleteSourceIcon />
+                            <CompletedHandIcon />
                           </Button>
                         </Tooltip>
+                      ) : item.state === "completed" &&
+                        item.is_integrated === true ? (
+                        <CompletedAutoIcon />
+                      ) : null}
+                      {item.name.length > 11 ? (
+                        <Tooltip title={item.name}>
+                          <Text className={styles["source-text-left"]}>
+                            {item.short_name}
+                          </Text>
+                        </Tooltip>
+                      ) : (
+                        <Text className={styles["source-text-left"]}>
+                          {item.name}{" "}
+                        </Text>
                       )}
+
+                      <Text className={styles["source-text-right"]}>
+                        {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                      </Text>
                     </div>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </>
-        )}
-      </Sider>
+                    <div className={styles["source-date-inner"]}>
+                      <div className={styles["source-date-part"]}>
+                        {item.state === "completed" && !item.disable_date ? (
+                          <Text>
+                            {item.last_info &&
+                              convertReverseFormat(item.last_info)}
+                          </Text>
+                        ) : item.state === "completed" && item.disable_date ? (
+                          <Text>{convertReverseFormat(item.disable_date)}</Text>
+                        ) : item.state === "failed" ? (
+                          <Link>{"Повторить"}</Link>
+                        ) : item.state === "in_progress" && item.link ? (
+                          <Link>{"Подключить"}</Link>
+                        ) : null}
+                        {!(item.state == "in_progress" && !item.link) && (
+                          <Tooltip
+                            title={
+                              item.is_integrated === false &&
+                              item.state === "completed" &&
+                              (item.type === "account" || item.type === "ofd")
+                                ? CONTENT.OFF_SOURCE
+                                : item.state === "failed"
+                                ? CONTENT.DELETE_SOURCE
+                                : item.is_integrated === true &&
+                                  item.state === "in_progress" &&
+                                  !!item.link
+                                ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                : item.is_integrated === true &&
+                                  item.state === "completed"
+                                ? CONTENT.OFF_INTEGRATION_SOURCE
+                                : ""
+                            }
+                          >
+                            <Button
+                              className={styles["source-delete-icon"]}
+                              onClick={() => {
+                                setIsDeletedSource(true)
+                                setOffSourceTitle(
+                                  item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    (item.type === "account" ||
+                                      item.type === "ofd")
+                                    ? CONTENT.OFF_SOURCE
+                                    : item.state === "failed"
+                                    ? CONTENT.DELETE_SOURCE
+                                    : item.is_integrated === true &&
+                                      item.state === "in_progress" &&
+                                      !!item.link
+                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                    : item.is_integrated === true &&
+                                      item.state === "completed"
+                                    ? CONTENT.OFF_INTEGRATION_SOURCE
+                                    : ""
+                                )
+                                setTypeSource(
+                                  item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    item.type === "account"
+                                    ? 1
+                                    : item.is_integrated === false &&
+                                      item.state === "completed" &&
+                                      item.type === "ofd"
+                                    ? 2
+                                    : item.state === "failed"
+                                    ? 3
+                                    : item.is_integrated === true &&
+                                      item.state === "in_progress" &&
+                                      !!item.link
+                                    ? 4
+                                    : item.is_integrated === true &&
+                                      item.state === "completed"
+                                    ? 5
+                                    : 0
+                                )
+                                setTypeSourceName(item.name)
+                                setAccountSource(item.sub_name || "")
+                                setOffSourceId(item.id)
+                              }}
+                            >
+                              <DeleteSourceIcon />
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </>
+          )}
+          {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
+            <>
+              <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
+              <List
+                dataSource={sourcesAutoSider}
+                renderItem={(item) => (
+                  <List.Item
+                    className={styles["list-item-right"]}
+                    style={{ borderBlockEnd: "none" }}
+                  >
+                    <div className={styles["left-source-name"]}>
+                      {item.state === "in_progress" ? (
+                        <InProgressIcon />
+                      ) : item.state === "failed" ? (
+                        <Tooltip title={item.reason}>
+                          <FailedIcon />
+                        </Tooltip>
+                      ) : item.state === "completed" &&
+                        item.is_integrated === false ? (
+                        <CompletedHandIcon />
+                      ) : item.state === "completed" &&
+                        item.is_integrated === true ? (
+                        <CompletedAutoIcon />
+                      ) : null}
+
+                      {item.name.length > 11 ? (
+                        <Tooltip title={item.name}>
+                          <Text className={styles["source-text-left"]}>
+                            {item.name.slice(0, 9)}
+                            {"..."}
+                          </Text>
+                        </Tooltip>
+                      ) : (
+                        <Text className={styles["source-text-left"]}>
+                          {item.name}{" "}
+                        </Text>
+                      )}
+                      <Text className={styles["source-text-right"]}>
+                        {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+                      </Text>
+                    </div>
+                    <div className={styles["source-date-inner"]}>
+                      <div className={styles["source-date-part"]}>
+                        {item.state === "completed" && !item.disable_date ? (
+                          <Text>
+                            {item.last_info &&
+                              convertReverseFormat(item.last_info)}
+                          </Text>
+                        ) : item.state === "completed" && item.disable_date ? (
+                          <Text>{convertReverseFormat(item.disable_date)}</Text>
+                        ) : item.state === "failed" ? (
+                          <Link>{"Повторить"}</Link>
+                        ) : item.state === "in_progress" && item.link ? (
+                          <Link href={item.link}>{"Подключить"}</Link>
+                        ) : null}
+                        {!(item.state == "in_progress" && !item.link) && (
+                          <Tooltip
+                            title={
+                              item.is_integrated === false &&
+                              item.state === "completed" &&
+                              (item.type === "account" || item.type === "ofd")
+                                ? CONTENT.OFF_SOURCE
+                                : item.state === "failed"
+                                ? CONTENT.DELETE_SOURCE
+                                : item.is_integrated === true &&
+                                  item.state === "in_progress" &&
+                                  !!item.link
+                                ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                : item.is_integrated === true &&
+                                  item.state === "completed"
+                                ? CONTENT.OFF_INTEGRATION_SOURCE
+                                : ""
+                            }
+                          >
+                            <Button
+                              className={styles["source-delete-icon"]}
+                              onClick={() => {
+                                setIsDeletedSource(true)
+                                setOffSourceTitle(
+                                  item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    (item.type === "account" ||
+                                      item.type === "ofd")
+                                    ? CONTENT.OFF_SOURCE
+                                    : item.state === "failed"
+                                    ? CONTENT.DELETE_SOURCE
+                                    : item.is_integrated === true &&
+                                      item.state === "in_progress" &&
+                                      !!item.link
+                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                    : item.is_integrated === true &&
+                                      item.state === "completed"
+                                    ? CONTENT.OFF_INTEGRATION_SOURCE
+                                    : ""
+                                )
+                                setTypeSource(
+                                  item.is_integrated === false &&
+                                    item.state === "completed" &&
+                                    item.type === "account"
+                                    ? 1
+                                    : item.is_integrated === false &&
+                                      item.state === "completed" &&
+                                      item.type === "ofd"
+                                    ? 2
+                                    : item.state === "failed"
+                                    ? 3
+                                    : item.is_integrated === true &&
+                                      item.state === "in_progress" &&
+                                      !!item.link
+                                    ? 4
+                                    : item.is_integrated === true &&
+                                      item.state === "completed"
+                                    ? 5
+                                    : 0
+                                )
+                                setTypeSourceName(item.name)
+                                setOffSourceId(item.id)
+                              }}
+                            >
+                              <DeleteSourceIcon />
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </>
+          )}
+        </Sider>
+      )}
       <DeleteOperationModal
         isOpen={deleteModalOpen}
         setOpen={setIsDeleteModalOpen}

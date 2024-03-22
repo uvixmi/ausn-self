@@ -23,6 +23,7 @@ import Cookies from "js-cookie"
 import { v4 as uuid } from "uuid"
 import cn from "classnames"
 import { fetchSourcesInfo } from "./client/sources/thunks"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const AccountPage = ({
   token_type,
@@ -59,6 +60,8 @@ export const AccountPage = ({
 
   const navigate = useNavigate()
 
+  const isMobile = useMediaQuery("(max-width: 767px)")
+
   return (
     <>
       <ConfigProvider
@@ -83,67 +86,69 @@ export const AccountPage = ({
         }}
       >
         <Layout>
-          <Sider
-            className={styles["left-sider-wrapper"]}
-            style={{
-              overflow: "auto",
-              height: "100vh",
-              position: "fixed",
-              left: 0,
-              top: 0,
-              bottom: 0,
-            }}
-          >
-            <div className={styles["left-sider-inner"]}>
-              <div className={styles["logo-inner"]}>
-                <LogoIcon
-                  onClick={() => {
-                    navigate("/main"), logOut(), dispatch(clearData())
-                  }}
-                  type="icon-custom"
-                  className={styles["logo-item"]}
-                />
+          {!isMobile && (
+            <Sider
+              className={styles["left-sider-wrapper"]}
+              style={{
+                overflow: "auto",
+                height: "100vh",
+                position: "fixed",
+                left: 0,
+                top: 0,
+                bottom: 0,
+              }}
+            >
+              <div className={styles["left-sider-inner"]}>
+                <div className={styles["logo-inner"]}>
+                  <LogoIcon
+                    onClick={() => {
+                      navigate("/main"), logOut(), dispatch(clearData())
+                    }}
+                    type="icon-custom"
+                    className={styles["logo-item"]}
+                  />
+                </div>
+                <div className={styles["left-sider-menu-inner"]}>
+                  <List
+                    className={styles["left-sider-menu"]}
+                    dataSource={data}
+                    renderItem={(item) => (
+                      <List.Item style={{ border: "none" }}>
+                        <Link
+                          //underline={item.title == CONTENT.HEADING_TAXES}
+                          //strong={item.title == CONTENT.HEADING_TAXES}
+                          to={item.to}
+                          className={cn(styles["item-link-item"], {
+                            [styles["item-active"]]:
+                              location.pathname === item.to,
+                          })}
+                        >
+                          {item.title}
+                        </Link>
+                      </List.Item>
+                    )}
+                  />
+                  <List
+                    className={styles["left-sider-menu"]}
+                    dataSource={settings}
+                    renderItem={(item) => (
+                      <List.Item style={{ border: "none" }}>
+                        <Link //underline={item == CONTENT.HEADING_TAXES}
+                          to={item.to}
+                          className={cn(styles["item-link-item"], {
+                            [styles["item-active"]]:
+                              location.pathname === item.to,
+                          })}
+                        >
+                          {item.title}
+                        </Link>
+                      </List.Item>
+                    )}
+                  />
+                </div>
               </div>
-              <div className={styles["left-sider-menu-inner"]}>
-                <List
-                  className={styles["left-sider-menu"]}
-                  dataSource={data}
-                  renderItem={(item) => (
-                    <List.Item style={{ border: "none" }}>
-                      <Link
-                        //underline={item.title == CONTENT.HEADING_TAXES}
-                        //strong={item.title == CONTENT.HEADING_TAXES}
-                        to={item.to}
-                        className={cn(styles["item-link-item"], {
-                          [styles["item-active"]]:
-                            location.pathname === item.to,
-                        })}
-                      >
-                        {item.title}
-                      </Link>
-                    </List.Item>
-                  )}
-                />
-                <List
-                  className={styles["left-sider-menu"]}
-                  dataSource={settings}
-                  renderItem={(item) => (
-                    <List.Item style={{ border: "none" }}>
-                      <Link //underline={item == CONTENT.HEADING_TAXES}
-                        to={item.to}
-                        className={cn(styles["item-link-item"], {
-                          [styles["item-active"]]:
-                            location.pathname === item.to,
-                        })}
-                      >
-                        {item.title}
-                      </Link>
-                    </List.Item>
-                  )}
-                />
-              </div>
-            </div>
-          </Sider>
+            </Sider>
+          )}
 
           <Outlet />
         </Layout>

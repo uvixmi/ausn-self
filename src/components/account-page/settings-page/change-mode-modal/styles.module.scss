@@ -18,22 +18,16 @@ $xxl: 2560px;
 
 .title-description {
   font-family: "Inter";
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 16px;
   font-weight: 400;
+  line-height: 24px;
   letter-spacing: 0em;
   text-align: left;
   color: #505050;
-
-  @media screen and (min-width: $tablet) {
-    font-size: 16px;
-    line-height: 24px;
-  }
 }
 
 .ant-modal {
   height: -webkit-fill-available;
-  max-width: 100vw;
 }
 
 .modal-style {
@@ -44,7 +38,6 @@ $xxl: 2560px;
 
 .modal-inner {
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
   height: 100%;
 }
@@ -52,43 +45,19 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   max-width: 440px;
-
-  @media screen and (min-width: $tablet) {
-    gap: 24px;
-  }
-}
-
-.inputs-row {
-  display: flex;
-  flex-direction: column;
-
-  @media screen and (min-width: $tablet) {
-    justify-content: space-between;
-    flex-direction: row;
-    gap: 20px;
-  }
 }
 
 .input-item {
   display: flex;
   flex-direction: column;
-
+  gap: 8px;
   width: 100%;
-
-  @media screen and (min-width: $tablet) {
-    gap: 8px;
-  }
 }
 
 .description-item {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 16px;
-
-  @media screen and (min-width: $tablet) {
-    margin-bottom: 0;
-  }
 }
 
 .select-item {
@@ -101,17 +70,28 @@ $xxl: 2560px;
   color: #141414;
 }
 
-.pay-inner {
+.cancel-button {
+  height: 34px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  width: 100%;
+  color: #6159ff;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.save-button {
   height: 34px;
   padding: 8px 16px;
   border-radius: 4px;
   width: 100%;
   background: #6159ff;
   color: #fff;
-
-  @media screen and (min-width: $tablet) {
-    height: 44px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .add-payment-inner {
@@ -136,8 +116,14 @@ $xxl: 2560px;
 
 .footer-button {
   display: flex;
+
+  gap: 8px;
   flex-direction: column;
-  margin-top: 20px;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    margin-top: 20px;
+    gap: 16px;
+  }
 }
 
 .remark-text {
@@ -189,16 +175,36 @@ $xxl: 2560px;
   }
 }
 
-.datepicker-style {
-  width: 100%;
+.inputs-row {
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+  }
+}
+
+.description-inner {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+
+  @media screen and (min-width: $tablet) {
+    margin-bottom: 24px;
+  }
 }
 
 .necessary {
   color: #cf133c;
   font-family: "Inter";
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
   letter-spacing: 0em;
   text-align: left;
+}
+
+.justify-heading {
+  margin-top: 0 !important;
 }

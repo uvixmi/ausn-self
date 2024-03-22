@@ -16,9 +16,13 @@ import { useAuth } from "../../../AuthContext"
 import { useNavigate } from "react-router-dom"
 import { FailedIcon } from "../taxes-page/type-operation/icons/failed"
 import { OffDisableIcon } from "../taxes-page/type-operation/icons/off-disable"
+import { ChangeModeModal } from "./change-mode-modal"
+import { OffServiceModal } from "./off-service-modal"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const SettingsPage = () => {
-  const [isOpen, setOpen] = useState(false)
+  const [isOpenEditMode, setIsOpenEditMode] = useState(false)
+  const [isOffOpen, setIsOffOpen] = useState(false)
   const { isAuthenticated, login, setRole, logout } = useAuth()
 
   const navigate = useNavigate()
@@ -34,51 +38,8 @@ export const SettingsPage = () => {
     if (!loaded && !loading) dispatch(fetchCurrentUser())
   }, [dispatch, loaded, loading])
 
-  const data = [
-    {
-      date: "09 Января 2024",
-      late: true,
-      needToPay: 45842,
-      paid: 10,
-      title: "Фиксированные взносы за 2023 год",
-      description:
-        "Уплата страхового взноса за ИП в совокупном фиксированном размере",
-    },
-    {
-      date: "25 Апреля 2024",
-      late: false,
-      needToPay: 0,
-      paid: 0,
-      title: "Декларация УСН за 2023 год",
-      description:
-        "Сдача налоговой декларации по упрощенной системе налогообложения",
-    },
-    {
-      date: "25 Апреля 2024",
-      late: false,
-      needToPay: 45842,
-      paid: 10,
-      title: "Уведомление по УСН за I кв 2024 года",
-      description:
-        "Сдача уведомления об исчисленных авансовых платежах по налогу",
-    },
-    {
-      date: "25 Апреля 2024",
-      late: false,
-      needToPay: 35542,
-      paid: 17042,
-      title: "Налог УСН за 2023 год",
-      description: "Уплата налога по упрощенной системе налогообложения",
-    },
-    {
-      date: "01 Июля 2024",
-      late: false,
-      needToPay: 42500,
-      paid: 32500,
-      title: "1% с дохода за 2023 год",
-      description: "Уплата страхового взноса с дохода свыше 300 000 ₽",
-    },
-  ]
+  const isMobile = useMediaQuery("(max-width: 767px)")
+
   return (
     <>
       <Content className={styles["content-wrapper"]}>
@@ -142,10 +103,15 @@ export const SettingsPage = () => {
                   {CONTENT.TAXMODE_HEADING}
                 </Title>
                 <div className={styles["button-heading"]}>
-                  <EditIcon />
-                  <Text className={styles["button-link"]}>
-                    {CONTENT.BUTTON_EDIT}
-                  </Text>
+                  <Button
+                    className={styles["edit-button"]}
+                    onClick={() => setIsOpenEditMode(true)}
+                  >
+                    <EditIcon />
+                    <Text className={styles["button-link"]}>
+                      {CONTENT.BUTTON_EDIT}
+                    </Text>
+                  </Button>
                 </div>
                 <div className={styles["button-heading"]}>
                   <DocumentIcon />
@@ -154,11 +120,11 @@ export const SettingsPage = () => {
                   </Text>
                 </div>
               </div>
-              <Text className={styles["text-inner"]}>
+              <Text className={styles["text-inner-mode"]}>
                 {currentUser.tax_system && TAX_SYSTEM[currentUser.tax_system]}
                 <Text
                   style={{ fontWeight: 600 }}
-                  className={styles["text-inner"]}
+                  className={styles["text-inner-mode"]}
                 >
                   {" " + currentUser.tax_rate + "%"}
                 </Text>{" "}
@@ -180,108 +146,34 @@ export const SettingsPage = () => {
                   </Text>
                 </div>
               </div>
-              <Text className={styles["text-inner"]}>
+              <Text className={styles["text-inner-mode"]}>
                 {CONTENT.TEXT_CODE_IFNS}
                 <Text
                   style={{ fontWeight: 600 }}
-                  className={styles["text-inner"]}
+                  className={styles["text-inner-mode"]}
                 >
                   {" " + currentUser.fns_code}
                 </Text>
                 {"- " + currentUser.fns_description}
               </Text>
-              <Text className={styles["text-inner"]}>
+              <Text className={styles["text-inner-mode"]}>
                 {CONTENT.TEXT_OKTMO}
                 <Text
                   style={{ fontWeight: 600 }}
-                  className={styles["text-inner"]}
+                  className={styles["text-inner-mode"]}
                 >
                   {" " + currentUser.oktmo}
                 </Text>
               </Text>
             </div>
 
-            {/* 
-          <div className={styles["info-row"]}>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_TAXSYSTEM}
-              </Text>
-              <Text className={styles["text-inner"]}>{"УСН"}</Text>
-            </div>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_DATE_REGISTRATION}
-              </Text>
-              <Text className={styles["text-inner"]}>{"21.10.2021"}</Text>
-            </div>
-          </div>
-          
-          <div className={styles["info-row"]}>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_TAXOBJECT}
-              </Text>
-              <Text className={styles["text-inner"]}>{"Доходы"}</Text>
-            </div>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>{CONTENT.TEXT_OKTMO}</Text>
-              <Text className={styles["text-inner"]}>{"48901221"}</Text>
-            </div>
-          </div>
-          <div className={styles["info-row"]}>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_TAX_RATE}
-              </Text>
-              <Text className={styles["text-inner"]}>{"4%"}</Text>
-            </div>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_CODE_IFNS}
-              </Text>
-              <Text className={styles["text-inner"]}>{"0550"}</Text>
-            </div>
-          </div>
-          <div className={styles["info-row"]}>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_DATE_BEGIN}
-              </Text>
-              <Text className={styles["text-inner"]}>{"01.01.2023"}</Text>
-            </div>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>
-                {CONTENT.TEXT_DEFAULT_CODE}
-              </Text>
-            </div>
-          </div>
-        </div>
-        <div className={styles["info-wrapper"]}>
-          <Title
-            level={3}
-            className={styles["heading-text"]}
-            style={{ marginTop: 0 }}
-          >
-            {CONTENT.CONTACT_HEADING}
-          </Title>
-          <div className={styles["info-row"]}>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>{CONTENT.TEXT_EMAIL}</Text>
-              <Text className={styles["text-inner"]}>{"teat@bk.ru"}</Text>
-            </div>
-            <div className={styles["info-item"]}>
-              <Text className={styles["text-title"]}>{CONTENT.TEXT_PHONE}</Text>
-              <Text className={styles["text-inner"]}>{"+7 987 123-00-00"}</Text>
-            </div>
-              </div>*/}
-            <Button className={styles["button-password"]}>
+            {/* <Button className={styles["button-password"]}>
               {CONTENT.BUTTON_CHANGE_PASSWORD}
-            </Button>
+                </Button>*/}
           </div>
           <div className={styles["right-info"]}>
             <div className={styles["contact-info-inner"]}>
-              <div className={styles["tax-system-heaing-inner"]}>
+              <div className={styles["contacts-heading-inner"]}>
                 <Title level={4} style={{ margin: 0 }}>
                   {CONTENT.CONTACT_HEADING}
                 </Title>
@@ -309,6 +201,7 @@ export const SettingsPage = () => {
                 </Text>
               </div>
             </div>
+            {isMobile && <div className={styles["divider"]}></div>}
             <div className={styles["additional-info-inner"]}>
               <div className={styles["tax-system-heaing-inner"]}>
                 <Title level={4} style={{ margin: 0 }}>
@@ -335,7 +228,10 @@ export const SettingsPage = () => {
                   {CONTENT.LINK_APPLICATION}
                 </Text>
               </div>
-              <Button className={styles["off-button"]}>
+              <Button
+                className={styles["off-button"]}
+                onClick={() => setIsOffOpen(true)}
+              >
                 <OffDisableIcon />
                 {CONTENT.BUTTON_OFF_SERVICE}
               </Button>
@@ -343,6 +239,8 @@ export const SettingsPage = () => {
           </div>
         </div>
       </Content>
+      <ChangeModeModal isOpen={isOpenEditMode} setOpen={setIsOpenEditMode} />
+      <OffServiceModal isOpen={isOffOpen} setOpen={setIsOffOpen} />
     </>
   )
 }

@@ -20,4 +20,5 @@ export const CONTENT = {
     "Ошибка добавления операции. Повторите попытку",
   COUNTERPARTY_TAX_DISABLED: "Казначейство России (ФНС России)",
   PURPOSE_TAX_DISABLED: "Единый налоговый платеж",
+  NECESSARY: " *",
 }
