@@ -98,7 +98,8 @@ export const TaxesPage = () => {
     useState<OperationsResponse | null>(null)
 
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
-
+  const [operationsLoaded, setOperationsLoaded] = useState(false)
+  const [groupedOperationsLoaded, setGroupedOperationsLoaded] = useState(false)
   const optionsTypesSelect = [
     {
       label: (
@@ -367,11 +368,13 @@ export const TaxesPage = () => {
           pages_count: operations.data.pages_count,
         }))
       }
+
       setPagination((prevPagination) => ({
         ...prevPagination,
         page_number: prevPagination.page_number + 1,
       }))
       setIsFetching(false)
+      setOperationsLoaded(true)
     }
   }, [
     isFetching,
@@ -429,6 +432,7 @@ export const TaxesPage = () => {
     })
 
     setGroupedOperations(updatedGroupedOperations)
+    operationsData && setGroupedOperationsLoaded(true)
   }, [operationsData])
 
   const [hoveredIndex, setHoveredIndex] = useState<string | null>(null)
@@ -581,118 +585,128 @@ export const TaxesPage = () => {
                   ))}
                 </div>
               )}
-              {Object.entries(groupedOperations).length > 0 ? (
-                Object.entries(groupedOperations).map(([date, operations]) => (
-                  <div key={date}>
-                    <div className={styles["table-date-row"]}>
-                      {formatToPayDate(date)}
-                    </div>
-                    <div>
-                      {operations.map((operation, index) => (
-                        <>
-                          <div
-                            className={cn(styles["table-info-row"], {
-                              [styles["hovered-row"]]:
-                                hoveredIndex === operation.id,
-                            })}
-                            key={operation.id}
-                            onMouseEnter={() => {
-                              setHoveredIndex(operation.id),
-                                setHoveredAmount(operation.markup.amount)
-                            }}
-                          >
-                            <div className={styles["source-inner"]}>
-                              <Text className={styles["source-title"]}>
-                                {operation.counterparty_name ||
-                                  "Нет контрагента"}
-                              </Text>
-                              <Text className={styles["source-text"]}>
-                                {operation.purpose || "Нет данных"}
-                              </Text>
-                            </div>
-                            <div className={styles["operation-type-wrapper"]}>
-                              <div className={styles["operation-type-inner"]}>
-                                <Select
-                                  options={optionsTypes}
-                                  defaultValue={operation.markup.operation_type}
-                                  dropdownStyle={{
-                                    width: "max-content",
-                                  }}
-                                  className={cn(
-                                    "type-item-select",
-                                    styles["type-select-inner"]
-                                  )}
-                                  onChange={(value) => {
-                                    handleChangeMarkup(value)
-                                  }}
-                                />
-
-                                {(operation.markup_mode_code === 2 ||
-                                  operation.markup_mode_code === 3) && (
-                                  <PencilIcon />
-                                )}
-                              </div>
-                            </div>
-                            <div className={styles["amount-inner"]}>
+              {Object.entries(groupedOperations).length > 0
+                ? Object.entries(groupedOperations).map(
+                    ([date, operations]) => (
+                      <div key={date}>
+                        <div className={styles["table-date-row"]}>
+                          {formatToPayDate(date)}
+                        </div>
+                        <div>
+                          {operations.map((operation, index) => (
+                            <>
                               <div
-                                className={cn(styles["amount-part"], {
-                                  [styles["amount-part-hovered"]]:
+                                className={cn(styles["table-info-row"], {
+                                  [styles["hovered-row"]]:
                                     hoveredIndex === operation.id,
                                 })}
+                                key={operation.id}
+                                onMouseEnter={() => {
+                                  setHoveredIndex(operation.id),
+                                    setHoveredAmount(operation.markup.amount)
+                                }}
                               >
-                                <Text className={styles["currency-income"]}>
-                                  {operation.markup.amount > 0
-                                    ? getCurrency(
-                                        operation.markup.amount,
-                                        operation.category
-                                      )
-                                    : getCurrency(
-                                        operation.amount_doc,
-                                        operation.category
-                                      )}
-                                </Text>
-                                <Text className={styles["source-account-text"]}>
-                                  {getSourceText(
-                                    operation.source_name,
-                                    operation.account_number
-                                  )}
-                                </Text>
-                              </div>
-                              {
-                                <Button
-                                  className={styles["delete-icon"]}
-                                  onClick={() => setIsDeleteModalOpen(true)}
+                                <div className={styles["source-inner"]}>
+                                  <Text className={styles["source-title"]}>
+                                    {operation.counterparty_name ||
+                                      "Нет контрагента"}
+                                  </Text>
+                                  <Text className={styles["source-text"]}>
+                                    {operation.purpose || "Нет данных"}
+                                  </Text>
+                                </div>
+                                <div
+                                  className={styles["operation-type-wrapper"]}
                                 >
-                                  <DeleteOutlined />
-                                </Button>
-                              }
-                            </div>
-                          </div>
-                          {isMobile && (
-                            <div className={styles["divider"]}></div>
-                          )}
-                        </>
-                      ))}
+                                  <div
+                                    className={styles["operation-type-inner"]}
+                                  >
+                                    <Select
+                                      options={optionsTypes}
+                                      defaultValue={
+                                        operation.markup.operation_type
+                                      }
+                                      dropdownStyle={{
+                                        width: "max-content",
+                                      }}
+                                      className={cn(
+                                        "type-item-select",
+                                        styles["type-select-inner"]
+                                      )}
+                                      onChange={(value) => {
+                                        handleChangeMarkup(value)
+                                      }}
+                                    />
+
+                                    {(operation.markup_mode_code === 2 ||
+                                      operation.markup_mode_code === 3) && (
+                                      <PencilIcon />
+                                    )}
+                                  </div>
+                                </div>
+                                <div className={styles["amount-inner"]}>
+                                  <div
+                                    className={cn(styles["amount-part"], {
+                                      [styles["amount-part-hovered"]]:
+                                        hoveredIndex === operation.id,
+                                    })}
+                                  >
+                                    <Text className={styles["currency-income"]}>
+                                      {operation.markup.amount > 0
+                                        ? getCurrency(
+                                            operation.markup.amount,
+                                            operation.category
+                                          )
+                                        : getCurrency(
+                                            operation.amount_doc,
+                                            operation.category
+                                          )}
+                                    </Text>
+                                    <Text
+                                      className={styles["source-account-text"]}
+                                    >
+                                      {getSourceText(
+                                        operation.source_name,
+                                        operation.account_number
+                                      )}
+                                    </Text>
+                                  </div>
+                                  {
+                                    <Button
+                                      className={styles["delete-icon"]}
+                                      onClick={() => setIsDeleteModalOpen(true)}
+                                    >
+                                      <DeleteOutlined />
+                                    </Button>
+                                  }
+                                </div>
+                              </div>
+                              {isMobile && (
+                                <div className={styles["divider"]}></div>
+                              )}
+                            </>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  )
+                : groupedOperationsLoaded && (
+                    <div className={styles["non-taxes"]}>
+                      <NonTaxesImage />
+                      <div className={styles["non-wrapper"]}>
+                        <Text className={styles["non-text"]}>
+                          {CONTENT.TEXT_NON_TAXES}
+                        </Text>
+                      </div>
+                      <Button className={styles["non-source-button"]}>
+                        <PlusOutlined
+                          className={styles["plus-non-icon"]}
+                          style={{ marginInlineStart: "4px" }}
+                        />
+                        {CONTENT.BUTTON_ADD_SOURCE_NON}
+                      </Button>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className={styles["non-taxes"]}>
-                  <NonTaxesImage />
-                  <div className={styles["non-wrapper"]}>
-                    <Text className={styles["non-text"]}>
-                      {CONTENT.TEXT_NON_TAXES}
-                    </Text>
-                  </div>
-                  <Button className={styles["non-source-button"]}>
-                    <PlusOutlined
-                      className={styles["plus-non-icon"]}
-                      style={{ marginInlineStart: "4px" }}
-                    />
-                    {CONTENT.BUTTON_ADD_SOURCE_NON}
-                  </Button>
-                </div>
-              )}
+                  )}
               <div ref={bottomBlockRef} style={{ height: "1px" }} />
             </div>
           </div>

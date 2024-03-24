@@ -3,6 +3,7 @@ import {
   ConfigProvider,
   Layout,
   List,
+  Menu,
   Select,
   Table,
   Typography,
@@ -24,6 +25,11 @@ import { v4 as uuid } from "uuid"
 import cn from "classnames"
 import { fetchSourcesInfo } from "./client/sources/thunks"
 import { useMediaQuery } from "@react-hook/media-query"
+import { Footer } from "antd/es/layout/layout"
+import { MenuTaxesIcon } from "./taxes-page/type-operation/icons/menu-taxes"
+import { MenuActionsIcon } from "./taxes-page/type-operation/icons/menu-actions"
+import { MenuReportsIcon } from "./taxes-page/type-operation/icons/menu-reports"
+import { MenuSettingsIcon } from "./taxes-page/type-operation/icons/menu-settings"
 
 export const AccountPage = ({
   token_type,
@@ -47,6 +53,73 @@ export const AccountPage = ({
     { title: CONTENT.SIDER_SUPPORT, to: "/support" },
   ]
 
+  const menuItems = [
+    {
+      label: (
+        <Link
+          to={"/main"}
+          className={cn(styles["menu-footer-item"], {
+            [styles["footer-item-active"]]: location.pathname === "/main",
+          })}
+        >
+          <MenuActionsIcon
+            className={cn({
+              [styles["footer-item-active"]]: location.pathname === "/main",
+            })}
+          />
+          {CONTENT.SIDER_HEADING_EVENTS}
+        </Link>
+      ),
+      key: 1,
+    },
+    {
+      label: (
+        <Link
+          to={"/taxes"}
+          className={cn(styles["menu-footer-item"], {
+            [styles["footer-item-active"]]: location.pathname === "/taxes",
+          })}
+        >
+          <MenuTaxesIcon
+            className={cn({
+              [styles["footer-item-active"]]: location.pathname === "/taxes",
+            })}
+          />
+          {CONTENT.SIDER_HEADING_TAXES}
+        </Link>
+      ),
+      key: 2,
+    },
+    {
+      label: (
+        <Link
+          to={"/reports"}
+          className={cn(styles["menu-footer-item"], {
+            [styles["footer-item-active"]]: location.pathname === "/reports",
+          })}
+        >
+          <MenuReportsIcon />
+          {CONTENT.SIDER_HEADING_REPORTS}
+        </Link>
+      ),
+      key: 3,
+    },
+    {
+      label: (
+        <Link
+          to={"/settings"}
+          className={cn(styles["menu-footer-item"], {
+            [styles["footer-item-active"]]: location.pathname === "/settings",
+          })}
+        >
+          <MenuSettingsIcon />
+          {CONTENT.SIDER_SETTINGS}
+        </Link>
+      ),
+      key: 4,
+    },
+  ]
+
   const { Title, Text } = Typography
 
   const dispatch = useDispatch<AppDispatch>()
@@ -61,6 +134,10 @@ export const AccountPage = ({
   const navigate = useNavigate()
 
   const isMobile = useMediaQuery("(max-width: 767px)")
+
+  useEffect(() => {
+    console.log(location.pathname)
+  }, [location])
 
   return (
     <>
@@ -151,6 +228,21 @@ export const AccountPage = ({
           )}
 
           <Outlet />
+          {isMobile && (
+            <Footer
+              style={{
+                position: "fixed",
+                bottom: 0,
+                width: "100%",
+                zIndex: 999,
+              }}
+              className={styles["menu-footer"]}
+            >
+              <div className={styles["menu-footer-inner"]}>
+                {menuItems.map((item) => item.label)}
+              </div>
+            </Footer>
+          )}
         </Layout>
       </ConfigProvider>
     </>
