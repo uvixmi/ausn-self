@@ -40,4 +40,5 @@ export const CONTENT = {
   INPUT_PARAGRAPH_TITLE: "Пункт",
   INPUT_SUBPARAGRAPH_TITLE: "Подпункт",
   INPUT_PLACEHOLDER: "Введите",
+  SELECT_PLACEHOLDER: "Выберите",
 }

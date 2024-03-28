@@ -16,7 +16,6 @@ import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import cn from "classnames"
 import {
-  CheckCircleOutlined,
   InfoCircleOutlined,
   DeleteOutlined,
   PlusOutlined,
@@ -67,6 +66,7 @@ import { OffSourceModal } from "./off-source-modal"
 import { useMediaQuery } from "@react-hook/media-query"
 import { InProgressOrangeIcon } from "./type-operation/icons/in-progress-orange"
 import { OpenSourceIcon } from "./type-operation/icons/open-source"
+import { DownloadKudirModal } from "./download-kudir-modal"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -478,6 +478,8 @@ export const TaxesPage = () => {
 
   const isMobile = useMediaQuery("(max-width: 767px)")
 
+  const [downloadKudir, setDownloadKudir] = useState(false)
+
   const collapseItems = [
     {
       key: 1,
@@ -544,16 +546,24 @@ export const TaxesPage = () => {
           <Title level={2} className={styles["heading-text"]}>
             {CONTENT.HEADING_INCOME}
           </Title>
-          <Button
-            className={cn(styles["buttons-row-item"], styles["button-make"])}
-            onClick={() => setAddOperation(true)}
-          >
-            <PlusOutlined
-              className={styles["plus-icon"]}
-              style={{ marginInlineStart: "4px" }}
-            />
-            {CONTENT.BUTTON_ADD_OPERATION}
-          </Button>
+          <div className={styles["buttons-header"]}>
+            <Button
+              className={styles["kudir-button"]}
+              onClick={() => setDownloadKudir(true)}
+            >
+              {CONTENT.BUTTON_DOWNLOAD_KUDIR}
+            </Button>
+            <Button
+              className={cn(styles["buttons-row-item"], styles["button-make"])}
+              onClick={() => setAddOperation(true)}
+            >
+              <PlusOutlined
+                className={styles["plus-icon"]}
+                style={{ marginInlineStart: "4px" }}
+              />
+              {CONTENT.BUTTON_ADD_OPERATION}
+            </Button>
+          </div>
         </div>
 
         <div className={styles["income-table"]}>
@@ -701,7 +711,17 @@ export const TaxesPage = () => {
                                     >
                                       {getSourceText(
                                         operation.source_name,
-                                        operation.account_number
+                                        operation.account_number,
+                                        sources?.sources?.find(
+                                          (source) =>
+                                            source.id === operation.source_id
+                                        )
+                                          ? sources?.sources?.find(
+                                              (source) =>
+                                                source.id ===
+                                                operation.source_id
+                                            )?.short_name
+                                          : undefined
                                       )}
                                     </Text>
                                   </div>
@@ -828,10 +848,10 @@ export const TaxesPage = () => {
                         item.is_integrated === true ? (
                         <CompletedAutoIcon />
                       ) : null}
-                      {item.name.length > 11 ? (
+                      {item.short_name && item.short_name !== null ? (
                         <Tooltip title={item.name}>
                           <Text className={styles["source-text-left"]}>
-                            {item.short_name}
+                            {item.short_name}{" "}
                           </Text>
                         </Tooltip>
                       ) : (
@@ -973,10 +993,10 @@ export const TaxesPage = () => {
                         <CompletedAutoIcon />
                       ) : null}
 
-                      {item.name.length > 11 ? (
+                      {item.short_name && item.short_name !== null ? (
                         <Tooltip title={item.name}>
                           <Text className={styles["source-text-left"]}>
-                            {item.name.slice(0, 9)}
+                            {item.short_name}
                             {"..."}
                           </Text>
                         </Tooltip>
@@ -1165,10 +1185,10 @@ export const TaxesPage = () => {
                           item.is_integrated === true ? (
                           <CompletedAutoIcon />
                         ) : null}
-                        {item.name.length > 11 ? (
+                        {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
-                              {item.short_name}
+                              {item.short_name}{" "}
                             </Text>
                           </Tooltip>
                         ) : (
@@ -1313,11 +1333,10 @@ export const TaxesPage = () => {
                           <CompletedAutoIcon />
                         ) : null}
 
-                        {item.name.length > 11 ? (
+                        {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
-                              {item.name.slice(0, 9)}
-                              {"..."}
+                              {item.short_name}{" "}
                             </Text>
                           </Tooltip>
                         ) : (
@@ -1454,6 +1473,7 @@ export const TaxesPage = () => {
         account={accountSource}
         source_id={offSourceId}
       />
+      <DownloadKudirModal isOpen={downloadKudir} setOpen={setDownloadKudir} />
     </>
   )
 }

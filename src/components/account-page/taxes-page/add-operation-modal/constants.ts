@@ -6,6 +6,8 @@ export const CONTENT = {
     "Данные будут отражены в Книге учёта доходов",
   INPUT_COUNTERPARTY_TITLE: "Контрагент",
   INPUT_DIRECT_TITLE: "Назначение",
+  SELECT_INCOME_PLACEHOLDER: "Выберите",
+  SELECT_INCOME_TITLE: "Тип операции",
   INPUT_AMOUNT_TITLE: "Сумма операции",
   INPUT_DOCUMENT_TITLE: "Номер платежного документа",
   INPUT_DOCUMENT_HINT:

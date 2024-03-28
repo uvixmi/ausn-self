@@ -94,6 +94,13 @@ export const OffSourceModal = ({
     }
   }
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+
+  useEffect(() => {
+    if (dateOperation !== "") setIsButtonDisabled(false)
+    else setIsButtonDisabled(true)
+  }, [dateOperation])
+
   return (
     <>
       {contextHolder}
@@ -190,6 +197,7 @@ export const OffSourceModal = ({
                 handleOffSource()
               }}
               className={styles["button-item-enter"]}
+              disabled={isButtonDisabled}
             >
               {titleModal}
             </Button>

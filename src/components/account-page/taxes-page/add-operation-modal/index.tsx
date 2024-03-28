@@ -225,13 +225,27 @@ export const AddOperationModal = ({
                   {CONTENT.OPERATION_DESCRIPTION_SECOND_LINE}
                 </Text>
               </div>
-              <Select
-                className={"modal-select"}
-                style={{ borderRadius: "4px", marginBottom: "24px" }}
-                value={income}
-                options={options}
-                onChange={(value) => setIncome(value)}
-              />
+              <div className={styles["input-item"]}>
+                <Text
+                  className={cn(
+                    styles["text-description"],
+                    styles["default-text"]
+                  )}
+                >
+                  {CONTENT.SELECT_INCOME_TITLE}{" "}
+                  <Text className={styles["necessary"]}>
+                    {CONTENT.NECESSARY}
+                  </Text>
+                </Text>
+                <Select
+                  className={"modal-select"}
+                  style={{ borderRadius: "4px", marginBottom: "24px" }}
+                  value={income}
+                  options={options}
+                  onChange={(value) => setIncome(value)}
+                  placeholder={CONTENT.SELECT_INCOME_PLACEHOLDER}
+                />
+              </div>
               <div className={styles["input-item"]}>
                 <Text
                   className={cn(

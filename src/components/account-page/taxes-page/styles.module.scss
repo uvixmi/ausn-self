@@ -220,6 +220,22 @@ $xxl: 2560px;
   text-align: center;
 }
 
+.kudir-button {
+  border-radius: 2px;
+  color: #6159ff;
+  border: 1px solid #d1d1d1;
+  text-align: center;
+}
+
+.buttons-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+  }
+}
+
 .non-source-button {
   border-radius: 2px;
   max-width: 250px;

@@ -29,7 +29,7 @@ export const CONTENT = {
   LINK_OFERTA: "Оферта →",
   LINK_APPLICATION: "Пользовательское соглашение →",
   TOOLPTIP_YEAR:
-    "Если вы хотите изменить год начала расчета,напишите об этом в Чате поддержки",
+    "Если вы хотите изменить год начала расчета, напишите об этом в Чате поддержки",
 }
 
 export const TAX_SYSTEM: Record<string, string> = {

@@ -494,7 +494,8 @@ export const RegisterPage = ({
                           value={email}
                           onChange={(event) => {
                             setEmail(event.target.value),
-                              setEmailError(validateEmail(event.target.value))
+                              setEmailError(validateEmail(event.target.value)),
+                              setEmailDoubleError(false)
                           }}
                           placeholder={CONTENT.EMAIL_PLACEHOLDER}
                           status={emailError ? "error" : undefined}
@@ -791,6 +792,7 @@ export const RegisterPage = ({
                             style={{ borderRadius: "4px" }}
                             value={selectedReasonType}
                             options={justificationOptions}
+                            placeholder={CONTENT.SELECT_PLACEHOLDER}
                             onChange={(value) => {
                               setSelectedReasonType(value)
                             }}
