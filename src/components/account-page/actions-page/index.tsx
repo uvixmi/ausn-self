@@ -488,7 +488,7 @@ export const ActionsPage = () => {
                         <div className={styles["row-item-buttons"]}>
                           {(item.type === "report" && item.report_code) ||
                           formedSuccess.includes(item.task_code) ? (
-                            <div className={styles["row-item-buttons"]}>
+                            <div className={styles["row-item-buttons-wrapper"]}>
                               <Button
                                 className={styles["download-button"]}
                                 onClick={() =>
@@ -571,13 +571,14 @@ export const ActionsPage = () => {
                           <div className={styles["amount-pay"]}>
                             {formedSuccess.includes(item.task_code) ? (
                               <Text className={styles["amount-heading"]}>
-                                {CONTENT.TITLE_FORMED + formatDateString("")}
+                                {CONTENT.TITLE_FORMED +
+                                  formatDateString("", true)}
                               </Text>
                             ) : (
                               item.report_update && (
                                 <Text className={styles["amount-heading"]}>
                                   {CONTENT.TITLE_FORMED +
-                                    formatDateString(item.report_update)}
+                                    formatDateString(item.report_update, true)}
                                 </Text>
                               )
                             )}

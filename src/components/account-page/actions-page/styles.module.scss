@@ -252,10 +252,24 @@ $xxl: 2560px;
   }
 }
 
+.row-item-buttons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 50%;
+
+  @media screen and (min-width: $tablet) {
+    width: auto;
+  }
+}
+
 .row-item-buttons {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+  width: 100%;
+  @media screen and (min-width: $tablet) {
+  }
 }
 
 .info-heading {
@@ -359,10 +373,15 @@ $xxl: 2560px;
 .paid-button {
   border: none;
   background: #f0f0f0;
-  flex-basis: 50%;
+  width: 50%;
   height: 30px;
   padding: 6px 8px 6px 12px;
   border-radius: 2px;
+
+  @media screen and (min-width: $tablet) {
+    width: auto;
+    flex-basis: 50%;
+  }
 }
 
 .update-wrapper {
@@ -438,6 +457,11 @@ $xxl: 2560px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+
+  @media screen and (min-width: $tablet) {
+    width: auto;
+  }
 }
 
 .delete-banner {

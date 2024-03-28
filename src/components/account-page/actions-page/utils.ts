@@ -1,6 +1,9 @@
 import { CONTENT } from "./constants"
 
-export const formatDateString = (inputDate?: string | null): string => {
+export const formatDateString = (
+  inputDate?: string | null,
+  time?: boolean
+): string => {
   if (inputDate) {
     const date = new Date(inputDate)
 
@@ -12,7 +15,12 @@ export const formatDateString = (inputDate?: string | null): string => {
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
 
-    return `${day}.${month}.${year}`
+    if (time)
+      return `${day}.${month}.${year} ${String(date.getHours()).padStart(
+        2,
+        "0"
+      )}:${String(date.getMinutes()).padStart(2, "0")}`
+    else return `${day}.${month}.${year}`
   } else {
     const date = new Date()
     const day = String(date.getDate()).padStart(2, "0")
