@@ -649,3 +649,17 @@ $xxl: 2560px;
   opacity: 0px;
   margin-top: 12px;
 }
+
+.open-source-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.no-border-button {
+  border: none;
+  padding: 0 !important;
+}
+
+.drawer-wrapper {
+  background-color: #fff;
+}

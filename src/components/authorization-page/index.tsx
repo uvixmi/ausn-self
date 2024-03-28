@@ -96,7 +96,7 @@ export const AuthorizationPage = ({
                 <Link onClick={() => navigate("/register")}>
                   {CONTENT.REGISTRATION_TEXT}
                 </Link>
-                <Link>{CONTENT.PASSWORD_FORGOT_TEXT}</Link>
+                {/*<Link>{CONTENT.PASSWORD_FORGOT_TEXT}</Link>*/}
               </div>
             </div>
             <Button

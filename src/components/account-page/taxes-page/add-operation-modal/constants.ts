@@ -11,9 +11,11 @@ export const CONTENT = {
   INPUT_DOCUMENT_HINT:
     "Заполните, если доход получен в банке, по которому не подгружена выписка",
   INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
+  INPUT_FAULT_HINT: "Поле заполнено некорректно",
   DATEPICKER_TITLE: "Дата операции",
   INPUT_PLACEHOLDER: "Введите",
   DATEPICKER_PLACEHOLDER: "Укажите дату",
+  TOOLTIP_TEXT: 'Укажите "Физ. лица", если доход пришел от нескольких лиц',
   BUTTON_ADD: "Добавить операцию",
   NOTIFICATION_PROCESSING_SUCCESS: "Операция успешно добавлена",
   NOTIFICATION_PROCESSING_FAILED:

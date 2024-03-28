@@ -5,6 +5,7 @@ import {
   Input,
   Modal,
   Select,
+  Tooltip,
   Typography,
   message,
 } from "antd"
@@ -24,6 +25,8 @@ import {
   convertDateFormat,
   numberWithSpaces,
 } from "../../actions-page/payment-modal/utils"
+import { formatDateString } from "../../actions-page/utils"
+import { InfoCircleOutlined } from "@ant-design/icons"
 
 export const AddOperationModal = ({
   isOpen,
@@ -59,7 +62,7 @@ export const AddOperationModal = ({
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
-  const [income, setIncome] = useState(1)
+  const [income, setIncome] = useState<number | null>(null)
 
   const [counterparty, setCounterparty] = useState("")
   const [direct, setDirect] = useState("")
@@ -100,6 +103,9 @@ export const AddOperationModal = ({
     if (income === 4) {
       setDirect(CONTENT.PURPOSE_TAX_DISABLED)
       setCounterparty(CONTENT.COUNTERPARTY_TAX_DISABLED)
+    } else {
+      setDirect("")
+      setCounterparty("")
     }
   }, [income])
 
@@ -191,12 +197,6 @@ export const AddOperationModal = ({
 
   const [dateError, setDateError] = useState(false)
 
-  useEffect(() => {
-    if (dateOperation !== "") setDateError(false)
-    else setDateError(true)
-    console.log(dateOperation)
-  }, [dateOperation])
-
   return (
     <>
       {contextHolder}
@@ -207,13 +207,9 @@ export const AddOperationModal = ({
           marginRight: 0,
           borderRadius: "0",
         }}
-        onOk={() => {
-          setOpen(false)
-        }}
+        onOk={closeModal}
         mask={false}
-        onCancel={() => {
-          setOpen(false)
-        }}
+        onCancel={closeModal}
         footer={null}
         className={cn(styles["ant-modal"], "modal-payment")}
       >
@@ -246,7 +242,13 @@ export const AddOperationModal = ({
                   {CONTENT.INPUT_COUNTERPARTY_TITLE}
                   <Text className={styles["necessary"]}>
                     {CONTENT.NECESSARY}
-                  </Text>
+                  </Text>{" "}
+                  <Tooltip title={CONTENT.TOOLTIP_TEXT}>
+                    <InfoCircleOutlined
+                      style={{ color: "#8C8C8C" }}
+                      size={14}
+                    />
+                  </Tooltip>
                 </Text>
                 <Form.Item
                   className={styles["form-inn"]}
@@ -347,7 +349,9 @@ export const AddOperationModal = ({
                       amountError ? (
                         <div>
                           <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
+                            {amountInput === "0"
+                              ? CONTENT.INPUT_FAULT_HINT
+                              : CONTENT.INPUT_ERROR_HINT}
                           </Text>
                         </div>
                       ) : (
@@ -395,6 +399,7 @@ export const AddOperationModal = ({
                       style={{ borderRadius: "4px", height: "32px" }}
                       className={styles["datepicker-style"]}
                       locale={locale}
+                      maxDate={dayjs(formatDateString(), dateFormat)}
                       format={dateFormat}
                       value={
                         dateOperation ? dayjs(dateOperation, dateFormat) : null
@@ -402,6 +407,8 @@ export const AddOperationModal = ({
                       onChange={(value, dateString) => {
                         typeof dateString === "string" &&
                           setDateOperation(dateString)
+                        if (dateString === "") setDateError(true)
+                        else setDateError(false)
                       }}
                     />
                   </Form.Item>
@@ -430,7 +437,14 @@ export const AddOperationModal = ({
                     placeholder={CONTENT.INPUT_PLACEHOLDER}
                     style={{ borderRadius: "4px" }}
                     value={document}
-                    onChange={(event) => setDocument(event.target.value)}
+                    maxLength={20}
+                    onChange={(event) => {
+                      const inputValue = event.target.value
+                      const regex = /^[a-zA-Zа-яА-Я0-9/.-]*$/
+                      if (regex.test(inputValue) && inputValue.length <= 20) {
+                        setDocument(inputValue)
+                      }
+                    }}
                   />
                 </Form.Item>
               </div>

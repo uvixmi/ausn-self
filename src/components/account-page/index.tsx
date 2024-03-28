@@ -43,14 +43,25 @@ export const AccountPage = ({
   const location = useLocation()
 
   const data = [
-    { title: CONTENT.SIDER_HEADING_EVENTS, to: "/main" },
-    { title: CONTENT.SIDER_HEADING_TAXES, to: "/taxes" },
-    { title: CONTENT.SIDER_HEADING_REPORTS, to: "/reports" },
+    {
+      title: CONTENT.SIDER_HEADING_EVENTS,
+      to: "/main",
+      icon: <MenuActionsIcon />,
+    },
+    {
+      title: CONTENT.SIDER_HEADING_TAXES,
+      to: "/taxes",
+      icon: <MenuTaxesIcon />,
+    },
   ]
 
   const settings = [
-    { title: CONTENT.SIDER_SETTINGS, to: "/settings" },
-    { title: CONTENT.SIDER_SUPPORT, to: "/support" },
+    {
+      title: CONTENT.SIDER_SETTINGS,
+      to: "/settings",
+      icon: <MenuSettingsIcon />,
+    },
+    // { title: CONTENT.SIDER_SUPPORT, to: "/support" },
   ]
 
   const menuItems = [
@@ -90,7 +101,7 @@ export const AccountPage = ({
       ),
       key: 2,
     },
-    {
+    /* {
       label: (
         <Link
           to={"/reports"}
@@ -103,7 +114,7 @@ export const AccountPage = ({
         </Link>
       ),
       key: 3,
-    },
+    },*/
     {
       label: (
         <Link
@@ -135,10 +146,6 @@ export const AccountPage = ({
 
   const isMobile = useMediaQuery("(max-width: 767px)")
 
-  useEffect(() => {
-    console.log(location.pathname)
-  }, [location])
-
   return (
     <>
       <ConfigProvider
@@ -157,7 +164,9 @@ export const AccountPage = ({
               siderBg: "#fff",
             },
             Button: {
-              borderColorDisabled: "#8C8C8C",
+              colorBgContainerDisabled: "#F0F0F0",
+              borderColorDisabled: "#F0F0F0",
+              colorTextDisabled: "#D1D1D1",
             },
           },
         }}
@@ -190,7 +199,15 @@ export const AccountPage = ({
                     className={styles["left-sider-menu"]}
                     dataSource={data}
                     renderItem={(item) => (
-                      <List.Item style={{ border: "none" }}>
+                      <List.Item
+                        style={{
+                          border: "none",
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          gap: "8px",
+                        }}
+                      >
+                        {item.icon}
                         <Link
                           //underline={item.title == CONTENT.HEADING_TAXES}
                           //strong={item.title == CONTENT.HEADING_TAXES}
@@ -209,7 +226,15 @@ export const AccountPage = ({
                     className={styles["left-sider-menu"]}
                     dataSource={settings}
                     renderItem={(item) => (
-                      <List.Item style={{ border: "none" }}>
+                      <List.Item
+                        style={{
+                          border: "none",
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          gap: "8px",
+                        }}
+                      >
+                        {item.icon}
                         <Link //underline={item == CONTENT.HEADING_TAXES}
                           to={item.to}
                           className={cn(styles["item-link-item"], {

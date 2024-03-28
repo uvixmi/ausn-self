@@ -1,4 +1,4 @@
-import { Button, Layout, Progress, Typography } from "antd"
+import { Button, Layout, Progress, Tooltip, Typography } from "antd"
 import { CONTENT, TAX_SYSTEM } from "./constants"
 import styles from "./styles.module.scss"
 import cn from "classnames"
@@ -19,6 +19,7 @@ import { OffDisableIcon } from "../taxes-page/type-operation/icons/off-disable"
 import { ChangeModeModal } from "./change-mode-modal"
 import { OffServiceModal } from "./off-service-modal"
 import { useMediaQuery } from "@react-hook/media-query"
+import { QuitModal } from "./quit-modal"
 
 export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
@@ -40,6 +41,7 @@ export const SettingsPage = () => {
 
   const isMobile = useMediaQuery("(max-width: 767px)")
 
+  const [isQuitOpen, setIsQuitOpen] = useState(false)
   return (
     <>
       <Content className={styles["content-wrapper"]}>
@@ -54,7 +56,7 @@ export const SettingsPage = () => {
           <Button
             className={styles["remark-button"]}
             onClick={() => {
-              logout(), dispatch(clearData()), navigate("/login")
+              setIsQuitOpen(true)
             }}
           >
             {CONTENT.BUTTON_OFF_PROFILE}
@@ -113,12 +115,12 @@ export const SettingsPage = () => {
                     </Text>
                   </Button>
                 </div>
-                <div className={styles["button-heading"]}>
+                {/*<div className={styles["button-heading"]}>
                   <DocumentIcon />
                   <Text className={styles["button-link"]}>
                     {CONTENT.BUTTON_CHANGES_HISTORY}
                   </Text>
-                </div>
+                </div>*/}
               </div>
               <Text className={styles["text-inner-mode"]}>
                 {currentUser.tax_system && TAX_SYSTEM[currentUser.tax_system]}
@@ -128,7 +130,15 @@ export const SettingsPage = () => {
                 >
                   {" " + currentUser.tax_rate + "%"}
                 </Text>{" "}
-                <InfoCircleOutlined style={{ color: "#6159FF" }} size={14} />
+                {(currentUser.rate_reason !== null ||
+                  currentUser.rate_reason !== "") && (
+                  <Tooltip>
+                    <InfoCircleOutlined
+                      style={{ color: "#6159FF" }}
+                      size={14}
+                    />
+                  </Tooltip>
+                )}
               </Text>
             </div>
             <div className={styles["tax-system-inner"]}>
@@ -139,12 +149,12 @@ export const SettingsPage = () => {
                 >
                   {CONTENT.TAX_INSPECTION_HEADING}
                 </Title>
-                <div className={styles["button-heading"]}>
+                {/*<div className={styles["button-heading"]}>
                   <ArrowCounterIcon />
                   <Text className={styles["button-link"]}>
                     {CONTENT.BUTTON_REFRESH_INN}
                   </Text>
-                </div>
+                </div>*/}
               </div>
               <Text className={styles["text-inner-mode"]}>
                 {CONTENT.TEXT_CODE_IFNS}
@@ -177,12 +187,12 @@ export const SettingsPage = () => {
                 <Title level={4} style={{ margin: 0 }}>
                   {CONTENT.CONTACT_HEADING}
                 </Title>
-                <div className={styles["button-heading"]}>
+                {/* <div className={styles["button-heading"]}>
                   <EditIcon />
                   <Text className={styles["button-link"]}>
                     {CONTENT.BUTTON_EDIT}
                   </Text>
-                </div>
+              </div>*/}
               </div>
               <div className={styles["info-user-row-item"]}>
                 <Text className={styles["text-title"]}>
@@ -211,7 +221,12 @@ export const SettingsPage = () => {
               <div className={styles["info-user-row-item"]}>
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_YEAR_BEGIN + " "}
-                  <InfoCircleOutlined style={{ color: "#6159FF" }} size={14} />
+                  <Tooltip title={CONTENT.TOOLPTIP_YEAR}>
+                    <InfoCircleOutlined
+                      style={{ color: "#6159FF" }}
+                      size={14}
+                    />
+                  </Tooltip>
                 </Text>
                 <Text className={styles["text-inner"]}>
                   {currentUser.tax_date_begin?.split("-")[0]}
@@ -241,6 +256,7 @@ export const SettingsPage = () => {
       </Content>
       <ChangeModeModal isOpen={isOpenEditMode} setOpen={setIsOpenEditMode} />
       <OffServiceModal isOpen={isOffOpen} setOpen={setIsOffOpen} />
+      <QuitModal isOpen={isQuitOpen} setOpen={setIsQuitOpen} />
     </>
   )
 }

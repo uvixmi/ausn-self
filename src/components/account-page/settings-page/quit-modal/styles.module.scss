@@ -32,7 +32,7 @@ $xxl: 2560px;
 
 .modal-style {
   height: 100%;
-  top: 0;
+
   overflow: auto;
 }
 
@@ -128,7 +128,7 @@ $xxl: 2560px;
   @media screen and (min-width: $tablet) {
     flex-direction: row;
     margin-top: 20px;
-    margin-bottom: 0px;
+    margin-top: 0px;
     gap: 16px;
   }
 }

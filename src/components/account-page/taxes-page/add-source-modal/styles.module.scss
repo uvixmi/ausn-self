@@ -10,18 +10,27 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 20px 16px;
+
+  @media screen and (min-width: $tablet) {
+    padding: 20px 16px;
+  }
 }
 
 .button-source-item {
-  width: 440px;
   height: fit-content;
   display: flex;
-  align-items: center;
+
   padding: 12px;
   border-radius: 4px;
   border: 1px solid #f0f0f0;
   gap: 12px;
+  flex-direction: column;
+
+  @media screen and (min-width: $tablet) {
+    width: 440px;
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 .button-source-inner {
@@ -38,6 +47,7 @@ $xxl: 2560px;
   letter-spacing: 0em;
   text-align: center;
   color: #8c8c8c;
+  text-wrap: wrap;
 }
 
 .text-description-dragger {
@@ -148,7 +158,10 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 20px 16px;
+
+  @media screen and (min-width: $tablet) {
+    padding: 20px 16px;
+  }
 }
 
 .upload-title-wrapper {
@@ -168,10 +181,13 @@ $xxl: 2560px;
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
+  @media screen and (min-width: $tablet) {
+    justify-content: space-around;
+  }
 }
 
 .bank-item {
-  width: 216px;
   padding: 16px;
   border-radius: 2px;
   border: 1px solid #f0f0f0;
@@ -180,6 +196,12 @@ $xxl: 2560px;
   align-items: center;
   flex-direction: column;
   height: fit-content;
+  min-width: 145px;
+
+  @media screen and (min-width: $tablet) {
+    min-width: none;
+    width: 216px;
+  }
 }
 
 .bank-logo {
@@ -214,16 +236,27 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   width: 100%;
-  gap: 16px;
   margin-top: 20px;
+  flex-direction: column;
+  gap: 8px;
+  @media screen and (min-width: $m) {
+    flex-direction: row;
+    gap: 16px;
+  }
 }
 
 .buttons-generate-inner {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  gap: 16px;
   margin-top: 8px;
+
+  flex-direction: column;
+  gap: 8px;
+  @media screen and (min-width: $m) {
+    flex-direction: row;
+    gap: 16px;
+  }
 }
 
 .generate-back {
@@ -279,7 +312,6 @@ $xxl: 2560px;
 .otherbanks-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .necessary {

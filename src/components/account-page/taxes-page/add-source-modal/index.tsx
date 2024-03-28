@@ -43,6 +43,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
 import Link from "antd/es/typography/Link"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const AddSourceModal = ({
   isOpen,
@@ -269,6 +270,7 @@ export const AddSourceModal = ({
 
   const [ofdLogin, setOfdLogin] = useState("")
   const [ofdPassword, setOfdPassword] = useState("")
+  const isMobile = useMediaQuery("(max-width: 767px)")
 
   const sendApiOFDSource = async (ofd_source: OFDSource) => {
     try {
@@ -300,6 +302,18 @@ export const AddSourceModal = ({
   const [integratePasswordError, setIntegratePasswordError] = useState(false)
   const [integrateBikError, setIntegrateBikError] = useState(false)
   const [integrateAccountError, setIntegrateAccountError] = useState(false)
+
+  useEffect(() => {
+    if (integrateAccount !== "")
+      if (
+        !(
+          integrateAccount.startsWith("408") ||
+          integrateAccount.startsWith("407")
+        )
+      ) {
+        setIntegrateAccountError(true)
+      } else setIntegrateAccountError(false)
+  }, [integrateAccount])
 
   const [isButtonMarketplaceDisabled, setIsButtonMarketplaceDisabled] =
     useState(true)
@@ -448,12 +462,18 @@ export const AddSourceModal = ({
                     <Text className={styles["text-title"]}>
                       {accountFromFile &&
                         "account_number" in accountFromFile &&
-                        CONTENT.DATA_ACCOUNT + accountFromFile.account_number}
+                        CONTENT.DATA_ACCOUNT +
+                          (accountFromFile.account_number
+                            ? accountFromFile.account_number
+                            : "")}
                     </Text>
                     <Text className={styles["text-title"]}>
                       {accountFromFile &&
                         "account_number" in accountFromFile &&
-                        CONTENT.DATA_BANKNAME + accountFromFile.bank_name}
+                        CONTENT.DATA_BANKNAME +
+                          (accountFromFile.bank_name
+                            ? accountFromFile.bank_name
+                            : "")}
                     </Text>
                     <Text className={styles["text-title"]}>
                       {accountFromFile &&
@@ -516,7 +536,7 @@ export const AddSourceModal = ({
                     <div className={styles["dragger-text"]}>
                       <Text
                         className={styles["text-title"]}
-                        style={{ color: "#141414" }}
+                        style={{ color: "#141414", textAlign: "center" }}
                       >
                         {CONTENT.TEXT_UPLOAD_TITLE}
                       </Text>
@@ -531,7 +551,7 @@ export const AddSourceModal = ({
                     <div className={styles["dragger-text"]}>
                       <Text
                         className={styles["text-title"]}
-                        style={{ color: "#6159FF" }}
+                        style={{ color: "#6159FF", textAlign: "center" }}
                       >
                         {CONTENT.TEXT_LOADING_TITLE}
                       </Text>
@@ -546,7 +566,7 @@ export const AddSourceModal = ({
                     <div className={styles["dragger-text"]}>
                       <Text
                         className={styles["text-title"]}
-                        style={{ color: "#141414" }}
+                        style={{ color: "#141414", textAlign: "center" }}
                       >
                         {CONTENT.TEXT_ERROR_TITLE}
                       </Text>
@@ -561,7 +581,7 @@ export const AddSourceModal = ({
                     <div className={styles["dragger-text"]}>
                       <Text
                         className={styles["text-title"]}
-                        style={{ color: "#141414" }}
+                        style={{ color: "#141414", textAlign: "center" }}
                       >
                         {CONTENT.TEXT_LOADED_TITLE}
                       </Text>
@@ -685,12 +705,15 @@ export const AddSourceModal = ({
                       <Input
                         value={integrateLogin}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        maxLength={225}
                         onChange={(event) => {
                           setIntegrateLogin(event.target.value)
                           if (event.target.value !== "")
                             setIntegrateLoginError(false)
                           else setIntegrateLoginError(true)
                         }}
+                        id="integrateLogin"
+                        autoComplete="off"
                       />
                     </Form.Item>
                   </div>
@@ -721,9 +744,9 @@ export const AddSourceModal = ({
                         )
                       }
                     >
-                      <Input
+                      <Input.Password
                         value={integratePassword}
-                        type="password"
+                        maxLength={225}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         onChange={(event) => {
                           setIntegratePassword(event.target.value)
@@ -731,6 +754,7 @@ export const AddSourceModal = ({
                             setIntegratePasswordError(false)
                           else setIntegratePasswordError(true)
                         }}
+                        autoComplete="new-password"
                       />
                     </Form.Item>
                   </div>
@@ -764,6 +788,8 @@ export const AddSourceModal = ({
                       <Input
                         value={integrateBik}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        showCount
+                        maxLength={9}
                         onChange={(event) => {
                           const numericValue = event.target.value.replace(
                             /\D/g,
@@ -796,7 +822,14 @@ export const AddSourceModal = ({
                         integrateAccountError ? (
                           <div>
                             <Text className={styles["error-text"]}>
-                              {CONTENT.INPUT_ERROR_HINT}
+                              {integrateAccount === ""
+                                ? CONTENT.INPUT_ERROR_HINT
+                                : !(
+                                    integrateAccount.startsWith("408") ||
+                                    integrateAccount.startsWith("407")
+                                  )
+                                ? CONTENT.INPUT_FAULT_ACCOUNT
+                                : ""}
                             </Text>
                           </div>
                         ) : (
@@ -807,15 +840,16 @@ export const AddSourceModal = ({
                       <Input
                         value={integrateAccount}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        maxLength={20}
+                        showCount
                         onChange={(event) => {
                           const numericValue = event.target.value.replace(
                             /\D/g,
                             ""
                           )
                           setIntegrateAccount(numericValue)
-                          if (event.target.value !== "")
-                            setIntegrateAccountError(false)
-                          else setIntegrateAccountError(true)
+                          if (event.target.value === "")
+                            setIntegrateAccountError(true)
                         }}
                       />
                     </Form.Item>
@@ -823,15 +857,27 @@ export const AddSourceModal = ({
                   <div>
                     <Text className={styles["text-title"]}>
                       {CONTENT.TEXT_OTHER_INTEGRATE_DESCRIPTION}
+                      {isMobile && (
+                        <Link
+                          className={styles["instructions"]}
+                          style={{ color: "#6159ff" }}
+                          target="_blink"
+                          href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                        >
+                          {CONTENT.LINK_INSTRUCTIONS}
+                        </Link>
+                      )}
                     </Text>
-                    <Link
-                      className={styles["instructions"]}
-                      style={{ color: "#6159ff" }}
-                      target="_blink"
-                      href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
-                    >
-                      {CONTENT.LINK_INSTRUCTIONS}
-                    </Link>
+                    {!isMobile && (
+                      <Link
+                        className={styles["instructions"]}
+                        style={{ color: "#6159ff" }}
+                        target="_blink"
+                        href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                      >
+                        {CONTENT.LINK_INSTRUCTIONS}
+                      </Link>
+                    )}
                   </div>
                   <div className={styles["buttons-generate-inner"]}>
                     <Button
@@ -857,107 +903,214 @@ export const AddSourceModal = ({
               )
             ) : buttonMode === "online_cashier" ? (
               ofdMode === "" ? (
-                <div className={styles["bank-integration-wrapper"]}>
-                  <div className={styles["bank-row"]}>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueОФДРу)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${ofdru})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_OFD}
-                      </Text>
-                    </Button>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueПервыйОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${firstofd})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_FIRST}
-                      </Text>
-                    </Button>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueПлатформаОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${platform})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_PLATFORM}
-                      </Text>
-                    </Button>
+                !isMobile ? (
+                  <div className={styles["bank-integration-wrapper"]}>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueОФДРу)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${ofdru})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_OFD}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueПервыйОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${firstofd})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_FIRST}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueПлатформаОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${platform})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_PLATFORM}
+                        </Text>
+                      </Button>
+                    </div>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueЯндексОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${yaofd})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_YANDEX}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueСБИСОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${sbis})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIES_SBIS}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueТакскомОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${taxcom})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_TAXCOM}
+                        </Text>
+                      </Button>
+                    </div>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueКонтурОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${kontur})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_KONTUR}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode("other")}
+                      >
+                        <OnlineCashierIcon className={styles["bank-logo"]} />
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_OTHER}
+                        </Text>
+                      </Button>
+                    </div>
                   </div>
-                  <div className={styles["bank-row"]}>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueЯндексОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${yaofd})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_YANDEX}
-                      </Text>
-                    </Button>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueСБИСОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${sbis})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIES_SBIS}
-                      </Text>
-                    </Button>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueТакскомОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${taxcom})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_TAXCOM}
-                      </Text>
-                    </Button>
+                ) : (
+                  <div className={styles["bank-integration-wrapper"]}>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueОФДРу)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${ofdru})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_OFD}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueПервыйОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${firstofd})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_FIRST}
+                        </Text>
+                      </Button>
+                    </div>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueПлатформаОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${platform})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_PLATFORM}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueЯндексОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${yaofd})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_YANDEX}
+                        </Text>
+                      </Button>
+                    </div>
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueСБИСОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${sbis})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIES_SBIS}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueТакскомОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${taxcom})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_TAXCOM}
+                        </Text>
+                      </Button>
+                    </div>
+
+                    <div className={styles["bank-row"]}>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode(OFDSource.ValueКонтурОФД)}
+                      >
+                        <div
+                          className={styles["bank-logo"]}
+                          style={{ backgroundImage: `url(${kontur})` }}
+                        ></div>
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_KONTUR}
+                        </Text>
+                      </Button>
+                      <Button
+                        className={styles["cashier-item"]}
+                        onClick={() => setOfdMode("other")}
+                      >
+                        <OnlineCashierIcon className={styles["bank-logo"]} />
+                        <Text className={styles["bank-title"]}>
+                          {CONTENT.CASHIER_OTHER}
+                        </Text>
+                      </Button>
+                    </div>
                   </div>
-                  <div className={styles["bank-row"]}>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode(OFDSource.ValueКонтурОФД)}
-                    >
-                      <div
-                        className={styles["bank-logo"]}
-                        style={{ backgroundImage: `url(${kontur})` }}
-                      ></div>
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_KONTUR}
-                      </Text>
-                    </Button>
-                    <Button
-                      className={styles["cashier-item"]}
-                      onClick={() => setOfdMode("other")}
-                    >
-                      <OnlineCashierIcon className={styles["bank-logo"]} />
-                      <Text className={styles["bank-title"]}>
-                        {CONTENT.CASHIER_OTHER}
-                      </Text>
-                    </Button>
-                  </div>
-                </div>
+                )
               ) : ofdMode === OFDSource.ValueОФДРу ||
                 ofdMode === OFDSource.ValueПервыйОФД ? (
                 <div className={styles["bank-integration-wrapper"]}>
@@ -1067,7 +1220,7 @@ export const AddSourceModal = ({
                         }
                         const uploadFile = file as unknown as RcFile
                         setFileName(uploadFile.name)
-                        console.log(uploadFile.name)
+
                         setFileIsLoading("loading")
 
                         await sendOFDSource(uploadFile, ofdMode)
@@ -1091,7 +1244,7 @@ export const AddSourceModal = ({
                         <div className={styles["dragger-text"]}>
                           <Text
                             className={styles["text-title"]}
-                            style={{ color: "#141414" }}
+                            style={{ color: "#141414", textAlign: "center" }}
                           >
                             {CONTENT.TEXT_UPLOAD_TITLE}
                           </Text>
@@ -1265,7 +1418,9 @@ export const AddSourceModal = ({
                   >
                     <MarketplaceIcon className={styles["bank-logo"]} />
                     <Text className={styles["bank-title"]}>
-                      {CONTENT.MARKETPLACE_OTHER}
+                      {isMobile
+                        ? CONTENT.MARKETPLACE_OTHER_SHORT
+                        : CONTENT.MARKETPLACE_OTHER}
                     </Text>
                   </Button>
                 </div>
@@ -1280,6 +1435,9 @@ export const AddSourceModal = ({
                     )}
                   >
                     {CONTENT.TEXT_MARKETPLACE_ID_INPUT}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <Input
                     value={marketplaceId}
@@ -1294,6 +1452,9 @@ export const AddSourceModal = ({
                     )}
                   >
                     {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <Input
                     value={marketplaceKey}
@@ -1336,6 +1497,9 @@ export const AddSourceModal = ({
                     )}
                   >
                     {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <Input
                     value={marketplaceKey}

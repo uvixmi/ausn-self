@@ -94,10 +94,6 @@ export const OffSourceModal = ({
     }
   }
 
-  useEffect(() => {
-    console.log(convertReverseFormat(getCurrentDate()))
-  }, [])
-
   return (
     <>
       {contextHolder}

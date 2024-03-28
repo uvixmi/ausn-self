@@ -17,6 +17,7 @@ import dayjs from "dayjs"
 import "dayjs/locale/ru"
 import { TAX_SYSTEM } from "../constants"
 import { RootState } from "../../../main-page/store"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
   const { Title, Text, Link } = Typography
@@ -131,43 +132,111 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
   const [selectedReason, setSelectedReason] = useState<string | null>(null)
   const [selectedReasonType, setSelectedReasonType] =
     useState<RateReasonType | null>(
-      user.data.rate_reason == "3462010" || user.data.rate_reason == "3462020"
+      user.data.rate_reason?.split("/")[0] == "3462010" ||
+        user.data.rate_reason?.split("/")[0] == "3462020"
         ? RateReasonType.Nothing
-        : user.data.rate_reason == "3462030"
+        : user.data.rate_reason?.split("/")[0] == "3462030"
         ? RateReasonType.Crimea
-        : user.data.rate_reason == "3462040"
+        : user.data.rate_reason?.split("/")[0] == "3462040"
         ? RateReasonType.TaxHolidays
         : null
     )
 
-  const [selectedArticle, setSelectedArticle] = useState("")
-  const [selectedParagraph, setSelectedParagraph] = useState("")
-  const [selectedSubparagraph, setSelectedSubparagraph] = useState("")
+  const rateReason = user.data.rate_reason
+  const defaultRateReason = rateReason ? rateReason.split("/")[1] || "" : ""
+
+  const defaultArticle = defaultRateReason.slice(0, 4)
+  const defaultParagraph =
+    defaultRateReason.length >= 8 ? defaultRateReason.slice(4, 8) : ""
+  const defaultSubparagraph =
+    defaultRateReason.length >= 12 ? defaultRateReason.slice(8, 12) : ""
+
+  const [selectedArticle, setSelectedArticle] = useState<string | undefined>(
+    defaultArticle || undefined
+  )
+  const [selectedParagraph, setSelectedParagraph] = useState<
+    string | undefined
+  >(defaultParagraph || undefined)
+  const [selectedSubparagraph, setSelectedSubparagraph] = useState<
+    string | undefined
+  >(defaultSubparagraph || undefined)
 
   useEffect(() => {
-    if (selectedArticle !== "")
+    if (selectedArticle && selectedArticle !== "")
       setSelectedReason(
-        selectedArticle + selectedParagraph + selectedSubparagraph
+        selectedArticle?.padStart(4, "0") +
+          selectedParagraph?.padStart(4, "0") +
+          selectedSubparagraph?.padStart(4, "0")
       )
     else setSelectedReason(null)
   }, [selectedArticle, selectedParagraph, selectedSubparagraph])
 
   useEffect(() => {
-    if (selectedTaxSystem === TaxSystemType.UsnD)
+    const userReason =
+      user.data.rate_reason?.split("/")[0] == "3462010" ||
+      user.data.rate_reason?.split("/")[0] == "3462020"
+        ? RateReasonType.Nothing
+        : user.data.rate_reason?.split("/")[0] == "3462030"
+        ? RateReasonType.Crimea
+        : user.data.rate_reason?.split("/")[0] == "3462040"
+        ? RateReasonType.TaxHolidays
+        : null
+    if (
+      selectedTaxSystem !== (user.data.tax_system as TaxSystemType) &&
+      selectedTaxRate !== user.data.tax_rate &&
+      selectedReasonType !== userReason
+    ) {
+      setSelectedArticle("")
+      setSelectedParagraph("")
+      setSelectedSubparagraph("")
+    }
+  }, [
+    selectedReasonType,
+    selectedTaxRate,
+    selectedTaxSystem,
+    user.data.rate_reason,
+    user.data.tax_rate,
+    user.data.tax_system,
+  ])
+
+  useEffect(() => {
+    if (selectedTaxSystem === TaxSystemType.UsnD) {
       setRateOptions(
         Array.from({ length: 7 }, (_, index) => ({
           label: `${index}%`,
           value: index,
         }))
       )
-    if (selectedTaxSystem === TaxSystemType.UsnDR)
+      if (selectedTaxSystem !== (user.data.tax_system as TaxSystemType))
+        setSelectedTaxRate(6)
+      else setSelectedTaxRate(user.data.tax_rate ? user.data.tax_rate : null)
+    }
+    if (selectedTaxSystem === TaxSystemType.UsnDR) {
       setRateOptions(
         Array.from({ length: 16 }, (_, index) => ({
           label: `${index}%`,
           value: index,
         }))
       )
-  }, [selectedTaxSystem])
+      if (selectedTaxSystem !== (user.data.tax_system as TaxSystemType))
+        setSelectedTaxRate(15)
+      else setSelectedTaxRate(user.data.tax_rate ? user.data.tax_rate : null)
+    }
+  }, [selectedTaxSystem, user.data.tax_rate, user.data.tax_system])
+
+  useEffect(() => {
+    if (
+      selectedTaxSystem !== (user.data.tax_system as TaxSystemType) &&
+      selectedTaxRate !== user.data.tax_rate
+    ) {
+      setSelectedReasonType(null)
+    }
+  }, [
+    selectedTaxRate,
+    selectedTaxSystem,
+    user.data.tax_rate,
+    user.data.tax_system,
+  ])
 
   const onSave = async () => {
     try {
@@ -231,6 +300,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
         onCancel={() => {
           setOpen(false)
         }}
+        centered
         footer={null}
         className={cn(styles["ant-modal"], "modal-payment")}
       >
@@ -351,7 +421,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
                 selectedTaxRate < 6) ||
                 (selectedTaxSystem === TaxSystemType.UsnDR &&
                   selectedTaxRate !== null &&
-                  selectedTaxRate < 14)) && (
+                  selectedTaxRate < 15)) && (
                 <>
                   <Title level={4} className={styles["justify-heading"]}>
                     {CONTENT.JUSTIFICATION_TITLE}

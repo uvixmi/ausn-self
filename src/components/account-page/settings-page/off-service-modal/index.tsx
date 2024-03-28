@@ -14,6 +14,7 @@ import TextArea from "antd/es/input/TextArea"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../../../AuthContext"
 import { clearData } from "../../../authorization-page/slice"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const OffServiceModal = ({ isOpen, setOpen }: OffServiceModalProps) => {
   const { Title, Text, Link } = Typography
@@ -57,6 +58,7 @@ export const OffServiceModal = ({ isOpen, setOpen }: OffServiceModalProps) => {
     setOpen(false), navigate("/main"), logout(), dispatch(clearData())
     setServiceDisabled(false)
   }
+  const isMobile = useMediaQuery("(max-width: 767px)")
 
   return (
     <>
@@ -65,12 +67,14 @@ export const OffServiceModal = ({ isOpen, setOpen }: OffServiceModalProps) => {
         open={isOpen}
         style={{
           borderRadius: "0",
+          top: !isMobile ? "30%" : undefined,
         }}
         onOk={() => {
           setOpen(false)
           serviceDisabled && leaveService()
         }}
         mask={false}
+        centered
         onCancel={() => {
           setOpen(false)
           serviceDisabled && leaveService()

@@ -1,7 +1,7 @@
 export const CONTENT = {
   HEADING_EVENTS: "События",
   HEADING_TAXES: "Налоговая база",
-  HEADING_DATA_SOURCES: "Источники данных",
+  HEADING_DATA_SOURCES: "Источник данных",
   HEADING_BANKS: "Банки",
   HEADING_CASHIERS: "Кассы",
   HEADING_MARKETPLACES: "Маркетплейсы",
@@ -25,7 +25,7 @@ export const CONTENT = {
   BUTTON_ADD_SOURCE_NON: "Добавить источники данных",
   ENS_ANALYSIS_TEXT: "Анализ ЕНС доступен на платном тарифе",
   TEXT_DETAILS: "Подробнее",
-  SELECT_ACCOUNT_NUMBER: "Номер счета",
+  SELECT_ACCOUNT_NUMBER: "Источники данных",
   SELECT_OPERATION_TYPE: "Тип операции",
   SIDER_SETTINGS: "Настройки",
   SIDER_SUPPORT: "Помощь",
@@ -58,5 +58,8 @@ export const CONTENT = {
   CANCEL_INTEGRATION_SOURCE: "Отменить интеграцию",
   OFF_INTEGRATION_SOURCE: "Отключить интеграцию",
   ADD_SOURCE_COMPLETED: "Добавить данные",
+  TOOLTIP_ORANGE: "Требуется дополнительное действие",
+  TOOLTIP_GREY: "Данные в процессе добавления. Ожидайте завершения",
+  TOOLTIP_DATE: "Дата последней операции",
   FILTER_HEADING: "Фильтр",
 }

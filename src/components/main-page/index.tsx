@@ -75,7 +75,18 @@ export const MainPage = () => {
                   />
                 )}
               />
-              <Route path="/register" Component={RegisterPage} />
+              <Route
+                path="/register"
+                Component={() => (
+                  <RegisterPage
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
+                  />
+                )}
+              />
+
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/*" element={<Navigate to="/login" replace />} />
             </Routes>
@@ -107,6 +118,10 @@ export const MainPage = () => {
                   <RegisterPage
                     registrationPage={2}
                     currentUser={currentUser}
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
                   />
                 )}
               />

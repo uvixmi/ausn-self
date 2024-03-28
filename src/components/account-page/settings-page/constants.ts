@@ -7,7 +7,7 @@ export const CONTENT = {
   TEXT_TAXOBJECT: "Объект налогообожения",
   TEXT_TAX_RATE: "Ставка налога",
   TEXT_DATE_BEGIN: "Дата начала расчёта",
-  TEXT_DATE_REGISTRATION: "Дата регистрации ИП",
+  TEXT_DATE_REGISTRATION: "Дата регистрации",
   TEXT_OKTMO: "ОКТМО",
   TEXT_CODE_IFNS: "ИФНС",
   TEXT_DEFAULT_CODE:
@@ -28,6 +28,8 @@ export const CONTENT = {
   TEXT_DOCUMENTS: "Документы",
   LINK_OFERTA: "Оферта →",
   LINK_APPLICATION: "Пользовательское соглашение →",
+  TOOLPTIP_YEAR:
+    "Если вы хотите изменить год начала расчета,напишите об этом в Чате поддержки",
 }
 
 export const TAX_SYSTEM: Record<string, string> = {

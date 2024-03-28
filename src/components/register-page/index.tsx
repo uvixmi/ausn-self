@@ -21,6 +21,7 @@ import {
   api,
   HTTPValidationError,
   TaxSystemType,
+  RateReasonType,
 } from "../../api/myApi"
 import { MaskedInput } from "antd-mask-input"
 import { validateInn } from "./utils"
@@ -33,12 +34,17 @@ import { AppDispatch } from "../main-page/store"
 import Cookies from "js-cookie"
 import cn from "classnames"
 import { formatDateString } from "../account-page/actions-page/utils"
+import { fetchCurrentUser } from "../authorization-page/slice"
 
 const { Title, Text, Link } = Typography
 
 export const RegisterPage = ({
   registrationPage,
   currentUser,
+  setTokenType,
+  setAccessToken,
+  setIsAuth,
+  login,
 }: RegisterPageProps) => {
   const isMobile = useMediaQuery("(max-width: 767px)")
 
@@ -85,8 +91,8 @@ export const RegisterPage = ({
     },
   ]
 
-  const [currentStep, setCurrentStep] = useState(0)
-  const [email, setEmail] = useState("")
+  const [currentStep, setCurrentStep] = useState(1)
+  const [email, setEmail] = useState("uvixmi7@yandex.ru")
   const [phone, setPhone] = useState("")
   const [inn, setInn] = useState("")
   const [innRequest, setInnRequst] = useState("")
@@ -115,7 +121,7 @@ export const RegisterPage = ({
   const [isLoading, setIsLoading] = useState(false)
   const [isInnLoaded, setIsInnLoaded] = useState(false)
   const [checkedError, setCheckedError] = useState(false)
-  const [errorText, setErrorText] = useState("")
+  const [errorTextPassword, setErrorTextPassword] = useState("")
 
   const [emailDoubleError, setEmailDoubleError] = useState(false)
   const [emailDoubleErrorText, setEmailDoubleErrorText] = useState("")
@@ -200,11 +206,6 @@ export const RegisterPage = ({
       .padStart(2, "0")}`
   }
 
-  const startTimer = () => {
-    setButtonDisabled(true)
-    setSecondsRemaining(10)
-  }
-
   const marks1 = {
     0: "0%",
     1: "1%",
@@ -255,16 +256,12 @@ export const RegisterPage = ({
 
   const [rate, setRate] = useState<string | undefined>(undefined)
 
-  useEffect(() => {
-    console.log(rate)
-  }, [rate])
-
   const PhoneMask = "+7 (000) 000-00-00"
 
   const onChangeSlider = (value: number) => {
     setRate(marks[value as keyof typeof marks])
   }
-
+  /*
   useEffect(() => {
     let timer: NodeJS.Timeout
     if (isButtonDisabled) {
@@ -285,6 +282,13 @@ export const RegisterPage = ({
   useEffect(() => {
     startTimer()
   }, [currentStep])
+  
+
+  const startTimer = () => {
+    setButtonDisabled(true)
+    setSecondsRemaining(10)
+  }
+  */
 
   const validateEmail = (email: string) => {
     // Регулярное выражение для проверки формата email
@@ -340,6 +344,8 @@ export const RegisterPage = ({
           tax_rate: parseInt(rate.slice(0, -1), 10),
           tax_system: sno,
           start_year: startYear,
+          rate_reason: selectedReason ? selectedReason : undefined,
+          reason_type: selectedReasonType ? selectedReasonType : undefined,
         },
         { headers }
       )
@@ -349,11 +355,90 @@ export const RegisterPage = ({
 
   const [disabledEnter, setDisabledEnter] = useState(true)
 
+  const [passwordMail, setPasswordMail] = useState("")
+
   useEffect(() => {
-    if (innError === false && inn !== "" && startYear != 0 && sno != undefined)
+    if (passwordMail !== "") setButtonDisabled(false)
+    else setButtonDisabled(true)
+  }, [passwordMail])
+
+  const [authError, setAuthError] = useState(false)
+  const [errorText, setErrorText] = useState("")
+
+  const enterAccount = async () => {
+    try {
+      const response = await api.auth.loginAuthPost({
+        username: email,
+        password: passwordMail,
+      })
+
+      if (response.data) {
+        const { token_type, access_token } = response.data
+
+        login(access_token, 3600)
+        dispatch(fetchCurrentUser())
+        setAccessToken(access_token)
+        setTokenType(token_type)
+        setIsAuth(true)
+      } else {
+        console.error("Отсутствует свойство data в ответе API.")
+      }
+    } catch (error) {
+      console.error("Ошибка при выполнении запроса:", error)
+
+      setAuthError(true)
+      if (isErrorResponse(error)) {
+        setErrorTextPassword(error.error.detail.message)
+      }
+    }
+  }
+
+  const [selectedArticle, setSelectedArticle] = useState<string | undefined>(
+    "" || undefined
+  )
+  const [selectedParagraph, setSelectedParagraph] = useState<
+    string | undefined
+  >("" || undefined)
+  const [selectedSubparagraph, setSelectedSubparagraph] = useState<
+    string | undefined
+  >("" || undefined)
+  const justificationOptions = [
+    { label: "Предприниматель Крыма и Севастополя", value: "crimea" },
+    { label: "Налоговые каникулы", value: "tax_holidays" },
+    { label: "Другое", value: "nothing" },
+  ]
+
+  const [counterpartyError, setCounterpartyError] = useState(false)
+  const [selectedReasonType, setSelectedReasonType] =
+    useState<RateReasonType | null>(null)
+  const [selectedReason, setSelectedReason] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (selectedArticle && selectedArticle !== "")
+      setSelectedReason(
+        selectedArticle?.padStart(4, "0") +
+          (selectedParagraph?.padStart(4, "0") || "") +
+          (selectedSubparagraph?.padStart(4, "0") || "")
+      )
+    else setSelectedReason(null)
+  }, [selectedArticle, selectedParagraph, selectedSubparagraph])
+
+  useEffect(() => {
+    if (
+      (innError === false &&
+        (sno === TaxSystemType.UsnD || sno === TaxSystemType.UsnDR) &&
+        rate !== null &&
+        selectedReason !== null &&
+        selectedReasonType !== null &&
+        startYear !== 0) ||
+      ((sno === TaxSystemType.Eshn ||
+        sno === TaxSystemType.Osn ||
+        sno === TaxSystemType.Patent) &&
+        startYear !== 0)
+    )
       setDisabledEnter(false)
     else setDisabledEnter(true)
-  }, [inn, innError, sno, startYear])
+  }, [innError, rate, selectedReason, selectedReasonType, sno, startYear])
 
   return (
     <>
@@ -441,14 +526,53 @@ export const RegisterPage = ({
                   <div className={styles["links-wrapper"]}>
                     <Text>{CONTENT.REGISTRATION_TEXT}</Text>
                   </div>
+                  <div className={styles["links-wrapper"]}>
+                    <Text className={styles["oferta-description"]}>
+                      {CONTENT.OFERTA_REGISTER_ONE}
+                      <Link
+                        className={styles["link-oferta"]}
+                        target="_blink"
+                        underline
+                        href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                      >
+                        {CONTENT.OFERTA_LINK}
+                      </Link>
+                      {CONTENT.OFERTA_REGISTER_TWO}
+                      <Link
+                        className={styles["link-oferta"]}
+                        target="_blink"
+                        underline
+                        href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                      >
+                        {CONTENT.PERSONAL_DATA_LINK}
+                      </Link>
+                      {CONTENT.OFERTA_REGISTER_THREE}
+                    </Text>
+                  </div>
                 </>
               )}
               {currentStep == 1 && (
                 <div>
                   <div className={styles["links-wrapper"]}>
-                    <Text>{CONTENT.MAIL_SENT_FIRST + email}</Text>
+                    <Text>
+                      {CONTENT.MAIL_SENT_FIRST}{" "}
+                      <Text className={styles["text-bold-in"]}>{email}</Text>
+                    </Text>
                     <Text>{CONTENT.MAIL_SENT_SECOND}</Text>
-                    <Text>{CONTENT.MAIL_SENT_THIRD}</Text>
+                  </div>
+                  <div style={{ marginTop: "20px" }}>
+                    <Text>
+                      {CONTENT.PASSWORD_MAIL_TEXT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Input
+                      placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
+                      value={passwordMail}
+                      type="password"
+                      onChange={(event) => setPasswordMail(event.target.value)}
+                    />
                   </div>
                   <div className={styles["buttons-wrapper"]}>
                     <Button
@@ -461,12 +585,14 @@ export const RegisterPage = ({
                     </Button>
                     <Button
                       className={styles["button-item-wide"]}
-                      onClick={startTimer}
                       disabled={isButtonDisabled}
+                      onClick={enterAccount}
                     >
-                      {CONTENT.BUTTON_ONE_MORE_MAIL}
-                      {isButtonDisabled &&
-                        ` через (${formatTime(secondsRemaining)})`}
+                      {CONTENT.CONTINUE_BUTTON}
+                      {/*
+                      onClick={startTimer}
+                      isButtonDisabled &&
+                        ` через (${formatTime(secondsRemaining)})`*/}
                     </Button>
                   </div>
                 </div>
@@ -620,6 +746,182 @@ export const RegisterPage = ({
                         )}
                     </div>
                   )}
+
+                  {((sno === TaxSystemType.UsnD &&
+                    rate !== null &&
+                    rate &&
+                    parseInt(rate.slice(0, -1), 10) < 6) ||
+                    (sno === TaxSystemType.UsnDR &&
+                      rate !== null &&
+                      rate &&
+                      parseInt(rate.slice(0, -1), 10) < 15)) && (
+                    <>
+                      <Title level={4} className={styles["justify-heading"]}>
+                        {CONTENT.JUSTIFICATION_TITLE}
+                      </Title>
+
+                      <div className={styles["input-item-justify"]}>
+                        <Text
+                          className={cn(
+                            styles["text-description"],
+                            styles["default-text"]
+                          )}
+                        >
+                          {CONTENT.SELECT_JUSTIFICATION_TITLE}
+                          <Text className={styles["necessary"]}>
+                            {" " + CONTENT.NECESSARY}
+                          </Text>
+                        </Text>
+                        <Form.Item
+                          className={styles["form-inn"]}
+                          validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                          help={
+                            counterpartyError ? (
+                              <div>
+                                <Text className={styles["error-text"]}>
+                                  {CONTENT.SELECT_JUSTIFICATION_TITLE}
+                                </Text>
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          }
+                        >
+                          <Select
+                            style={{ borderRadius: "4px" }}
+                            value={selectedReasonType}
+                            options={justificationOptions}
+                            onChange={(value) => {
+                              setSelectedReasonType(value)
+                            }}
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className={styles["inputs-row"]}>
+                        <div className={styles["input-item-justify"]}>
+                          <Text
+                            className={cn(
+                              styles["text-description"],
+                              styles["default-text"]
+                            )}
+                          >
+                            {CONTENT.INPUT_ARTICLE_TITLE}
+                            <Text className={styles["necessary"]}>
+                              {" " + CONTENT.NECESSARY}
+                            </Text>
+                          </Text>
+                          <Form.Item
+                            className={styles["form-inn"]}
+                            validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                            help={
+                              counterpartyError ? (
+                                <div>
+                                  <Text className={styles["error-text"]}>
+                                    {CONTENT.INPUT_ARTICLE_TITLE}
+                                  </Text>
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            }
+                          >
+                            <Input
+                              placeholder={CONTENT.INPUT_PLACEHOLDER}
+                              style={{ borderRadius: "4px" }}
+                              value={selectedArticle}
+                              onChange={(event) => {
+                                const inputValue = event.target.value.replace(
+                                  /[^\d./-]/g,
+                                  ""
+                                )
+                                setSelectedArticle(inputValue)
+                              }}
+                              maxLength={4}
+                            />
+                          </Form.Item>
+                        </div>
+                        <div className={styles["input-item-justify"]}>
+                          <Text
+                            className={cn(
+                              styles["text-description"],
+                              styles["default-text"]
+                            )}
+                          >
+                            {CONTENT.INPUT_PARAGRAPH_TITLE}
+                          </Text>
+                          <Form.Item
+                            className={styles["form-inn"]}
+                            validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                            help={
+                              counterpartyError ? (
+                                <div>
+                                  <Text className={styles["error-text"]}>
+                                    {CONTENT.INPUT_PARAGRAPH_TITLE}
+                                  </Text>
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            }
+                          >
+                            <Input
+                              placeholder={CONTENT.INPUT_PLACEHOLDER}
+                              style={{ borderRadius: "4px" }}
+                              value={selectedParagraph}
+                              onChange={(event) => {
+                                const inputValue = event.target.value.replace(
+                                  /[^\d./-]/g,
+                                  ""
+                                )
+                                setSelectedParagraph(inputValue)
+                              }}
+                              maxLength={4}
+                            />
+                          </Form.Item>
+                        </div>
+                        <div className={styles["input-item-justify"]}>
+                          <Text
+                            className={cn(
+                              styles["text-description"],
+                              styles["default-text"]
+                            )}
+                          >
+                            {CONTENT.INPUT_SUBPARAGRAPH_TITLE}
+                          </Text>
+                          <Form.Item
+                            className={styles["form-inn"]}
+                            validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                            help={
+                              counterpartyError ? (
+                                <div>
+                                  <Text className={styles["error-text"]}>
+                                    {CONTENT.INPUT_SUBPARAGRAPH_TITLE}
+                                  </Text>
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            }
+                          >
+                            <Input
+                              placeholder={CONTENT.INPUT_PLACEHOLDER}
+                              style={{ borderRadius: "4px" }}
+                              value={selectedSubparagraph}
+                              onChange={(event) => {
+                                const inputValue = event.target.value.replace(
+                                  /[^\d./-]/g,
+                                  ""
+                                )
+                                setSelectedSubparagraph(inputValue)
+                              }}
+                              maxLength={4}
+                            />
+                          </Form.Item>
+                        </div>
+                      </div>
+                    </>
+                  )}
                   <div className={styles["button-one"]}>
                     <Button
                       className={styles["button-item-enter"]}
@@ -631,11 +933,22 @@ export const RegisterPage = ({
                   </div>
                   <Text className={styles["oferta-text"]}>
                     {CONTENT.OFERTA_TEXT}
-                    <Link underline className={styles["oferta-text"]}>
+                    <Link
+                      underline
+                      className={styles["oferta-text"]}
+                      target="_blink"
+                      href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                    >
                       {CONTENT.OFERTA_LINK_ONE}
                     </Link>
                     {CONTENT.TEXT_AND}
-                    <Link underline className={styles["oferta-text"]} color="">
+                    <Link
+                      underline
+                      className={styles["oferta-text"]}
+                      color=""
+                      target="_blink"
+                      href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                    >
                       {CONTENT.OFERTA_LINK_TWO}
                     </Link>
                   </Text>

@@ -262,3 +262,64 @@ $xxl: 2560px;
     width: 330px;
   }
 }
+
+.oferta-description {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+}
+
+.link-oferta {
+  text-decoration: underline;
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 2px;
+  text-align: left;
+}
+
+.text-bold-in {
+  font-weight: 600;
+}
+
+.necessary {
+  color: #cf133c;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.input-item-justify {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.default-text {
+  color: #141414;
+}
+
+.text-description {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #505050;
+}
+
+.inputs-row {
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+  }
+}
