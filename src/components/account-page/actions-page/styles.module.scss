@@ -65,9 +65,14 @@ $xxl: 2560px;
 .remark-wrapper {
   display: flex;
   width: 100%;
-  gap: 16px;
-  height: 42px;
   gap: 4px;
+  flex-direction: column;
+
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    height: 42px;
+    gap: 16px;
+  }
 }
 
 .remark-button {
@@ -75,21 +80,31 @@ $xxl: 2560px;
   background: #6159ff;
   color: #fff;
   height: 100%;
-  max-width: 143px;
+
+  @media screen and (min-width: $tablet) {
+    max-width: 143px;
+  }
 }
 
 .remark-text {
   display: flex;
-  padding: 12px 13px;
+  padding: 12px 24px 12px 12px;
   border-radius: 4px;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  row-gap: 8px;
   background: linear-gradient(
     67.21deg,
     #f0f0ff 0%,
     rgba(245, 245, 245, 0.45) 100%
   );
-  flex-grow: 1;
+
+  @media screen and (min-width: $tablet) {
+    padding: 12px 13px;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+  }
 }
 
 .logo-item {
@@ -221,14 +236,25 @@ $xxl: 2560px;
   border-bottom: 1px solid #d9d9d9;
   width: 100%;
   min-height: 178px;
-  padding: 32px 0px 32px 0px;
+  padding: 12px 0px 12px;
   border-radius: 4px;
+
+  @media screen and (min-width: $tablet) {
+    padding: 32px 0px 32px 0px;
+    gap: 64px;
+    flex-direction: row;
+  }
 }
 
 .row-inner {
   display: flex;
-  justify-content: space-between;
-  gap: 64px;
+  flex-direction: column;
+
+  @media screen and (min-width: $tablet) {
+    justify-content: space-between;
+    gap: 64px;
+    flex-direction: row;
+  }
 }
 
 .row-item-buttons {
@@ -247,7 +273,12 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 40%;
+  width: 100%;
+
+  @media screen and (min-width: $tablet) {
+    width: auto;
+    max-width: 40%;
+  }
 }
 
 .title-style {
@@ -255,10 +286,13 @@ $xxl: 2560px;
 }
 
 .amount-part {
-  width: 280px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media screen and (min-width: $tablet) {
+    width: 280px;
+  }
 }
 .amount-info {
   display: flex;

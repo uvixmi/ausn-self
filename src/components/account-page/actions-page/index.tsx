@@ -42,6 +42,7 @@ import { ConfirmPassModal } from "./confirm-pass-modal"
 import { fetchSourcesInfo } from "../client/sources/thunks"
 import { fetchTasks } from "../client/tasks/thunks"
 import { fetchBanners } from "../client/banners/thunks"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export interface InfoBannerLinked {
   id: string
@@ -313,6 +314,8 @@ export const ActionsPage = () => {
 
   const defaultAccount =
     sources && sources?.find((item) => item.is_main)?.sub_name
+
+  const isMobile = useMediaQuery("(max-width: 767px)")
 
   return (
     <>
@@ -601,62 +604,64 @@ export const ActionsPage = () => {
             !tasks) &&
             tasksLoaded === "succeeded" && <AllDoneBlock type="usn" />}
         </Content>
-        <Sider
-          className={styles["right-sider-wrapper"]}
-          width={320}
-          breakpoint="lg"
-          collapsedWidth="0"
-        >
-          <div className={styles["sider-inner-wrapper"]}>
-            {banners?.map((item) => {
-              return (
-                <div className={styles["update-wrapper"]}>
-                  <div className={styles["update-inner"]}>
-                    <div className={styles["update-text-inner"]}>
-                      <div>
-                        <Title
-                          style={{
-                            marginBottom: 0,
-                            marginTop: "8px",
-                            maxWidth: "200px",
-                          }}
-                          level={5}
-                        >
-                          {item.title}
-                        </Title>
-                        {item.description.map((text) => {
-                          if (text.startsWith("{") && text.endsWith("}")) {
-                            const link = text.slice("{link:".length, -1)
-                            return (
-                              <Link
-                                className={styles["update-text"]}
-                                onClick={() => navigate(link)}
-                              >
-                                {LINK_MAP[link]}
-                              </Link>
-                            )
-                          } else
-                            return (
-                              <Text className={styles["update-text"]}>
-                                {text}
-                              </Text>
-                            )
-                        })}
+        {!isMobile && (
+          <Sider
+            className={styles["right-sider-wrapper"]}
+            width={320}
+            breakpoint="lg"
+            collapsedWidth="0"
+          >
+            <div className={styles["sider-inner-wrapper"]}>
+              {banners?.map((item) => {
+                return (
+                  <div className={styles["update-wrapper"]}>
+                    <div className={styles["update-inner"]}>
+                      <div className={styles["update-text-inner"]}>
+                        <div>
+                          <Title
+                            style={{
+                              marginBottom: 0,
+                              marginTop: "8px",
+                              maxWidth: "200px",
+                            }}
+                            level={5}
+                          >
+                            {item.title}
+                          </Title>
+                          {item.description.map((text) => {
+                            if (text.startsWith("{") && text.endsWith("}")) {
+                              const link = text.slice("{link:".length, -1)
+                              return (
+                                <Link
+                                  className={styles["update-text"]}
+                                  onClick={() => navigate(link)}
+                                >
+                                  {LINK_MAP[link]}
+                                </Link>
+                              )
+                            } else
+                              return (
+                                <Text className={styles["update-text"]}>
+                                  {text}
+                                </Text>
+                              )
+                          })}
+                        </div>
                       </div>
+                      <Button
+                        className={styles["delete-banner"]}
+                        style={{ border: "none", boxShadow: "none" }}
+                        onClick={() => deleteBanner(item.id)}
+                      >
+                        <CloseOutlined />
+                      </Button>
                     </div>
-                    <Button
-                      className={styles["delete-banner"]}
-                      style={{ border: "none", boxShadow: "none" }}
-                      onClick={() => deleteBanner(item.id)}
-                    >
-                      <CloseOutlined />
-                    </Button>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        </Sider>
+                )
+              })}
+            </div>
+          </Sider>
+        )}
         <ConfirmPassModal
           isOpen={isConfirmPass}
           setOpen={setIsConfirmPass}
