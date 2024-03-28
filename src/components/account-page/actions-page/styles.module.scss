@@ -49,7 +49,7 @@ $xxl: 2560px;
   flex-direction: column;
   background-color: #fff;
   gap: 8px;
-  padding: 14px;
+  padding: 14px 14px 66px;
 
   @media screen and (min-width: $tablet) {
     margin: 35px 40px 0px 240px;
@@ -110,11 +110,6 @@ $xxl: 2560px;
 .logo-item {
   margin: 20px 40px;
   cursor: pointer;
-}
-
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
 }
 
 .cards-wrapper {
