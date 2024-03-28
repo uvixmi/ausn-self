@@ -91,8 +91,8 @@ export const RegisterPage = ({
     },
   ]
 
-  const [currentStep, setCurrentStep] = useState(1)
-  const [email, setEmail] = useState("uvixmi7@yandex.ru")
+  const [currentStep, setCurrentStep] = useState(0)
+  const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [inn, setInn] = useState("")
   const [innRequest, setInnRequst] = useState("")
