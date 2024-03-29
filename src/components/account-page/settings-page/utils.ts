@@ -9,7 +9,7 @@ export const getRateReason = (reasonString: string): string => {
   const parts: string[] = reasonString.split("/")
   const reason: string = reasons[parts[0]]
 
-  if (!reason) return "Неверный формат причины"
+  if (!reason && reason !== "") return "Неверный формат причины"
 
   const article: string = parts[1].substring(0, 4).replace(/^0+/, "")
   const section: string = parts[1].substring(4, 8).replace(/^0+/, "")

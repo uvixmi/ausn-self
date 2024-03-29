@@ -180,6 +180,7 @@ export const DownloadKudirModal = ({
               <Select
                 style={{ borderRadius: "4px" }}
                 value={selectedYear}
+                placeholder={CONTENT.SELECT_PLACEHOLDER}
                 options={yearsOptions}
                 onChange={(value) => setSelectedYear(value)}
               />
@@ -201,6 +202,7 @@ export const DownloadKudirModal = ({
                 style={{ borderRadius: "4px" }}
                 value={selectedFormat}
                 options={formatOptions}
+                placeholder={CONTENT.SELECT_PLACEHOLDER}
                 onChange={(value) => setSelectedFormat(value)}
               />
             </div>

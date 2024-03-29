@@ -117,7 +117,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
 
   const justificationOptions = [
     { label: "Предприниматель Крыма и Севастополя", value: "crimea" },
-    { label: "Налоговые каникулы", value: "holidays" },
+    { label: "Налоговые каникулы", value: "tax_holidays" },
     { label: "Другое", value: "nothing" },
   ]
 
