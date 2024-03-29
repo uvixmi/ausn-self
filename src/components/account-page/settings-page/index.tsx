@@ -20,6 +20,7 @@ import { ChangeModeModal } from "./change-mode-modal"
 import { OffServiceModal } from "./off-service-modal"
 import { useMediaQuery } from "@react-hook/media-query"
 import { QuitModal } from "./quit-modal"
+import { getRateReason } from "./utils"
 
 export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
@@ -132,7 +133,13 @@ export const SettingsPage = () => {
                 </Text>{" "}
                 {(currentUser.rate_reason !== null ||
                   currentUser.rate_reason !== "") && (
-                  <Tooltip>
+                  <Tooltip
+                    title={
+                      currentUser.rate_reason
+                        ? getRateReason(currentUser.rate_reason)
+                        : undefined
+                    }
+                  >
                     <InfoCircleOutlined
                       style={{ color: "#6159FF" }}
                       size={14}

@@ -29,6 +29,6 @@ export const CONTENT = {
 }
 
 export const LINK_MAP: Record<string, string> = {
-  "/taxes": "Налоговая база",
+  "/taxes": "Операции",
   "/settings": "Настройки",
 }

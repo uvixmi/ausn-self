@@ -264,6 +264,13 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
 
   useEffect(() => {
     if (
+      ((selectedTaxSystem === TaxSystemType.UsnD && selectedTaxRate === 6) ||
+        (selectedTaxSystem === TaxSystemType.UsnDR &&
+          selectedTaxRate === 15)) &&
+      selectedYear !== 0
+    ) {
+      setIsButtonDisabled(false)
+    } else if (
       ((selectedTaxSystem === TaxSystemType.UsnD ||
         selectedTaxSystem === TaxSystemType.UsnDR) &&
         selectedTaxRate !== null &&
@@ -274,9 +281,11 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
         selectedTaxSystem === TaxSystemType.Osn ||
         selectedTaxSystem === TaxSystemType.Patent) &&
         selectedYear !== 0)
-    )
+    ) {
       setIsButtonDisabled(false)
-    else setIsButtonDisabled(true)
+    } else {
+      setIsButtonDisabled(true)
+    }
   }, [
     selectedYear,
     selectedTaxSystem,

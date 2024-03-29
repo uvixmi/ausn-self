@@ -27,7 +27,12 @@ export const formatDateString = (
     const month = String(date.getMonth() + 1).padStart(2, "0")
     const year = date.getFullYear()
 
-    return `${day}.${month}.${year}`
+    if (time)
+      return `${day}.${month}.${year} ${String(date.getHours()).padStart(
+        2,
+        "0"
+      )}:${String(date.getMinutes()).padStart(2, "0")}`
+    else return `${day}.${month}.${year}`
   }
 }
 
