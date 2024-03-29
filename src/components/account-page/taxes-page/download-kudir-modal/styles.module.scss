@@ -1,3 +1,11 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .modal-wrapper {
   padding: 20px 16px;
 }
@@ -10,18 +18,45 @@
   width: 50%;
 }
 
+.button-item-download {
+  height: 32px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background: #6159ff;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  @media screen and (min-width: $tablet) {
+    width: 50%;
+  }
+}
+
 .button-item-cancel {
   border-radius: 4px;
   background: #fff;
   color: #6159ff;
   height: 32px;
-  width: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media screen and (min-width: $tablet) {
+    width: 50%;
+  }
 }
 
 .buttons-row {
   display: flex;
   gap: 10px;
   margin-top: 32px;
+  flex-direction: column;
+
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+  }
 }
 
 .list-wrapper {

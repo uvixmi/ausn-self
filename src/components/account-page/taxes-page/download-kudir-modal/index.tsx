@@ -217,7 +217,7 @@ export const DownloadKudirModal = ({
             <Button
               key="delete"
               onClick={downloadKudir}
-              className={styles["button-item-enter"]}
+              className={styles["button-item-download"]}
               disabled={isButtonDisabled}
             >
               {CONTENT.BUTTON_DOWNLOAD}
