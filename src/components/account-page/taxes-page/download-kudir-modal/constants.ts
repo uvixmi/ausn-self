@@ -3,7 +3,7 @@ export const CONTENT = {
   BUTTON_DOWNLOAD: "Скачать КУДиР",
   SELECT_PERIOD_TITLE: "Налоговый период",
   SELECT_FORMAT_TITLE: "Формат файла",
-  CANCEL_BUTTON: "Отмена",
+  CANCEL_BUTTON: "Отменить",
   NOTIFCATION_DOWNLOAD_ERROR: "Ошибка скачивания файла. Попробуйте еще раз",
   NOTIFICATION_DOWNLOAD_SUCCESS: "Скачивание файла",
   FILE_TITLE: "КУДиР от",

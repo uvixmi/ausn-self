@@ -96,7 +96,11 @@ export const DownloadKudirModal = ({
   )
 
   useEffect(() => {
-    if (selectedYear !== 0 && selectedFormat !== undefined)
+    if (
+      selectedYear !== 0 &&
+      selectedFormat !== undefined &&
+      selectedYear !== undefined
+    )
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [selectedFormat, selectedYear])

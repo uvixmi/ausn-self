@@ -19,6 +19,7 @@ import {
   InfoCircleOutlined,
   DeleteOutlined,
   PlusOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { v4 as uuid, v4 } from "uuid"
@@ -551,6 +552,7 @@ export const TaxesPage = () => {
               className={styles["kudir-button"]}
               onClick={() => setDownloadKudir(true)}
             >
+              <DownloadOutlined className={styles["download-icon"]} />
               {CONTENT.BUTTON_DOWNLOAD_KUDIR}
             </Button>
             <Button

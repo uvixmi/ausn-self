@@ -16,6 +16,7 @@ import {
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
+import { formatDateString } from "../../actions-page/utils"
 
 export const OffSourceModal = ({
   isOpen,
@@ -144,6 +145,7 @@ export const OffSourceModal = ({
                 <DatePicker
                   placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
                   style={{ borderRadius: "4px", height: "32px" }}
+                  maxDate={dayjs(formatDateString(), dateFormat)}
                   locale={locale}
                   format={dateFormat}
                   value={
