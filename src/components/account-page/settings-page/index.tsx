@@ -1,4 +1,4 @@
-import { Button, Layout, Progress, Tooltip, Typography } from "antd"
+import { Button, Layout, Progress, Skeleton, Tooltip, Typography } from "antd"
 import { CONTENT, TAX_SYSTEM } from "./constants"
 import styles from "./styles.module.scss"
 import cn from "classnames"
@@ -66,34 +66,46 @@ export const SettingsPage = () => {
         <div className={styles["settings-wrapper"]}>
           <div className={styles["info-user-inner"]}>
             <div className={styles["info-wrapper"]}>
-              <Title level={1} className={styles["heading-info-text"]}>
-                {currentUser.inn?.length === 12
-                  ? "ИП " +
-                    currentUser.lastname +
-                    " " +
-                    currentUser.firstname?.charAt(0) +
-                    ". " +
-                    currentUser.patronymic?.charAt(0) +
-                    "."
-                  : currentUser.full_name}
-              </Title>
+              {currentUser.inn ? (
+                <Title level={1} className={styles["heading-info-text"]}>
+                  {currentUser.inn?.length === 12
+                    ? "ИП " +
+                      currentUser.lastname +
+                      " " +
+                      currentUser.firstname?.charAt(0) +
+                      ". " +
+                      currentUser.patronymic?.charAt(0) +
+                      "."
+                    : currentUser.full_name}
+                </Title>
+              ) : (
+                <Skeleton.Input active />
+              )}
 
               <div className={styles["info-user-row"]}>
                 <div className={styles["info-user-row-item"]}>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_INN}
                   </Text>
-                  <Text className={styles["text-inner"]}>
-                    {currentUser.inn}
-                  </Text>
+                  {currentUser.inn ? (
+                    <Text className={styles["text-inner"]}>
+                      {currentUser.inn}
+                    </Text>
+                  ) : (
+                    <Skeleton.Input active />
+                  )}
                 </div>
                 <div className={styles["info-user-row-item"]}>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_DATE_REGISTRATION}
                   </Text>
-                  <Text className={styles["text-inner"]}>
-                    {convertReverseFormat(currentUser.fns_reg_date || "")}
-                  </Text>
+                  {currentUser.fns_reg_date ? (
+                    <Text className={styles["text-inner"]}>
+                      {convertReverseFormat(currentUser.fns_reg_date || "")}
+                    </Text>
+                  ) : (
+                    <Skeleton.Input active />
+                  )}
                 </div>
               </div>
             </div>
@@ -123,32 +135,36 @@ export const SettingsPage = () => {
                   </Text>
                 </div>*/}
               </div>
-              <Text className={styles["text-inner-mode"]}>
-                {currentUser.tax_system && TAX_SYSTEM[currentUser.tax_system]}
-                <Text
-                  style={{ fontWeight: 600 }}
-                  className={styles["text-inner-mode"]}
-                >
-                  {" " + currentUser.tax_rate + "%"}
-                </Text>{" "}
-                {(currentUser.rate_reason !== null ||
-                  currentUser.rate_reason !== "") &&
-                  currentUser.rate_reason &&
-                  getRateReason(currentUser.rate_reason) !== undefined && (
-                    <Tooltip
-                      title={
-                        currentUser.rate_reason
-                          ? getRateReason(currentUser.rate_reason)
-                          : undefined
-                      }
-                    >
-                      <InfoCircleOutlined
-                        style={{ color: "#6159FF" }}
-                        size={14}
-                      />
-                    </Tooltip>
-                  )}
-              </Text>
+              {currentUser.tax_rate ? (
+                <Text className={styles["text-inner-mode"]}>
+                  {currentUser.tax_system && TAX_SYSTEM[currentUser.tax_system]}
+                  <Text
+                    style={{ fontWeight: 600 }}
+                    className={styles["text-inner-mode"]}
+                  >
+                    {" " + currentUser.tax_rate + "%"}
+                  </Text>{" "}
+                  {(currentUser.rate_reason !== null ||
+                    currentUser.rate_reason !== "") &&
+                    currentUser.rate_reason &&
+                    getRateReason(currentUser.rate_reason) !== undefined && (
+                      <Tooltip
+                        title={
+                          currentUser.rate_reason
+                            ? getRateReason(currentUser.rate_reason)
+                            : undefined
+                        }
+                      >
+                        <InfoCircleOutlined
+                          style={{ color: "#6159FF" }}
+                          size={14}
+                        />
+                      </Tooltip>
+                    )}
+                </Text>
+              ) : (
+                <Skeleton.Input active />
+              )}
             </div>
             <div className={styles["tax-system-inner"]}>
               <div className={styles["tax-system-heaing-inner"]}>
@@ -165,25 +181,33 @@ export const SettingsPage = () => {
                   </Text>
                 </div>*/}
               </div>
-              <Text className={styles["text-inner-mode"]}>
-                {CONTENT.TEXT_CODE_IFNS}
-                <Text
-                  style={{ fontWeight: 600 }}
-                  className={styles["text-inner-mode"]}
-                >
-                  {" " + currentUser.fns_code}
+              {currentUser.fns_code ? (
+                <Text className={styles["text-inner-mode"]}>
+                  {CONTENT.TEXT_CODE_IFNS}
+                  <Text
+                    style={{ fontWeight: 600 }}
+                    className={styles["text-inner-mode"]}
+                  >
+                    {" " + currentUser.fns_code}
+                  </Text>
+                  {"- " + currentUser.fns_description}
                 </Text>
-                {"- " + currentUser.fns_description}
-              </Text>
-              <Text className={styles["text-inner-mode"]}>
-                {CONTENT.TEXT_OKTMO}
-                <Text
-                  style={{ fontWeight: 600 }}
-                  className={styles["text-inner-mode"]}
-                >
-                  {" " + currentUser.oktmo}
+              ) : (
+                <Skeleton.Input active />
+              )}
+              {currentUser.oktmo ? (
+                <Text className={styles["text-inner-mode"]}>
+                  {CONTENT.TEXT_OKTMO}
+                  <Text
+                    style={{ fontWeight: 600 }}
+                    className={styles["text-inner-mode"]}
+                  >
+                    {" " + currentUser.oktmo}
+                  </Text>
                 </Text>
-              </Text>
+              ) : (
+                <Skeleton.Input active />
+              )}
             </div>
 
             {/* <Button className={styles["button-password"]}>
@@ -207,17 +231,25 @@ export const SettingsPage = () => {
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_EMAIL}
                 </Text>
-                <Text className={styles["text-inner"]}>
-                  {currentUser.email || "-"}
-                </Text>
+                {currentUser.email ? (
+                  <Text className={styles["text-inner"]}>
+                    {currentUser.email || "-"}
+                  </Text>
+                ) : (
+                  <Skeleton.Input active />
+                )}
               </div>
               <div className={styles["info-user-row-item"]}>
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_PHONE}
                 </Text>
-                <Text className={styles["text-inner"]}>
-                  {currentUser.phone_number || "-"}
-                </Text>
+                {currentUser.phone_number ? (
+                  <Text className={styles["text-inner"]}>
+                    {currentUser.phone_number || "-"}
+                  </Text>
+                ) : (
+                  <Skeleton.Input active />
+                )}
               </div>
             </div>
             {isMobile && <div className={styles["divider"]}></div>}
@@ -237,9 +269,13 @@ export const SettingsPage = () => {
                     />
                   </Tooltip>
                 </Text>
-                <Text className={styles["text-inner"]}>
-                  {currentUser.tax_date_begin?.split("-")[0]}
-                </Text>
+                {currentUser.tax_date_begin ? (
+                  <Text className={styles["text-inner"]}>
+                    {currentUser.tax_date_begin?.split("-")[0]}
+                  </Text>
+                ) : (
+                  <Skeleton.Input active />
+                )}
               </div>
               <div className={styles["info-user-row-item"]}>
                 <Text className={styles["text-title"]}>
