@@ -1,6 +1,6 @@
 {
   "name": "ausn-self",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@openapitools/openapi-generator-cli": "^2.7.0",

@@ -907,17 +907,13 @@ export const TaxesPage = () => {
                       </Text>
                     </div>
                     <div className={styles["source-date-inner"]}>
-                      <div 
-                        className={cn( {
+                      <div
+                        className={cn({
                           [styles["source-date-part-disable"]]:
                             item.disable_date,
-                          [styles["source-date-part"]]:
-                            !item.disable_date,
+                          [styles["source-date-part"]]: !item.disable_date,
                         })}
-                      
                       >
-                        
-                        
                         {item.state === "completed" && !item.disable_date ? (
                           <Tooltip title={CONTENT.TOOLTIP_DATE}>
                             <Text>
@@ -944,6 +940,7 @@ export const TaxesPage = () => {
                             title={
                               item.is_integrated === false &&
                               item.state === "completed" &&
+                              !item.disable_date &&
                               (item.type === "account" || item.type === "ofd")
                                 ? CONTENT.OFF_SOURCE
                                 : item.state === "failed"
@@ -953,64 +950,68 @@ export const TaxesPage = () => {
                                   !!item.link
                                 ? CONTENT.CANCEL_INTEGRATION_SOURCE
                                 : item.is_integrated === true &&
-                                  item.state === "completed"
+                                  item.state === "completed" &&
+                                  !item.disable_date
                                 ? CONTENT.OFF_INTEGRATION_SOURCE
-                                : ""
+                                : undefined
                             }
                           >
-                            <Button
-                            className={cn( {
-                              [styles["source-delete-icon-disable"]]:
-                                item.disable_date,
-                              [styles["source-delete-icon"]]:
-                                !item.disable_date,
-                            })}
-                              onClick={() => {
-                                setIsDeletedSource(true)
-                                setOffSourceTitle(
-                                  item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    (item.type === "account" ||
-                                      item.type === "ofd")
-                                    ? CONTENT.OFF_SOURCE
-                                    : item.state === "failed"
-                                    ? CONTENT.DELETE_SOURCE
-                                    : item.is_integrated === true &&
-                                      item.state === "in_progress" &&
-                                      !!item.link
-                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                    : item.is_integrated === true &&
-                                      item.state === "completed"
-                                    ? CONTENT.OFF_INTEGRATION_SOURCE
-                                    : ""
-                                )
-                                setTypeSource(
-                                  item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    item.type === "account"
-                                    ? 1
-                                    : item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      item.type === "ofd"
-                                    ? 2
-                                    : item.state === "failed"
-                                    ? 3
-                                    : item.is_integrated === true &&
-                                      item.state === "in_progress" &&
-                                      !!item.link
-                                    ? 4
-                                    : item.is_integrated === true &&
-                                      item.state === "completed"
-                                    ? 5
-                                    : 0
-                                )
-                                setTypeSourceName(item.name)
-                                setAccountSource(item.sub_name || "")
-                                setOffSourceId(item.id)
-                              }}
-                            >
-                              <DeleteSourceIcon />
-                            </Button>
+                            {item.state === "completed" &&
+                              !item.disable_date && (
+                                <Button
+                                  className={cn({
+                                    [styles["source-delete-icon-disable"]]:
+                                      item.disable_date,
+                                    [styles["source-delete-icon"]]:
+                                      !item.disable_date,
+                                  })}
+                                  onClick={() => {
+                                    setIsDeletedSource(true)
+                                    setOffSourceTitle(
+                                      item.is_integrated === false &&
+                                        item.state === "completed" &&
+                                        (item.type === "account" ||
+                                          item.type === "ofd")
+                                        ? CONTENT.OFF_SOURCE
+                                        : item.state === "failed"
+                                        ? CONTENT.DELETE_SOURCE
+                                        : item.is_integrated === true &&
+                                          item.state === "in_progress" &&
+                                          !!item.link
+                                        ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                        : item.is_integrated === true &&
+                                          item.state === "completed"
+                                        ? CONTENT.OFF_INTEGRATION_SOURCE
+                                        : ""
+                                    )
+                                    setTypeSource(
+                                      item.is_integrated === false &&
+                                        item.state === "completed" &&
+                                        item.type === "account"
+                                        ? 1
+                                        : item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          item.type === "ofd"
+                                        ? 2
+                                        : item.state === "failed"
+                                        ? 3
+                                        : item.is_integrated === true &&
+                                          item.state === "in_progress" &&
+                                          !!item.link
+                                        ? 4
+                                        : item.is_integrated === true &&
+                                          item.state === "completed"
+                                        ? 5
+                                        : 0
+                                    )
+                                    setTypeSourceName(item.name)
+                                    setAccountSource(item.sub_name || "")
+                                    setOffSourceId(item.id)
+                                  }}
+                                >
+                                  <DeleteSourceIcon />
+                                </Button>
+                              )}
                           </Tooltip>
                         )}
                       </div>
@@ -1072,12 +1073,13 @@ export const TaxesPage = () => {
                       </Text>
                     </div>
                     <div className={styles["source-date-inner"]}>
-                      <div  className={cn( {
+                      <div
+                        className={cn({
                           [styles["source-date-part-disable"]]:
                             item.disable_date,
-                          [styles["source-date-part"]]:
-                            !item.disable_date,
-                        })}>
+                          [styles["source-date-part"]]: !item.disable_date,
+                        })}
+                      >
                         {item.state === "completed" && !item.disable_date ? (
                           <Tooltip title={CONTENT.TOOLTIP_DATE}>
                             <Text>
@@ -1100,6 +1102,7 @@ export const TaxesPage = () => {
                             title={
                               item.is_integrated === false &&
                               item.state === "completed" &&
+                              !item.disable_date &&
                               (item.type === "account" || item.type === "ofd")
                                 ? CONTENT.OFF_SOURCE
                                 : item.state === "failed"
@@ -1110,62 +1113,66 @@ export const TaxesPage = () => {
                                 ? CONTENT.CANCEL_INTEGRATION_SOURCE
                                 : item.is_integrated === true &&
                                   item.state === "completed"
-                                ? CONTENT.OFF_INTEGRATION_SOURCE
-                                : ""
+                                ? CONTENT.OFF_INTEGRATION_SOURCE &&
+                                  !item.disable_date
+                                : undefined
                             }
                           >
-                            <Button
-                    className={cn( {
-                      [styles["source-delete-icon-disable"]]:
-                        item.disable_date,
-                      [styles["source-delete-icon"]]:
-                        !item.disable_date,
-                    })}
-                              onClick={() => {
-                                setIsDeletedSource(true)
-                                setOffSourceTitle(
-                                  item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    (item.type === "account" ||
-                                      item.type === "ofd")
-                                    ? CONTENT.OFF_SOURCE
-                                    : item.state === "failed"
-                                    ? CONTENT.DELETE_SOURCE
-                                    : item.is_integrated === true &&
-                                      item.state === "in_progress" &&
-                                      !!item.link
-                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                    : item.is_integrated === true &&
-                                      item.state === "completed"
-                                    ? CONTENT.OFF_INTEGRATION_SOURCE
-                                    : ""
-                                )
-                                setTypeSource(
-                                  item.is_integrated === false &&
-                                    item.state === "completed" &&
-                                    item.type === "account"
-                                    ? 1
-                                    : item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      item.type === "ofd"
-                                    ? 2
-                                    : item.state === "failed"
-                                    ? 3
-                                    : item.is_integrated === true &&
-                                      item.state === "in_progress" &&
-                                      !!item.link
-                                    ? 4
-                                    : item.is_integrated === true &&
-                                      item.state === "completed"
-                                    ? 5
-                                    : 0
-                                )
-                                setTypeSourceName(item.name)
-                                setOffSourceId(item.id)
-                              }}
-                            >
-                              <DeleteSourceIcon />
-                            </Button>
+                            {item.state === "completed" &&
+                              !item.disable_date && (
+                                <Button
+                                  className={cn({
+                                    [styles["source-delete-icon-disable"]]:
+                                      item.disable_date,
+                                    [styles["source-delete-icon"]]:
+                                      !item.disable_date,
+                                  })}
+                                  onClick={() => {
+                                    setIsDeletedSource(true)
+                                    setOffSourceTitle(
+                                      item.is_integrated === false &&
+                                        item.state === "completed" &&
+                                        (item.type === "account" ||
+                                          item.type === "ofd")
+                                        ? CONTENT.OFF_SOURCE
+                                        : item.state === "failed"
+                                        ? CONTENT.DELETE_SOURCE
+                                        : item.is_integrated === true &&
+                                          item.state === "in_progress" &&
+                                          !!item.link
+                                        ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                        : item.is_integrated === true &&
+                                          item.state === "completed"
+                                        ? CONTENT.OFF_INTEGRATION_SOURCE
+                                        : ""
+                                    )
+                                    setTypeSource(
+                                      item.is_integrated === false &&
+                                        item.state === "completed" &&
+                                        item.type === "account"
+                                        ? 1
+                                        : item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          item.type === "ofd"
+                                        ? 2
+                                        : item.state === "failed"
+                                        ? 3
+                                        : item.is_integrated === true &&
+                                          item.state === "in_progress" &&
+                                          !!item.link
+                                        ? 4
+                                        : item.is_integrated === true &&
+                                          item.state === "completed"
+                                        ? 5
+                                        : 0
+                                    )
+                                    setTypeSourceName(item.name)
+                                    setOffSourceId(item.id)
+                                  }}
+                                >
+                                  <DeleteSourceIcon />
+                                </Button>
+                              )}
                           </Tooltip>
                         )}
                       </div>
@@ -1285,12 +1292,13 @@ export const TaxesPage = () => {
                         </Text>
                       </div>
                       <div className={styles["source-date-inner"]}>
-                        <div  className={cn( {
-                          [styles["source-date-part-disable"]]:
-                            item.disable_date,
-                          [styles["source-date-part"]]:
-                            !item.disable_date,
-                        })}>
+                        <div
+                          className={cn({
+                            [styles["source-date-part-disable"]]:
+                              item.disable_date,
+                            [styles["source-date-part"]]: !item.disable_date,
+                          })}
+                        >
                           {item.state === "completed" && !item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
                               <Text>
@@ -1318,6 +1326,7 @@ export const TaxesPage = () => {
                               title={
                                 item.is_integrated === false &&
                                 item.state === "completed" &&
+                                !item.disable_date &&
                                 (item.type === "account" || item.type === "ofd")
                                   ? CONTENT.OFF_SOURCE
                                   : item.state === "failed"
@@ -1328,63 +1337,67 @@ export const TaxesPage = () => {
                                   ? CONTENT.CANCEL_INTEGRATION_SOURCE
                                   : item.is_integrated === true &&
                                     item.state === "completed"
-                                  ? CONTENT.OFF_INTEGRATION_SOURCE
-                                  : ""
+                                  ? CONTENT.OFF_INTEGRATION_SOURCE &&
+                                    !item.disable_date
+                                  : undefined
                               }
                             >
-                              <Button
-                                className={cn( {
-                                  [styles["source-delete-icon-disable"]]:
-                                    item.disable_date,
-                                  [styles["source-delete-icon"]]:
-                                    !item.disable_date,
-                                })}
-                                onClick={() => {
-                                  setIsDeletedSource(true)
-                                  setOffSourceTitle(
-                                    item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      (item.type === "account" ||
-                                        item.type === "ofd")
-                                      ? CONTENT.OFF_SOURCE
-                                      : item.state === "failed"
-                                      ? CONTENT.DELETE_SOURCE
-                                      : item.is_integrated === true &&
-                                        item.state === "in_progress" &&
-                                        !!item.link
-                                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                      : item.is_integrated === true &&
-                                        item.state === "completed"
-                                      ? CONTENT.OFF_INTEGRATION_SOURCE
-                                      : ""
-                                  )
-                                  setTypeSource(
-                                    item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      item.type === "account"
-                                      ? 1
-                                      : item.is_integrated === false &&
-                                        item.state === "completed" &&
-                                        item.type === "ofd"
-                                      ? 2
-                                      : item.state === "failed"
-                                      ? 3
-                                      : item.is_integrated === true &&
-                                        item.state === "in_progress" &&
-                                        !!item.link
-                                      ? 4
-                                      : item.is_integrated === true &&
-                                        item.state === "completed"
-                                      ? 5
-                                      : 0
-                                  )
-                                  setTypeSourceName(item.name)
-                                  setAccountSource(item.sub_name || "")
-                                  setOffSourceId(item.id)
-                                }}
-                              >
-                                <DeleteSourceIcon />
-                              </Button>
+                              {item.state === "completed" &&
+                                !item.disable_date && (
+                                  <Button
+                                    className={cn({
+                                      [styles["source-delete-icon-disable"]]:
+                                        item.disable_date,
+                                      [styles["source-delete-icon"]]:
+                                        !item.disable_date,
+                                    })}
+                                    onClick={() => {
+                                      setIsDeletedSource(true)
+                                      setOffSourceTitle(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          (item.type === "account" ||
+                                            item.type === "ofd")
+                                          ? CONTENT.OFF_SOURCE
+                                          : item.state === "failed"
+                                          ? CONTENT.DELETE_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? CONTENT.OFF_INTEGRATION_SOURCE
+                                          : ""
+                                      )
+                                      setTypeSource(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          item.type === "account"
+                                          ? 1
+                                          : item.is_integrated === false &&
+                                            item.state === "completed" &&
+                                            item.type === "ofd"
+                                          ? 2
+                                          : item.state === "failed"
+                                          ? 3
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? 4
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? 5
+                                          : 0
+                                      )
+                                      setTypeSourceName(item.name)
+                                      setAccountSource(item.sub_name || "")
+                                      setOffSourceId(item.id)
+                                    }}
+                                  >
+                                    <DeleteSourceIcon />
+                                  </Button>
+                                )}
                             </Tooltip>
                           )}
                         </div>
@@ -1445,12 +1458,13 @@ export const TaxesPage = () => {
                         </Text>
                       </div>
                       <div className={styles["source-date-inner"]}>
-                        <div  className={cn( {
-                          [styles["source-date-part-disable"]]:
-                            item.disable_date,
-                          [styles["source-date-part"]]:
-                            !item.disable_date,
-                        })}>
+                        <div
+                          className={cn({
+                            [styles["source-date-part-disable"]]:
+                              item.disable_date,
+                            [styles["source-date-part"]]: !item.disable_date,
+                          })}
+                        >
                           {item.state === "completed" && !item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
                               <Text>
@@ -1474,6 +1488,7 @@ export const TaxesPage = () => {
                               title={
                                 item.is_integrated === false &&
                                 item.state === "completed" &&
+                                !item.disable_date &&
                                 (item.type === "account" || item.type === "ofd")
                                   ? CONTENT.OFF_SOURCE
                                   : item.state === "failed"
@@ -1483,63 +1498,67 @@ export const TaxesPage = () => {
                                     !!item.link
                                   ? CONTENT.CANCEL_INTEGRATION_SOURCE
                                   : item.is_integrated === true &&
-                                    item.state === "completed"
+                                    item.state === "completed" &&
+                                    !item.disable_date
                                   ? CONTENT.OFF_INTEGRATION_SOURCE
-                                  : ""
+                                  : undefined
                               }
                             >
-                              <Button
-                                className={cn( {
-                                  [styles["source-delete-icon-disable"]]:
-                                    item.disable_date,
-                                  [styles["source-delete-icon"]]:
-                                    !item.disable_date,
-                                })}
-                                onClick={() => {
-                                  setIsDeletedSource(true)
-                                  setOffSourceTitle(
-                                    item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      (item.type === "account" ||
-                                        item.type === "ofd")
-                                      ? CONTENT.OFF_SOURCE
-                                      : item.state === "failed"
-                                      ? CONTENT.DELETE_SOURCE
-                                      : item.is_integrated === true &&
-                                        item.state === "in_progress" &&
-                                        !!item.link
-                                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                      : item.is_integrated === true &&
-                                        item.state === "completed"
-                                      ? CONTENT.OFF_INTEGRATION_SOURCE
-                                      : ""
-                                  )
-                                  setTypeSource(
-                                    item.is_integrated === false &&
-                                      item.state === "completed" &&
-                                      item.type === "account"
-                                      ? 1
-                                      : item.is_integrated === false &&
-                                        item.state === "completed" &&
-                                        item.type === "ofd"
-                                      ? 2
-                                      : item.state === "failed"
-                                      ? 3
-                                      : item.is_integrated === true &&
-                                        item.state === "in_progress" &&
-                                        !!item.link
-                                      ? 4
-                                      : item.is_integrated === true &&
-                                        item.state === "completed"
-                                      ? 5
-                                      : 0
-                                  )
-                                  setTypeSourceName(item.name)
-                                  setOffSourceId(item.id)
-                                }}
-                              >
-                                <DeleteSourceIcon />
-                              </Button>
+                              {item.state === "completed" &&
+                                !item.disable_date && (
+                                  <Button
+                                    className={cn({
+                                      [styles["source-delete-icon-disable"]]:
+                                        item.disable_date,
+                                      [styles["source-delete-icon"]]:
+                                        !item.disable_date,
+                                    })}
+                                    onClick={() => {
+                                      setIsDeletedSource(true)
+                                      setOffSourceTitle(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          (item.type === "account" ||
+                                            item.type === "ofd")
+                                          ? CONTENT.OFF_SOURCE
+                                          : item.state === "failed"
+                                          ? CONTENT.DELETE_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? CONTENT.OFF_INTEGRATION_SOURCE
+                                          : ""
+                                      )
+                                      setTypeSource(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          item.type === "account"
+                                          ? 1
+                                          : item.is_integrated === false &&
+                                            item.state === "completed" &&
+                                            item.type === "ofd"
+                                          ? 2
+                                          : item.state === "failed"
+                                          ? 3
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? 4
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? 5
+                                          : 0
+                                      )
+                                      setTypeSourceName(item.name)
+                                      setOffSourceId(item.id)
+                                    }}
+                                  >
+                                    <DeleteSourceIcon />
+                                  </Button>
+                                )}
                             </Tooltip>
                           )}
                         </div>

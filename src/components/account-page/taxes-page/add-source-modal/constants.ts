@@ -4,12 +4,12 @@ export const CONTENT = {
   DESCRIPTION_BANK_STATEMENT: "Загрузить выписку в формате\u00A01С\u00A0(.txt)",
   TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
-  DESCRIPTION_BANK_INTEGRATION: "Альфа-Банк, Модульбанк, Тинькофф, Точка",
+  DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
     "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и т.д.",
   TITLE_MARKETPLACE_INTEGRATION: "Интеграция с маркетплейсом",
-  DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries, Яндекс Маркет",
+  DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries",
   NOTIFICATION_PROCESSING_SUCCESS: "Данные сохранены",
   NOTIFICATION_PROCESSING_FAILED: "Не удалось сохранить. Попробуйте еще раз",
   NOTIFICATION_INTEGRATE_ALPHA_FAILED:
