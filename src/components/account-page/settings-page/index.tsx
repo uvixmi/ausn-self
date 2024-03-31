@@ -21,6 +21,8 @@ import { OffServiceModal } from "./off-service-modal"
 import { useMediaQuery } from "@react-hook/media-query"
 import { QuitModal } from "./quit-modal"
 import { getRateReason } from "./utils"
+import { TaxSystemType } from "../../../api/myApi"
+import Link from "antd/es/typography/Link"
 
 export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
@@ -147,7 +149,13 @@ export const SettingsPage = () => {
                   {(currentUser.rate_reason !== null ||
                     currentUser.rate_reason !== "") &&
                     currentUser.rate_reason &&
-                    getRateReason(currentUser.rate_reason) !== undefined && (
+                    getRateReason(currentUser.rate_reason) !== undefined &&
+                    !(
+                      (currentUser.tax_system === TaxSystemType.UsnD &&
+                        currentUser.tax_rate === 6) ||
+                      (currentUser.tax_system === TaxSystemType.UsnDR &&
+                        currentUser.tax_rate === 15)
+                    ) && (
                       <Tooltip
                         title={
                           currentUser.rate_reason
@@ -243,13 +251,9 @@ export const SettingsPage = () => {
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_PHONE}
                 </Text>
-                {currentUser.phone_number ? (
-                  <Text className={styles["text-inner"]}>
-                    {currentUser.phone_number || "-"}
-                  </Text>
-                ) : (
-                  <Skeleton.Input active />
-                )}
+                <Text className={styles["text-inner"]}>
+                  {currentUser.phone_number || "-"}
+                </Text>
               </div>
             </div>
             {isMobile && <div className={styles["divider"]}></div>}
@@ -281,12 +285,20 @@ export const SettingsPage = () => {
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_DOCUMENTS}
                 </Text>
-                <Text className={styles["button-link"]}>
+                <Link
+                  className={styles["button-link"]}
+                  target="_blink"
+                  href="https://docs.google.com/document/d/1wyphbddHpr1hvZpQzwkQ29sUUiRZnRh7/"
+                >
                   {CONTENT.LINK_OFERTA}
-                </Text>
-                <Text className={styles["button-link"]}>
+                </Link>
+                <Link
+                  className={styles["button-link"]}
+                  target="_blink"
+                  href="https://docs.google.com/document/d/1LgOipJN6Zg8FRWuCUbis7LwfF4y8znCP/"
+                >
                   {CONTENT.LINK_APPLICATION}
-                </Text>
+                </Link>
               </div>
               <Button
                 className={styles["off-button"]}

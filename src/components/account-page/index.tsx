@@ -145,6 +145,21 @@ export const AccountPage = ({
 
   const isMobile = useMediaQuery("(max-width: 767px)")
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      window.carrotquest.onReady(function () {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        window.carrotquest.messenger.toStateCollapsed()
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+      })
+  }, [])
+
   return (
     <>
       <ConfigProvider

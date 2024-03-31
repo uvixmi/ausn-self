@@ -38,6 +38,19 @@ export const AuthorizationPage = ({
   const token = Cookies.get("token")
   const { isAuthenticated, setRole, logout } = useAuth()
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      window.carrotquest.onReady(function () {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        window.carrotquest.removeChat()
+      })
+  }, [])
+
   return (
     <>
       <div className={styles["content-wrapper"]}>

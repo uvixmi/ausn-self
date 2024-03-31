@@ -22,10 +22,10 @@ export const getRateReason = (reasonString: string): string | undefined => {
 
   let formattedString: string = `Обоснование сниженной ставки: ${reason} статья ${article}`
 
-  if (section !== "0") {
+  if (section !== "0" && section !== "") {
     formattedString += `, пункт ${section}`
 
-    if (subsection !== "0") {
+    if (subsection !== "0" && subsection !== "") {
       formattedString += `, подпункт ${subsection}`
     }
   }

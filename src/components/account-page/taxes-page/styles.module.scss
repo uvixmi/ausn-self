@@ -613,6 +613,8 @@ $xxl: 2560px;
   position: relative;
   justify-content: center;
   padding-right: 4px;
+  min-width: 60px;
+  height: 100%;
 }
 
 .source-date-part {
@@ -650,9 +652,8 @@ $xxl: 2560px;
   position: absolute;
   top: 60%;
   left: -30px;
+  cursor: initial;
   transform: translateY(-50%);
-  cursor: pointer;
-
   border: none;
   padding: 5px;
 }

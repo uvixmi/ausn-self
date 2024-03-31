@@ -165,11 +165,26 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
     if (selectedArticle && selectedArticle !== "")
       setSelectedReason(
         selectedArticle?.padStart(4, "0") +
-          selectedParagraph?.padStart(4, "0") +
-          selectedSubparagraph?.padStart(4, "0")
+          (selectedParagraph?.padStart(4, "0") || "0000") +
+          (selectedSubparagraph?.padStart(4, "0") || "0000")
       )
     else setSelectedReason(null)
-  }, [selectedArticle, selectedParagraph, selectedSubparagraph])
+  }, [
+    selectedArticle,
+    selectedParagraph,
+    selectedSubparagraph,
+    selectedTaxRate,
+  ])
+
+  useEffect(() => {
+    if (
+      (selectedTaxSystem === TaxSystemType.UsnD && selectedTaxRate === 6) ||
+      (selectedTaxSystem === TaxSystemType.UsnDR && selectedTaxRate === 15)
+    ) {
+      setSelectedReason(null)
+      setSelectedReasonType(null)
+    }
+  }, [selectedTaxRate, selectedTaxSystem])
 
   useEffect(() => {
     const userReason =

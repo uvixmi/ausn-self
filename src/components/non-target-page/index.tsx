@@ -44,9 +44,14 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
             <Text className={styles["paragraph-text"]}>
               {CONTENT.NON_TARGET_TEXT}
             </Text>
-            <div className={styles["inputs-window"]}>
+            <div
+              className={styles["inputs-window"]}
+              style={{ marginTop: "12px" }}
+            >
               <div className={styles["input-item-wrapper"]}>
-                <Text>{CONTENT.PHONE_TITLE}</Text>
+                <Text className={styles["paragraph-text"]}>
+                  {CONTENT.PHONE_TITLE}
+                </Text>
                 <Input
                   className={styles["input-item"]}
                   placeholder={users?.phone_number || ""}

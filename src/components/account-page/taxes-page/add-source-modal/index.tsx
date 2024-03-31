@@ -39,8 +39,8 @@ import { formatDateString } from "../../actions-page/utils"
 import { CloseSaveModal } from "./close-save-modal"
 import { isErrorResponse } from "./utils"
 import { FileErrorIcon } from "../images/file-error"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "../../../main-page/store"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
 import Link from "antd/es/typography/Link"
 import { useMediaQuery } from "@react-hook/media-query"
@@ -164,6 +164,8 @@ export const AddSourceModal = ({
     }
   }
 
+  const { data: currentUser } = useSelector((state: RootState) => state.user)
+
   const [integrateLogin, setIntegrateLogin] = useState("")
   const [integratePassword, setIntegratePassword] = useState("")
   const [integrateBik, setIntegrateBik] = useState("")
@@ -271,8 +273,6 @@ export const AddSourceModal = ({
     }
   }
 
-  const sendOtherOFDSource = async () => {}
-
   const [ofdLogin, setOfdLogin] = useState("")
   const [ofdPassword, setOfdPassword] = useState("")
   const isMobile = useMediaQuery("(max-width: 767px)")
@@ -281,7 +281,11 @@ export const AddSourceModal = ({
     try {
       await api.sources.createClientOfdSourcesOfdPost(
         { ofd_type: 2, ofd_source },
-        { login: ofdLogin, password: ofdPassword },
+        {
+          login: ofdLogin,
+          password: ofdPassword,
+          date_begin: currentUser.tax_date_begin,
+        },
         {
           headers,
         }
