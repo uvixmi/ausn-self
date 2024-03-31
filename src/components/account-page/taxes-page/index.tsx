@@ -6,6 +6,7 @@ import {
   Layout,
   List,
   Select,
+  Skeleton,
   Table,
   Tooltip,
   Typography,
@@ -644,8 +645,9 @@ export const TaxesPage = () => {
                   ))}
                 </div>
               )}
-              {Object.entries(groupedOperations).length > 0
-                ? Object.entries(groupedOperations).map(
+              {operationsLoaded ? (
+                Object.entries(groupedOperations).length > 0 ? (
+                  Object.entries(groupedOperations).map(
                     ([date, operations]) => (
                       <div key={date}>
                         <div className={styles["table-date-row"]}>
@@ -771,7 +773,8 @@ export const TaxesPage = () => {
                       </div>
                     )
                   )
-                : groupedOperationsLoaded && (
+                ) : (
+                  groupedOperationsLoaded && (
                     <div className={styles["non-taxes"]}>
                       <NonTaxesImage />
                       <div className={styles["non-wrapper"]}>
@@ -790,7 +793,108 @@ export const TaxesPage = () => {
                         {CONTENT.BUTTON_ADD_SOURCE_NON}
                       </Button>
                     </div>
-                  )}
+                  )
+                )
+              ) : (
+                <div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={bottomBlockRef} style={{ height: "1px" }} />
             </div>
           </div>
