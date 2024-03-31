@@ -143,10 +143,10 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   margin-right: 30px;
-  height: 100%;
 
   @media screen and (min-width: $s) {
     margin-top: 140px;
+    height: 100%;
   }
 }
 
