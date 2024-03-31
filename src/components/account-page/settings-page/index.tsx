@@ -132,20 +132,22 @@ export const SettingsPage = () => {
                   {" " + currentUser.tax_rate + "%"}
                 </Text>{" "}
                 {(currentUser.rate_reason !== null ||
-                  currentUser.rate_reason !== "") && (
-                  <Tooltip
-                    title={
-                      currentUser.rate_reason
-                        ? getRateReason(currentUser.rate_reason)
-                        : undefined
-                    }
-                  >
-                    <InfoCircleOutlined
-                      style={{ color: "#6159FF" }}
-                      size={14}
-                    />
-                  </Tooltip>
-                )}
+                  currentUser.rate_reason !== "") &&
+                  currentUser.rate_reason &&
+                  getRateReason(currentUser.rate_reason) !== undefined && (
+                    <Tooltip
+                      title={
+                        currentUser.rate_reason
+                          ? getRateReason(currentUser.rate_reason)
+                          : undefined
+                      }
+                    >
+                      <InfoCircleOutlined
+                        style={{ color: "#6159FF" }}
+                        size={14}
+                      />
+                    </Tooltip>
+                  )}
               </Text>
             </div>
             <div className={styles["tax-system-inner"]}>

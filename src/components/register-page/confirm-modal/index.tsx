@@ -1,19 +1,28 @@
-import { Button, Modal, Typography } from "antd"
+import { Button, Modal, Radio, Typography } from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import { updateInn } from "../../authorization-page/slice"
+import { useDispatch, useSelector } from "react-redux"
+import {
+  fetchCurrentUser,
+  refreshRole,
+  updateInn,
+} from "../../authorization-page/slice"
+import { AppDispatch, RootState } from "../../main-page/store"
+import { useEffect, useState } from "react"
 
 export const ConfirmModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
-  // Вызываем действие updateInn с новым значением для inn
-  const handleUpdateInn = () => {
-    dispatch(updateInn("321"))
+  const { loaded, loading } = useSelector((state: RootState) => state.user)
+
+  const handleUpdate = () => {
+    dispatch(refreshRole())
+    dispatch(fetchCurrentUser())
   }
+  const [value, setValue] = useState(1)
 
   const navigate = useNavigate()
   return (
@@ -24,36 +33,51 @@ export const ConfirmModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       footer={null}
     >
       <Title level={3}>{"Подтверждение"}</Title>
-      <div className={styles["list-wrapper"]}>
-        <Text>{"Я подтверждаю, что:"}</Text>
-        <Text>
-          {
-            "- не нанимаю физических лиц по трудовым или гражданско-правовым договорам;"
-          }
-        </Text>
-        <Text>{"- не применяю патентую систему налогообложени;"}</Text>
-        <Text>{"- не являюсь плательщиком торгового сбора;"}</Text>
-        <Text>{"- не имею движений по валютным счетам ИП"}</Text>
-      </div>
+      <Text>{"Пожалуйста, выберите условие"}</Text>
+      <Radio.Group
+        onChange={(e) => {
+          setValue(e.target.value)
+        }}
+        value={value}
+      >
+        <div className={styles["list-radio"]}>
+          <Radio value={1} />
+          <div className={styles["list-wrapper"]}>
+            <Text>
+              <Text className={styles["text-bold"]}>{"Подтверждаю"}</Text>
+              {", что:"}
+            </Text>
+            <Text>
+              {
+                "- не нанимаю физических лиц по трудовым или гражданско-правовым договорам;"
+              }
+            </Text>
+            <Text>{"- не применяю патентую систему налогообложени;"}</Text>
+            <Text>{"- не являюсь плательщиком торгового сбора;"}</Text>
+            <Text>{"- не имею движений по валютным счетам ИП"}</Text>
+          </div>
+        </div>
+        <div>
+          <Radio value={2} />
+          <Text className={styles["text-bold"]}>{"Не подтверждаю "}</Text>
+          <Text>{"вышеперечисленное"}</Text>
+        </div>
+      </Radio.Group>
       <div className={styles["buttons-row"]}>
         <Button
           key="back"
-          onClick={() => {
-            setOpen(false), navigate("/non-target")
-          }}
-          className={styles["button-item-cancel"]}
-        >
-          {"Отмена"}
-        </Button>
-
-        <Button
-          key="back"
-          onClick={() => {
-            setOpen(false), handleUpdateInn(), navigate("/main")
-          }}
+          onClick={
+            value === 1
+              ? () => {
+                  handleUpdate()
+                }
+              : () => {
+                  setOpen(false), navigate("/non-target")
+                }
+          }
           className={styles["button-item-enter"]}
         >
-          {"Подтвердите"}
+          {"Отправить"}
         </Button>
       </div>
     </Modal>

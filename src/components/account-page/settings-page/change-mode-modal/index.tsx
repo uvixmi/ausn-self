@@ -347,6 +347,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
                   <Select
                     style={{ borderRadius: "4px" }}
                     value={selectedYear}
+                    placeholder={CONTENT.SELECT_PLACEHOLDER}
                     options={yearsOptions}
                     onChange={(value) => setSelectedYear(value)}
                   />
@@ -383,6 +384,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
                     style={{ borderRadius: "4px" }}
                     value={selectedTaxSystem}
                     options={systemOptions}
+                    placeholder={CONTENT.SELECT_PLACEHOLDER}
                     onChange={(value) => setSelectedTaxSystem(value)}
                   />
                 </Form.Item>
@@ -419,6 +421,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
                     <Select
                       style={{ borderRadius: "4px" }}
                       value={selectedTaxRate}
+                      placeholder={CONTENT.SELECT_PLACEHOLDER}
                       options={rateOptions}
                       onChange={(value) => setSelectedTaxRate(value)}
                     />
@@ -483,6 +486,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
                       <Select
                         style={{ borderRadius: "4px" }}
                         value={selectedReasonType}
+                        placeholder={CONTENT.SELECT_PLACEHOLDER}
                         options={justificationOptions}
                         onChange={(value) => {
                           setSelectedReasonType(value)

@@ -7,10 +7,13 @@ $xl: 1920px;
 $xxl: 2560px;
 
 .content-wrapper {
-  width: 100%;
   display: flex;
-  padding: 28px 20px 20px 60px;
-  justify-content: center;
+
+  @media screen and (min-width: $tablet) {
+    padding: 28px 20px 20px 60px;
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .register-block-wrapper {
@@ -33,8 +36,11 @@ $xxl: 2560px;
 .inputs-wrapper {
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  width: 800px;
+  padding: 20px 14px;
+  @media screen and (min-width: $tablet) {
+    width: 800px;
+    padding: 20px 0;
+  }
 
   @media screen and (min-width: $s) {
     margin: 40px 0;
@@ -53,7 +59,10 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   border-radius: 2px;
-  width: 440px;
+
+  @media screen and (min-width: $tablet) {
+    width: 440px;
+  }
 }
 
 .input-item {

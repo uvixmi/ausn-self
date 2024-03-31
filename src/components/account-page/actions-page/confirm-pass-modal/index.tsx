@@ -82,7 +82,7 @@ export const ConfirmPassModal = ({
           <Title level={3}>{CONTENT.TITLE_PASSED}</Title>
           <div className={styles["list-wrapper"]}>
             <Text className={styles["text-style"]}>{fnsText}</Text>
-            <div>
+            {/*<div>
               <Text className={styles["text-style"]}>
                 {CONTENT.SECOND_LINE}
               </Text>
@@ -93,7 +93,7 @@ export const ConfirmPassModal = ({
               >
                 {CONTENT.LINK_REPORT}
               </Link>
-            </div>
+  </div>*/}
           </div>
           <div className={styles["buttons-row"]}>
             <Button

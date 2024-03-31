@@ -41,10 +41,10 @@ export const MainPage = () => {
   useEffect(() => {
     if (loaded && token) {
       if (!currentUser.inn && !currentUser.is_lead) {
-        setRole("register", 3600)
+        setRole("register", 86400)
       } else if (currentUser.is_lead == true) setRole("lead", 3600)
       else {
-        setRole("account", 3600)
+        setRole("account", 86400)
       }
     }
   }, [loaded, setRole])

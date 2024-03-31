@@ -1,4 +1,9 @@
-export const getRateReason = (reasonString: string): string => {
+export const getRateReason = (reasonString: string): string | undefined => {
+  const formatRegex = /^\d{7}\/\d{4}\d{4}\d{4}$/
+  if (!formatRegex.test(reasonString)) {
+    return undefined
+  }
+
   const reasons: { [key: string]: string } = {
     "3462010": "",
     "3462020": "",

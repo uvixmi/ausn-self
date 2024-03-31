@@ -393,15 +393,14 @@ export const RegisterPage = ({
     }
   }
 
-  const [selectedArticle, setSelectedArticle] = useState<string | undefined>(
-    "" || undefined
-  )
+  const [selectedArticle, setSelectedArticle] = useState<string | undefined>("")
   const [selectedParagraph, setSelectedParagraph] = useState<
     string | undefined
-  >("" || undefined)
+  >("")
   const [selectedSubparagraph, setSelectedSubparagraph] = useState<
     string | undefined
-  >("" || undefined)
+  >("")
+
   const justificationOptions = [
     { label: "Предприниматель Крыма и Севастополя", value: "crimea" },
     { label: "Налоговые каникулы", value: "tax_holidays" },
@@ -417,14 +416,21 @@ export const RegisterPage = ({
     if (selectedArticle && selectedArticle !== "")
       setSelectedReason(
         selectedArticle?.padStart(4, "0") +
-          (selectedParagraph?.padStart(4, "0") || "") +
-          (selectedSubparagraph?.padStart(4, "0") || "")
+          (selectedParagraph?.padStart(4, "0") || "0000") +
+          (selectedSubparagraph?.padStart(4, "0") || "0000")
       )
     else setSelectedReason(null)
   }, [selectedArticle, selectedParagraph, selectedSubparagraph])
 
   useEffect(() => {
     if (
+      ((sno === TaxSystemType.UsnD && rate === "6%") ||
+        (sno === TaxSystemType.UsnDR && rate === "15%")) &&
+      startYear !== 0 &&
+      innError === false
+    ) {
+      setDisabledEnter(false)
+    } else if (
       (innError === false &&
         (sno === TaxSystemType.UsnD || sno === TaxSystemType.UsnDR) &&
         rate !== null &&
@@ -534,7 +540,7 @@ export const RegisterPage = ({
                         className={styles["link-oferta"]}
                         target="_blink"
                         underline
-                        href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                        href="https://docs.google.com/document/d/1wyphbddHpr1hvZpQzwkQ29sUUiRZnRh7/"
                       >
                         {CONTENT.OFERTA_LINK}
                       </Link>
@@ -543,7 +549,7 @@ export const RegisterPage = ({
                         className={styles["link-oferta"]}
                         target="_blink"
                         underline
-                        href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                        href="https://docs.google.com/document/d/1LgOipJN6Zg8FRWuCUbis7LwfF4y8znCP/"
                       >
                         {CONTENT.PERSONAL_DATA_LINK}
                       </Link>
@@ -939,7 +945,7 @@ export const RegisterPage = ({
                       underline
                       className={styles["oferta-text"]}
                       target="_blink"
-                      href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                      href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i/"
                     >
                       {CONTENT.OFERTA_LINK_ONE}
                     </Link>
@@ -949,7 +955,7 @@ export const RegisterPage = ({
                       className={styles["oferta-text"]}
                       color=""
                       target="_blink"
-                      href="https://docs.google.com/document/d/1yYJC6ormNHtca58YsTvw1g1NgKBOpN3i"
+                      href="https://docs.google.com/document/d/1wyphbddHpr1hvZpQzwkQ29sUUiRZnRh7/"
                     >
                       {CONTENT.OFERTA_LINK_TWO}
                     </Link>

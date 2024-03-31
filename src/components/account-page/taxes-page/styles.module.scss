@@ -622,6 +622,12 @@ $xxl: 2560px;
   align-items: flex-end;
 }
 
+.source-date-part-disable {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .source-date-inner:hover .source-date-part {
   margin-right: 20px;
 }
@@ -636,6 +642,17 @@ $xxl: 2560px;
   transition:
     right 0.3s ease,
     opacity 0.3s ease;
+  border: none;
+  padding: 5px;
+}
+
+.source-delete-icon-disable {
+  position: absolute;
+  top: 60%;
+  left: -30px;
+  transform: translateY(-50%);
+  cursor: pointer;
+
   border: none;
   padding: 5px;
 }

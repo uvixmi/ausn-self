@@ -98,9 +98,10 @@ export const OffSourceModal = ({
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   useEffect(() => {
-    if (dateOperation !== "") setIsButtonDisabled(false)
+    if (dateOperation !== "" || typeSource === 3 || typeSource === 5)
+      setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
-  }, [dateOperation])
+  }, [dateOperation, typeSource])
 
   return (
     <>

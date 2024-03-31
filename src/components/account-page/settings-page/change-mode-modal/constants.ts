@@ -14,6 +14,7 @@ export const CONTENT = {
   INPUT_SUBPARAGRAPH_TITLE: "Подпункт",
   BUTTON_CANCEL: "Отменить",
   BUTTON_SAVE: "Сохранить",
+  SELECT_PLACEHOLDER: "Выберите",
   INPUT_PLACEHOLDER: "Введите",
   NOTIFICATION_PROCESSING_SUCCESS: "Данные сохранены",
   NOTIFICATION_PROCESSING_FAILED:

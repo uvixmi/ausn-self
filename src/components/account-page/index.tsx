@@ -39,7 +39,6 @@ export const AccountPage = ({
   const { Sider } = Layout
 
   const { data: loaded } = useSelector((state: RootState) => state.user)
-
   const location = useLocation()
 
   const data = [

@@ -4,7 +4,7 @@
   color: #fff;
   height: 40px;
   margin: 32px 0 16px 0;
-  width: 50%;
+  width: 100%;
 }
 
 .button-item-cancel {
@@ -24,5 +24,13 @@
 .list-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+}
+
+.list-radio {
+  display: flex;
+  align-items: flex-start;
+}
+
+.text-bold {
+  font-weight: 600;
 }

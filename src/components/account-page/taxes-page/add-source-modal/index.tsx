@@ -51,6 +51,7 @@ export const AddSourceModal = ({
   setAddOperation,
   completedSource,
   setCompletedSource,
+  fetchSourcesHand,
 }: AddSourceModalProps) => {
   const { Title, Text } = Typography
   const token = Cookies.get("token")
@@ -99,7 +100,7 @@ export const AddSourceModal = ({
       setAccountFromFile(response.data)
       setFileIsLoading("loaded")
       message.success("Файл успешно загружен!")
-      dispatch(fetchSourcesInfo())
+      await fetchSourcesHand()
     } catch (error) {
       if (isErrorResponse(error)) {
         setErrorText(error.error.detail.message)
@@ -155,6 +156,7 @@ export const AddSourceModal = ({
         data,
         { headers }
       )
+      await fetchSourcesHand()
     } catch (error) {
       errorProcess(CONTENT.NOTIFICATION_INTEGRATE_ALPHA_FAILED)
     } finally {
@@ -197,6 +199,7 @@ export const AddSourceModal = ({
         data,
         { headers }
       )
+      await fetchSourcesHand()
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
       errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
@@ -215,6 +218,7 @@ export const AddSourceModal = ({
       await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
         headers,
       })
+      await fetchSourcesHand()
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
       errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
@@ -234,6 +238,7 @@ export const AddSourceModal = ({
       await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
         headers,
       })
+      await fetchSourcesHand()
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
       errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
@@ -254,7 +259,7 @@ export const AddSourceModal = ({
       setAccountFromFile(response.data)
       setFileIsLoading("loaded")
       message.success("Файл успешно загружен!")
-      dispatch(fetchSourcesInfo())
+      await fetchSourcesHand()
     } catch (error) {
       if (isErrorResponse(error)) {
         setErrorText(error.error.detail.message)
@@ -281,6 +286,7 @@ export const AddSourceModal = ({
           headers,
         }
       )
+      dispatch(fetchSourcesInfo())
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
       errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
@@ -596,7 +602,7 @@ export const AddSourceModal = ({
               bankToIntegrate === "" ? (
                 <div className={styles["bank-integration-wrapper"]}>
                   <div className={styles["bank-row"]}>
-                    <Button
+                    {/*<Button
                       className={styles["bank-item"]}
                       onClick={handleAlpha}
                     >
@@ -607,7 +613,7 @@ export const AddSourceModal = ({
                       <Text className={styles["bank-title"]}>
                         {CONTENT.BANK_ALPHA}
                       </Text>
-                    </Button>
+              </Button>*/}
                     <Button
                       className={styles["bank-item"]}
                       onClick={handleOtherBank}
@@ -620,8 +626,7 @@ export const AddSourceModal = ({
                         {CONTENT.BANK_MODUL}
                       </Text>
                     </Button>
-                  </div>
-                  <div className={styles["bank-row"]}>
+
                     <Button
                       className={styles["bank-item"]}
                       onClick={handleOtherBank}
@@ -634,6 +639,11 @@ export const AddSourceModal = ({
                         {CONTENT.BANK_TINKOFF}
                       </Text>
                     </Button>
+                  </div>
+                  <div
+                    className={styles["bank-row"]}
+                    style={{ justifyContent: "flex-start" }}
+                  >
                     <Button
                       className={styles["bank-item"]}
                       onClick={handleOtherBank}
@@ -1360,7 +1370,6 @@ export const AddSourceModal = ({
                     </Button>
                     <Button
                       className={styles["generate-button"]}
-                      disabled={isIntegrateButtonDisabled}
                       onClick={() => {
                         closeModal()
                         setAddOperation(true)
@@ -1399,8 +1408,11 @@ export const AddSourceModal = ({
                     </Text>
                   </Button>
                 </div>
-                <div className={styles["bank-row"]}>
-                  <Button
+                <div
+                  className={styles["bank-row"]}
+                  style={{ justifyContent: "flex-start" }}
+                >
+                  {/*<Button
                     className={styles["bank-item"]}
                     onClick={() => setMarketplaceMode("1")}
                   >
@@ -1411,7 +1423,7 @@ export const AddSourceModal = ({
                     <Text className={styles["bank-title"]}>
                       {CONTENT.MARKETPLACE_YANDEX}
                     </Text>
-                  </Button>
+            </Button>*/}
                   <Button
                     className={styles["bank-item"]}
                     onClick={() => setMarketplaceMode("4")}
@@ -1581,7 +1593,7 @@ export const AddSourceModal = ({
                     />
                     <Button
                       className={styles["send-button"]}
-                      onClick={closeModal}
+                      //  onClick={closeModal}
                     >
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_OFD_OTHER_SEND}

@@ -62,5 +62,6 @@ export const CONTENT = {
   TOOLTIP_ORANGE: "Требуется дополнительное действие",
   TOOLTIP_GREY: "Данные в процессе добавления. Ожидайте завершения",
   TOOLTIP_DATE: "Дата последней операции",
+  TOOLTIP_DISABLE_DATE: "Дата отключения",
   FILTER_HEADING: "Фильтр",
 }

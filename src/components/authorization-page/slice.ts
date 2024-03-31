@@ -42,6 +42,9 @@ const userSlice = createSlice({
       state.data = {} as User
       state.loaded = false
     },
+    refreshRole: (state) => {
+      state.loaded = false
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -75,5 +78,5 @@ const userSlice = createSlice({
   },
 })
 
-export const { updateInn, clearData } = userSlice.actions
+export const { updateInn, clearData, refreshRole } = userSlice.actions
 export default userSlice.reducer

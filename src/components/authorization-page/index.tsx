@@ -111,7 +111,7 @@ export const AuthorizationPage = ({
                   if (response.data) {
                     const { token_type, access_token } = response.data
 
-                    login(access_token, 3600)
+                    login(access_token, 86400)
                     dispatch(fetchCurrentUser())
                     setAccessToken(access_token)
                     setTokenType(token_type)
