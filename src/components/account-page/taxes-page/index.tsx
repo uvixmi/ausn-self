@@ -795,103 +795,179 @@ export const TaxesPage = () => {
                     </div>
                   )
                 )
+              ) : !isMobile ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "20px",
+                    width: "100%",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "20px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <Skeleton
+                        paragraph={{
+                          rows: 2,
+                        }}
+                        active
+                      />
+                    </div>
+                    <div style={{}}>
+                      <Skeleton.Input active />
+                    </div>
+                    <div style={{ width: "20%" }}>
+                      <Skeleton
+                        title={false}
+                        style={{ display: "flex", alignItems: "flex-end" }}
+                        paragraph={{
+                          rows: 2,
+                          width: [140, 140],
+                        }}
+                        active
+                      />
+                    </div>
+                  </div>
+                </div>
               ) : (
-                <div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Skeleton
-                        paragraph={{
-                          rows: 2,
-                        }}
-                        active
-                      />
-                    </div>
-                    <div style={{}}>
-                      <Skeleton.Input active />
-                    </div>
-                    <div style={{ width: "20%" }}>
-                      <Skeleton
-                        title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
-                        paragraph={{
-                          rows: 2,
-                          width: [140, 140],
-                        }}
-                        active
-                      />
-                    </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "20px",
+                    width: "100%",
+                  }}
+                >
+                  <div style={{ width: "100%" }}>
+                    <Skeleton
+                      paragraph={{
+                        rows: 2,
+                        width: [200, 200],
+                      }}
+                      active
+                    />
+                  </div>
+                  <div style={{ width: "100%" }}>
+                    <Skeleton.Input active />
                   </div>
                   <div
                     style={{
                       width: "100%",
                       display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
                       justifyContent: "space-between",
                     }}
                   >
-                    <div style={{ width: "50%" }}>
-                      <Skeleton
-                        paragraph={{
-                          rows: 2,
-                        }}
-                        active
-                      />
-                    </div>
-                    <div style={{}}>
-                      <Skeleton.Input active />
-                    </div>
-                    <div style={{ width: "20%" }}>
-                      <Skeleton
-                        title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
-                        paragraph={{
-                          rows: 2,
-                          width: [140, 140],
-                        }}
-                        active
-                      />
-                    </div>
+                    <Skeleton
+                      title={false}
+                      paragraph={{
+                        rows: 2,
+                        width: [140, 140],
+                      }}
+                      active
+                    />
+                    <Skeleton.Avatar shape="square" />
+                  </div>
+                  <div className={styles["divider"]}></div>
+                  <div style={{ width: "100%" }}>
+                    <Skeleton
+                      paragraph={{
+                        rows: 2,
+                        width: [200, 200],
+                      }}
+                      active
+                    />
+                  </div>
+                  <div style={{ width: "100%" }}>
+                    <Skeleton.Input active />
                   </div>
                   <div
                     style={{
                       width: "100%",
                       display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
                       justifyContent: "space-between",
                     }}
                   >
-                    <div style={{ width: "50%" }}>
-                      <Skeleton
-                        paragraph={{
-                          rows: 2,
-                        }}
-                        active
-                      />
-                    </div>
-                    <div style={{}}>
-                      <Skeleton.Input active />
-                    </div>
-                    <div style={{ width: "20%" }}>
-                      <Skeleton
-                        title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
-                        paragraph={{
-                          rows: 2,
-                          width: [140, 140],
-                        }}
-                        active
-                      />
-                    </div>
+                    <Skeleton
+                      title={false}
+                      paragraph={{
+                        rows: 2,
+                        width: [140, 140],
+                      }}
+                      active
+                    />
+                    <Skeleton.Avatar shape="square" />
                   </div>
                 </div>
               )}
