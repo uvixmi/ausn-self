@@ -99,7 +99,7 @@ export const AddSourceModal = ({
         })
       setAccountFromFile(response.data)
       setFileIsLoading("loaded")
-      message.success("Файл успешно загружен!")
+      successProcess("Файл успешно загружен!")
       await fetchSourcesHand()
     } catch (error) {
       if (isErrorResponse(error)) {
@@ -108,7 +108,7 @@ export const AddSourceModal = ({
         setFileIsLoading("error")
       }
       console.error("Ошибка загрузки файла:", error)
-      message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
+      errorProcess("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
     }
   }
 
@@ -260,7 +260,7 @@ export const AddSourceModal = ({
       )
       setAccountFromFile(response.data)
       setFileIsLoading("loaded")
-      message.success("Файл успешно загружен!")
+      successProcess("Файл успешно загружен!")
       await fetchSourcesHand()
     } catch (error) {
       if (isErrorResponse(error)) {
@@ -269,7 +269,7 @@ export const AddSourceModal = ({
         setFileIsLoading("error")
       }
       console.error("Ошибка загрузки файла:", error)
-      message.error("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
+      errorProcess("Ошибка загрузки файла. Пожалуйста, повторите попытку.")
     }
   }
 
