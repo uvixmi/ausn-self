@@ -1,0 +1,80 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.input-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.title-description {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #505050;
+}
+
+.error-text {
+  font-size: 8px;
+  line-height: 8px;
+  color: red;
+
+  @media screen and (min-width: $m) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+.necessary {
+  color: #cf133c;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.modal-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.generate-button {
+  border-radius: 4px;
+  background: #6159ff;
+  color: #fff;
+  height: 100%;
+  width: 100%;
+}
+
+.inputs-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-inn {
+  width: 100%;
+}
+.text-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.005em;
+  text-align: left;
+  color: #505050;
+}
+
+.default-text {
+  color: #141414;
+}

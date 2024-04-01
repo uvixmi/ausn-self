@@ -2,6 +2,7 @@ export const CONTENT = {
   HEADING_MODAL: "Формирование платежного поручения",
   TEXT_AMOUNT: "Сумма уплаты (₽)",
   INPUT_AMOUNT_PLACEHOLDER: "Введите сумму",
+  SELECT_ACCOUNT_PLACEHOLDER: "Выберите счет",
   TEXT_ACCOUNT_NUMBER: "Счет списания",
   TEXT_PAYMENT_DIRECTION: "Назначение платежа",
   TITLE_REQUISITES: "Реквизиты получателя",

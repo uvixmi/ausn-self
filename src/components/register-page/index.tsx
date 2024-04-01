@@ -955,7 +955,7 @@ export const RegisterPage = ({
                       className={styles["oferta-text"]}
                       color=""
                       target="_blink"
-                      href="https://docs.google.com/document/d/1wyphbddHpr1hvZpQzwkQ29sUUiRZnRh7/"
+                      href="https://docs.google.com/document/d/1LgOipJN6Zg8FRWuCUbis7LwfF4y8znCP/"
                     >
                       {CONTENT.OFERTA_LINK_TWO}
                     </Link>

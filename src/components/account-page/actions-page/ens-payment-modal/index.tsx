@@ -22,6 +22,7 @@ import * as iconv from "iconv-lite"
 import { numberWithSpaces } from "../payment-modal/utils"
 import { formatDateString } from "../utils"
 import { RootState } from "../../../main-page/store"
+import { AddAccountModal } from "./add-account-modal"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -31,9 +32,7 @@ export const EnsPaymentModal = ({
   defaultAccount,
 }: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
-  const dispatch = useDispatch()
   const token = Cookies.get("token")
-  const location = useLocation()
 
   const [ensRequsites, setEnsRequsites] = useState<ENSInfo | undefined>(
     undefined
@@ -205,6 +204,8 @@ export const EnsPaymentModal = ({
       ),
     },
   ]
+
+  const [addAccountOpen, setAddAccountOpen] = useState(false)
   const handlePayment = async () => {
     if (account) {
       const data = {
@@ -291,11 +292,17 @@ export const EnsPaymentModal = ({
                       options={options}
                       defaultValue={defaultAccount}
                       className={"modal-select"}
-                      placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
+                      placeholder={CONTENT.SELECT_ACCOUNT_PLACEHOLDER}
                       onChange={(value) => setAccount(value)}
                     />
                   ) : (
-                    <Button>{"Добавить счет"}</Button>
+                    <Button
+                      onClick={() => {
+                        setAddAccountOpen(true)
+                      }}
+                    >
+                      {"Добавить счет"}
+                    </Button>
                   )}
                 </div>
               </div>
@@ -355,6 +362,7 @@ export const EnsPaymentModal = ({
           </div>
         </div>
       </Modal>
+      <AddAccountModal isOpen={addAccountOpen} setOpen={setAddAccountOpen} />
     </>
   )
 }
