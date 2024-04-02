@@ -6,6 +6,9 @@ import {
   useState,
   useEffect,
 } from "react"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "./components/main-page/store"
+import { useNavigate } from "react-router-dom"
 
 interface AuthContextProps {
   children: ReactNode

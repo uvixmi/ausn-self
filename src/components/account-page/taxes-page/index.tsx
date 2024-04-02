@@ -39,7 +39,7 @@ import Cookies from "js-cookie"
 import { formatToPayDate } from "../../main-page/utils"
 import { TypeOperation } from "./type-operation"
 import { getCurrency } from "../actions-page/utils"
-import { getSourceText } from "./utils"
+import { ApiError, getSourceText } from "./utils"
 import { IncomeIcon } from "./type-operation/icons/income"
 import { TaxesIcon } from "./type-operation/icons/taxes"
 import { BackIcon } from "./type-operation/icons/back"
@@ -69,6 +69,10 @@ import { useMediaQuery } from "@react-hook/media-query"
 import { InProgressOrangeIcon } from "./type-operation/icons/in-progress-orange"
 import { OpenSourceIcon } from "./type-operation/icons/open-source"
 import { DownloadKudirModal } from "./download-kudir-modal"
+import { isErrorResponse } from "./add-source-modal/utils"
+import { useAuth } from "../../../AuthContext"
+import { clearData } from "../../authorization-page/slice"
+import { useNavigate } from "react-router-dom"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -252,21 +256,37 @@ export const TaxesPage = () => {
         }
       })
   const [deleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
   useEffect(() => {
     const fetchOperations = async () => {
-      const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-        headers,
-      })
-      setSources(sourcesResponse.data)
+      try {
+        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
+          headers,
+        })
+        setSources(sourcesResponse.data)
+      } catch (error) {
+        if ((error as ApiError).status === 422) {
+          logout(), dispatch(clearData()), navigate("/login")
+        }
+      }
     }
     fetchOperations()
   }, [])
 
   const fetchSourcesHand = async () => {
-    const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-      headers,
-    })
-    setSources(sourcesResponse.data)
+    try {
+      const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
+        headers,
+      })
+      setSources(sourcesResponse.data)
+    } catch (error) {
+      if ((error as ApiError).status === 422) {
+        logout(), dispatch(clearData()), navigate("/login")
+      }
+    }
   }
 
   const [pagination, setPagination] = useState({
@@ -367,44 +387,51 @@ export const TaxesPage = () => {
 
   const fetchOperations = useCallback(async () => {
     if (isFetching) {
-      const filters: GetOperationsRequest = {
-        start_date: selectedStartDate || undefined,
-        end_date: selectedEndDate || undefined,
-        operations_types:
-          selectedOperationTypes.length > 0
-            ? selectedOperationTypes
-            : undefined,
-        sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
-        pagination: { ...pagination },
-      }
+      try {
+        const filters: GetOperationsRequest = {
+          start_date: selectedStartDate || undefined,
+          end_date: selectedEndDate || undefined,
+          operations_types:
+            selectedOperationTypes.length > 0
+              ? selectedOperationTypes
+              : undefined,
+          sources_ids: selectedSources.length > 0 ? selectedSources : undefined,
+          pagination: { ...pagination },
+        }
 
-      const operations = await api.operations.getOperationsOperationsPost(
-        filters,
-        { headers }
-      )
+        const operations = await api.operations.getOperationsOperationsPost(
+          filters,
+          { headers }
+        )
 
-      if (pagination.page_number === 1) {
-        setOperationsData((prevData) => ({
-          operations: [...operations.data.operations],
-          pages_count: operations.data.pages_count,
+        if (pagination.page_number === 1) {
+          setOperationsData((prevData) => ({
+            operations: [...operations.data.operations],
+            pages_count: operations.data.pages_count,
+          }))
+        } else {
+          setOperationsData((prevData) => ({
+            ...prevData,
+            operations: [
+              ...(prevData?.operations || []),
+              ...operations.data.operations,
+            ],
+            pages_count: operations.data.pages_count,
+          }))
+        }
+
+        setPagination((prevPagination) => ({
+          ...prevPagination,
+          page_number: prevPagination.page_number + 1,
         }))
-      } else {
-        setOperationsData((prevData) => ({
-          ...prevData,
-          operations: [
-            ...(prevData?.operations || []),
-            ...operations.data.operations,
-          ],
-          pages_count: operations.data.pages_count,
-        }))
+        setIsFetching(false)
+        setOperationsLoaded(true)
+      } catch (error) {
+        console.log(error)
+        if ((error as ApiError).status === 422) {
+          logout(), dispatch(clearData()), navigate("/login")
+        }
       }
-
-      setPagination((prevPagination) => ({
-        ...prevPagination,
-        page_number: prevPagination.page_number + 1,
-      }))
-      setIsFetching(false)
-      setOperationsLoaded(true)
     }
   }, [
     isFetching,

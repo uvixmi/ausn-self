@@ -15,3 +15,7 @@ export const getSourceText = (
     return last4Digits
   }
 }
+
+export interface ApiError {
+  status: number
+}

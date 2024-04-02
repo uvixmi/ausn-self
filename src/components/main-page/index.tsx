@@ -19,7 +19,7 @@ import { fetchSourcesInfo } from "../account-page/client/sources/thunks"
 
 export const MainPage = () => {
   const navigate = useNavigate()
-  const { isAuthenticated, login, setRole, logout } = useAuth()
+  const { role, login, setRole, logout } = useAuth()
 
   const [accessToken, setAccessToken] = useState("")
   const [isAuth, setIsAuth] = useState(false)
@@ -29,14 +29,15 @@ export const MainPage = () => {
     (state: RootState) => state.user
   )
 
-  const role = Cookies.get("role")
   const token = Cookies.get("token")
 
   useEffect(() => {
     if (!role) {
+      console.log(role)
+      dispatch(clearData())
       dispatch(fetchCurrentUser())
     }
-  }, [dispatch])
+  }, [dispatch, role])
 
   useEffect(() => {
     if (loaded && token) {

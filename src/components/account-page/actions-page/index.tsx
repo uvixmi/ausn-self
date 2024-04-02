@@ -43,6 +43,9 @@ import { fetchSourcesInfo } from "../client/sources/thunks"
 import { fetchTasks } from "../client/tasks/thunks"
 import { fetchBanners } from "../client/banners/thunks"
 import { useMediaQuery } from "@react-hook/media-query"
+import { ApiError } from "../taxes-page/utils"
+import { clearData } from "../../authorization-page/slice"
+import { useAuth } from "../../../AuthContext"
 
 export interface InfoBannerLinked {
   id: string
@@ -61,6 +64,7 @@ export interface InfoBannerLinked {
 export const ActionsPage = () => {
   const [isPaymentOpen, setPaymentOpen] = useState(false)
   const [isEnsOpen, setEnsOpen] = useState(false)
+  const { logout } = useAuth()
   const [isAnalysisOpen, setAnalysisOpen] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   const antIcon = (
@@ -206,6 +210,10 @@ export const ActionsPage = () => {
         dispatch(fetchTasks())
       } catch (error) {
         errorTasks()
+
+        if ((error as ApiError).status === 422) {
+          logout(), dispatch(clearData()), navigate("/login")
+        }
       }
     } catch (error) {
       setIsForming(false)
@@ -239,6 +247,9 @@ export const ActionsPage = () => {
     } catch (error) {
       console.error("Error during API call:", error)
       errorDownload()
+      if ((error as ApiError).status === 422) {
+        logout(), dispatch(clearData()), navigate("/login")
+      }
     }
   }
 
@@ -267,6 +278,9 @@ export const ActionsPage = () => {
     } catch (error) {
       console.error("Error during API call:", error)
       errorDownload()
+      if ((error as ApiError).status === 422) {
+        logout(), dispatch(clearData()), navigate("/login")
+      }
     }
   }
 
@@ -291,25 +305,31 @@ export const ActionsPage = () => {
   }
 
   const deleteBanner = async (id: string) => {
-    await api.banners.updateUserBannerStateBannersPut(
-      { banner_id: id },
-      { headers }
-    )
-    const bannersResponse = await api.banners.getUserBannersBannersGet(
-      {
-        current_date: convertDateFormat(new Date().toLocaleDateString()),
-      },
-      {
-        headers,
-      }
-    )
-    const linkedBanners = bannersResponse.data.banners.map((item) => {
-      const regex = /(\{link:[^\}]+\})/g
-      const parts = item.description.split(regex)
-      return { ...item, description: parts }
-    })
+    try {
+      await api.banners.updateUserBannerStateBannersPut(
+        { banner_id: id },
+        { headers }
+      )
+      const bannersResponse = await api.banners.getUserBannersBannersGet(
+        {
+          current_date: convertDateFormat(new Date().toLocaleDateString()),
+        },
+        {
+          headers,
+        }
+      )
+      const linkedBanners = bannersResponse.data.banners.map((item) => {
+        const regex = /(\{link:[^\}]+\})/g
+        const parts = item.description.split(regex)
+        return { ...item, description: parts }
+      })
 
-    setBanners(linkedBanners)
+      setBanners(linkedBanners)
+    } catch (error) {
+      if ((error as ApiError).status === 422) {
+        logout(), dispatch(clearData()), navigate("/login")
+      }
+    }
   }
 
   const defaultAccount =
