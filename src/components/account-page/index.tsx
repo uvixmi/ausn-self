@@ -1,36 +1,22 @@
-import {
-  Button,
-  ConfigProvider,
-  Layout,
-  List,
-  Menu,
-  Select,
-  Table,
-  Typography,
-} from "antd"
+import { ConfigProvider, Layout, List, Typography } from "antd"
 import { Link, useLocation } from "react-router-dom"
 import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
 import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
 import { AccountPageProps } from "./types"
-import { useEffect, useState } from "react"
-import { SourcesInfo, TaskResponse, User, api } from "../../api/myApi"
+import { useEffect } from "react"
 import { clearData, fetchCurrentUser } from "../authorization-page/slice"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../main-page/store"
-import { useAuth } from "../../AuthContext"
 import Cookies from "js-cookie"
-import { v4 as uuid } from "uuid"
 import cn from "classnames"
 import { fetchSourcesInfo } from "./client/sources/thunks"
 import { useMediaQuery } from "@react-hook/media-query"
 import { Footer } from "antd/es/layout/layout"
 import { MenuTaxesIcon } from "./taxes-page/type-operation/icons/menu-taxes"
 import { MenuActionsIcon } from "./taxes-page/type-operation/icons/menu-actions"
-import { MenuReportsIcon } from "./taxes-page/type-operation/icons/menu-reports"
 import { MenuSettingsIcon } from "./taxes-page/type-operation/icons/menu-settings"
-import { userInfo } from "os"
 
 export const AccountPage = ({
   token_type,
@@ -39,7 +25,7 @@ export const AccountPage = ({
 }: AccountPageProps) => {
   const { Sider } = Layout
 
-  const { data: loaded } = useSelector((state: RootState) => state.user)
+  const { loaded, loading } = useSelector((state: RootState) => state.user)
   const location = useLocation()
 
   const data = [
@@ -136,11 +122,12 @@ export const AccountPage = ({
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (!loaded) {
+    if (!loaded && !loading) {
       dispatch(fetchCurrentUser())
+
       dispatch(fetchSourcesInfo())
     }
-  }, [dispatch, loaded])
+  }, [dispatch, loaded, loading])
 
   const navigate = useNavigate()
 
@@ -158,6 +145,7 @@ export const AccountPage = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         window.carrotquest.messenger.toStateCollapsed()
+
         if (currentUser.email) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
