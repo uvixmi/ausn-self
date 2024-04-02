@@ -30,6 +30,7 @@ import { MenuTaxesIcon } from "./taxes-page/type-operation/icons/menu-taxes"
 import { MenuActionsIcon } from "./taxes-page/type-operation/icons/menu-actions"
 import { MenuReportsIcon } from "./taxes-page/type-operation/icons/menu-reports"
 import { MenuSettingsIcon } from "./taxes-page/type-operation/icons/menu-settings"
+import { userInfo } from "os"
 
 export const AccountPage = ({
   token_type,
@@ -145,6 +146,8 @@ export const AccountPage = ({
 
   const isMobile = useMediaQuery("(max-width: 767px)")
 
+  const { data: currentUser } = useSelector((state: RootState) => state.user)
+
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -155,8 +158,21 @@ export const AccountPage = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         window.carrotquest.messenger.toStateCollapsed()
+        if (currentUser.email)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          window.carrotquest.auth(
+            currentUser.inn,
+            "49672bf861335d68040fedb25c90a580dd33c6748dc82d8fe76d508ebcef2b4b"
+          )
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
+        window.carrotquest.identify({
+          $name: currentUser.full_name,
+          $email: currentUser.email,
+          $phone: currentUser.phone_number,
+          inn: currentUser.inn,
+        })
       })
   }, [])
 
