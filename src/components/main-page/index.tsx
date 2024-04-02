@@ -42,7 +42,7 @@ export const MainPage = () => {
     if (loaded && token) {
       if (!currentUser.inn && !currentUser.is_lead) {
         setRole("register", 86400)
-      } else if (currentUser.is_lead == true) setRole("lead", 3600)
+      } else if (currentUser.is_lead == true) setRole("lead", 86400)
       else {
         setRole("account", 86400)
       }

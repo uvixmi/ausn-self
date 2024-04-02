@@ -37,28 +37,6 @@ export interface AccountDetails {
   bank_bik: string
 }
 
-/** AccountInfoFromFile */
-export interface AccountInfoFromFile {
-  /**
-   * Start Date
-   * @format date
-   */
-  start_date: string
-  /**
-   * End Date
-   * @format date
-   */
-  end_date: string
-  /** Account Number */
-  account_number: string
-  /** Bank Name */
-  bank_name: string
-  /** Bank Short Name */
-  bank_short_name?: string | null
-  /** Bank Bik */
-  bank_bik: string
-}
-
 /** AccountIntegrationType */
 export enum AccountIntegrationType {
   Value1 = 1,
@@ -187,12 +165,23 @@ export interface CreateAccountIntegration {
 
 /** CreateAccountResponse */
 export interface CreateAccountResponse {
+  /** Start Date */
+  start_date?: string | null
+  /** End Date */
+  end_date?: string | null
+  /** Account Number */
+  account_number?: string | null
+  /** Bank Name */
+  bank_name?: string | null
+  /** Bank Short Name */
+  bank_short_name?: string | null
+  /** Bank Bik */
+  bank_bik?: string | null
   /**
    * Request Id
    * @format uuid
    */
   request_id: string
-  account_info_from_file?: AccountInfoFromFile | null
 }
 
 /** CreateMarketplaceRequest */
@@ -675,9 +664,9 @@ export enum LeadReason {
 export interface MarketplaceCredentials {
   /**
    * Login
-   * Логин
+   * Логин. Необязателен в случае marketplace_type - 2.
    */
-  login: string
+  login?: string | null
   /**
    * Password
    * Пароль / токен доступа
@@ -877,6 +866,11 @@ export interface OperationMarkup {
    * Сумма, участвующая в разметке операции
    */
   amount: number
+  /**
+   * Commission
+   * Сумма комиссии
+   */
+  commission?: number | null
   /** Description */
   description?: OperationDebitDescription | OperationCreditDescription | null
 }
@@ -1142,6 +1136,20 @@ export enum RequestState {
   Failed = "failed",
 }
 
+/** ResultInfo */
+export interface ResultInfo {
+  /**
+   * Id
+   * @format uuid
+   */
+  id: string
+  status: RequestState
+  /** Message */
+  message?: string | null
+  /** Link */
+  link?: string | null
+}
+
 /** SNOReference */
 export interface SNOReference {
   /**
@@ -1305,6 +1313,11 @@ export interface TaskInfo {
    */
   tax_base?: number | null
   /**
+   * Tax Base Now
+   * Налоговая база (текущий расчет)
+   */
+  tax_base_now?: number | null
+  /**
    * Due Amount
    * Сумма к уплате по данной задаче
    */
@@ -1314,6 +1327,11 @@ export interface TaskInfo {
    * Сумма “начислено всего” по данной задаче
    */
   accrued_amount?: number | null
+  /**
+   * Accrued Amount Now
+   * Сумма “начислено всего” согласно текущему расчету
+   */
+  accrued_amount_now?: number | null
   /**
    * Paid Amount
    * Сумма “уплачено ранее” по данной задаче
@@ -1663,6 +1681,11 @@ export interface User {
    */
   oktmo?: string | null
   /**
+   * Hashed Id
+   * Захэшированный ID пользователя. Необходим для работы с Carrot Quest
+   */
+  hashed_id?: string | null
+  /**
    * Fns Code
    * Код ИФНС
    */
@@ -1984,7 +2007,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.12
+ * @version 0.1.16
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2203,6 +2226,27 @@ export class Api<
       }),
 
     /**
+     * @description Метод возвращает информацию по статусу добавления источника данных в мастер системе
+     *
+     * @tags Sources
+     * @name GetSourceRequestStateSourcesRequestIdStateGet
+     * @summary Получить статус запроса добавления источника данных
+     * @request GET:/sources/{request_id}/state
+     * @secure
+     */
+    getSourceRequestStateSourcesRequestIdStateGet: (
+      requestId: string,
+      params: RequestParams = {}
+    ) =>
+      this.request<ResultInfo, HTTPValidationError | void>({
+        path: `/sources/${requestId}/state`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Данный метод реализует отключение источника данных. По отключенному источнику данных приостанавливается интеграция. Данные по нему возвращаться будут, однако новых в систему поступать не будет.
      *
      * @tags Sources
@@ -2411,7 +2455,7 @@ export class Api<
       data: BodyCreateOperationsFromFileOperationsFilePost,
       params: RequestParams = {}
     ) =>
-      this.request<AccountInfoFromFile, HTTPValidationError | void>({
+      this.request<CreateAccountResponse, HTTPValidationError | void>({
         path: `/operations/file`,
         method: "POST",
         body: data,
@@ -2468,6 +2512,27 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.
+     *
+     * @tags Operations
+     * @name GetOperationByIdOperationsOperationIdGet
+     * @summary Получить список размеченных операций
+     * @request GET:/operations/{operation_id}
+     * @secure
+     */
+    getOperationByIdOperationsOperationIdGet: (
+      operationId: string,
+      params: RequestParams = {}
+    ) =>
+      this.request<Operation, HTTPValidationError | void>({
+        path: `/operations/${operationId}`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),

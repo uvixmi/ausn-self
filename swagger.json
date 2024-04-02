@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.12"
+    "version": "0.1.16"
   },
   "paths": {
     "/auth": {
@@ -593,6 +593,68 @@
         ]
       }
     },
+    "/sources/{request_id}/state": {
+      "get": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "Получить статус запроса добавления источника данных",
+        "description": "Метод возвращает информацию по статусу добавления источника данных в мастер системе",
+        "operationId": "get_source_request_state_sources__request_id__state_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID запроса на добавление источника",
+              "title": "Request Id"
+            },
+            "description": "ID запроса на добавление источника"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sources/disable": {
       "put": {
         "tags": [
@@ -1125,7 +1187,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AccountInfoFromFile"
+                  "$ref": "#/components/schemas/CreateAccountResponse"
                 }
               }
             }
@@ -1280,6 +1342,67 @@
             "OAuth2PasswordBearer": []
           }
         ]
+      }
+    },
+    "/operations/{operation_id}": {
+      "get": {
+        "tags": [
+          "Operations"
+        ],
+        "summary": "Получить список размеченных операций",
+        "description": "Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.",
+        "operationId": "get_operation_by_id_operations__operation_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "operation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID операции",
+              "title": "Operation Id"
+            },
+            "description": "ID операции"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/taxes/systems": {
@@ -2204,52 +2327,6 @@
         ],
         "title": "AccountDetails"
       },
-      "AccountInfoFromFile": {
-        "properties": {
-          "start_date": {
-            "type": "string",
-            "format": "date",
-            "title": "Start Date"
-          },
-          "end_date": {
-            "type": "string",
-            "format": "date",
-            "title": "End Date"
-          },
-          "account_number": {
-            "type": "string",
-            "title": "Account Number"
-          },
-          "bank_name": {
-            "type": "string",
-            "title": "Bank Name"
-          },
-          "bank_short_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Bank Short Name"
-          },
-          "bank_bik": {
-            "type": "string",
-            "title": "Bank Bik"
-          }
-        },
-        "type": "object",
-        "required": [
-          "start_date",
-          "end_date",
-          "account_number",
-          "bank_name",
-          "bank_bik"
-        ],
-        "title": "AccountInfoFromFile"
-      },
       "AccountIntegrationType": {
         "type": "integer",
         "enum": [
@@ -2545,20 +2622,78 @@
       },
       "CreateAccountResponse": {
         "properties": {
-          "request_id": {
-            "type": "string",
-            "format": "uuid",
-            "title": "Request Id"
-          },
-          "account_info_from_file": {
+          "start_date": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/AccountInfoFromFile"
+                "type": "string",
+                "format": "date"
               },
               {
                 "type": "null"
               }
-            ]
+            ],
+            "title": "Start Date"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "account_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number"
+          },
+          "bank_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Name"
+          },
+          "bank_short_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Short Name"
+          },
+          "bank_bik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Bik"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id"
           }
         },
         "type": "object",
@@ -3411,9 +3546,16 @@
       "MarketplaceCredentials": {
         "properties": {
           "login": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Login",
-            "description": "Логин"
+            "description": "Логин. Необязателен в случае marketplace_type - 2."
           },
           "password": {
             "type": "string",
@@ -3423,7 +3565,6 @@
         },
         "type": "object",
         "required": [
-          "login",
           "password"
         ],
         "title": "MarketplaceCredentials"
@@ -3683,6 +3824,18 @@
             "type": "number",
             "title": "Amount",
             "description": "Сумма, участвующая в разметке операции"
+          },
+          "commission": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commission",
+            "description": "Сумма комиссии"
           },
           "description": {
             "anyOf": [
@@ -4108,6 +4261,46 @@
         ],
         "title": "RequestState"
       },
+      "ResultInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RequestState"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "title": "ResultInfo"
+      },
       "SNOReference": {
         "properties": {
           "title": {
@@ -4487,6 +4680,18 @@
             "title": "Tax Base",
             "description": "Налоговая база"
           },
+          "tax_base_now": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Base Now",
+            "description": "Налоговая база (текущий расчет)"
+          },
           "due_amount": {
             "anyOf": [
               {
@@ -4510,6 +4715,18 @@
             ],
             "title": "Accrued Amount",
             "description": "Сумма “начислено всего” по данной задаче"
+          },
+          "accrued_amount_now": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accrued Amount Now",
+            "description": "Сумма “начислено всего” согласно текущему расчету"
           },
           "paid_amount": {
             "anyOf": [
@@ -5030,22 +5247,22 @@
             "description": "Год, за который установлены лимиты"
           },
           "fixed_fees": {
-            "type": "integer",
+            "type": "number",
             "title": "Fixed Fees",
             "description": "Фиксированные взносы за ИП"
           },
           "income_percentage": {
-            "type": "integer",
+            "type": "number",
             "title": "Income Percentage",
             "description": "Предельная величина взносов 1% с дохода"
           },
           "rate_increase": {
-            "type": "integer",
+            "type": "number",
             "title": "Rate Increase",
             "description": "Сумма лимита на повышение ставки УСН"
           },
           "max_income": {
-            "type": "integer",
+            "type": "number",
             "title": "Max Income",
             "description": "Сумма максимального дохода УСН"
           }
@@ -5438,6 +5655,18 @@
             ],
             "title": "Oktmo",
             "description": "Код ОКТМО"
+          },
+          "hashed_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hashed Id",
+            "description": "Захэшированный ID пользователя. Необходим для работы с Carrot Quest"
           },
           "fns_code": {
             "anyOf": [

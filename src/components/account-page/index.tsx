@@ -158,21 +158,19 @@ export const AccountPage = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         window.carrotquest.messenger.toStateCollapsed()
-        if (currentUser.email)
+        if (currentUser.email) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
-          window.carrotquest.auth(
-            currentUser.inn,
-            "49672bf861335d68040fedb25c90a580dd33c6748dc82d8fe76d508ebcef2b4b"
-          )
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        window.carrotquest.identify({
-          $name: currentUser.full_name,
-          $email: currentUser.email,
-          $phone: currentUser.phone_number,
-          inn: currentUser.inn,
-        })
+          window.carrotquest.auth(currentUser.id, currentUser.hashed_id)
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          window.carrotquest.identify({
+            $name: currentUser.full_name,
+            $email: currentUser.email,
+            $phone: currentUser.phone_number,
+            inn: currentUser.inn,
+          })
+        }
       })
   }, [])
 

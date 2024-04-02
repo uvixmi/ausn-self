@@ -3,7 +3,6 @@ import { AddSourceModalProps } from "./types"
 import styles from "./styles.module.scss"
 import "./styles.scss"
 import {
-  AccountInfoFromFile,
   CreateAccountResponse,
   CreateSourceResponse,
   OFDSource,
@@ -84,7 +83,7 @@ export const AddSourceModal = ({
   const [errorText, setErrorText] = useState("")
 
   const [accountFromFile, setAccountFromFile] = useState<
-    AccountInfoFromFile | CreateSourceResponse | null
+    CreateAccountResponse | CreateSourceResponse | null
   >(null)
 
   const handleFileUpload = async (file: RcFile) => {
