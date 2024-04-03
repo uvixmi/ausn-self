@@ -70,7 +70,7 @@ export const ActionsPage = () => {
   const antIcon = (
     <LoadingOutlined
       style={{
-        fontSize: 24,
+        fontSize: 22,
       }}
       spin
     />
