@@ -13,6 +13,7 @@ import { AppDispatch, RootState } from "../main-page/store"
 import Cookies from "js-cookie"
 import { useAuth } from "../../AuthContext"
 import { isErrorResponse } from "./utils"
+import { jwtDecode } from "jwt-decode"
 
 const { Title, Text } = Typography
 
@@ -123,8 +124,12 @@ export const AuthorizationPage = ({
                   // Проверка наличия свойства data в ответе
                   if (response.data) {
                     const { token_type, access_token } = response.data
-
-                    login(access_token, 86400)
+                    const { exp } = jwtDecode(access_token)
+                    if (exp) {
+                      const expDate = new Date(exp * 1000)
+                      const expiresIn = expDate.getTime() - Date.now()
+                      login(access_token, expiresIn)
+                    } else login(access_token, 86400)
                     dispatch(fetchCurrentUser())
                     setAccessToken(access_token)
                     setTokenType(token_type)

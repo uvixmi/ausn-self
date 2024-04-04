@@ -16,6 +16,7 @@ import { TaxesPage } from "../account-page/taxes-page"
 import { SettingsPage } from "../account-page/settings-page"
 import { ReportsPage } from "../account-page/reports-page"
 import { fetchSourcesInfo } from "../account-page/client/sources/thunks"
+import { jwtDecode } from "jwt-decode"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -33,19 +34,30 @@ export const MainPage = () => {
 
   useEffect(() => {
     if (!role) {
-      console.log(role)
       dispatch(clearData())
       dispatch(fetchCurrentUser())
     }
   }, [dispatch, role])
 
   useEffect(() => {
+    let expiresIn = 0
+    if (token) {
+      const { exp } = jwtDecode(token)
+      if (exp) {
+        const expDate = new Date(exp * 1000)
+        expiresIn = expDate.getTime() - Date.now()
+      }
+    }
     if (loaded && token) {
       if (!currentUser.inn && !currentUser.is_lead) {
+        if (expiresIn !== 0) setRole("register", expiresIn)
         setRole("register", 86400)
-      } else if (currentUser.is_lead == true) setRole("lead", 86400)
+      } else if (currentUser.is_lead == true)
+        if (expiresIn !== 0) setRole("lead", expiresIn)
+        else setRole("lead", 86400)
       else {
-        setRole("account", 86400)
+        if (expiresIn !== 0) setRole("account", expiresIn)
+        else setRole("account", 86400)
       }
     }
   }, [loaded, setRole])

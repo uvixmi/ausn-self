@@ -35,6 +35,7 @@ import Cookies from "js-cookie"
 import cn from "classnames"
 import { formatDateString } from "../account-page/actions-page/utils"
 import { fetchCurrentUser } from "../authorization-page/slice"
+import { jwtDecode } from "jwt-decode"
 
 const { Title, Text, Link } = Typography
 
@@ -374,8 +375,13 @@ export const RegisterPage = ({
 
       if (response.data) {
         const { token_type, access_token } = response.data
+        const { exp } = jwtDecode(access_token)
+        if (exp) {
+          const expDate = new Date(exp * 1000)
+          const expiresIn = expDate.getTime() - Date.now()
+          login(access_token, expiresIn)
+        } else login(access_token, 86400)
 
-        login(access_token, 3600)
         dispatch(fetchCurrentUser())
         setAccessToken(access_token)
         setTokenType(token_type)
