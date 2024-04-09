@@ -4,7 +4,7 @@ export const CONTENT = {
   DESCRIPTION_BANK_STATEMENT: "Загрузить выписку в формате\u00A01С\u00A0(.txt)",
   TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
-  DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка",
+  DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка, Хайс",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
     "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и т.д.",
