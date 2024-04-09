@@ -39,7 +39,8 @@ export const SettingsPage = () => {
   } = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
-    if (!loaded && !loading) dispatch(fetchCurrentUser())
+    if (!loaded && loading !== "succeeded" && loading !== "loading")
+      dispatch(fetchCurrentUser())
   }, [dispatch, loaded, loading])
 
   const isMobile = useMediaQuery("(max-width: 767px)")

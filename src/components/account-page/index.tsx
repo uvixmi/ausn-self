@@ -122,7 +122,7 @@ export const AccountPage = ({
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (!loaded && !loading) {
+    if (!loaded && loading !== "") {
       dispatch(fetchCurrentUser())
 
       dispatch(fetchSourcesInfo())

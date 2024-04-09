@@ -19,6 +19,7 @@ import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons"
 import alpha from "./bank-logos/alpha.png"
 import tinkoff from "./bank-logos/tinkoff.png"
 import tochka from "./bank-logos/tochka.jpeg"
+import hais from "./bank-logos/hais.png"
 import modul from "./bank-logos/modul.png"
 import firstofd from "./bank-logos/firstofd.png"
 import kontur from "./bank-logos/kontur.png"
@@ -645,7 +646,7 @@ export const AddSourceModal = ({
                   </div>
                   <div
                     className={styles["bank-row"]}
-                    style={{ justifyContent: "flex-start" }}
+                    //style={{ justifyContent: "flex-start" }}
                   >
                     <Button
                       className={styles["bank-item"]}
@@ -657,6 +658,18 @@ export const AddSourceModal = ({
                       ></div>
                       <Text className={styles["bank-title"]}>
                         {CONTENT.BANK_TOCHKA}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={handleOtherBank}
+                    >
+                      <div
+                        className={styles["bank-logo"]}
+                        style={{ backgroundImage: `url(${hais})` }}
+                      ></div>
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.BANK_HAIS}
                       </Text>
                     </Button>
                   </div>

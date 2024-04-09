@@ -127,7 +127,9 @@ export const AuthorizationPage = ({
                     const { exp } = jwtDecode(access_token)
                     if (exp) {
                       const expDate = new Date(exp * 1000)
-                      const expiresIn = expDate.getTime() - Date.now()
+                      const expiresIn = Math.floor(
+                        (expDate.getTime() - Date.now()) / 1000
+                      )
                       login(access_token, expiresIn)
                     } else login(access_token, 86400)
                     dispatch(fetchCurrentUser())

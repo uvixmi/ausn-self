@@ -35,6 +35,7 @@ export const CONTENT = {
   BANK_TINKOFF: "Тинькофф",
   BANK_MODUL: "Модульбанк",
   BANK_TOCHKA: "Точка",
+  BANK_HAIS: "Хайс",
   CASHIER_OFD: "OFD.ru",
   CASHIER_FIRST: "Первый ОФД",
   CASHIER_PLATFORM: "Платформа",

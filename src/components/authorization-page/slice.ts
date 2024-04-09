@@ -30,7 +30,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     data: {} as User,
-    loading: false,
+    loading: "" as string,
     loaded: false,
     error: null as string | null,
   },
@@ -51,16 +51,16 @@ const userSlice = createSlice({
       .addCase(
         fetchCurrentUser.pending,
         (
-          state: Draft<{ data: User; loading: boolean; error: string | null }>
+          state: Draft<{ data: User; loading: string; error: string | null }>
         ) => {
-          state.loading = true
+          state.loading = "loading"
           state.error = null
         }
       )
       .addCase(
         fetchCurrentUser.fulfilled,
         (state, action: PayloadAction<User>) => {
-          state.loading = false
+          state.loading = "succeeded"
           state.data = action.payload
           if (!state.loaded) state.loaded = true
         }
@@ -73,7 +73,7 @@ const userSlice = createSlice({
         } else {
           state.error = "Неизвестная ошибка"
         }
-        state.loading = false
+        state.loading = "failed"
       })
   },
 })

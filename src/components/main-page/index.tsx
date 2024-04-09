@@ -26,9 +26,11 @@ export const MainPage = () => {
   const [isAuth, setIsAuth] = useState(false)
   const [token_type, setTokenType] = useState("")
   const dispatch = useDispatch<AppDispatch>()
-  const { data: currentUser, loaded } = useSelector(
-    (state: RootState) => state.user
-  )
+  const {
+    data: currentUser,
+    loaded,
+    loading,
+  } = useSelector((state: RootState) => state.user)
 
   const token = Cookies.get("token")
 
@@ -40,15 +42,19 @@ export const MainPage = () => {
   }, [dispatch, role])
 
   useEffect(() => {
-    let expiresIn = 0
-    if (token) {
+    if (loading === "failed")
+      logout(), dispatch(clearData()), navigate("/login")
+  }, [loading])
+
+  useEffect(() => {
+    if (loaded && token) {
+      let expiresIn = 0
       const { exp } = jwtDecode(token)
       if (exp) {
         const expDate = new Date(exp * 1000)
-        expiresIn = expDate.getTime() - Date.now()
+        expiresIn = Math.floor((expDate.getTime() - Date.now()) / 1000)
       }
-    }
-    if (loaded && token) {
+
       if (!currentUser.inn && !currentUser.is_lead) {
         if (expiresIn !== 0) setRole("register", expiresIn)
         setRole("register", 86400)
@@ -60,7 +66,7 @@ export const MainPage = () => {
         else setRole("account", 86400)
       }
     }
-  }, [loaded, setRole])
+  }, [currentUser.inn, currentUser.is_lead, loaded, token])
 
   if (!role)
     return (

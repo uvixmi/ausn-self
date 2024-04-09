@@ -108,7 +108,8 @@ export const DownloadKudirModal = ({
   const { loaded, loading } = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
-    if (!loaded && !loading) dispatch(fetchCurrentUser())
+    if (!loaded && loading !== "succeeded" && loading !== "loading")
+      dispatch(fetchCurrentUser())
   }, [dispatch, loaded, loading])
 
   const clear = () => {
