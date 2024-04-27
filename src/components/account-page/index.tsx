@@ -9,7 +9,7 @@ import { useEffect } from "react"
 import { clearData, fetchCurrentUser } from "../authorization-page/slice"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../main-page/store"
-import Cookies from "js-cookie"
+import "./styles.scss"
 import cn from "classnames"
 import { fetchSourcesInfo } from "./client/sources/thunks"
 import { useMediaQuery } from "@react-hook/media-query"
@@ -217,7 +217,10 @@ export const AccountPage = ({
                 </div>
                 <div className={styles["left-sider-menu-inner"]}>
                   <List
-                    className={styles["left-sider-menu"]}
+                    className={cn(
+                      "left-sider-menu-custom",
+                      styles["left-sider-menu"]
+                    )}
                     dataSource={data}
                     renderItem={(item) => (
                       <List.Item
@@ -226,13 +229,9 @@ export const AccountPage = ({
                           display: "flex",
                           justifyContent: "flex-start",
                           gap: "8px",
+                          padding: 0,
                         }}
-                        className={cn(styles["item-link-item"], {
-                          [styles["item-active"]]:
-                            location.pathname === item.to,
-                        })}
                       >
-                        {item.icon}
                         <Link
                           //underline={item.title == CONTENT.HEADING_TAXES}
                           //strong={item.title == CONTENT.HEADING_TAXES}
@@ -240,8 +239,11 @@ export const AccountPage = ({
                           className={cn(styles["item-link-item"], {
                             [styles["item-active"]]:
                               location.pathname === item.to,
+                            [styles["item-hover"]]:
+                              location.pathname !== item.to,
                           })}
                         >
+                          {item.icon}
                           {item.title}
                         </Link>
                       </List.Item>

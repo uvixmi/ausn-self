@@ -217,7 +217,19 @@
   padding: 6px 8px !important;
   gap: 8px;
   border-radius: 4px;
+  width: 100%;
 
+  a {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    text-align: inherit;
+    color: inherit;
+  }
+}
+
+.item-hover {
   &:hover {
     background-color: $brand-secondary-pale !important;
     color: $brand-primary !important;
