@@ -74,7 +74,7 @@ export const AuthorizationPage = ({
                     placeholder={CONTENT.EMAIL_PLACEHOLDER}
                     value={email}
                     onChange={(event) => {
-                      setEmail(event.target.value)
+                      setEmail(event.target.value.toLowerCase())
                     }}
                   />
                 </Form.Item>
@@ -102,7 +102,7 @@ export const AuthorizationPage = ({
                     type="password"
                     value={password}
                     onChange={(event) => {
-                      setPassword(event.target.value)
+                      setPassword(event.target.value.trim())
                       setAuthError(false)
                     }}
                   />
