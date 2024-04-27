@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.16"
+    "version": "0.1.17"
   },
   "paths": {
     "/auth": {
@@ -241,36 +241,6 @@
               }
             }
           },
-          "404": {
-            "description": "Не найдено",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "По ИНН: {inn} не получены реквизиты из сервиса",
-                  "error_key": "inn_not_found"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Конфликт",
-            "content": {
-              "application/json": {
-                "example": {
-                  "possible_exceptions": [
-                    {
-                      "message": "Пользователь с ИНН {inn} уже зарегистрирован.",
-                      "error_key": "users_conflict"
-                    },
-                    {
-                      "message": "Пользователь {curr_u.email} уже имеет сохраненный ИНН в ЛК.",
-                      "error_key": "user_inn_conflict"
-                    }
-                  ]
-                }
-              }
-            }
-          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -288,17 +258,6 @@
                 "example": {
                   "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
                   "error_key": "internal_server_error"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Сервис недоступен",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Сервис заполнения по ИНН недоступен",
-                  "error_key": "inn_service_not_available"
                 }
               }
             }
@@ -340,6 +299,17 @@
               }
             }
           },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По ИНН не получены реквизиты из сервиса",
+                  "error_key": "inn_not_found"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -357,6 +327,17 @@
                 "example": {
                   "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
                   "error_key": "internal_server_error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сервис заполнения по ИНН недоступен",
+                  "error_key": "inn_service_not_available"
                 }
               }
             }
@@ -491,11 +472,12 @@
             }
           },
           "422": {
-            "description": "Validation Error",
+            "description": "Неподдерживаемый контент",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Некорректный период учетной политики: {year}",
+                  "error_key": "invalid_year"
                 }
               }
             }
@@ -631,6 +613,17 @@
               }
             }
           },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По данному пользователю не найден запрос.",
+                  "error_key": "request_not_found"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -682,12 +675,35 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "403": {
+            "description": "Запрещено",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Невозможно удалить источник в процессе добавления",
+                  "error_key": "in_progress_deletion_reject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Источник не найден.",
+                  "error_key": "source_not_found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неподдерживаемый контент",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "При удалении уже обработанного источника дата обязательна!",
+                  "error_key": "disable_source_unprocessable"
                 }
               }
             }
@@ -798,12 +814,24 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "404": {
+            "description": "Не найдено",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Не найден банк с БИК: {БИК}",
+                  "error_key": "bank_not_found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неподдерживаемый контент",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не поддерживаемый DirectLine БИК: {БИК}",
+                  "error_key": "bank_not_integrated"
                 }
               }
             }
@@ -813,8 +841,16 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
-                  "error_key": "internal_server_error"
+                  "possible_exceptions": [
+                    {
+                      "message": "Не создан счет с номером: {номер счета}",
+                      "error_key": "account_creation_error"
+                    },
+                    {
+                      "message": "Монолит: {описание ошибки}",
+                      "error_key": "direct_bank_error"
+                    }
+                  ]
                 }
               }
             }
@@ -1192,12 +1228,48 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "404": {
+            "description": "Не найдено",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Не найден банк с БИК: {БИК}",
+                  "error_key": "bank_not_found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неподдерживаемый контент",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "В выписке ТХТ не найдены номер счета и БИК",
+                      "error_key": "requisites_not_found"
+                    },
+                    {
+                      "message": "В выписке ТХТ несколько банковских счетов",
+                      "error_key": "several_numbers_found"
+                    },
+                    {
+                      "message": "В выписке TXT не определен номер счета",
+                      "error_key": "account_number_not_found"
+                    },
+                    {
+                      "message": "В выписке TXT не определен БИК",
+                      "error_key": "bik_not_found"
+                    },
+                    {
+                      "message": "В загруженной выписке не найден ИНН пользователя",
+                      "error_key": "inn_not_found"
+                    },
+                    {
+                      "message": "Загруженный файл выписки не прошел предвалидацию.",
+                      "error_key": "txt_validation_error"
+                    }
+                  ]
                 }
               }
             }
@@ -1207,8 +1279,16 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
-                  "error_key": "internal_server_error"
+                  "possible_exceptions": [
+                    {
+                      "message": "Монолит: {описание ошибки}",
+                      "error_key": "txt_error"
+                    },
+                    {
+                      "message": "Не создан счет с номером: {номер счета}",
+                      "error_key": "account_creation_error"
+                    }
+                  ]
                 }
               }
             }
@@ -1264,12 +1344,24 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "404": {
+            "description": "Не найдено",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Не найдена запись по id: {id}",
+                  "error_key": "operation_not_found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неподдерживаемый контент",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не распознан вид операции по параметру description: {вид операции}",
+                  "error_key": "invalid_operation_description"
                 }
               }
             }
@@ -1312,6 +1404,17 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Плохой запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не заполнены реквизиты ЕНП",
+                  "error_key": "enp_requisites_not_found"
+                }
               }
             }
           },
@@ -1377,6 +1480,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Operation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не найдена запись по id: {id}",
+                  "error_key": "operation_not_found"
                 }
               }
             }
@@ -1471,6 +1585,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TaxCalculationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Плохой запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не рассчитаны налоги по запрашиваемому периоду",
+                  "error_key": "taxes_not_calculated"
                 }
               }
             }
@@ -1615,10 +1740,7 @@
         },
         "responses": {
           "200": {
-            "description": "Платежное поручение в формате txt.",
-            "content": {
-              "text/plain": {}
-            }
+            "description": "Платежное поручение в формате txt."
           },
           "422": {
             "description": "Validation Error",
@@ -1626,6 +1748,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/taxes/recalculation": {
+      "put": {
+        "tags": [
+          "Taxes"
+        ],
+        "summary": "Обновление расчета налога",
+        "operationId": "recalculation_taxes_taxes_recalculation_put",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BRNOkResponse"
                 }
               }
             }
@@ -1664,6 +1823,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Плохой запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не рассчитаны налоги за ХХХХ год",
+                  "error_key": "invalid_tasks_period"
                 }
               }
             }
@@ -1811,12 +1981,32 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
+          "404": {
+            "description": "Не найдено",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                "example": {
+                  "message": "Не найден документ уведомление по номеру {report_code}",
+                  "error_key": "report_not_found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Неподдерживаемый контент",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "Некорректный статус {report_status}",
+                      "error_key": "invalid_report_status"
+                    },
+                    {
+                      "message": "В справонике не найден статус {report_status}",
+                      "error_key": "report_status_not_found"
+                    }
+                  ]
                 }
               }
             }
@@ -2080,6 +2270,17 @@
               }
             }
           },
+          "403": {
+            "description": "Запрещено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Невозможно получить информационные баннеры за промежуток времени, превышающий текущую дату на день или больше.",
+                  "error_key": "invalid_future_period"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -2132,6 +2333,17 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Пользователь уже скрыл баннер.",
+                  "error_key": "banner_already_hidden"
+                }
               }
             }
           },
@@ -2335,6 +2547,19 @@
           3
         ],
         "title": "AccountIntegrationType"
+      },
+      "BRNOkResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "BRNOkResponse"
       },
       "BankReferenceResponse": {
         "properties": {
@@ -2694,6 +2919,17 @@
             "type": "string",
             "format": "uuid",
             "title": "Request Id"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
           }
         },
         "type": "object",
@@ -2810,6 +3046,17 @@
             "type": "string",
             "format": "uuid",
             "title": "Request Id"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
           }
         },
         "type": "object",
@@ -3668,6 +3915,30 @@
             "title": "Account Number",
             "description": "Номер счета операции"
           },
+          "bank_bik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Bik",
+            "description": "БИК банка клиента, по которому прошла операция"
+          },
+          "short_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Name",
+            "description": "Сокращенное название"
+          },
           "source_id": {
             "type": "string",
             "title": "Source Id",
@@ -3728,7 +3999,14 @@
             "description": "Признак, кто выполнил разметку операции. \n1 - авторазметка БРН. 2 - разметка пользователем. 3 - разметка бухгалтером."
           },
           "doc_number": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Doc Number",
             "description": "Номер документа"
           },
@@ -3747,7 +4025,6 @@
           "category",
           "date",
           "markup_mode_code",
-          "doc_number",
           "markup"
         ],
         "title": "Operation"
@@ -4268,6 +4545,17 @@
             "format": "uuid",
             "title": "Id"
           },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
           "status": {
             "$ref": "#/components/schemas/RequestState"
           },
@@ -4281,6 +4569,17 @@
               }
             ],
             "title": "Message"
+          },
+          "message_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Key"
           },
           "link": {
             "anyOf": [
@@ -4728,6 +5027,18 @@
             "title": "Accrued Amount Now",
             "description": "Сумма “начислено всего” согласно текущему расчету"
           },
+          "accrued_amount_kv": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accrued Amount Kv",
+            "description": "Исчислен налог поквартально"
+          },
           "paid_amount": {
             "anyOf": [
               {
@@ -5012,11 +5323,17 @@
             "type": "array",
             "title": "Tasks",
             "description": "Задачи по уплате налогов. Задачи в списке упорядочены по полю due_date."
+          },
+          "is_relevant": {
+            "type": "boolean",
+            "title": "Is Relevant",
+            "description": "Актуальность расчета налогов"
           }
         },
         "type": "object",
         "required": [
-          "tasks"
+          "tasks",
+          "is_relevant"
         ],
         "title": "TaskResponse",
         "example": {

@@ -1,7 +1,7 @@
 export const CONTENT = {
   HEADING_EVENTS: "События",
   HEADING_TAXES: "Налоговая база",
-  HEADING_DATA_SOURCES: "Источник данных",
+  HEADING_DATA_SOURCES: "Источники данных",
   HEADING_BANKS: "Банки",
   HEADING_CASHIERS: "Кассы",
   HEADING_MARKETPLACES: "Маркетплейсы",
@@ -19,7 +19,7 @@ export const CONTENT = {
   BUTTON_DOWNLOAD_KUDIR: "Скачать КУДиР",
   MARKETPLACE_OZON: "Озон",
   BUTTON_ADD_PAYMENT_TEXT: "Добавить уплату",
-  BUTTON_ADD_OPERATION: "Добавить операцию",
+  BUTTON_ADD_OPERATION: "Добавить данные",
   BUTTON_ENS_TEXT: "Пополнить ЕНС",
   BUTTON_SIDER_ADD_TEXT: "Добавить",
   BUTTON_SIDER_EDIT_TEXT: "Редактировать",
@@ -64,4 +64,8 @@ export const CONTENT = {
   TOOLTIP_DATE: "Дата последней операции",
   TOOLTIP_DISABLE_DATE: "Дата отключения",
   FILTER_HEADING: "Фильтр",
+  RESET_FILTERS: "Сбросить фильтр",
+  TAXES_ERROR_HEADING: "Что-то пошло не так",
+  TAXES_ERROR_DESCRIPTION: "Мы знаем о проблеме и решаем её",
+  TITLE_COLLAPSED_SOURCES: "Скрытые источники",
 }

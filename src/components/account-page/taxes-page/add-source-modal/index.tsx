@@ -44,6 +44,8 @@ import { AppDispatch, RootState } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
 import Link from "antd/es/typography/Link"
 import { useMediaQuery } from "@react-hook/media-query"
+import { PencilIcon } from "../type-operation/icons/pencil"
+import { PencilBigIcon } from "../type-operation/icons/pencil-big"
 
 export const AddSourceModal = ({
   isOpen,
@@ -368,6 +370,23 @@ export const AddSourceModal = ({
             <Title level={3} style={{ marginTop: "0", marginBottom: "24px" }}>
               {CONTENT.TITLE_ADD_SOURCE}
             </Title>
+            <Button
+              onClick={() => {
+                setAddOperation(true)
+                setOpen(false)
+              }}
+              className={styles["button-source-item"]}
+            >
+              <PencilBigIcon />
+              <div className={styles["button-source-inner"]}>
+                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                  {CONTENT.TITLE_MANUAL_LOAD}
+                </Title>
+                <Text className={styles["text-description"]}>
+                  {CONTENT.DESCRIPTION_MANUAL_LOAD}
+                </Text>
+              </div>
+            </Button>
             <Button
               onClick={() => {
                 setButtonMode("bank_statement")

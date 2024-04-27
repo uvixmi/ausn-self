@@ -1,0 +1,57 @@
+@import "./../theme/colors.scss";
+
+.amount {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+
+  &.default {
+    color: $base-primary-dark;
+  }
+
+  &.secondary {
+    color: $base-secondary-1;
+  }
+
+  &.income {
+    color: $green-primary;
+  }
+
+  &.expense {
+    color: $red-primary;
+  }
+}
+
+.decimal {
+  &.default.opaque {
+    color: inherit;
+  }
+
+  &.default.translucent {
+    color: $base-secondary-2;
+  }
+
+  &.secondary.opaque {
+    color: inherit;
+  }
+
+  &.secondary.translucent {
+    color: $base-secondary-2;
+  }
+
+  &.income.opaque {
+    color: inherit;
+  }
+
+  &.income.translucent {
+    color: $base-secondary-2;
+  }
+
+  &.expense.opaque {
+    color: inherit;
+  }
+
+  &.expense.translucent {
+    color: $red-primary;
+  }
+}

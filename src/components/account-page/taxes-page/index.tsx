@@ -73,6 +73,9 @@ import { isErrorResponse } from "./add-source-modal/utils"
 import { useAuth } from "../../../AuthContext"
 import { clearData } from "../../authorization-page/slice"
 import { useNavigate } from "react-router-dom"
+import { ButtonOne } from "../../../ui-kit/button"
+import { Amount } from "../../../ui-kit/amount"
+import { TaxesErrorImage } from "./images/taxes-error"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -107,9 +110,11 @@ export const TaxesPage = () => {
     useState<OperationsResponse | null>(null)
 
   const [sources, setSources] = useState<SourcesInfo | undefined>(undefined)
+
   const [operationsLoaded, setOperationsLoaded] = useState(false)
   const [groupedOperationsLoaded, setGroupedOperationsLoaded] = useState(false)
-  const optionsTypesSelect = [
+
+  const initialOptionTypesSelect = [
     {
       label: (
         <div
@@ -167,6 +172,9 @@ export const TaxesPage = () => {
       value: 4,
     },
   ]
+  const [optionsTypesSelect, setOptionsTypesSelect] = useState(
+    initialOptionTypesSelect
+  )
 
   const optionsTypes = [
     {
@@ -215,10 +223,16 @@ export const TaxesPage = () => {
     },
   ]
 
-  const optionsSources =
+  const isUUID = (str: string): boolean => {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    return uuidRegex.test(str)
+  }
+
+  const inititalSources =
     sources?.sources &&
     sources.sources
-      .filter((item) => item.id && item.state !== "failed")
+      .filter((item) => item.id && item.state !== "failed" && !isUUID(item.id))
       .map((item) => {
         const subName = item.sub_name ? " *" + item.sub_name?.slice(-4) : ""
         return {
@@ -228,6 +242,8 @@ export const TaxesPage = () => {
           value: item.id,
         }
       })
+
+  const [optionsSources, setOptionsSources] = useState(inititalSources)
 
   const sourcesAutoSider =
     sources &&
@@ -246,6 +262,44 @@ export const TaxesPage = () => {
     sources &&
     sources.sources
       ?.filter((item) => !item.is_integrated && item.name !== "Ручной ввод")
+      .sort((a, b) => {
+        if (a.disable_date && !b.disable_date) {
+          return 1
+        } else if (!a.disable_date && b.disable_date) {
+          return -1
+        } else {
+          return 0
+        }
+      })
+  const sourcesAutoDisabledSider =
+    sources &&
+    sources.sources
+      ?.filter(
+        (item) =>
+          item.is_integrated &&
+          item.name !== "Ручной ввод" &&
+          item.state === "completed" &&
+          item.disable_date
+      )
+      .sort((a, b) => {
+        if (a.disable_date && !b.disable_date) {
+          return 1
+        } else if (!a.disable_date && b.disable_date) {
+          return -1
+        } else {
+          return 0
+        }
+      })
+  const sourcesHandDisabledSider =
+    sources &&
+    sources.sources
+      ?.filter(
+        (item) =>
+          !item.is_integrated &&
+          item.name !== "Ручной ввод" &&
+          item.state === "completed" &&
+          item.disable_date
+      )
       .sort((a, b) => {
         if (a.disable_date && !b.disable_date) {
           return 1
@@ -289,11 +343,17 @@ export const TaxesPage = () => {
     }
   }
 
+  useEffect(() => {
+    setOptionsSources(inititalSources)
+  }, [sources])
+
   const [pagination, setPagination] = useState({
     page_number: 1,
     row_count: 30,
     request_id: v4(),
   })
+
+  const [taxesErrorImage, setTaxesErrorImage] = useState(false)
 
   const [selectedSources, setSelectedSources] = useState<string[]>([])
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
@@ -384,6 +444,21 @@ export const TaxesPage = () => {
       setIsFetching(true)
     }
   }
+  const resetFilter = () => {
+    setPagination({
+      page_number: 1,
+      row_count: 30,
+      request_id: v4(),
+    })
+    setSelectedSources([])
+    setSelectedOperationTypes([])
+    setSelectedStartDate(null)
+    setSelectedEndDate(null)
+    setIsFetching(true)
+
+    setOptionsTypesSelect(initialOptionTypesSelect)
+    handleSourcesChange([])
+  }
 
   const fetchOperations = useCallback(async () => {
     if (isFetching) {
@@ -430,6 +505,8 @@ export const TaxesPage = () => {
         console.log(error)
         if ((error as ApiError).status === 422) {
           logout(), dispatch(clearData()), navigate("/login")
+        } else {
+          setTaxesErrorImage(true)
         }
       }
     }
@@ -528,7 +605,8 @@ export const TaxesPage = () => {
     }
   }
 
-  const isMobile = useMediaQuery("(max-width: 767px)")
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+  const isTablet = useMediaQuery("(max-width: 1279px)")
 
   const [downloadKudir, setDownloadKudir] = useState(false)
 
@@ -546,6 +624,8 @@ export const TaxesPage = () => {
             onChange={handleSourcesChange}
             mode="multiple"
             maxTagCount={1}
+            value={selectedSources}
+            allowClear
           />
           <Select
             placeholder={CONTENT.SELECT_OPERATION_TYPE}
@@ -553,15 +633,19 @@ export const TaxesPage = () => {
             style={{ borderRadius: "4px" }}
             options={optionsTypesSelect}
             onChange={handleOperationTypesChange}
+            onClear={() => setOptionsTypesSelect(initialOptionTypesSelect)}
+            value={selectedOperationTypes}
             mode="multiple"
             maxTagCount={1}
           />
           <DatePicker.RangePicker
             locale={locale}
             format={dateFormat}
+            allowClear
             placeholder={["от", "до"]}
             className={styles["datepicker-item"]}
             style={{ borderRadius: "4px" }}
+            value={[dayjs(selectedStartDate), dayjs(selectedEndDate)]}
             onChange={(dates, dateStrings) =>
               handleDateRangeChange(dateStrings)
             }
@@ -580,6 +664,211 @@ export const TaxesPage = () => {
   const closeDrawer = () => {
     setIsOpenDrawer(false)
   }
+
+  const collapsedAutoSources = [
+    {
+      key: 1,
+      label: (
+        <Text
+          className={cn(styles["hide-source-title"])}
+          style={{ marginTop: 0 }}
+        >
+          {CONTENT.TITLE_COLLAPSED_SOURCES}
+        </Text>
+      ),
+      children:
+        sourcesAutoDisabledSider &&
+        sourcesAutoDisabledSider.map((item) => (
+          <div className={styles["inputs-row"]}>
+            <Tooltip
+              title={
+                item.is_integrated === false &&
+                item.state === "completed" &&
+                !item.disable_date &&
+                (item.type === "account" || item.type === "ofd")
+                  ? CONTENT.OFF_SOURCE
+                  : item.state === "failed"
+                  ? CONTENT.DELETE_SOURCE
+                  : item.is_integrated === true &&
+                    item.state === "in_progress" &&
+                    !!item.link
+                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                  : item.is_integrated === true &&
+                    item.state === "completed" &&
+                    !item.disable_date
+                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                  : undefined
+              }
+            >
+              <Button
+                className={cn({
+                  [styles["source-delete-icon-disable"]]: item.disable_date,
+                  [styles["source-delete-icon"]]: !item.disable_date,
+                })}
+                onClick={() => {
+                  setIsDeletedSource(true)
+                  setOffSourceTitle(
+                    item.is_integrated === false &&
+                      item.state === "completed" &&
+                      (item.type === "account" || item.type === "ofd")
+                      ? CONTENT.OFF_SOURCE
+                      : item.state === "failed"
+                      ? CONTENT.DELETE_SOURCE
+                      : item.is_integrated === true &&
+                        item.state === "in_progress" &&
+                        !!item.link
+                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                      : item.is_integrated === true &&
+                        item.state === "completed"
+                      ? CONTENT.OFF_INTEGRATION_SOURCE
+                      : ""
+                  )
+                  setTypeSource(
+                    item.is_integrated === false &&
+                      item.state === "completed" &&
+                      item.type === "account"
+                      ? 1
+                      : item.is_integrated === false &&
+                        item.state === "completed" &&
+                        item.type === "ofd"
+                      ? 2
+                      : item.state === "failed"
+                      ? 3
+                      : item.is_integrated === true &&
+                        item.state === "in_progress" &&
+                        !!item.link
+                      ? 4
+                      : item.is_integrated === true &&
+                        item.state === "completed"
+                      ? 5
+                      : 0
+                  )
+                  setTypeSourceName(item.name)
+                  setAccountSource(item.sub_name || "")
+                  setOffSourceId(item.id)
+                }}
+              >
+                <DeleteSourceIcon />
+              </Button>
+            </Tooltip>
+          </div>
+        )),
+    },
+  ]
+
+  const collapsedHandSources = [
+    {
+      key: 1,
+      label: (
+        <Text
+          className={cn(styles["hide-source-title"])}
+          style={{ marginTop: 0 }}
+        >
+          {CONTENT.TITLE_COLLAPSED_SOURCES}
+        </Text>
+      ),
+      children:
+        sourcesHandDisabledSider &&
+        sourcesHandDisabledSider.map((item) => (
+          <div className={styles["list-item-hide"]}>
+            <div className={styles["left-source-name"]}>
+              {item.short_name && item.short_name !== null ? (
+                <Tooltip title={item.name}>
+                  <Text className={styles["source-text-left"]}>
+                    {item.short_name.length > 10 && isTablet
+                      ? `${item.short_name.substring(0, 10)}...`
+                      : item.short_name}
+                  </Text>
+                </Tooltip>
+              ) : (
+                <Text className={styles["source-text-left"]}>{item.name} </Text>
+              )}
+
+              <Text className={styles["source-text-right"]}>
+                {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+              </Text>
+            </div>
+            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+              <Text className={styles["date-style"]}>
+                {item.disable_date && convertReverseFormat(item.disable_date)}
+              </Text>
+            </Tooltip>
+            <Tooltip
+              title={
+                item.is_integrated === false &&
+                item.state === "completed" &&
+                !item.disable_date &&
+                (item.type === "account" || item.type === "ofd")
+                  ? CONTENT.OFF_SOURCE
+                  : item.state === "failed"
+                  ? CONTENT.DELETE_SOURCE
+                  : item.is_integrated === true &&
+                    item.state === "in_progress" &&
+                    !!item.link
+                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                  : item.is_integrated === true &&
+                    item.state === "completed" &&
+                    !item.disable_date
+                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                  : undefined
+              }
+            >
+              <Button
+                className={cn({
+                  [styles["source-delete-icon-disable"]]: item.disable_date,
+                  [styles["source-delete-icon"]]: !item.disable_date,
+                })}
+                onClick={() => {
+                  setIsDeletedSource(true)
+                  setOffSourceTitle(
+                    item.is_integrated === false &&
+                      item.state === "completed" &&
+                      (item.type === "account" || item.type === "ofd")
+                      ? CONTENT.OFF_SOURCE
+                      : item.state === "failed"
+                      ? CONTENT.DELETE_SOURCE
+                      : item.is_integrated === true &&
+                        item.state === "in_progress" &&
+                        !!item.link
+                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                      : item.is_integrated === true &&
+                        item.state === "completed"
+                      ? CONTENT.OFF_INTEGRATION_SOURCE
+                      : ""
+                  )
+                  setTypeSource(
+                    item.is_integrated === false &&
+                      item.state === "completed" &&
+                      item.type === "account"
+                      ? 1
+                      : item.is_integrated === false &&
+                        item.state === "completed" &&
+                        item.type === "ofd"
+                      ? 2
+                      : item.state === "failed"
+                      ? 3
+                      : item.is_integrated === true &&
+                        item.state === "in_progress" &&
+                        !!item.link
+                      ? 4
+                      : item.is_integrated === true &&
+                        item.state === "completed"
+                      ? 5
+                      : 0
+                  )
+                  setTypeSourceName(item.name)
+                  setAccountSource(item.sub_name || "")
+                  setOffSourceId(item.id)
+                }}
+              >
+                <DeleteSourceIcon />
+              </Button>
+            </Tooltip>
+          </div>
+        )),
+    },
+  ]
+
   return (
     <>
       {contextHolder}
@@ -599,428 +888,456 @@ export const TaxesPage = () => {
             {CONTENT.HEADING_INCOME}
           </Title>
           <div className={styles["buttons-header"]}>
-            <Button
-              className={styles["kudir-button"]}
-              onClick={() => setDownloadKudir(true)}
-            >
+            <ButtonOne type="secondary" onClick={() => setDownloadKudir(true)}>
               <DownloadOutlined className={styles["download-icon"]} />
               {CONTENT.BUTTON_DOWNLOAD_KUDIR}
-            </Button>
-            <Button
+            </ButtonOne>
+            <ButtonOne
               className={cn(styles["buttons-row-item"], styles["button-make"])}
-              onClick={() => setAddOperation(true)}
+              onClick={() => setIsAddSourceOpen(true)}
             >
               <PlusOutlined
                 className={styles["plus-icon"]}
                 style={{ marginInlineStart: "4px" }}
               />
               {CONTENT.BUTTON_ADD_OPERATION}
-            </Button>
+            </ButtonOne>
           </div>
         </div>
 
-        <div className={styles["income-table"]}>
-          {isMobile ? (
-            <Collapse
-              items={collapseItems}
-              bordered={false}
-              className="filter-collapse"
-              ghost
-              expandIconPosition="end"
-            />
-          ) : (
-            <div className={styles["income-header-wrapper"]}>
-              <Select
-                placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
-                className={styles["account-select"]}
-                options={optionsSources}
-                style={{ borderRadius: "4px" }}
-                onChange={handleSourcesChange}
-                mode="multiple"
-                maxTagCount={1}
+        {!taxesErrorImage ? (
+          <div className={styles["income-table"]}>
+            {isMobile ? (
+              <Collapse
+                items={collapseItems}
+                bordered={false}
+                className="filter-collapse"
+                ghost
+                expandIconPosition="end"
               />
-              <Select
-                placeholder={CONTENT.SELECT_OPERATION_TYPE}
-                className={styles["operation-select"]}
-                style={{ borderRadius: "4px" }}
-                options={optionsTypesSelect}
-                onChange={handleOperationTypesChange}
-                mode="multiple"
-                maxTagCount={1}
-              />
-              <DatePicker.RangePicker
-                locale={locale}
-                format={dateFormat}
-                placeholder={["от", "до"]}
-                className={styles["datepicker-item"]}
-                style={{ borderRadius: "4px" }}
-                onChange={(dates, dateStrings) =>
-                  handleDateRangeChange(dateStrings)
-                }
-              />
-            </div>
-          )}
+            ) : (
+              <div className={styles["income-header-wrapper"]}>
+                <Select
+                  placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
+                  className={styles["account-select"]}
+                  options={optionsSources}
+                  style={{ borderRadius: "4px" }}
+                  onChange={handleSourcesChange}
+                  value={selectedSources}
+                  mode="multiple"
+                  maxTagCount={1}
+                  allowClear
+                />
+                <Select
+                  placeholder={CONTENT.SELECT_OPERATION_TYPE}
+                  className={styles["operation-select"]}
+                  style={{ borderRadius: "4px" }}
+                  options={optionsTypesSelect}
+                  onChange={handleOperationTypesChange}
+                  value={selectedOperationTypes}
+                  mode="multiple"
+                  maxTagCount={1}
+                  allowClear
+                />
+                <DatePicker.RangePicker
+                  locale={locale}
+                  format={dateFormat}
+                  placeholder={["от", "до"]}
+                  className={styles["datepicker-item"]}
+                  style={{ borderRadius: "4px" }}
+                  value={[
+                    selectedStartDate !== null
+                      ? dayjs(selectedStartDate)
+                      : null,
+                    selectedEndDate !== null ? dayjs(selectedEndDate) : null,
+                  ]}
+                  allowClear
+                  onChange={(dates, dateStrings) =>
+                    handleDateRangeChange(dateStrings)
+                  }
+                />
+                <ButtonOne onClick={resetFilter}>
+                  {CONTENT.RESET_FILTERS}
+                </ButtonOne>
+              </div>
+            )}
 
-          <div className={styles["operations-table-wrapper"]}>
-            <div className={styles["operations-table-inner"]}>
-              {!isMobile && (
-                <div className={styles["table-header"]}>
-                  {columns.map((item, index) => (
-                    <div className={styles["table-header-title"]} key={index}>
-                      {item.title}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {operationsLoaded ? (
-                Object.entries(groupedOperations).length > 0 ? (
-                  Object.entries(groupedOperations).map(
-                    ([date, operations]) => (
-                      <div key={date}>
-                        <div className={styles["table-date-row"]}>
-                          {formatToPayDate(date)}
-                        </div>
-                        <div>
-                          {operations.map((operation, index) => (
-                            <>
-                              <div
-                                className={cn(styles["table-info-row"], {
-                                  [styles["hovered-row"]]:
-                                    hoveredIndex === operation.id,
-                                })}
-                                key={operation.id}
-                                onMouseEnter={() => {
-                                  setHoveredIndex(operation.id),
-                                    setHoveredAmount(operation.markup.amount)
-                                }}
-                              >
-                                <div className={styles["source-inner"]}>
-                                  <Text className={styles["source-title"]}>
-                                    {operation.counterparty_name ||
-                                      "Нет контрагента"}
-                                  </Text>
-                                  <Text className={styles["source-text"]}>
-                                    {operation.purpose || "Нет данных"}
-                                  </Text>
-                                </div>
+            <div className={styles["operations-table-wrapper"]}>
+              <div className={styles["operations-table-inner"]}>
+                {!isMobile && (
+                  <div className={styles["table-header"]}>
+                    {columns.map((item, index) => (
+                      <div className={styles["table-header-title"]} key={index}>
+                        {item.title}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {operationsLoaded ? (
+                  Object.entries(groupedOperations).length > 0 ? (
+                    Object.entries(groupedOperations).map(
+                      ([date, operations]) => (
+                        <div key={date}>
+                          <div className={styles["table-date-row"]}>
+                            {formatToPayDate(date)}
+                          </div>
+                          <div>
+                            {operations.map((operation, index) => (
+                              <>
                                 <div
-                                  className={styles["operation-type-wrapper"]}
+                                  className={cn(styles["table-info-row"], {
+                                    [styles["hovered-row"]]:
+                                      hoveredIndex === operation.id,
+                                  })}
+                                  key={operation.id}
+                                  onMouseEnter={() => {
+                                    setHoveredIndex(operation.id),
+                                      setHoveredAmount(operation.markup.amount)
+                                  }}
                                 >
-                                  <div
-                                    className={styles["operation-type-inner"]}
-                                  >
-                                    <Select
-                                      options={
-                                        operation.category === "debet"
-                                          ? optionsTypes.filter(
-                                              (item) =>
-                                                item.value !== 3 &&
-                                                item.value !== 4
-                                            )
-                                          : operation.category === "credit"
-                                          ? optionsTypes.filter(
-                                              (item) => item.value !== 1
-                                            )
-                                          : optionsTypes
-                                      }
-                                      defaultValue={
-                                        operation.markup.operation_type
-                                      }
-                                      dropdownStyle={{
-                                        width: "max-content",
-                                      }}
-                                      className={cn(
-                                        "type-item-select",
-                                        styles["type-select-inner"]
-                                      )}
-                                      onChange={(value) => {
-                                        handleChangeMarkup(value)
-                                      }}
-                                    />
-
-                                    {(operation.markup_mode_code === 2 ||
-                                      operation.markup_mode_code === 3) && (
-                                      <PencilIcon />
-                                    )}
+                                  <div className={styles["source-inner"]}>
+                                    <Text className={styles["source-title"]}>
+                                      {operation.counterparty_name ||
+                                        "Нет контрагента"}
+                                    </Text>
+                                    <Text className={styles["source-text"]}>
+                                      {operation.purpose || "Нет данных"}
+                                    </Text>
                                   </div>
-                                </div>
-                                <div className={styles["amount-inner"]}>
                                   <div
-                                    className={cn(styles["amount-part"], {
-                                      [styles["amount-part-hovered"]]:
-                                        hoveredIndex === operation.id,
-                                    })}
+                                    className={styles["operation-type-wrapper"]}
                                   >
-                                    <Text className={styles["currency-income"]}>
-                                      {operation.markup.amount > 0
-                                        ? getCurrency(
-                                            operation.markup.amount,
-                                            operation.category
-                                          )
-                                        : getCurrency(
+                                    <div
+                                      className={styles["operation-type-inner"]}
+                                    >
+                                      <Select
+                                        options={
+                                          operation.category === "debet"
+                                            ? optionsTypes.filter(
+                                                (item) =>
+                                                  item.value !== 3 &&
+                                                  item.value !== 4
+                                              )
+                                            : operation.category === "credit"
+                                            ? optionsTypes.filter(
+                                                (item) => item.value !== 1
+                                              )
+                                            : optionsTypes
+                                        }
+                                        defaultValue={
+                                          operation.markup.operation_type
+                                        }
+                                        dropdownStyle={{
+                                          width: "max-content",
+                                        }}
+                                        className={cn(
+                                          "type-item-select",
+                                          styles["type-select-inner"]
+                                        )}
+                                        onChange={(value) => {
+                                          handleChangeMarkup(value)
+                                        }}
+                                      />
+
+                                      {(operation.markup_mode_code === 2 ||
+                                        operation.markup_mode_code === 3) && (
+                                        <PencilIcon />
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className={styles["amount-inner"]}>
+                                    <div
+                                      className={cn(styles["amount-part"], {
+                                        [styles["amount-part-hovered"]]:
+                                          hoveredIndex === operation.id,
+                                      })}
+                                    >
+                                      <Text
+                                        className={styles["currency-income"]}
+                                      >
+                                        {operation.markup.amount >= 0 ? (
+                                          <Amount
+                                            prefix={
+                                              operation.category === "debet"
+                                                ? "plus"
+                                                : "minus"
+                                            }
+                                            currency="RUB"
+                                            value={operation.markup.amount}
+                                            className={styles["amount-nowrap"]}
+                                          />
+                                        ) : (
+                                          getCurrency(
                                             operation.amount_doc,
                                             operation.category
-                                          )}
-                                    </Text>
-                                    <Text
-                                      className={styles["source-account-text"]}
-                                    >
-                                      {getSourceText(
-                                        operation.source_name,
-                                        operation.account_number,
-                                        sources?.sources?.find(
-                                          (source) =>
-                                            source.id === operation.source_id
-                                        )
-                                          ? sources?.sources?.find(
-                                              (source) =>
-                                                source.id ===
-                                                operation.source_id
-                                            )?.short_name
-                                          : undefined
-                                      )}
-                                    </Text>
+                                          )
+                                        )}
+                                      </Text>
+                                      <Text
+                                        className={
+                                          styles["source-account-text"]
+                                        }
+                                      >
+                                        {getSourceText(
+                                          operation.source_name,
+                                          operation.account_number,
+                                          operation.short_name
+                                        )}
+                                      </Text>
+                                    </div>
+                                    {
+                                      <ButtonOne
+                                        className={styles["delete-icon"]}
+                                        type="danger"
+                                        onClick={() =>
+                                          setIsDeleteModalOpen(true)
+                                        }
+                                      >
+                                        <DeleteOutlined />
+                                      </ButtonOne>
+                                    }
                                   </div>
-                                  {
-                                    <Button
-                                      className={styles["delete-icon"]}
-                                      onClick={() => setIsDeleteModalOpen(true)}
-                                    >
-                                      <DeleteOutlined />
-                                    </Button>
-                                  }
                                 </div>
-                              </div>
-                              {isMobile && (
-                                <div className={styles["divider"]}></div>
-                              )}
-                            </>
-                          ))}
+                                {isMobile && (
+                                  <div className={styles["divider"]}></div>
+                                )}
+                              </>
+                            ))}
+                          </div>
                         </div>
+                      )
+                    )
+                  ) : (
+                    groupedOperationsLoaded && (
+                      <div className={styles["non-taxes"]}>
+                        <NonTaxesImage />
+                        <div className={styles["non-wrapper"]}>
+                          <Text className={styles["non-text"]}>
+                            {CONTENT.TEXT_NON_TAXES}
+                          </Text>
+                        </div>
+                        <Button
+                          className={styles["non-source-button"]}
+                          onClick={() => setIsAddSourceOpen(true)}
+                        >
+                          <PlusOutlined
+                            className={styles["plus-non-icon"]}
+                            style={{ marginInlineStart: "4px" }}
+                          />
+                          {CONTENT.BUTTON_ADD_SOURCE_NON}
+                        </Button>
                       </div>
                     )
                   )
-                ) : (
-                  groupedOperationsLoaded && (
-                    <div className={styles["non-taxes"]}>
-                      <NonTaxesImage />
-                      <div className={styles["non-wrapper"]}>
-                        <Text className={styles["non-text"]}>
-                          {CONTENT.TEXT_NON_TAXES}
-                        </Text>
-                      </div>
-                      <Button
-                        className={styles["non-source-button"]}
-                        onClick={() => setIsAddSourceOpen(true)}
-                      >
-                        <PlusOutlined
-                          className={styles["plus-non-icon"]}
-                          style={{ marginInlineStart: "4px" }}
+                ) : !isMobile ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "20px",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ width: "50%" }}>
+                        <Skeleton
+                          paragraph={{
+                            rows: 2,
+                          }}
+                          active
                         />
-                        {CONTENT.BUTTON_ADD_SOURCE_NON}
-                      </Button>
+                      </div>
+                      <div style={{}}>
+                        <Skeleton.Input active />
+                      </div>
+                      <div style={{ width: "20%" }}>
+                        <Skeleton
+                          title={false}
+                          style={{ display: "flex", alignItems: "flex-end" }}
+                          paragraph={{
+                            rows: 2,
+                            width: [140, 140],
+                          }}
+                          active
+                        />
+                      </div>
                     </div>
-                  )
-                )
-              ) : !isMobile ? (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "20px",
-                    width: "100%",
-                  }}
-                >
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ width: "50%" }}>
+                        <Skeleton
+                          paragraph={{
+                            rows: 2,
+                          }}
+                          active
+                        />
+                      </div>
+                      <div style={{}}>
+                        <Skeleton.Input active />
+                      </div>
+                      <div style={{ width: "20%" }}>
+                        <Skeleton
+                          title={false}
+                          style={{ display: "flex", alignItems: "flex-end" }}
+                          paragraph={{
+                            rows: 2,
+                            width: [140, 140],
+                          }}
+                          active
+                        />
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ width: "50%" }}>
+                        <Skeleton
+                          paragraph={{
+                            rows: 2,
+                          }}
+                          active
+                        />
+                      </div>
+                      <div style={{}}>
+                        <Skeleton.Input active />
+                      </div>
+                      <div style={{ width: "20%" }}>
+                        <Skeleton
+                          title={false}
+                          style={{ display: "flex", alignItems: "flex-end" }}
+                          paragraph={{
+                            rows: 2,
+                            width: [140, 140],
+                          }}
+                          active
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
                   <div
                     style={{
-                      width: "100%",
                       display: "flex",
-                      alignItems: "center",
+                      flexDirection: "column",
                       gap: "20px",
-                      justifyContent: "space-between",
+                      width: "100%",
                     }}
                   >
-                    <div style={{ width: "50%" }}>
+                    <div style={{ width: "100%" }}>
                       <Skeleton
                         paragraph={{
                           rows: 2,
+                          width: [200, 200],
                         }}
                         active
                       />
                     </div>
-                    <div style={{}}>
+                    <div style={{ width: "100%" }}>
                       <Skeleton.Input active />
                     </div>
-                    <div style={{ width: "20%" }}>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Skeleton
                         title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
                         paragraph={{
                           rows: 2,
                           width: [140, 140],
                         }}
                         active
                       />
+                      <Skeleton.Avatar shape="square" />
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
+                    <div className={styles["divider"]}></div>
+                    <div style={{ width: "100%" }}>
                       <Skeleton
                         paragraph={{
                           rows: 2,
+                          width: [200, 200],
                         }}
                         active
                       />
                     </div>
-                    <div style={{}}>
+                    <div style={{ width: "100%" }}>
                       <Skeleton.Input active />
                     </div>
-                    <div style={{ width: "20%" }}>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Skeleton
                         title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
                         paragraph={{
                           rows: 2,
                           width: [140, 140],
                         }}
                         active
                       />
+                      <Skeleton.Avatar shape="square" />
                     </div>
                   </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "20px",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ width: "50%" }}>
-                      <Skeleton
-                        paragraph={{
-                          rows: 2,
-                        }}
-                        active
-                      />
-                    </div>
-                    <div style={{}}>
-                      <Skeleton.Input active />
-                    </div>
-                    <div style={{ width: "20%" }}>
-                      <Skeleton
-                        title={false}
-                        style={{ display: "flex", alignItems: "flex-end" }}
-                        paragraph={{
-                          rows: 2,
-                          width: [140, 140],
-                        }}
-                        active
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "20px",
-                    width: "100%",
-                  }}
-                >
-                  <div style={{ width: "100%" }}>
-                    <Skeleton
-                      paragraph={{
-                        rows: 2,
-                        width: [200, 200],
-                      }}
-                      active
-                    />
-                  </div>
-                  <div style={{ width: "100%" }}>
-                    <Skeleton.Input active />
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Skeleton
-                      title={false}
-                      paragraph={{
-                        rows: 2,
-                        width: [140, 140],
-                      }}
-                      active
-                    />
-                    <Skeleton.Avatar shape="square" />
-                  </div>
-                  <div className={styles["divider"]}></div>
-                  <div style={{ width: "100%" }}>
-                    <Skeleton
-                      paragraph={{
-                        rows: 2,
-                        width: [200, 200],
-                      }}
-                      active
-                    />
-                  </div>
-                  <div style={{ width: "100%" }}>
-                    <Skeleton.Input active />
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Skeleton
-                      title={false}
-                      paragraph={{
-                        rows: 2,
-                        width: [140, 140],
-                      }}
-                      active
-                    />
-                    <Skeleton.Avatar shape="square" />
-                  </div>
-                </div>
-              )}
-              <div ref={bottomBlockRef} style={{ height: "1px" }} />
+                )}
+                <div ref={bottomBlockRef} style={{ height: "1px" }} />
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className={styles["taxes-error-block"]}>
+            <TaxesErrorImage />
+            <Text className={styles["taxes-error-title"]}>
+              {CONTENT.TAXES_ERROR_HEADING}
+            </Text>
+            <Text className={styles["non-text"]}>
+              {CONTENT.TAXES_ERROR_DESCRIPTION}
+            </Text>
+          </div>
+        )}
       </Content>
       {!isMobile && (
         <Sider
           className={styles["right-sider-wrapper"]}
-          width={340}
           breakpoint="lg"
           collapsedWidth="0"
         >
           <Title level={3}>
             {CONTENT.HEADING_DATA_SOURCES}{" "}
             <Button
-              onClick={() => dispatch(fetchSourcesInfo())}
+              onClick={() => fetchSourcesHand()}
               className={styles["refresh-sources"]}
             >
               <ArrowCounterIcon />
             </Button>
           </Title>
 
-          <div className={styles["sider-buttons"]}>
+          {/*<div className={styles["sider-buttons"]}>
             <Button
               className={styles["default-button"]}
               onClick={() => setIsAddSourceOpen(true)}
@@ -1031,7 +1348,7 @@ export const TaxesPage = () => {
               />
               {CONTENT.BUTTON_SIDER_ADD_TEXT}
             </Button>
-          </div>
+          </div>*/}
           {sourcesHandSider && sourcesHandSider.length > 0 && (
             <>
               <Title level={4}>
@@ -1093,7 +1410,9 @@ export const TaxesPage = () => {
                       {item.short_name && item.short_name !== null ? (
                         <Tooltip title={item.name}>
                           <Text className={styles["source-text-left"]}>
-                            {item.short_name}{" "}
+                            {item.short_name.length > 10 && isTablet
+                              ? `${item.short_name.substring(0, 10)}...`
+                              : item.short_name}
                           </Text>
                         </Tooltip>
                       ) : (
@@ -1116,14 +1435,14 @@ export const TaxesPage = () => {
                       >
                         {item.state === "completed" && !item.disable_date ? (
                           <Tooltip title={CONTENT.TOOLTIP_DATE}>
-                            <Text>
+                            <Text className={styles["date-style"]}>
                               {item.last_info &&
                                 convertReverseFormat(item.last_info)}
                             </Text>
                           </Tooltip>
                         ) : item.state === "completed" && item.disable_date ? (
                           <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                            <Text>
+                            <Text className={styles["date-style"]}>
                               {convertReverseFormat(item.disable_date)}
                             </Text>
                           </Tooltip>
@@ -1228,6 +1547,15 @@ export const TaxesPage = () => {
               />
             </>
           )}
+          {sourcesHandDisabledSider && sourcesHandDisabledSider.length > 0 && (
+            <Collapse
+              items={collapsedHandSources}
+              bordered={false}
+              className="hide-sources payment-collapse"
+              ghost
+              expandIconPosition="right"
+            />
+          )}
           {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
             <>
               <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
@@ -1266,8 +1594,9 @@ export const TaxesPage = () => {
                       {item.short_name && item.short_name !== null ? (
                         <Tooltip title={item.name}>
                           <Text className={styles["source-text-left"]}>
-                            {item.short_name}
-                            {"..."}
+                            {item.short_name.length > 10 && isTablet
+                              ? `${item.short_name.substring(0, 10)}...`
+                              : item.short_name}
                           </Text>
                         </Tooltip>
                       ) : (
@@ -1396,6 +1725,15 @@ export const TaxesPage = () => {
               />
             </>
           )}
+          {sourcesAutoDisabledSider && sourcesAutoDisabledSider.length > 0 && (
+            <Collapse
+              items={collapsedAutoSources}
+              bordered={false}
+              className="hide-sources payment-collapse"
+              ghost
+              expandIconPosition="right"
+            />
+          )}
         </Sider>
       )}
       {isMobile && (
@@ -1416,7 +1754,7 @@ export const TaxesPage = () => {
               </Button>
             </Title>
 
-            <div className={styles["sider-buttons"]}>
+            {/*<div className={styles["sider-buttons"]}>
               <Button
                 className={styles["default-button"]}
                 onClick={() => setIsAddSourceOpen(true)}
@@ -1427,7 +1765,7 @@ export const TaxesPage = () => {
                 />
                 {CONTENT.BUTTON_SIDER_ADD_TEXT}
               </Button>
-            </div>
+      </div>*/}
             {sourcesHandSider && sourcesHandSider.length > 0 && (
               <>
                 <Title level={4}>
@@ -1492,7 +1830,9 @@ export const TaxesPage = () => {
                         {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
-                              {item.short_name}{" "}
+                              {item.short_name.length > 10 && isTablet
+                                ? `${item.short_name.substring(0, 10)}...`
+                                : item.short_name}
                             </Text>
                           </Tooltip>
                         ) : (
@@ -1515,7 +1855,7 @@ export const TaxesPage = () => {
                         >
                           {item.state === "completed" && !item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
-                              <Text>
+                              <Text className={styles["date-style"]}>
                                 {item.last_info &&
                                   convertReverseFormat(item.last_info)}
                               </Text>
@@ -1523,7 +1863,7 @@ export const TaxesPage = () => {
                           ) : item.state === "completed" &&
                             item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                              <Text>
+                              <Text className={styles["date-style"]}>
                                 {convertReverseFormat(item.disable_date)}
                               </Text>
                             </Tooltip>
@@ -1668,7 +2008,9 @@ export const TaxesPage = () => {
                         {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
-                              {item.short_name}{" "}
+                              {item.short_name.length > 10 && isTablet
+                                ? `${item.short_name.substring(0, 10)}...`
+                                : item.short_name}
                             </Text>
                           </Tooltip>
                         ) : (
@@ -1690,7 +2032,7 @@ export const TaxesPage = () => {
                         >
                           {item.state === "completed" && !item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
-                              <Text>
+                              <Text className={styles["date-style"]}>
                                 {item.last_info &&
                                   convertReverseFormat(item.last_info)}
                               </Text>
@@ -1698,7 +2040,7 @@ export const TaxesPage = () => {
                           ) : item.state === "completed" &&
                             item.disable_date ? (
                             <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                              <Text>
+                              <Text className={styles["date-style"]}>
                                 {convertReverseFormat(item.disable_date)}
                               </Text>
                             </Tooltip>

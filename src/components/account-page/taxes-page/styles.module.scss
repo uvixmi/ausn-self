@@ -1,3 +1,4 @@
+@import "../../../ui-kit/theme/colors.scss";
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -32,7 +33,17 @@ $xxl: 2560px;
 .right-sider-wrapper {
   background-color: #fff;
   border-left: 1px solid #d9d9d9;
-  padding: 20px 24px;
+  padding: 20px 16px;
+  max-width: 270px !important;
+  width: 270px !important;
+  min-width: 270px !important;
+
+  @media screen and (min-width: $m) {
+    width: 340px;
+    max-width: 340px !important;
+    min-width: 340px !important;
+    padding: 20px 24px;
+  }
 }
 
 .heading-text {
@@ -49,7 +60,7 @@ $xxl: 2560px;
   gap: 8px;
   padding: 14px 14px 66px;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $m) {
     margin: 35px 40px 0px 240px;
     padding: 0;
     gap: 24px;
@@ -236,7 +247,7 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     flex-direction: row;
   }
 }
@@ -266,6 +277,14 @@ $xxl: 2560px;
 .list-item-right {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.list-item-hide {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
 }
 
 .table-header {
@@ -321,6 +340,7 @@ $xxl: 2560px;
   @media screen and (min-width: $tablet) {
     flex-direction: row;
   }
+  border-bottom: 1px solid $base-secondary-pale;
 }
 
 .source-inner {
@@ -330,6 +350,10 @@ $xxl: 2560px;
   align-items: flex-start;
 
   @media screen and (min-width: $tablet) {
+    width: 262px;
+  }
+
+  @media screen and (min-width: $m) {
     width: 48%;
   }
 }
@@ -444,7 +468,7 @@ $xxl: 2560px;
   justify-content: space-between;
   @media screen and (min-width: $tablet) {
     flex-direction: column;
-    width: 24%;
+    flex-grow: 1;
     padding: 13px 8px;
     align-items: flex-end;
     justify-content: center;
@@ -467,16 +491,13 @@ $xxl: 2560px;
 
 .delete-icon {
   cursor: pointer;
-  border: none;
-  background: #6159ff;
-  color: #fff;
+  padding: 10px !important;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     position: absolute;
     opacity: 0;
     top: 50%;
     background: #fff;
-    color: #6159ff;
     right: -40px;
     transform: translateY(-50%);
     transition:
@@ -527,6 +548,7 @@ $xxl: 2560px;
 }
 
 .non-text {
+  font-family: "Inter";
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
@@ -564,27 +586,21 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
   }
 }
 
-.button-make {
-  border: 1px solid #6159ff;
-  background-color: #6159ff;
-  color: #ffffff;
-  border-radius: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .left-source-name {
   display: flex;
-  gap: 10px;
+  gap: 4px;
   align-items: center;
+
+  @media screen and (min-width: $m) {
+    gap: 10px;
+  }
 }
 
 .sider-icon {
@@ -623,6 +639,16 @@ $xxl: 2560px;
   align-items: flex-end;
   min-width: 60px;
   min-height: 24px;
+  justify-content: center;
+}
+
+.date-style {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: $base-secondary-1;
 }
 
 .source-date-part-disable {
@@ -652,7 +678,7 @@ $xxl: 2560px;
 .source-delete-icon-disable {
   position: absolute;
   top: 60%;
-  left: -30px;
+  left: -20px;
   cursor: initial;
   transform: translateY(-50%);
   border: none;
@@ -702,4 +728,36 @@ $xxl: 2560px;
 
 .drawer-wrapper {
   background-color: #fff;
+}
+
+.taxes-error-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  gap: 8px;
+
+  @media screen and (min-width: $tablet) {
+    padding-top: 200px;
+  }
+}
+
+.taxes-error-title {
+  font-family: "Inter";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-align: left;
+  color: #141414;
+  margin-top: 28px;
+}
+
+.hide-source-title {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: #8c8c8c;
 }

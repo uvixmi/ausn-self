@@ -58,6 +58,11 @@ $xxl: 2560px;
   }
 }
 
+.operation-type-inner {
+  display: flex;
+  flex-direction: column;
+}
+
 .inputs-row {
   display: flex;
   flex-direction: column;

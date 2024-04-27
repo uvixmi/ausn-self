@@ -225,125 +225,7 @@ export const AddOperationModal = ({
                   {CONTENT.OPERATION_DESCRIPTION_SECOND_LINE}
                 </Text>
               </div>
-              <div className={styles["input-item"]}>
-                <Text
-                  className={cn(
-                    styles["text-description"],
-                    styles["default-text"]
-                  )}
-                >
-                  {CONTENT.SELECT_INCOME_TITLE}{" "}
-                  <Text className={styles["necessary"]}>
-                    {CONTENT.NECESSARY}
-                  </Text>
-                </Text>
-                <Select
-                  className={"modal-select"}
-                  style={{ borderRadius: "4px", marginBottom: "24px" }}
-                  value={income}
-                  options={options}
-                  onChange={(value) => setIncome(value)}
-                  placeholder={CONTENT.SELECT_INCOME_PLACEHOLDER}
-                />
-              </div>
-              <div className={styles["input-item"]}>
-                <Text
-                  className={cn(
-                    styles["text-description"],
-                    styles["default-text"]
-                  )}
-                >
-                  {CONTENT.INPUT_COUNTERPARTY_TITLE}
-                  <Text className={styles["necessary"]}>
-                    {CONTENT.NECESSARY}
-                  </Text>{" "}
-                  <Tooltip title={CONTENT.TOOLTIP_TEXT}>
-                    <InfoCircleOutlined
-                      style={{ color: "#8C8C8C" }}
-                      size={14}
-                    />
-                  </Tooltip>
-                </Text>
-                <Form.Item
-                  className={styles["form-inn"]}
-                  validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                  help={
-                    counterpartyError ? (
-                      <div>
-                        <Text className={styles["error-text"]}>
-                          {CONTENT.INPUT_ERROR_HINT}
-                        </Text>
-                      </div>
-                    ) : (
-                      ""
-                    )
-                  }
-                >
-                  <Input
-                    placeholder={CONTENT.INPUT_PLACEHOLDER}
-                    style={{ borderRadius: "4px" }}
-                    value={counterparty}
-                    disabled={income === 4}
-                    onChange={(event) => {
-                      setCounterparty(event.target.value)
-                      if (
-                        event.target.value !== "" &&
-                        event.target.value.length > 0 &&
-                        event.target.value.length < 256
-                      )
-                        setCounterpartyError(false)
-                      else setCounterpartyError(true)
-                    }}
-                  />
-                </Form.Item>
-              </div>
-              <div className={styles["input-item"]}>
-                <Text
-                  className={cn(
-                    styles["text-description"],
-                    styles["default-text"]
-                  )}
-                >
-                  {CONTENT.INPUT_DIRECT_TITLE}{" "}
-                  <Text className={styles["necessary"]}>
-                    {CONTENT.NECESSARY}
-                  </Text>
-                </Text>
-                <Form.Item
-                  className={styles["form-inn"]}
-                  validateStatus={purposeError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                  help={
-                    purposeError ? (
-                      <div>
-                        <Text className={styles["error-text"]}>
-                          {CONTENT.INPUT_ERROR_HINT}
-                        </Text>
-                      </div>
-                    ) : (
-                      ""
-                    )
-                  }
-                >
-                  <Input
-                    placeholder={CONTENT.INPUT_PLACEHOLDER}
-                    style={{ borderRadius: "4px" }}
-                    value={direct}
-                    disabled={income === 4}
-                    onChange={(event) => {
-                      setDirect(event.target.value)
-
-                      if (
-                        event.target.value !== "" &&
-                        event.target.value.length > 0 &&
-                        event.target.value.length < 256
-                      )
-                        setPurposeError(false)
-                      else setPurposeError(true)
-                    }}
-                  />
-                </Form.Item>
-              </div>
-              <div className={styles["inputs-row"]}>
+              <div className={styles["operation-type-inner"]}>
                 <div className={styles["input-item"]}>
                   <Text
                     className={cn(
@@ -351,35 +233,19 @@ export const AddOperationModal = ({
                       styles["default-text"]
                     )}
                   >
-                    {CONTENT.INPUT_AMOUNT_TITLE}
+                    {CONTENT.SELECT_INCOME_TITLE}{" "}
                     <Text className={styles["necessary"]}>
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={amountError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      amountError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {amountInput === "0"
-                              ? CONTENT.INPUT_FAULT_HINT
-                              : CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <Input
-                      placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      style={{ borderRadius: "4px" }}
-                      value={amountInput}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
+                  <Select
+                    className={"modal-select"}
+                    style={{ borderRadius: "4px", marginBottom: "24px" }}
+                    value={income}
+                    options={options}
+                    onChange={(value) => setIncome(value)}
+                    placeholder={CONTENT.SELECT_INCOME_PLACEHOLDER}
+                  />
                 </div>
                 <div className={styles["input-item"]}>
                   <Text
@@ -388,16 +254,22 @@ export const AddOperationModal = ({
                       styles["default-text"]
                     )}
                   >
-                    {CONTENT.DATEPICKER_TITLE}{" "}
+                    {CONTENT.INPUT_COUNTERPARTY_TITLE}
                     <Text className={styles["necessary"]}>
                       {CONTENT.NECESSARY}
-                    </Text>
+                    </Text>{" "}
+                    <Tooltip title={CONTENT.TOOLTIP_TEXT}>
+                      <InfoCircleOutlined
+                        style={{ color: "#8C8C8C" }}
+                        size={14}
+                      />
+                    </Tooltip>
                   </Text>
                   <Form.Item
                     className={styles["form-inn"]}
-                    validateStatus={dateError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                     help={
-                      dateError ? (
+                      counterpartyError ? (
                         <div>
                           <Text className={styles["error-text"]}>
                             {CONTENT.INPUT_ERROR_HINT}
@@ -408,59 +280,191 @@ export const AddOperationModal = ({
                       )
                     }
                   >
-                    <DatePicker
-                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                      style={{ borderRadius: "4px", height: "32px" }}
-                      className={styles["datepicker-style"]}
-                      locale={locale}
-                      maxDate={dayjs(formatDateString(), dateFormat)}
-                      format={dateFormat}
-                      value={
-                        dateOperation ? dayjs(dateOperation, dateFormat) : null
-                      }
-                      onChange={(value, dateString) => {
-                        typeof dateString === "string" &&
-                          setDateOperation(dateString)
-                        if (dateString === "") setDateError(true)
-                        else setDateError(false)
+                    <Input
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      style={{ borderRadius: "4px" }}
+                      value={counterparty}
+                      disabled={income === 4}
+                      onChange={(event) => {
+                        setCounterparty(event.target.value)
+                        if (
+                          event.target.value !== "" &&
+                          event.target.value.length > 0 &&
+                          event.target.value.length < 256
+                        )
+                          setCounterpartyError(false)
+                        else setCounterpartyError(true)
                       }}
                     />
                   </Form.Item>
                 </div>
-              </div>
-              <div className={styles["input-item"]}>
-                <Text
-                  className={cn(
-                    styles["text-description"],
-                    styles["default-text"]
-                  )}
-                >
-                  {CONTENT.INPUT_DOCUMENT_TITLE}
-                </Text>
-                <Form.Item
-                  className={styles["form-inner"]}
-                  help={
-                    <div>
-                      <Text className={styles["hint-text"]}>
-                        {CONTENT.INPUT_DOCUMENT_HINT}
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.INPUT_DIRECT_TITLE}{" "}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={purposeError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      purposeError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <Input
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      style={{ borderRadius: "4px" }}
+                      value={direct}
+                      disabled={income === 4}
+                      onChange={(event) => {
+                        setDirect(event.target.value)
+
+                        if (
+                          event.target.value !== "" &&
+                          event.target.value.length > 0 &&
+                          event.target.value.length < 256
+                        )
+                          setPurposeError(false)
+                        else setPurposeError(true)
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+                <div className={styles["inputs-row"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.INPUT_AMOUNT_TITLE}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
                       </Text>
-                    </div>
-                  }
-                >
-                  <Input
-                    placeholder={CONTENT.INPUT_PLACEHOLDER}
-                    style={{ borderRadius: "4px" }}
-                    value={document}
-                    maxLength={20}
-                    onChange={(event) => {
-                      const inputValue = event.target.value
-                      const regex = /^[a-zA-Zа-яА-Я0-9/.-]*$/
-                      if (regex.test(inputValue) && inputValue.length <= 20) {
-                        setDocument(inputValue)
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={amountError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        amountError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {amountInput === "0"
+                                ? CONTENT.INPUT_FAULT_HINT
+                                : CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
                       }
-                    }}
-                  />
-                </Form.Item>
+                    >
+                      <Input
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        style={{ borderRadius: "4px" }}
+                        value={amountInput}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.DATEPICKER_TITLE}{" "}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={dateError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        dateError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <DatePicker
+                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                        style={{ borderRadius: "4px", height: "32px" }}
+                        className={styles["datepicker-style"]}
+                        locale={locale}
+                        maxDate={dayjs(formatDateString(), dateFormat)}
+                        format={dateFormat}
+                        value={
+                          dateOperation
+                            ? dayjs(dateOperation, dateFormat)
+                            : null
+                        }
+                        onChange={(value, dateString) => {
+                          typeof dateString === "string" &&
+                            setDateOperation(dateString)
+                          if (dateString === "") setDateError(true)
+                          else setDateError(false)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.INPUT_DOCUMENT_TITLE}
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inner"]}
+                    help={
+                      <div>
+                        <Text className={styles["hint-text"]}>
+                          {CONTENT.INPUT_DOCUMENT_HINT}
+                        </Text>
+                      </div>
+                    }
+                  >
+                    <Input
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      style={{ borderRadius: "4px" }}
+                      value={document}
+                      maxLength={20}
+                      onChange={(event) => {
+                        const inputValue = event.target.value
+                        const regex = /^[a-zA-Zа-яА-Я0-9/.-]*$/
+                        if (regex.test(inputValue) && inputValue.length <= 20) {
+                          setDocument(inputValue)
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                </div>
               </div>
             </div>
             <div className={styles["footer-button"]}>

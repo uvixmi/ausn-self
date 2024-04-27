@@ -14,6 +14,8 @@ import Cookies from "js-cookie"
 import { useAuth } from "../../AuthContext"
 import { isErrorResponse } from "./utils"
 import { jwtDecode } from "jwt-decode"
+import { ButtonOne } from "../../ui-kit/button"
+import { InputOne } from "../../ui-kit/input"
 
 const { Title, Text } = Typography
 

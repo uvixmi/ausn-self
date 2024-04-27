@@ -4,6 +4,8 @@ export const CONTENT = {
   DESCRIPTION_BANK_STATEMENT: "Загрузить выписку в формате\u00A01С\u00A0(.txt)",
   TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
+  TITLE_MANUAL_LOAD: "Ручная загрузка операции",
+  DESCRIPTION_MANUAL_LOAD: "Добавить операцию не отраженную в списке",
   DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка, Хайс",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
@@ -95,4 +97,4 @@ export const CONTENT = {
   LINK_INSTRUCTIONS: " Инструкция →",
   INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
   INPUT_PLACEHOLDER: "Введите",
-}
+} as const

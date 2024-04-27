@@ -44,12 +44,6 @@ export enum AccountIntegrationType {
   Value3 = 3,
 }
 
-/** BRNOkResponse */
-export interface BRNOkResponse {
-  /** Status */
-  status: string
-}
-
 /** BankReferenceResponse */
 export interface BankReferenceResponse {
   /**
@@ -188,8 +182,6 @@ export interface CreateAccountResponse {
    * @format uuid
    */
   request_id: string
-  /** Source Id */
-  source_id?: string | null
 }
 
 /** CreateMarketplaceRequest */
@@ -247,8 +239,6 @@ export interface CreateSourceResponse {
    * @format uuid
    */
   request_id: string
-  /** Source Id */
-  source_id?: string | null
 }
 
 /** CreateTaxPaymentOperation */
@@ -759,16 +749,6 @@ export interface Operation {
    */
   account_number?: string | null
   /**
-   * Bank Bik
-   * БИК банка клиента, по которому прошла операция
-   */
-  bank_bik?: string | null
-  /**
-   * Short Name
-   * Сокращенное название
-   */
-  short_name?: string | null
-  /**
    * Source Id
    * ID источника, по которому у клиента прошла операция
    */
@@ -815,7 +795,7 @@ export interface Operation {
    * Doc Number
    * Номер документа
    */
-  doc_number?: string | null
+  doc_number: string
   markup: OperationMarkup
 }
 
@@ -1163,13 +1143,9 @@ export interface ResultInfo {
    * @format uuid
    */
   id: string
-  /** Source Id */
-  source_id?: string | null
   status: RequestState
   /** Message */
   message?: string | null
-  /** Message Key */
-  message_key?: string | null
   /** Link */
   link?: string | null
 }
@@ -1357,11 +1333,6 @@ export interface TaskInfo {
    */
   accrued_amount_now?: number | null
   /**
-   * Accrued Amount Kv
-   * Исчислен налог поквартально
-   */
-  accrued_amount_kv?: number | null
-  /**
    * Paid Amount
    * Сумма “уплачено ранее” по данной задаче
    */
@@ -1459,11 +1430,6 @@ export interface TaskResponse {
    * Задачи по уплате налогов. Задачи в списке упорядочены по полю due_date.
    */
   tasks: TaskInfo[]
-  /**
-   * Is Relevant
-   * Актуальность расчета налогов
-   */
-  is_relevant: boolean
 }
 
 /** TaskType */
@@ -2041,7 +2007,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.17
+ * @version 0.1.16
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2128,7 +2094,7 @@ export class Api<
       data: InnInfoToSave,
       params: RequestParams = {}
     ) =>
-      this.request<User, HTTPValidationError | void>({
+      this.request<User, void | HTTPValidationError>({
         path: `/users/registration/tax_info`,
         method: "PUT",
         body: data,
@@ -2151,7 +2117,7 @@ export class Api<
       data: LeadInfoToSave,
       params: RequestParams = {}
     ) =>
-      this.request<User, void | HTTPValidationError>({
+      this.request<User, HTTPValidationError | void>({
         path: `/users/registration/lead_info`,
         method: "PUT",
         body: data,
@@ -2212,7 +2178,7 @@ export class Api<
      * @secure
      */
     changeTaxUsersChangeTaxPut: (data: ChangeTax, params: RequestParams = {}) =>
-      this.request<any, void>({
+      this.request<any, HTTPValidationError | void>({
         path: `/users/change_tax`,
         method: "PUT",
         body: data,
@@ -2272,7 +2238,7 @@ export class Api<
       requestId: string,
       params: RequestParams = {}
     ) =>
-      this.request<ResultInfo, void | HTTPValidationError>({
+      this.request<ResultInfo, HTTPValidationError | void>({
         path: `/sources/${requestId}/state`,
         method: "GET",
         secure: true,
@@ -2293,7 +2259,7 @@ export class Api<
       data: DisableSource,
       params: RequestParams = {}
     ) =>
-      this.request<any, void>({
+      this.request<any, HTTPValidationError | void>({
         path: `/sources/disable`,
         method: "PUT",
         body: data,
@@ -2339,7 +2305,7 @@ export class Api<
       data: CreateAccountIntegration,
       params: RequestParams = {}
     ) =>
-      this.request<CreateAccountResponse, void>({
+      this.request<CreateAccountResponse, HTTPValidationError | void>({
         path: `/sources/account/integration`,
         method: "POST",
         body: data,
@@ -2489,7 +2455,7 @@ export class Api<
       data: BodyCreateOperationsFromFileOperationsFilePost,
       params: RequestParams = {}
     ) =>
-      this.request<CreateAccountResponse, void>({
+      this.request<CreateAccountResponse, HTTPValidationError | void>({
         path: `/operations/file`,
         method: "POST",
         body: data,
@@ -2516,7 +2482,7 @@ export class Api<
       data: UpdateOperationMarkup,
       params: RequestParams = {}
     ) =>
-      this.request<any, void>({
+      this.request<any, HTTPValidationError | void>({
         path: `/operations/markup`,
         method: "PUT",
         query: query,
@@ -2540,7 +2506,7 @@ export class Api<
       data: CreateTaxPaymentOperationsRequest,
       params: RequestParams = {}
     ) =>
-      this.request<any, void | HTTPValidationError>({
+      this.request<any, HTTPValidationError | void>({
         path: `/operations/tax_payment`,
         method: "POST",
         body: data,
@@ -2563,7 +2529,7 @@ export class Api<
       operationId: string,
       params: RequestParams = {}
     ) =>
-      this.request<Operation, void | HTTPValidationError>({
+      this.request<Operation, HTTPValidationError | void>({
         path: `/operations/${operationId}`,
         method: "GET",
         secure: true,
@@ -2607,7 +2573,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<TaxCalculationResponse, void | HTTPValidationError>({
+      this.request<TaxCalculationResponse, HTTPValidationError | void>({
         path: `/taxes/calculation`,
         method: "GET",
         query: query,
@@ -2676,24 +2642,6 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Taxes
-     * @name RecalculationTaxesTaxesRecalculationPut
-     * @summary Обновление расчета налога
-     * @request PUT:/taxes/recalculation
-     * @secure
-     */
-    recalculationTaxesTaxesRecalculationPut: (params: RequestParams = {}) =>
-      this.request<BRNOkResponse, void>({
-        path: `/taxes/recalculation`,
-        method: "PUT",
-        secure: true,
-        format: "json",
         ...params,
       }),
   }
@@ -2772,7 +2720,7 @@ export class Api<
       data: UpdateReportRequest,
       params: RequestParams = {}
     ) =>
-      this.request<any, void>({
+      this.request<any, HTTPValidationError | void>({
         path: `/tasks/status`,
         method: "PUT",
         body: data,
@@ -2886,7 +2834,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<InfoBannersResponse, void | HTTPValidationError>({
+      this.request<InfoBannersResponse, HTTPValidationError | void>({
         path: `/banners`,
         method: "GET",
         query: query,
@@ -2911,7 +2859,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<any, void | HTTPValidationError>({
+      this.request<any, HTTPValidationError | void>({
         path: `/banners`,
         method: "PUT",
         query: query,

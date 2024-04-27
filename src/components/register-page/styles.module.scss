@@ -12,7 +12,7 @@ $xxl: 2560px;
   padding: 8px 4px;
   justify-content: center;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $m) {
     padding: 28px 20px 20px 60px;
   }
 }

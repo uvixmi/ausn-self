@@ -16,5 +16,9 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "setupProxy.ts", ".eslintrc.js"]
+  "include": ["src", "setupProxy.ts", ".eslintrc.js"],
+  "baseUrl": ".",
+  "paths": {
+    "@myApi/*": ["src/api/*"]
+  }
 }

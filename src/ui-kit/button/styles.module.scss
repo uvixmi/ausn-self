@@ -1,0 +1,97 @@
+@import "./../theme/colors.scss";
+
+.default {
+  height: 34px;
+  padding: 6px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  color: $base-color-white;
+}
+
+.primary {
+  background-color: $brand-primary;
+
+  &:disabled {
+    background-color: $base-secondary-pale !important;
+    color: $base-secondary-2 !important;
+
+    &:hover,
+    &:focus {
+      background-color: $base-secondary-pale !important;
+      color: $base-secondary-2 !important;
+    }
+  }
+
+  &:hover {
+    background-color: $brand-additional-dark !important;
+    color: $base-color-white !important;
+  }
+
+  &:focus {
+    background-color: $brand-additional-dark !important;
+    color: $brand-secondary-1 !important;
+  }
+}
+
+.secondary {
+  background-color: $base-color-white;
+  color: $brand-primary;
+
+  &:disabled {
+    background-color: $base-color-white !important;
+    color: $base-secondary-2 !important;
+    border: 1px solid $base-secondary-pale !important;
+
+    &:hover,
+    &:focus {
+      background-color: $base-color-white !important;
+      color: $base-secondary-2 !important;
+      border: 1px solid $base-secondary-pale !important;
+    }
+  }
+
+  &:hover {
+    background-color: $base-secondary-pale !important;
+    color: $brand-primary !important;
+    border: 1px solid $brand-primary !important;
+  }
+
+  &:focus {
+    background-color: $base-secondary-pale !important;
+    color: $brand-additional-dark !important;
+    border: 1px solid $brand-additional-dark !important;
+  }
+}
+
+.danger {
+  background-color: $base-color-white;
+  color: $red-primary;
+  border: 1px solid $red-primary;
+
+  &:disabled {
+    background-color: $base-color-white !important;
+    color: $base-secondary-2 !important;
+    border: 1px solid $base-secondary-pale !important;
+
+    &:hover,
+    &:focus {
+      background-color: $base-color-white !important;
+      color: $base-secondary-2 !important;
+      border: 1px solid $base-secondary-pale !important;
+    }
+  }
+
+  &:hover {
+    background-color: $red-secondary-1 !important;
+    color: $base-color-white !important;
+  }
+
+  &:focus {
+    background-color: $red-additional-dark !important;
+    color: $base-color-white !important;
+    border: 1px solid $red-additional-dark !important;
+  }
+}

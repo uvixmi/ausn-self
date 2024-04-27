@@ -28,3 +28,15 @@
 .taxes-drawer .ant-drawer-body {
   padding-top: 0 !important;
 }
+
+.hide-sources .ant-collapse-header {
+  width: 160px;
+  padding-bottom: 0 !important;
+}
+
+.hide-sources .ant-collapse-header-text {
+  width: 130px;
+}
+.hide-sources .ant-collapse-content-box {
+  padding: 0;
+}

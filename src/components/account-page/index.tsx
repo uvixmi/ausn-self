@@ -131,7 +131,7 @@ export const AccountPage = ({
 
   const navigate = useNavigate()
 
-  const isMobile = useMediaQuery("(max-width: 767px)")
+  const isMobile = useMediaQuery("(max-width: 1279px)")
 
   const { data: currentUser } = useSelector((state: RootState) => state.user)
 
