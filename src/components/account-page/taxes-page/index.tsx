@@ -248,7 +248,12 @@ export const TaxesPage = () => {
   const sourcesAutoSider =
     sources &&
     sources.sources
-      ?.filter((item) => item.is_integrated && item.name !== "Ручной ввод")
+      ?.filter(
+        (item) =>
+          item.is_integrated &&
+          item.name !== "Ручной ввод" &&
+          !item.disable_date
+      )
       .sort((a, b) => {
         if (a.disable_date && !b.disable_date) {
           return 1
@@ -261,7 +266,12 @@ export const TaxesPage = () => {
   const sourcesHandSider =
     sources &&
     sources.sources
-      ?.filter((item) => !item.is_integrated && item.name !== "Ручной ввод")
+      ?.filter(
+        (item) =>
+          !item.is_integrated &&
+          item.name !== "Ручной ввод" &&
+          !item.disable_date
+      )
       .sort((a, b) => {
         if (a.disable_date && !b.disable_date) {
           return 1
