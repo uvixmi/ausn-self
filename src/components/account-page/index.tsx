@@ -39,6 +39,11 @@ export const AccountPage = ({
       to: "/taxes",
       icon: <MenuTaxesIcon />,
     },
+    {
+      title: CONTENT.SIDER_SETTINGS,
+      to: "/settings",
+      icon: <MenuSettingsIcon />,
+    },
   ]
 
   const settings = [
@@ -222,6 +227,10 @@ export const AccountPage = ({
                           justifyContent: "flex-start",
                           gap: "8px",
                         }}
+                        className={cn(styles["item-link-item"], {
+                          [styles["item-active"]]:
+                            location.pathname === item.to,
+                        })}
                       >
                         {item.icon}
                         <Link
@@ -238,7 +247,7 @@ export const AccountPage = ({
                       </List.Item>
                     )}
                   />
-                  <List
+                  {/*<List
                     className={styles["left-sider-menu"]}
                     dataSource={settings}
                     renderItem={(item) => (
@@ -249,6 +258,10 @@ export const AccountPage = ({
                           justifyContent: "flex-start",
                           gap: "8px",
                         }}
+                        className={cn(styles["item-link-item"], {
+                          [styles["item-active"]]:
+                            location.pathname === item.to,
+                        })}
                       >
                         {item.icon}
                         <Link //underline={item == CONTENT.HEADING_TAXES}
@@ -262,7 +275,7 @@ export const AccountPage = ({
                         </Link>
                       </List.Item>
                     )}
-                  />
+                        />*/}
                 </div>
               </div>
             </Sider>
