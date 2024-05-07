@@ -54,10 +54,11 @@ export const AuthorizationPage = ({
       })
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    window.carrotquest == null
+    window.carrotqueыst == null
     function deleteCookie() {
       document.cookie = "carrotquest_uid=; max-age=0; path=/"
       document.cookie = "carrotquest_auth_token=; max-age=0; path=/"
+
       console.log("deleted")
     }
 
@@ -125,7 +126,7 @@ export const AuthorizationPage = ({
                 {/*<Link>{CONTENT.PASSWORD_FORGOT_TEXT}</Link>*/}
               </div>
             </div>
-            <Button
+            <ButtonOne
               className={styles["button-item"]}
               onClick={async () => {
                 try {
@@ -162,7 +163,7 @@ export const AuthorizationPage = ({
               }}
             >
               {CONTENT.ENTER_BUTTON}
-            </Button>
+            </ButtonOne>
           </div>
           <div className={styles["img-wrapper"]}>
             <RegisterWelcomeImage className={styles["img-wrapper"]} />

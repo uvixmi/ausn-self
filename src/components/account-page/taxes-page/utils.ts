@@ -19,7 +19,7 @@ export const getSourceText = (
 export const getFormattedYearDate = () => {
   const currentDate = new Date()
 
-  const startOfYear = new Date(currentDate.getFullYear(), 0, 1)
+  const startOfYear = new Date(currentDate.getFullYear() - 1, 0, 1)
 
   const day = startOfYear.getDate()
   const month = startOfYear.getMonth() + 1 // Месяцы начинаются с 0, поэтому добавляем 1

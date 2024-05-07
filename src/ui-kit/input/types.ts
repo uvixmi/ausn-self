@@ -21,7 +21,8 @@ export type ButtonProps = {
   /**
    * Тип кнопки
    */
-  type?: ButtonType
+  type?: string
+  showCount?: boolean
   /**
    * Размер кнопки
    */
@@ -35,6 +36,8 @@ export type ButtonProps = {
    * Управление отключенным состоянием кнопки
    */
   placeholder?: string
+  value?: string
+  maxLength?: number
 
   /**
    * Управление отключенным состоянием кнопки
@@ -48,6 +51,9 @@ export type ButtonProps = {
    * Идентификатор для автоматизированного тестирования
    */
   dataTestId?: string
+
+  autoComplete?: string
+
   /**
    * Обработчик вызываемый при установке фокуса на кнопке
    */

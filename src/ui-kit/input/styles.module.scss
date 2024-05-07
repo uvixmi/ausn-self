@@ -8,13 +8,14 @@
   width: 100%;
   border-radius: 4px;
   color: $base-primary-dark;
+  font-family: "Inter";
   font-weight: 400;
   font-size: 14px;
   line-height: 22px;
   border: 1px solid $base-secondary-2;
 
   &::placeholder {
-    color: $base-secondary-pale;
+    color: $base-secondary-1;
   }
 
   &:disabled {

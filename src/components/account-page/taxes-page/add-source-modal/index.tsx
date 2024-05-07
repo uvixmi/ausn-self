@@ -1,4 +1,12 @@
-import { Button, Form, Input, Modal, Typography, message } from "antd"
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Typography,
+  message,
+} from "antd"
 import { AddSourceModalProps } from "./types"
 import styles from "./styles.module.scss"
 import "./styles.scss"
@@ -46,6 +54,16 @@ import Link from "antd/es/typography/Link"
 import { useMediaQuery } from "@react-hook/media-query"
 import { PencilIcon } from "../type-operation/icons/pencil"
 import { PencilBigIcon } from "../type-operation/icons/pencil-big"
+import { ButtonOne } from "../../../../ui-kit/button"
+import { InputOne } from "../../../../ui-kit/input"
+import ru_RU from "antd/lib/date-picker/locale/ru_RU"
+import dayjs from "dayjs"
+import "dayjs/locale/ru"
+import {
+  convertDateFormat,
+  convertReverseFormat,
+} from "../../actions-page/payment-modal/utils"
+import { antdMonths } from "../../../../ui-kit/datepicker/localization"
 
 export const AddSourceModal = ({
   isOpen,
@@ -59,6 +77,19 @@ export const AddSourceModal = ({
   const token = Cookies.get("token")
   const headers = {
     Authorization: `Bearer ${token}`,
+  }
+
+  const dateFormat = "DD.MM.YYYY"
+
+  dayjs.locale("ru")
+
+  const locale = {
+    ...ru_RU,
+    lang: {
+      ...ru_RU.lang,
+      shortMonths: antdMonths.monthsShort,
+      dateFormat: dateFormat,
+    },
   }
 
   const dispatch = useDispatch<AppDispatch>()
@@ -233,6 +264,13 @@ export const AddSourceModal = ({
   const sendOtherMarketplaceSource = async (type: number) => {
     const data = {
       marketplace_type: type,
+      date_begin: convertDateFormat(dateMarketPlace),
+      marketplace_source:
+        marketplaceMode === "3"
+          ? "Ozon"
+          : marketplaceMode === "2"
+          ? "Wildberries"
+          : undefined,
       marketplace_credentials: {
         login: marketplaceId,
         password: marketplaceKey,
@@ -277,7 +315,9 @@ export const AddSourceModal = ({
 
   const [ofdLogin, setOfdLogin] = useState("")
   const [ofdPassword, setOfdPassword] = useState("")
-  const isMobile = useMediaQuery("(max-width: 767px)")
+  const [ofdLoginError, setOfdLoginError] = useState(false)
+  const [ofdPasswordError, setOfdPasswordError] = useState(false)
+  const isMobile = useMediaQuery("(max-width: 1023px)")
 
   const sendApiOFDSource = async (ofd_source: OFDSource) => {
     try {
@@ -286,7 +326,7 @@ export const AddSourceModal = ({
         {
           login: ofdLogin,
           password: ofdPassword,
-          date_begin: currentUser.tax_date_begin,
+          date_begin: convertDateFormat(dateSource),
         },
         {
           headers,
@@ -307,6 +347,9 @@ export const AddSourceModal = ({
   const [marketplaceMode, setMarketplaceMode] = useState("")
   const [marketplaceId, setMarketplaceId] = useState("")
   const [marketplaceKey, setMarketplaceKey] = useState("")
+
+  const [marketplaceIdError, setMarketplaceIdError] = useState(false)
+  const [marketplaceKeyError, setMarketplaceKeyError] = useState(false)
 
   const [otherMarketplace, setOtherMarketplace] = useState("")
 
@@ -330,22 +373,7 @@ export const AddSourceModal = ({
   const [isButtonMarketplaceDisabled, setIsButtonMarketplaceDisabled] =
     useState(true)
 
-  useEffect(() => {
-    if (marketplaceMode === "3")
-      if (marketplaceId !== "" && marketplaceKey !== "")
-        setIsButtonMarketplaceDisabled(false)
-      else setIsButtonMarketplaceDisabled(true)
-    else if (marketplaceMode === "2")
-      if (marketplaceKey !== "") setIsButtonMarketplaceDisabled(false)
-      else setIsButtonMarketplaceDisabled(true)
-  }, [marketplaceId, marketplaceKey, marketplaceMode])
-
   const [isOfdButtonDisabled, setIsOfdButtonDisabled] = useState(true)
-
-  useEffect(() => {
-    if (ofdLogin !== "" && ofdPassword !== "") setIsOfdButtonDisabled(false)
-    else setIsOfdButtonDisabled(true)
-  }, [ofdLogin, ofdPassword])
 
   useEffect(() => {
     if (completedSource !== null) {
@@ -356,14 +384,68 @@ export const AddSourceModal = ({
     }
   }, [completedSource])
 
+  const [bankName, setBankName] = useState("")
+
+  useEffect(() => {
+    const getBankName = async () => {
+      try {
+        const response = await api.references.getBankInfoReferencesBankInfoGet(
+          {
+            bik: integrateBik,
+          },
+          { headers }
+        )
+        setBankName(response.data.bank_name)
+      } catch (error) {}
+    }
+    if (integrateBik.length === 9) getBankName()
+    else setBankName("")
+  }, [integrateBik])
+
+  const [dateSource, setDateSource] = useState("")
+  const [dateError, setDateError] = useState(false)
+
+  const [dateMarketPlace, setDateMarketPlace] = useState("")
+  const [dateMarketPlaceError, setDateMarketplaceError] = useState(false)
+
+  useEffect(() => {
+    if (ofdLogin !== "" && ofdPassword !== "" && dateSource !== "")
+      setIsOfdButtonDisabled(false)
+    else setIsOfdButtonDisabled(true)
+  }, [ofdLogin, ofdPassword, dateSource])
+
+  useEffect(() => {
+    if (marketplaceMode === "3")
+      if (
+        marketplaceId !== "" &&
+        marketplaceKey !== "" &&
+        dateMarketPlace !== ""
+      )
+        setIsButtonMarketplaceDisabled(false)
+      else setIsButtonMarketplaceDisabled(true)
+    else if (marketplaceMode === "2")
+      if (marketplaceKey !== "" && dateMarketPlace !== "")
+        setIsButtonMarketplaceDisabled(false)
+      else setIsButtonMarketplaceDisabled(true)
+  }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace])
+
   return (
     <>
       {contextHolder}
       <Modal
+        style={
+          isMobile
+            ? {
+                top: 0,
+                marginTop: "20px",
+              }
+            : undefined
+        }
         open={isOpen}
         onOk={closeAddSource}
         onCancel={closeAddSource}
         footer={null}
+        className="modal-source"
       >
         {buttonMode === "default" ? (
           <div className={styles["list-wrapper"]}>
@@ -379,10 +461,10 @@ export const AddSourceModal = ({
             >
               <PencilBigIcon />
               <div className={styles["button-source-inner"]}>
-                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                <Text className={styles["bank-title"]}>
                   {CONTENT.TITLE_MANUAL_LOAD}
-                </Title>
-                <Text className={styles["text-description"]}>
+                </Text>
+                <Text className={styles["text-description-button"]}>
                   {CONTENT.DESCRIPTION_MANUAL_LOAD}
                 </Text>
               </div>
@@ -395,10 +477,10 @@ export const AddSourceModal = ({
             >
               <BankBalanceIcon />
               <div className={styles["button-source-inner"]}>
-                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                <Text className={styles["bank-title"]}>
                   {CONTENT.TITLE_BANK_STATEMENT}
-                </Title>
-                <Text className={styles["text-description"]}>
+                </Text>
+                <Text className={styles["text-description-button"]}>
                   {CONTENT.DESCRIPTION_BANK_STATEMENT}
                 </Text>
               </div>
@@ -411,10 +493,10 @@ export const AddSourceModal = ({
             >
               <BankBalanceIcon />
               <div className={styles["button-source-inner"]}>
-                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                <Text className={styles["bank-title"]}>
                   {CONTENT.TITLE_BANK_INTEGRATION}
-                </Title>
-                <Text className={styles["text-description"]}>
+                </Text>
+                <Text className={styles["text-description-button"]}>
                   {CONTENT.DESCRIPTION_BANK_INTEGRATION}
                 </Text>
               </div>
@@ -427,10 +509,10 @@ export const AddSourceModal = ({
             >
               <OnlineCashierIcon />
               <div className={styles["button-source-inner"]}>
-                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                <Text className={styles["bank-title"]}>
                   {CONTENT.TITLE_ONLINE_CASHIER}
-                </Title>
-                <Text className={styles["text-description"]}>
+                </Text>
+                <Text className={styles["text-description-button"]}>
                   {CONTENT.DESCRIPTION_ONLINE_CASHIER}
                 </Text>
               </div>
@@ -443,10 +525,10 @@ export const AddSourceModal = ({
             >
               <MarketplaceIcon />
               <div className={styles["button-source-inner"]}>
-                <Title level={5} style={{ marginTop: "0", marginBottom: "0" }}>
+                <Text className={styles["bank-title"]}>
                   {CONTENT.TITLE_MARKETPLACE_INTEGRATION}
-                </Title>
-                <Text className={styles["text-description"]}>
+                </Text>
+                <Text className={styles["text-description-button"]}>
                   {CONTENT.DESCRIPTION_MARKETPLACE_INTEGRATION}
                 </Text>
               </div>
@@ -455,9 +537,9 @@ export const AddSourceModal = ({
         ) : (
           <div className={styles["upload-wrapper"]}>
             <div className={styles["upload-title-wrapper"]}>
-              <Title level={3} style={{ marginTop: "0", marginBottom: "0" }}>
+              <Text className={styles["title-modal"]}>
                 {CONTENT.TITLE_ADD_SOURCE}
-              </Title>
+              </Text>
               {fileIsLoading !== "loaded" ? (
                 <Text className={styles["text-title"]}>
                   {buttonMode === "bank_statement"
@@ -699,9 +781,10 @@ export const AddSourceModal = ({
                     {CONTENT.ALPHA_INTEGRATE_DESCRIPTION}
                   </Text>
                   <div className={styles["buttons-generate"]}>
-                    <Button
+                    <ButtonOne
                       onClick={() => setBankToIntegrate("")}
                       className={styles["generate-back"]}
+                      type="secondary"
                     >
                       <ArrowLeftOutlined
                         className={styles["arrow-left-icon"]}
@@ -709,7 +792,7 @@ export const AddSourceModal = ({
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_BACK}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                     <Button
                       onClick={sendAlphaSource}
                       className={styles["generate-button"]}
@@ -747,7 +830,7 @@ export const AddSourceModal = ({
                         )
                       }
                     >
-                      <Input
+                      <InputOne
                         value={integrateLogin}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         maxLength={225}
@@ -830,7 +913,7 @@ export const AddSourceModal = ({
                         )
                       }
                     >
-                      <Input
+                      <InputOne
                         value={integrateBik}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         showCount
@@ -847,6 +930,19 @@ export const AddSourceModal = ({
                         }}
                       />
                     </Form.Item>
+                  </div>
+                  <div
+                    className={styles["input-item"]}
+                    style={{ marginBottom: "24px" }}
+                  >
+                    <Text className={cn(styles["text-disabled"])}>
+                      {CONTENT.INPUT_BANK_NAME}
+                    </Text>
+                    <InputOne
+                      disabled
+                      placeholder={CONTENT.INPUT_BANK_NAME_PLACEHOLDER}
+                      value={bankName}
+                    />
                   </div>
                   <div className={styles["input-item"]}>
                     <Text
@@ -882,7 +978,7 @@ export const AddSourceModal = ({
                         )
                       }
                     >
-                      <Input
+                      <InputOne
                         value={integrateAccount}
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         maxLength={20}
@@ -900,7 +996,10 @@ export const AddSourceModal = ({
                     </Form.Item>
                   </div>
                   <div>
-                    <Text className={styles["text-title"]}>
+                    <Text
+                      className={styles["text-title"]}
+                      style={{ marginTop: "8px" }}
+                    >
                       {CONTENT.TEXT_OTHER_INTEGRATE_DESCRIPTION}
                       {isMobile && (
                         <Link
@@ -925,9 +1024,10 @@ export const AddSourceModal = ({
                     )}
                   </div>
                   <div className={styles["buttons-generate-inner"]}>
-                    <Button
+                    <ButtonOne
                       onClick={() => setBankToIntegrate("")}
                       className={styles["generate-back"]}
+                      type="secondary"
                     >
                       <ArrowLeftOutlined
                         className={styles["arrow-left-icon"]}
@@ -935,7 +1035,7 @@ export const AddSourceModal = ({
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_BACK}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                     <Button
                       onClick={sendOtherSource}
                       className={styles["generate-button"]}
@@ -1172,12 +1272,34 @@ export const AddSourceModal = ({
                           {CONTENT.NECESSARY}
                         </Text>
                       </Text>
-                      <Input
-                        value={ofdLogin}
-                        id="ofdLogin"
-                        onChange={(event) => setOfdLogin(event.target.value)}
-                        autoComplete="off"
-                      />
+                      <Form.Item
+                        className={styles["form-inn"]}
+                        validateStatus={ofdLoginError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          ofdLoginError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {CONTENT.INPUT_ERROR_HINT}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <InputOne
+                          value={ofdLogin}
+                          id="ofdLogin"
+                          onChange={(event) => {
+                            setOfdLogin(event.target.value)
+                            if (event.target.value !== "")
+                              setOfdLoginError(false)
+                            else setOfdLoginError(true)
+                          }}
+                          autoComplete="off"
+                          placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        />
+                      </Form.Item>
                     </div>
                     <div className={styles["input-item"]}>
                       <Text
@@ -1191,12 +1313,94 @@ export const AddSourceModal = ({
                           {CONTENT.NECESSARY}
                         </Text>
                       </Text>
-                      <Input
-                        value={ofdPassword}
-                        type="password"
-                        onChange={(event) => setOfdPassword(event.target.value)}
-                        autoComplete="new-password"
-                      />
+                      <Form.Item
+                        className={styles["form-inn"]}
+                        validateStatus={ofdPasswordError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          ofdPasswordError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {CONTENT.INPUT_ERROR_HINT}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <Input.Password
+                          value={ofdPassword}
+                          type="password"
+                          onChange={(event) => {
+                            setOfdPassword(event.target.value)
+                            if (event.target.value !== "")
+                              setOfdPasswordError(false)
+                            else setOfdPasswordError(true)
+                          }}
+                          autoComplete="new-password"
+                          placeholder={CONTENT.INPUT_PLACEHOLDER}
+                          className="custom-password-input"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.DATEPICKER_TITLE}{" "}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+                      <Form.Item
+                        className={styles["form-inn"]}
+                        validateStatus={dateError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          dateError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {CONTENT.INPUT_ERROR_HINT}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <DatePicker
+                          placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                          style={{ borderRadius: "4px", height: "34px" }}
+                          className={cn(
+                            "picker-source",
+                            styles["datepicker-style"]
+                          )}
+                          locale={locale}
+                          minDate={
+                            currentUser.tax_date_begin
+                              ? dayjs(
+                                  convertReverseFormat(
+                                    currentUser.tax_date_begin
+                                  ),
+                                  dateFormat
+                                )
+                              : undefined
+                          }
+                          maxDate={dayjs(formatDateString(), dateFormat)}
+                          format={dateFormat}
+                          value={
+                            dateSource ? dayjs(dateSource, dateFormat) : null
+                          }
+                          onChange={(value, dateString) => {
+                            typeof dateString === "string" &&
+                              setDateSource(dateString)
+                            if (dateString === "") setDateError(true)
+                            else setDateError(false)
+                          }}
+                        />
+                      </Form.Item>
                     </div>
                   </div>
                   <div>
@@ -1213,13 +1417,16 @@ export const AddSourceModal = ({
                     </Link>
                   </div>
                   <div className={styles["buttons-generate"]}>
-                    <Button
+                    <ButtonOne
                       onClick={() => {
                         setOfdMode("")
                         setOfdPassword("")
                         setOfdLogin("")
+                        setOfdLoginError(false)
+                        setOfdPasswordError(false)
                       }}
                       className={styles["generate-back"]}
+                      type="secondary"
                     >
                       <ArrowLeftOutlined
                         className={styles["arrow-left-icon"]}
@@ -1227,7 +1434,7 @@ export const AddSourceModal = ({
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_BACK}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                     <Button
                       onClick={() => sendApiOFDSource(ofdMode)}
                       className={styles["generate-button"]}
@@ -1346,9 +1553,10 @@ export const AddSourceModal = ({
                     )}
                   </Dragger>
                   <div className={styles["buttons-generate"]}>
-                    <Button
+                    <ButtonOne
                       onClick={() => setOfdMode("")}
                       className={styles["generate-back"]}
+                      type="secondary"
                     >
                       <ArrowLeftOutlined
                         className={styles["arrow-left-icon"]}
@@ -1356,7 +1564,7 @@ export const AddSourceModal = ({
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_BACK}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
               ) : (
@@ -1374,7 +1582,7 @@ export const AddSourceModal = ({
                       {CONTENT.TEXT_OFD_OTHER_INPUT}
                     </Text>
                     <div className={styles["bank-row"]}>
-                      <Input
+                      <InputOne
                         value={otherOfd}
                         onChange={(event) => setOtherOfd(event.target.value)}
                       />
@@ -1392,9 +1600,10 @@ export const AddSourceModal = ({
                     {CONTENT.TEXT_OFD_OTHER_DESCRIPTION}
                   </Text>
                   <div className={styles["buttons-generate"]}>
-                    <Button
+                    <ButtonOne
                       onClick={() => setOfdMode("")}
                       className={styles["generate-back"]}
+                      type="secondary"
                     >
                       <ArrowLeftOutlined
                         className={styles["arrow-left-icon"]}
@@ -1402,7 +1611,7 @@ export const AddSourceModal = ({
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_BACK}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                     <Button
                       className={styles["generate-button"]}
                       onClick={() => {
@@ -1486,10 +1695,31 @@ export const AddSourceModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <Input
-                    value={marketplaceId}
-                    onChange={(event) => setMarketplaceId(event.target.value)}
-                  />
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={marketplaceIdError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      marketplaceIdError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <InputOne
+                      value={marketplaceId}
+                      onChange={(event) => {
+                        setMarketplaceId(event.target.value)
+                        if (event.target.value !== "")
+                          setMarketplaceIdError(false)
+                        else setMarketplaceIdError(true)
+                      }}
+                    />
+                  </Form.Item>
                 </div>
                 <div className={styles["input-item"]}>
                   <Text
@@ -1503,28 +1733,114 @@ export const AddSourceModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <Input
-                    value={marketplaceKey}
-                    onChange={(event) => setMarketplaceKey(event.target.value)}
-                  />
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      marketplaceKeyError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <InputOne
+                      value={marketplaceKey}
+                      onChange={(event) => {
+                        setMarketplaceKey(event.target.value)
+                        if (event.target.value !== "")
+                          setMarketplaceKeyError(false)
+                        else setMarketplaceKeyError(true)
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"],
+                      styles["title-wrap"]
+                    )}
+                  >
+                    {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      dateMarketPlaceError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <DatePicker
+                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                      style={{ borderRadius: "4px", height: "34px" }}
+                      className={cn(
+                        "picker-source",
+                        styles["datepicker-style"]
+                      )}
+                      locale={locale}
+                      minDate={
+                        currentUser.tax_date_begin
+                          ? dayjs(
+                              convertReverseFormat(currentUser.tax_date_begin),
+                              dateFormat
+                            )
+                          : undefined
+                      }
+                      maxDate={dayjs(formatDateString(), dateFormat)}
+                      format={dateFormat}
+                      value={
+                        dateMarketPlace
+                          ? dayjs(dateMarketPlace, dateFormat)
+                          : null
+                      }
+                      onChange={(value, dateString) => {
+                        typeof dateString === "string" &&
+                          setDateMarketPlace(dateString)
+                        if (dateString === "") setDateMarketplaceError(true)
+                        else setDateMarketplaceError(false)
+                      }}
+                    />
+                  </Form.Item>
                 </div>
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate-inner"]}>
-                  <Button
+                  <ButtonOne
                     onClick={() => {
                       setMarketplaceMode("")
                       setMarketplaceKey("")
                       setMarketplaceId("")
+                      setMarketplaceIdError(false)
+                      setMarketplaceKeyError(false)
+                      setDateMarketPlace("")
+                      setDateMarketplaceError(false)
                     }}
                     className={styles["generate-back"]}
+                    type="secondary"
                   >
                     <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
                     <Text className={styles["button-back-text"]}>
                       {CONTENT.BUTTON_BACK}
                     </Text>
-                  </Button>
+                  </ButtonOne>
                   <Button
                     className={styles["generate-button"]}
                     onClick={() => sendOtherMarketplaceSource(3)}
@@ -1548,27 +1864,112 @@ export const AddSourceModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <Input
-                    value={marketplaceKey}
-                    onChange={(event) => setMarketplaceKey(event.target.value)}
-                  />
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      marketplaceKeyError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <InputOne
+                      value={marketplaceKey}
+                      onChange={(event) => {
+                        setMarketplaceKey(event.target.value)
+                        if (event.target.value !== "")
+                          setMarketplaceKeyError(false)
+                        else setMarketplaceKeyError(true)
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"],
+                      styles["title-wrap"]
+                    )}
+                  >
+                    {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      dateMarketPlaceError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <DatePicker
+                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                      style={{ borderRadius: "4px", height: "34px" }}
+                      className={cn(
+                        "picker-source",
+                        styles["datepicker-style"]
+                      )}
+                      locale={locale}
+                      minDate={
+                        currentUser.tax_date_begin
+                          ? dayjs(
+                              convertReverseFormat(currentUser.tax_date_begin),
+                              dateFormat
+                            )
+                          : undefined
+                      }
+                      maxDate={dayjs(formatDateString(), dateFormat)}
+                      format={dateFormat}
+                      value={
+                        dateMarketPlace
+                          ? dayjs(dateMarketPlace, dateFormat)
+                          : null
+                      }
+                      onChange={(value, dateString) => {
+                        typeof dateString === "string" &&
+                          setDateMarketPlace(dateString)
+                        if (dateString === "") setDateMarketplaceError(true)
+                        else setDateMarketplaceError(false)
+                      }}
+                    />
+                  </Form.Item>
                 </div>
                 <Text className={styles["text-title"]}>
                   {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate"]}>
-                  <Button
+                  <ButtonOne
                     onClick={() => {
                       setMarketplaceMode("")
                       setMarketplaceKey("")
+                      setMarketplaceKeyError(false)
+                      setDateMarketPlace("")
+                      setDateMarketplaceError(false)
                     }}
                     className={styles["generate-back"]}
+                    type="secondary"
                   >
                     <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
                     <Text className={styles["button-back-text"]}>
                       {CONTENT.BUTTON_BACK}
                     </Text>
-                  </Button>
+                  </ButtonOne>
                   <Button
                     className={styles["generate-button"]}
                     onClick={() => sendOtherMarketplaceSource(2)}
@@ -1587,15 +1988,16 @@ export const AddSourceModal = ({
                   {CONTENT.TEXT_MARKETPLACE_YANDEX_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate"]}>
-                  <Button
+                  <ButtonOne
                     onClick={() => setMarketplaceMode("")}
                     className={styles["generate-back"]}
+                    type="secondary"
                   >
                     <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
                     <Text className={styles["button-back-text"]}>
                       {CONTENT.BUTTON_BACK}
                     </Text>
-                  </Button>
+                  </ButtonOne>
                   <Button
                     className={styles["generate-button"]}
                     onClick={sendYandexMarketplaceSource}
@@ -1620,7 +2022,7 @@ export const AddSourceModal = ({
                     {CONTENT.TEXT_MARKETPLACE_OTHER_INPUT}
                   </Text>
                   <div className={styles["bank-row"]}>
-                    <Input
+                    <InputOne
                       value={otherMarketplace}
                       onChange={(event) =>
                         setOtherMarketplace(event.target.value)
@@ -1640,15 +2042,16 @@ export const AddSourceModal = ({
                   {CONTENT.TEXT_MARKETPLACE_OTHER_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate"]}>
-                  <Button
+                  <ButtonOne
                     onClick={() => setMarketplaceMode("")}
                     className={styles["generate-back"]}
+                    type="secondary"
                   >
                     <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
                     <Text className={styles["button-back-text"]}>
                       {CONTENT.BUTTON_BACK}
                     </Text>
-                  </Button>
+                  </ButtonOne>
                   <Button
                     className={styles["generate-button"]}
                     onClick={() => {
@@ -1665,12 +2068,16 @@ export const AddSourceModal = ({
             {bankToIntegrate === "" &&
               ofdMode === "" &&
               marketplaceMode === "" && (
-                <Button onClick={() => setButtonMode("default")}>
+                <ButtonOne
+                  onClick={() => setButtonMode("default")}
+                  className={styles["generate-back"]}
+                  type="secondary"
+                >
                   <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
                   <Text className={styles["button-back-text"]}>
                     {CONTENT.BUTTON_BACK}
                   </Text>
-                </Button>
+                </ButtonOne>
               )}
           </div>
         )}

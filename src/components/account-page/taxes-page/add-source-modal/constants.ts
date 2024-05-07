@@ -9,7 +9,7 @@ export const CONTENT = {
   DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка, Хайс",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
-    "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и т.д.",
+    "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и\u00A0т.д.",
   TITLE_MARKETPLACE_INTEGRATION: "Маркетплейс",
   DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries",
   NOTIFICATION_PROCESSING_SUCCESS: "Данные сохранены",
@@ -20,7 +20,7 @@ export const CONTENT = {
     "Ошибка сохранения данных. Повторите попытку",
 
   TEXT_UPLOAD_BANK_STATEMENT:
-    "Подгрузите выписку в формате .txt (1С), сформированную в ЛК банка. Файл должен содержать все входящие и исходящие операции по одному счету ИП",
+    "Подгрузите выписку в формате .txt (1С), сформированную в ЛК банка. Файл должен содержать все входящие и исходящие операции по одному счету\u00A0ИП",
   TEXT_UPLOAD_TITLE: "Выберите или перетащите файлы",
   TEXT_LOADING_TITLE: "Загрузка..",
   TEXT_ERROR_TITLE: "Не удалось загрузить данные",
@@ -97,4 +97,9 @@ export const CONTENT = {
   LINK_INSTRUCTIONS: " Инструкция →",
   INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
   INPUT_PLACEHOLDER: "Введите",
+  INPUT_BANK_NAME: "Наименование банка",
+  INPUT_BANK_NAME_PLACEHOLDER: "Название банка",
+  DATEPICKER_PLACEHOLDER: "Укажите дату",
+  DATEPICKER_TITLE: "Дата начала загрузки отчетов по чекам",
+  DATEPICKER_MARKETPLACE_TITLE: "Дата начала загрузки отчетов о реализации",
 } as const

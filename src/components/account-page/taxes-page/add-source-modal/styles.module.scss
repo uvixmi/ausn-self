@@ -1,3 +1,5 @@
+@import "../../../../ui-kit/theme/colors.scss";
+
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -11,7 +13,7 @@ $xxl: 2560px;
   flex-direction: column;
   gap: 8px;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     padding: 20px 16px;
   }
 }
@@ -19,17 +21,18 @@ $xxl: 2560px;
 .button-source-item {
   height: fit-content;
   display: flex;
-
+  width: 299px;
   padding: 12px;
   border-radius: 4px;
   border: 1px solid #f0f0f0;
-  gap: 12px;
+  gap: 8px;
   flex-direction: column;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     width: 440px;
     flex-direction: row;
     align-items: center;
+    gap: 12px;
   }
 }
 
@@ -39,15 +42,18 @@ $xxl: 2560px;
   align-items: flex-start;
 }
 
-.text-description {
+.text-description-button {
   font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
   letter-spacing: 0em;
-  text-align: center;
+  text-align: left;
   color: #8c8c8c;
   text-wrap: wrap;
+  @media screen and (min-width: $s) {
+    text-wrap: nowrap;
+  }
 }
 
 .text-description-dragger {
@@ -58,6 +64,15 @@ $xxl: 2560px;
   letter-spacing: 0em;
   text-align: center;
   color: #8c8c8c;
+}
+
+.title-modal {
+  font-family: "Inter";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  text-align: left;
+  color: #141414;
 }
 
 .text-title {
@@ -157,10 +172,11 @@ $xxl: 2560px;
 .upload-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     padding: 20px 16px;
+    gap: 32px;
   }
 }
 
@@ -181,8 +197,8 @@ $xxl: 2560px;
   display: flex;
   gap: 8px;
   align-items: center;
-  justify-content: center;
-  @media screen and (min-width: $tablet) {
+  justify-content: flex-start;
+  @media screen and (min-width: $s) {
   }
 }
 
@@ -196,9 +212,10 @@ $xxl: 2560px;
   flex-direction: column;
   height: fit-content;
   min-width: 145px;
+  gap: 8px;
 
-  @media screen and (min-width: $tablet) {
-    min-width: none;
+  @media screen and (min-width: $s) {
+    min-width: auto;
     width: 216px;
   }
 }
@@ -238,7 +255,7 @@ $xxl: 2560px;
   margin-top: 20px;
   flex-direction: column;
   gap: 8px;
-  @media screen and (min-width: $m) {
+  @media screen and (min-width: $s) {
     flex-direction: row;
     gap: 16px;
   }
@@ -248,26 +265,23 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-top: 8px;
-
+  margin-top: 24px;
   flex-direction: column;
   gap: 8px;
-  @media screen and (min-width: $m) {
+  @media screen and (min-width: $s) {
+    margin-top: 32px;
     flex-direction: row;
     gap: 16px;
   }
 }
 
 .generate-back {
-  border-radius: 4px;
-  height: 100%;
   width: 100%;
 }
 
 .wrapper-marketplace {
   display: flex;
   flex-direction: column;
-  gap: 32px;
 }
 
 .wrapper-other {
@@ -298,13 +312,22 @@ $xxl: 2560px;
   color: #505050;
 }
 
+.text-disabled {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.005em;
+  text-align: left;
+  color: $base-secondary-1;
+}
+
 .default-text {
   color: #141414;
 }
 .input-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
   width: 100%;
 }
 
@@ -341,5 +364,16 @@ $xxl: 2560px;
   @media screen and (min-width: $m) {
     font-size: 12px;
     line-height: 16px;
+  }
+}
+
+.datepicker-style {
+  width: 100%;
+}
+
+.title-wrap {
+  width: 280px;
+  @media screen and (min-width: $s) {
+    width: auto;
   }
 }

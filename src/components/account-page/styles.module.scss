@@ -41,12 +41,12 @@
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  margin: 35px 24px 0px 224px;
+  margin: 35px 24px 0px 274px;
   gap: 24px;
 }
 
 .logo-inner {
-  max-height: 64px;
+  margin-bottom: 32px;
 }
 
 .remark-wrapper {
@@ -80,7 +80,7 @@
 }
 
 .logo-item {
-  margin: 20px 40px;
+  margin: 24px 16px auto;
   cursor: pointer;
 }
 

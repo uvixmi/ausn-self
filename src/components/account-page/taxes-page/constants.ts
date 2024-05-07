@@ -56,7 +56,7 @@ export const CONTENT = {
   TEXT_NON_TAXES_OLD:
     "Расчет налогов в сервисе производится на основании анализа операций из различных источников данных. Важно внести все источники и своевременно подгружать информацию из них.",
   OFF_SOURCE: "Отключить источник",
-  DELETE_SOURCE: "Удалить",
+  DELETE_SOURCE: "Удалить источник",
   CANCEL_INTEGRATION_SOURCE: "Отменить интеграцию",
   OFF_INTEGRATION_SOURCE: "Отключить интеграцию",
   ADD_SOURCE_COMPLETED: "Добавить данные",
@@ -74,4 +74,20 @@ export const CONTENT = {
     "Расчет налогов и взносов производится на основании операций, загруженных в Сервис",
   NON_OPERATIONS_NEED: "Внесите данные для расчета с ",
   NON_OPERATIONS_TITLE: "У вас еще нет загруженных операций",
+  SOURCES_LOADED_EMPTY_TITLE: "Список источников",
+  SOURCES_LOADED_EMPTY_DESCRIPTION_ONE: "Здесь вы увидите ",
+
+  SOURCES_LOADED_EMPTY_DESCRIPTION_TWO: "банковские счета",
+  SOURCES_LOADED_EMPTY_DESCRIPTION_THREE:
+    ", по которым были загружены выписки, и ",
+  SOURCES_LOADED_EMPTY_DESCRIPTION_FOUR: "интеграции ",
+  SOURCES_LOADED_EMPTY_DESCRIPTION_FIVE:
+    "с банками, онлайн-кассами, маркетплейсами.",
+  SOURCES_LOADED_EMPTY_DESCRIPTION_SIX:
+    "Для каждого источника будет отображаться актуальный статус и дата последней операции",
+  SOURCES_ERROR_TITLE: "Что-то пошло не так",
+  SOURCES_ERROR_ONE:
+    "Произошла ошибка при загрузке. Попробуйте обновить список источников по кнопке обновления.",
+  SOURCES_ERROR_TWO:
+    "Если ошибка повторилась, напишите  тех. специалисту код ошибки. ",
 }

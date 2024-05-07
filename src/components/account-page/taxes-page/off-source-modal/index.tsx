@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../../main-page/store"
 import { fetchSourcesInfo } from "../../client/sources/thunks"
 import { formatDateString } from "../../actions-page/utils"
+import { ButtonOne } from "../../../../ui-kit/button"
 
 export const OffSourceModal = ({
   isOpen,
@@ -183,27 +184,29 @@ export const OffSourceModal = ({
           </div>
 
           <div className={styles["buttons-row"]}>
-            <Button
+            <ButtonOne
               key="back"
               onClick={() => {
                 setOpen(false)
                 clear()
               }}
               className={styles["button-item-cancel"]}
+              type="secondary"
             >
               {CONTENT.CANCEL_BUTTON}
-            </Button>
+            </ButtonOne>
 
-            <Button
+            <ButtonOne
               key="delete"
               onClick={() => {
                 handleOffSource()
               }}
               className={styles["button-item-enter"]}
               disabled={isButtonDisabled}
+              type="danger"
             >
               {titleModal}
-            </Button>
+            </ButtonOne>
           </div>
         </div>
       </Modal>

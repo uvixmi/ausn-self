@@ -12,3 +12,11 @@
     box-shadow: 0px 0px 0px 2px #f0f0ff;
   }
 }
+
+.select-custom .ant-select-option-selected {
+  border-radius: 0 !important;
+}
+
+.select-custom .ant-select-item {
+  border-radius: 0 !important;
+}

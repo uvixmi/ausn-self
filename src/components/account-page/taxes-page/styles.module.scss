@@ -62,7 +62,7 @@ $xxl: 2560px;
   padding: 14px 14px 66px;
 
   @media screen and (min-width: $m) {
-    margin: 35px 24px 0px 224px;
+    margin: 35px 24px 0px 274px;
     padding: 0;
     gap: 24px;
   }
@@ -465,6 +465,23 @@ $xxl: 2560px;
   padding-right: 14px;
 }
 
+.type-new-income {
+  padding-right: 14px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 24px;
+}
+
+.type-new-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: inherit;
+}
+
 .amount-inner {
   display: flex;
 
@@ -810,4 +827,68 @@ $xxl: 2560px;
   align-items: center;
   justify-content: center;
   max-width: 460px;
+}
+
+.sources-non-banner {
+  background-color: $green-secondary-pale;
+  width: 292px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 4px;
+}
+
+.sources-error-banner {
+  background-color: $red-secondary-pale;
+  width: 292px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 4px;
+}
+.sources-error-banner-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sources-non-banner-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sources-non-title {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: left;
+}
+
+.sources-non-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+}
+
+.sources-non-bold {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: left;
+}
+
+.sources-account-short {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: $base-secondary-1;
 }

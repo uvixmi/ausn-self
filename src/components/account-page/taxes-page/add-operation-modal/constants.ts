@@ -17,7 +17,7 @@ export const CONTENT = {
   DATEPICKER_TITLE: "Дата операции",
   INPUT_PLACEHOLDER: "Введите",
   DATEPICKER_PLACEHOLDER: "Укажите дату",
-  TOOLTIP_TEXT: 'Укажите "Физ. лица", если доход пришел от нескольких лиц',
+  TOOLTIP_TEXT: 'Укажите "Физлица", если контрагент - несколько физических лиц',
   BUTTON_ADD: "Добавить операцию",
   NOTIFICATION_PROCESSING_SUCCESS: "Операция успешно добавлена",
   NOTIFICATION_PROCESSING_FAILED:

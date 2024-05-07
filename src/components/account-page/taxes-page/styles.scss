@@ -1,7 +1,61 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.type-item-select .ant-select-option-selected {
+  border-radius: 0 !important;
+}
+
+.type-item-select.ant-select-dropdown .ant-select-item {
+  border-radius: 0 !important;
+}
+
 .type-item-select .ant-select-selector {
   border: none !important;
   padding: 0 !important;
   border-radius: 100px !important;
+
+  padding: 4px 12px;
+  border-radius: 100px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  @media screen and (min-width: $tablet) {
+    justify-content: flex-start;
+  }
+}
+
+.type-income .ant-select-selector {
+  background: #f0f0ff !important;
+  color: #6159ff !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.type-back .ant-select-selector {
+  background: #ecf9ff !important;
+  color: #158fe8 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.type-non .ant-select-selector {
+  background: #f0f0f0 !important;
+  color: #505050 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.type-taxes .ant-select-selector {
+  background: #f6ffed !important;
+  color: #389e0d !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
 }
 
 .type-item-select .ant-select-selection-item {

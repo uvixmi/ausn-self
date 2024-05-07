@@ -5,13 +5,17 @@ import { Input } from "antd"
 
 export const InputOne = ({
   id,
-  type = "primary",
+  type,
   size = "medium",
   placeholder,
   disabled = false,
+  maxLength,
   dataTestId = "button",
   children,
+  showCount,
   className,
+  autoComplete,
+  value,
   onBlur,
   onFocus,
   onChange,
@@ -44,16 +48,21 @@ export const InputOne = ({
   return (
     <Input
       {...ariaAttributes}
+      value={value}
       id={id}
       disabled={disabled}
       data-test-id={dataTestId}
+      maxLength={maxLength}
       className={inputClassnames}
+      autoComplete={autoComplete}
       onBlur={handleBlur}
       onChange={handleChange}
+      showCount={showCount}
       onFocus={handleFocus}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       placeholder={placeholder}
+      type={type}
     >
       {children}
     </Input>

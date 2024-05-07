@@ -1,3 +1,25 @@
+@import "../../../../ui-kit/theme/colors.scss";
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.modal-source .ant-modal-content {
+  border-radius: 4px;
+  padding: 24px !important;
+  width: 347px;
+  margin-top: 18px;
+
+  @media screen and (min-width: $s) {
+    padding: auto;
+    width: auto;
+    margin-top: auto;
+  }
+}
+
 .dragger-loading .ant-upload-drag {
   border: 1px solid #ceb7ff;
 }
@@ -8,4 +30,35 @@
 
 .dragger-error .ant-upload-drag {
   border: 1px solid #cf133c;
+}
+
+.picker-source .ant-picker-input > input::placeholder {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1 !important; // Используйте вашу переменную здесь
+}
+
+.custom-password-input .ant-input-password > input {
+}
+
+.ant-input-password {
+  height: 34px !important;
+  padding: 6px 16px;
+  display: flex;
+
+  width: 100%;
+  border-radius: 4px;
+  color: $base-primary-dark;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  border: 1px solid $base-secondary-2;
+
+  &::placeholder {
+    color: $base-secondary-1;
+  }
 }

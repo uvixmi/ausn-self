@@ -1,3 +1,5 @@
+@import "../../../../ui-kit/theme/colors.scss";
+
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -25,7 +27,7 @@ $xxl: 2560px;
   text-align: left;
   color: #505050;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     font-size: 16px;
     line-height: 24px;
   }
@@ -67,7 +69,7 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     justify-content: space-between;
     flex-direction: row;
     gap: 20px;
@@ -81,7 +83,7 @@ $xxl: 2560px;
   width: 100%;
 
   @media screen and (min-width: $tablet) {
-    gap: 8px;
+    gap: 2px;
   }
 }
 
@@ -107,16 +109,7 @@ $xxl: 2560px;
 }
 
 .pay-inner {
-  height: 34px;
-  padding: 8px 16px;
-  border-radius: 4px;
   width: 100%;
-  background: #6159ff;
-  color: #fff;
-
-  @media screen and (min-width: $tablet) {
-    height: 44px;
-  }
 }
 
 .add-payment-inner {
@@ -184,14 +177,11 @@ $xxl: 2560px;
 }
 
 .error-text {
-  font-size: 8px;
-  line-height: 8px;
-  color: red;
-
-  @media screen and (min-width: $m) {
-    font-size: 12px;
-    line-height: 16px;
-  }
+  color: $red-primary;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
 }
 
 .datepicker-style {
@@ -206,4 +196,13 @@ $xxl: 2560px;
   line-height: 18px;
   letter-spacing: 0em;
   text-align: left;
+}
+
+.select-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-primary-dark;
 }

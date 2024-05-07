@@ -196,6 +196,7 @@ export const AccountPage = ({
           {!isMobile && (
             <Sider
               className={styles["left-sider-wrapper"]}
+              width={250}
               style={{
                 overflow: "auto",
                 height: "100vh",

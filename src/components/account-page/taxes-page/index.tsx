@@ -77,6 +77,7 @@ import { TaxesErrorImage } from "./images/taxes-error"
 import { PersonEditIcon } from "./type-operation/icons/person-edit"
 import { SelectOne } from "../../../ui-kit/select"
 import { antdMonths } from "../../../ui-kit/datepicker/localization"
+import { WalletPigIcon } from "./type-operation/icons/wallet-pig"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -127,26 +128,18 @@ export const TaxesPage = () => {
   const initialOptionTypesSelect = [
     {
       label: (
-        <div
-          className={cn(styles["type-inner-select"], [styles["type-income"]])}
-        >
+        <div className={cn([styles["type-new-income"]])}>
           <IncomeIcon />
-          <Text
-            className={cn(styles["type-text-select"], [styles["type-income"]])}
-          >
-            {"Доход"}
-          </Text>
+          <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
       ),
       value: 1,
     },
     {
       label: (
-        <div className={cn(styles["type-inner-select"], [styles["type-non"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <NonIcon />
-          <Text
-            className={cn(styles["type-text-select"], [styles["type-non"]])}
-          >
+          <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
           </Text>
         </div>
@@ -155,26 +148,18 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn(styles["type-inner-select"], [styles["type-back"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <BackIcon />
-          <Text
-            className={cn(styles["type-text-select"], [styles["type-back"]])}
-          >
-            {"Возврат"}
-          </Text>
+          <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
       ),
       value: 3,
     },
     {
       label: (
-        <div
-          className={cn(styles["type-inner-select"], [styles["type-taxes"]])}
-        >
+        <div className={cn([styles["type-new-income"]])}>
           <TaxesIcon />
-          <Text
-            className={cn(styles["type-text-select"], [styles["type-taxes"]])}
-          >
+          <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
           </Text>
         </div>
@@ -189,20 +174,18 @@ export const TaxesPage = () => {
   const optionsTypes = [
     {
       label: (
-        <div className={cn(styles["type-inner"], [styles["type-income"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <IncomeIcon />
-          <Text className={cn(styles["type-text"], [styles["type-income"]])}>
-            {"Доход"}
-          </Text>
+          <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
       ),
       value: 1,
     },
     {
       label: (
-        <div className={cn(styles["type-inner"], [styles["type-non"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <NonIcon />
-          <Text className={cn(styles["type-text"], [styles["type-non"]])}>
+          <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
           </Text>
         </div>
@@ -211,20 +194,18 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn(styles["type-inner"], [styles["type-back"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <BackIcon />
-          <Text className={cn(styles["type-text"], [styles["type-back"]])}>
-            {"Возврат"}
-          </Text>
+          <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
       ),
       value: 3,
     },
     {
       label: (
-        <div className={cn(styles["type-inner"], [styles["type-taxes"]])}>
+        <div className={cn([styles["type-new-income"]])}>
           <TaxesIcon />
-          <Text className={cn(styles["type-text"], [styles["type-taxes"]])}>
+          <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
           </Text>
         </div>
@@ -246,9 +227,22 @@ export const TaxesPage = () => {
       .map((item) => {
         const subName = item.sub_name ? " *" + item.sub_name?.slice(-4) : ""
         return {
-          label: item.short_name
-            ? item.short_name + subName
-            : item.name + subName,
+          label: item.short_name ? (
+            <>
+              <Text className={styles["sources-non-text"]}>
+                {item.short_name + " "}
+              </Text>
+              <Text className={styles["sources-account-short"]}>{subName}</Text>
+            </>
+          ) : (
+            <>
+              <Text className={styles["sources-non-text"]}>
+                {item.name + " "}{" "}
+              </Text>
+
+              <Text className={styles["sources-account-short"]}>{subName}</Text>
+            </>
+          ),
           value: item.id,
         }
       })
@@ -350,16 +344,23 @@ export const TaxesPage = () => {
     fetchOperations()
   }, [])
 
+  const [sourcesLoaded, setSourcesLoaded] = useState(false)
+  const [sourcesError, setSourcesError] = useState(false)
+
   const fetchSourcesHand = async () => {
     try {
       const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
         headers,
       })
+      setSourcesLoaded(true)
       setSources(sourcesResponse.data)
+      setSourcesError(false)
     } catch (error) {
       if ((error as ApiError).status === 422) {
         logout(), dispatch(clearData()), navigate("/login")
       }
+      setSourcesLoaded(false)
+      setSourcesError(true)
     }
   }
 
@@ -1132,11 +1133,27 @@ export const TaxesPage = () => {
                                               operation.markup.operation_type
                                             }
                                             dropdownStyle={{
-                                              width: "max-content",
+                                              width: "300px",
+                                              padding: 0,
+                                              borderRadius: "1px",
                                             }}
                                             className={cn(
                                               "type-item-select",
-                                              styles["type-select-inner"]
+                                              styles["type-select-inner"],
+                                              {
+                                                ["type-income"]:
+                                                  operation.markup
+                                                    .operation_type === 1,
+                                                ["type-non"]:
+                                                  operation.markup
+                                                    .operation_type === 2,
+                                                ["type-back"]:
+                                                  operation.markup
+                                                    .operation_type === 3,
+                                                ["type-taxes"]:
+                                                  operation.markup
+                                                    .operation_type === 4,
+                                              }
                                             )}
                                             onChange={(value) => {
                                               handleChangeMarkup(value)
@@ -1890,6 +1907,46 @@ export const TaxesPage = () => {
                   expandIconPosition="right"
                 />
               )}
+            {sourcesLoaded && sources?.sources?.length == 0 && (
+              <div className={styles["sources-non-banner"]}>
+                <div className={styles["sources-non-banner-inner"]}>
+                  <WalletPigIcon />
+                  <Text className={styles["sources-non-title"]}>
+                    {CONTENT.SOURCES_LOADED_EMPTY_TITLE}
+                  </Text>
+                  <Text className={styles["sources-non-text"]}>
+                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_ONE}
+                    <Text className={styles["sources-non-bold"]}>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_TWO}
+                    </Text>
+                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_THREE}
+                    <Text className={styles["sources-non-bold"]}>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FOUR}
+                    </Text>
+                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FIVE}
+                  </Text>
+                  <Text className={styles["sources-non-text"]}>
+                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_SIX}
+                  </Text>
+                </div>
+              </div>
+            )}
+            {sourcesError && (
+              <div className={styles["sources-error-banner"]}>
+                <div className={styles["sources-error-banner-inner"]}>
+                  <FailedIcon />
+                  <Text className={styles["sources-non-title"]}>
+                    {CONTENT.SOURCES_ERROR_TITLE}
+                  </Text>
+                  <Text className={styles["sources-non-text"]}>
+                    {CONTENT.SOURCES_ERROR_ONE}
+                  </Text>
+                  <Text className={styles["sources-non-text"]}>
+                    {CONTENT.SOURCES_ERROR_TWO}
+                  </Text>
+                </div>
+              </div>
+            )}
           </Sider>
         )}
         {isMobile && (

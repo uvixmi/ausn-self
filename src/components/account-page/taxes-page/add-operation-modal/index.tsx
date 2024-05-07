@@ -18,15 +18,22 @@ import "./styles.scss"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
 import { OperationCategory, api } from "../../../../api/myApi"
-import locale from "antd/lib/date-picker/locale/ru_RU"
+import ru_RU from "antd/lib/date-picker/locale/ru_RU"
 import dayjs from "dayjs"
 import "dayjs/locale/ru"
 import {
   convertDateFormat,
+  convertReverseFormat,
   numberWithSpaces,
 } from "../../actions-page/payment-modal/utils"
 import { formatDateString } from "../../actions-page/utils"
 import { InfoCircleOutlined } from "@ant-design/icons"
+import { SelectOne } from "../../../../ui-kit/select"
+import { InputOne } from "../../../../ui-kit/input"
+import { ButtonOne } from "../../../../ui-kit/button"
+import { useMediaQuery } from "@react-hook/media-query"
+import { RootState } from "../../../main-page/store"
+import { antdMonths } from "../../../../ui-kit/datepicker/localization"
 
 export const AddOperationModal = ({
   isOpen,
@@ -39,9 +46,18 @@ export const AddOperationModal = ({
   const headers = {
     Authorization: `Bearer ${token}`,
   }
+  const dateFormat = "DD.MM.YYYY"
 
   dayjs.locale("ru")
-  const dateFormat = "DD.MM.YYYY"
+
+  const locale = {
+    ...ru_RU,
+    lang: {
+      ...ru_RU.lang,
+      shortMonths: antdMonths.monthsShort,
+      dateFormat: dateFormat,
+    },
+  }
 
   const [messageApi, contextHolder] = message.useMessage()
   const successProcess = () => {
@@ -90,13 +106,30 @@ export const AddOperationModal = ({
     else setAmountError(true)
   }
 
+  const { data: currentUser } = useSelector((state: RootState) => state.user)
+
   const [dateOperation, setDateOperation] = useState("")
   const [document, setDocument] = useState("")
 
   const options = [
-    { label: "Доход", value: 1 },
-    { label: "Возврат покупателю", value: 3 },
-    { label: "Уплата налога", value: 4 },
+    {
+      label: <Text className={styles["select-text"]}>{"Доход"}</Text>,
+      value: 1,
+    },
+    {
+      label: (
+        <Text className={styles["select-text"]}>{"Возврат покупателю"}</Text>
+      ),
+      value: 3,
+    },
+    {
+      label: (
+        <Text className={styles["select-text"]}>
+          {"Уплата налогов и взносов"}
+        </Text>
+      ),
+      value: 4,
+    },
   ]
 
   useEffect(() => {
@@ -197,6 +230,8 @@ export const AddOperationModal = ({
 
   const [dateError, setDateError] = useState(false)
 
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+
   return (
     <>
       {contextHolder}
@@ -204,11 +239,13 @@ export const AddOperationModal = ({
         open={isOpen}
         style={{
           top: 0,
+
           marginRight: 0,
           borderRadius: "0",
         }}
         onOk={closeModal}
-        mask={false}
+        centered={isMobile}
+        mask={true}
         onCancel={closeModal}
         footer={null}
         className={cn(styles["ant-modal"], "modal-payment")}
@@ -216,8 +253,10 @@ export const AddOperationModal = ({
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
             <div className={styles["operation-inner"]}>
-              <Title level={3}>{CONTENT.HEADING_MODAL}</Title>
               <div className={styles["description-item"]}>
+                <Title level={3} style={{ marginTop: 0, marginBottom: "8px" }}>
+                  {CONTENT.HEADING_MODAL}
+                </Title>
                 <Text className={styles["title-description"]}>
                   {CONTENT.OPERATION_DESCRIPTION_FIRST_LINE}
                 </Text>
@@ -226,7 +265,10 @@ export const AddOperationModal = ({
                 </Text>
               </div>
               <div className={styles["operation-type-inner"]}>
-                <div className={styles["input-item"]}>
+                <div
+                  className={styles["input-item"]}
+                  style={{ marginBottom: "24px" }}
+                >
                   <Text
                     className={cn(
                       styles["text-description"],
@@ -238,9 +280,8 @@ export const AddOperationModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <Select
+                  <SelectOne
                     className={"modal-select"}
-                    style={{ borderRadius: "4px", marginBottom: "24px" }}
                     value={income}
                     options={options}
                     onChange={(value) => setIncome(value)}
@@ -266,7 +307,7 @@ export const AddOperationModal = ({
                     </Tooltip>
                   </Text>
                   <Form.Item
-                    className={styles["form-inn"]}
+                    className={styles["form-inner"]}
                     validateStatus={counterpartyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                     help={
                       counterpartyError ? (
@@ -280,9 +321,8 @@ export const AddOperationModal = ({
                       )
                     }
                   >
-                    <Input
+                    <InputOne
                       placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      style={{ borderRadius: "4px" }}
                       value={counterparty}
                       disabled={income === 4}
                       onChange={(event) => {
@@ -325,9 +365,8 @@ export const AddOperationModal = ({
                       )
                     }
                   >
-                    <Input
+                    <InputOne
                       placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      style={{ borderRadius: "4px" }}
                       value={direct}
                       disabled={income === 4}
                       maxLength={255}
@@ -375,9 +414,8 @@ export const AddOperationModal = ({
                         )
                       }
                     >
-                      <Input
+                      <InputOne
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
-                        style={{ borderRadius: "4px" }}
                         value={amountInput}
                         onChange={handleChange}
                       />
@@ -412,9 +450,22 @@ export const AddOperationModal = ({
                     >
                       <DatePicker
                         placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                        style={{ borderRadius: "4px", height: "32px" }}
-                        className={styles["datepicker-style"]}
+                        style={{ borderRadius: "4px", height: "34px" }}
+                        className={cn(
+                          "picker-operation",
+                          styles["datepicker-style"]
+                        )}
                         locale={locale}
+                        minDate={
+                          currentUser.tax_date_begin
+                            ? dayjs(
+                                convertReverseFormat(
+                                  currentUser.tax_date_begin
+                                ),
+                                dateFormat
+                              )
+                            : undefined
+                        }
                         maxDate={dayjs(formatDateString(), dateFormat)}
                         format={dateFormat}
                         value={
@@ -451,9 +502,8 @@ export const AddOperationModal = ({
                       </div>
                     }
                   >
-                    <Input
+                    <InputOne
                       placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      style={{ borderRadius: "4px" }}
                       value={document}
                       maxLength={20}
                       onChange={(event) => {
@@ -469,13 +519,9 @@ export const AddOperationModal = ({
               </div>
             </div>
             <div className={styles["footer-button"]}>
-              <Button
-                className={styles["pay-inner"]}
-                disabled={isButtonDisabled}
-                onClick={addOperation}
-              >
+              <ButtonOne className={styles["pay-inner"]} onClick={addOperation}>
                 {CONTENT.BUTTON_ADD}
-              </Button>
+              </ButtonOne>
             </div>
           </div>
         </div>
