@@ -566,6 +566,15 @@ $xxl: 2560px;
   text-align: center;
 }
 
+.non-text-bold {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: center;
+}
+
 .non-wrapper {
   width: 50%;
   text-align: center;
@@ -630,6 +639,7 @@ $xxl: 2560px;
 .refresh-sources {
   border: none;
   padding: 0;
+  margin-left: 12px;
 }
 
 .source-date-inner {
@@ -774,4 +784,30 @@ $xxl: 2560px;
 
 .amount-nowrap {
   font-weight: 600 !important;
+}
+
+.non-taxes-operations {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  align-items: center;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.non-title {
+  font-family: "Inter";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-align: left;
+}
+
+.non-operations-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  max-width: 460px;
 }

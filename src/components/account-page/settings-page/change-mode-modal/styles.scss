@@ -6,7 +6,7 @@ $l: 1440px;
 $xl: 1920px;
 $xxl: 2560px;
 
-.modal-payment .ant-modal-content {
+.modal-settings .ant-modal-content {
   border-radius: 0px;
   padding: 24px !important;
   height: auto;
@@ -14,11 +14,11 @@ $xxl: 2560px;
     padding: 40px;
   }
 }
-.modal-payment .ant-modal-body {
+.modal-settings .ant-modal-body {
   height: 100%;
 }
 
-.modal-select .ant-select-selector {
+.modal-settings .ant-select-selector {
   border-radius: 0px;
 }
 

@@ -44,7 +44,7 @@ export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
           serviceDisabled && leaveService()
         }}
         footer={null}
-        className={cn(styles["ant-modal"], "modal-payment")}
+        className={cn(styles["ant-modal"], "modal-settings")}
       >
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>

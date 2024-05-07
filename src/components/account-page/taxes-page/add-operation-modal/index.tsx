@@ -330,6 +330,7 @@ export const AddOperationModal = ({
                       style={{ borderRadius: "4px" }}
                       value={direct}
                       disabled={income === 4}
+                      maxLength={255}
                       onChange={(event) => {
                         setDirect(event.target.value)
 

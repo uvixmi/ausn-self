@@ -23,7 +23,7 @@ export const CONTENT = {
   BUTTON_ENS_TEXT: "Пополнить ЕНС",
   BUTTON_SIDER_ADD_TEXT: "Добавить",
   BUTTON_SIDER_EDIT_TEXT: "Редактировать",
-  BUTTON_ADD_SOURCE_NON: "Добавить источники данных",
+  BUTTON_ADD_SOURCE_NON: "Добавить данные",
   ENS_ANALYSIS_TEXT: "Анализ ЕНС доступен на платном тарифе",
   TEXT_DETAILS: "Подробнее",
   SELECT_ACCOUNT_NUMBER: "Источник данных",
@@ -52,7 +52,8 @@ export const CONTENT = {
   NOTIFICATION_PROCESSING_SUCCESS: "Операция удалена",
   NOTIFICATION_PROCESSING_FAILED:
     "Ошибка удаления операции, попробуйте еще раз",
-  TEXT_NON_TAXES:
+  TEXT_NON_TAXES: "Нет операций, соответствующих фильтру",
+  TEXT_NON_TAXES_OLD:
     "Расчет налогов в сервисе производится на основании анализа операций из различных источников данных. Важно внести все источники и своевременно подгружать информацию из них.",
   OFF_SOURCE: "Отключить источник",
   DELETE_SOURCE: "Удалить",
@@ -69,4 +70,8 @@ export const CONTENT = {
   TAXES_ERROR_DESCRIPTION: "Мы знаем о проблеме и решаем её",
   TITLE_COLLAPSED_SOURCES: "Скрытые источники",
   DELETE_TOOLTIP: "Удалить",
+  NON_OPERATIONS:
+    "Расчет налогов и взносов производится на основании операций, загруженных в Сервис",
+  NON_OPERATIONS_NEED: "Внесите данные для расчета с ",
+  NON_OPERATIONS_TITLE: "У вас еще нет загруженных операций",
 }

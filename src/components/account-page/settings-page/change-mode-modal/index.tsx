@@ -326,7 +326,7 @@ export const ChangeModeModal = ({ isOpen, setOpen }: ChangeModeModalProps) => {
         }}
         centered
         footer={null}
-        className={cn(styles["ant-modal"], "modal-payment")}
+        className={cn(styles["ant-modal"], "modal-settings")}
       >
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>

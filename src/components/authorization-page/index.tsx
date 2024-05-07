@@ -42,6 +42,7 @@ export const AuthorizationPage = ({
   const { isAuthenticated, setRole, logout } = useAuth()
 
   useEffect(() => {
+    /*
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     window.carrotquest &&
@@ -51,7 +52,17 @@ export const AuthorizationPage = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         window.carrotquest.removeChat()
-      })
+      })*/
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest == null
+    function deleteCookie() {
+      document.cookie = "carrotquest_uid=; max-age=0; path=/"
+      document.cookie = "carrotquest_auth_token=; max-age=0; path=/"
+      console.log("deleted")
+    }
+
+    deleteCookie()
   }, [])
 
   return (
