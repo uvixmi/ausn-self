@@ -68,4 +68,5 @@ export const CONTENT = {
   TAXES_ERROR_HEADING: "Что-то пошло не так",
   TAXES_ERROR_DESCRIPTION: "Мы знаем о проблеме и решаем её",
   TITLE_COLLAPSED_SOURCES: "Скрытые источники",
+  DELETE_TOOLTIP: "Удалить",
 }

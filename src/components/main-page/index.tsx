@@ -15,7 +15,6 @@ import { ActionsPage } from "../account-page/actions-page"
 import { TaxesPage } from "../account-page/taxes-page"
 import { SettingsPage } from "../account-page/settings-page"
 import { ReportsPage } from "../account-page/reports-page"
-import { fetchSourcesInfo } from "../account-page/client/sources/thunks"
 import { jwtDecode } from "jwt-decode"
 
 export const MainPage = () => {

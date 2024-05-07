@@ -2,16 +2,12 @@
 
 .default {
   height: 34px;
-  padding: 6px 16px;
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  border-radius: 4px;
+
+  border-radius: 4px !important;
   color: $base-primary-dark;
   font-weight: 400;
   font-size: 14px;
   line-height: 22px;
-  border: 1px solid $base-secondary-2;
 
   &::placeholder {
     color: $base-secondary-pale;
@@ -26,14 +22,5 @@
       background-color: $base-secondary-pale !important;
       border: 1px solid $base-secondary-2;
     }
-  }
-
-  &:hover {
-    border: 1px solid $base-secondary-1;
-  }
-
-  &:focus {
-    border: 1px solid $brand-primary;
-    box-shadow: 0px 0px 0px 2px #f0f0ff;
   }
 }

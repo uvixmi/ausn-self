@@ -39,7 +39,7 @@ export const InputOne = ({
     onChange?.(event)
   }
 
-  const inputClassnames = cn(styles.button, styles["default"], className)
+  const inputClassnames = cn(styles["default"], className)
 
   return (
     <Input

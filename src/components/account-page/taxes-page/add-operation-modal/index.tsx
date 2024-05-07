@@ -95,7 +95,7 @@ export const AddOperationModal = ({
 
   const options = [
     { label: "Доход", value: 1 },
-    { label: "Возврат покупателю", value: 2 },
+    { label: "Возврат покупателю", value: 3 },
     { label: "Уплата налога", value: 4 },
   ]
 
@@ -159,7 +159,7 @@ export const AddOperationModal = ({
             counterparty_name: counterparty,
             category:
               income === 1 ? OperationCategory.Debet : OperationCategory.Credit,
-            operation_type: income === 1 ? 1 : 2,
+            operation_type: income === 1 ? 1 : 3,
           },
           {
             headers,
