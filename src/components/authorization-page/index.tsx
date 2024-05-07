@@ -42,7 +42,6 @@ export const AuthorizationPage = ({
   const { isAuthenticated, setRole, logout } = useAuth()
 
   useEffect(() => {
-    /*
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     window.carrotquest &&
@@ -52,7 +51,7 @@ export const AuthorizationPage = ({
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         window.carrotquest.removeChat()
-      })*/
+      })
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     window.carrotquest == null
