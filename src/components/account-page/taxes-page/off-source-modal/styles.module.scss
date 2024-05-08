@@ -19,7 +19,7 @@
 .list-wrapper {
   display: flex;
   flex-direction: column;
-  margin-top: 12px;
+  margin-top: 32px;
   gap: 16px;
 }
 
@@ -40,11 +40,19 @@
 
 .text-input {
   font-family: "Inter";
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #141414;
+}
+
+.text-input-load {
+  font-family: "Inter";
+  font-family: Inter;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-  letter-spacing: 0em;
-  text-align: left;
   color: #141414;
 }
 
@@ -66,4 +74,13 @@
   letter-spacing: 0em;
   text-align: left;
   color: #6159ff;
+}
+
+.off-title {
+  font-family: "Inter";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  text-align: left;
+  color: #141414;
 }

@@ -146,29 +146,6 @@ export const AddSourceModal = ({
     }
   }
 
-  const closeModal = () => {
-    setOpen(false)
-    setAccountFromFile(null)
-    setButtonMode("default")
-    setFileIsLoading("")
-    setFileName("")
-    setBankToIntegrate("")
-    setIntegrateAccount("")
-    setIntegrateBik("")
-    setIntegrateLogin("")
-    setIntegratePassword("")
-    setMarketplaceMode("")
-    setOfdMode("")
-    setOtherMarketplace("")
-    setOtherOfd("")
-    setCompletedSource(null)
-  }
-
-  const closeAddSource = () => {
-    if (fileIsLoading === "loading") setIsCloseSave(true)
-    else closeModal()
-  }
-
   const [isCloseSave, setIsCloseSave] = useState(false)
 
   const [bankToIntegrate, setBankToIntegrate] = useState("")
@@ -206,6 +183,34 @@ export const AddSourceModal = ({
   const [integrateAccount, setIntegrateAccount] = useState("")
   const [isIntegrateButtonDisabled, setIsIntegrateButtonDisabled] =
     useState(true)
+
+  const closeModal = () => {
+    setOpen(false)
+    setAccountFromFile(null)
+    setButtonMode("default")
+    setFileIsLoading("")
+    setFileName("")
+    setBankToIntegrate("")
+    setIntegrateAccount("")
+    setIntegrateBik("")
+    setIntegrateLogin("")
+    setIntegratePassword("")
+    setMarketplaceMode("")
+    setOfdMode("")
+    setOtherMarketplace("")
+    setOtherOfd("")
+    setCompletedSource(null)
+    setIntegrateBikError(false)
+    setIntegrateAccountError(false)
+    setIntegrateAccount("")
+    setIntegratePasswordError(false)
+    setIntegrateLoginError(false)
+  }
+
+  const closeAddSource = () => {
+    if (fileIsLoading === "loading") setIsCloseSave(true)
+    else closeModal()
+  }
 
   const sendOtherSource = async () => {
     const data = {
@@ -1038,7 +1043,17 @@ export const AddSourceModal = ({
                   </div>
                   <div className={styles["buttons-generate-inner"]}>
                     <ButtonOne
-                      onClick={() => setBankToIntegrate("")}
+                      onClick={() => {
+                        setBankToIntegrate("")
+                        setIntegrateBikError(false)
+                        setIntegrateBik("")
+                        setIntegrateAccountError(false)
+                        setIntegrateAccount("")
+                        setIntegratePassword("")
+                        setIntegratePasswordError(false)
+                        setIntegrateLogin("")
+                        setIntegrateLoginError(false)
+                      }}
                       className={styles["generate-back"]}
                       type="secondary"
                     >

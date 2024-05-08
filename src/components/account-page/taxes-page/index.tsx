@@ -729,17 +729,17 @@ export const TaxesPage = () => {
                 item.state === "completed" &&
                 !item.disable_date &&
                 (item.type === "account" || item.type === "ofd")
-                  ? CONTENT.OFF_SOURCE
+                  ? CONTENT.OFF_SOURCE_TOOLTIP
                   : item.state === "failed"
-                  ? CONTENT.DELETE_SOURCE
+                  ? CONTENT.DELETE_SOURCE_TOOLTIP
                   : item.is_integrated === true &&
                     item.state === "in_progress" &&
                     !!item.link
-                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                   : item.is_integrated === true &&
                     item.state === "completed" &&
                     !item.disable_date
-                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
                   : undefined
               }
             >
@@ -842,17 +842,17 @@ export const TaxesPage = () => {
                 item.state === "completed" &&
                 !item.disable_date &&
                 (item.type === "account" || item.type === "ofd")
-                  ? CONTENT.OFF_SOURCE
+                  ? CONTENT.OFF_SOURCE_TOOLTIP
                   : item.state === "failed"
-                  ? CONTENT.DELETE_SOURCE
+                  ? CONTENT.DELETE_SOURCE_TOOLTIP
                   : item.is_integrated === true &&
                     item.state === "in_progress" &&
                     !!item.link
-                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                   : item.is_integrated === true &&
                     item.state === "completed" &&
                     !item.disable_date
-                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
                   : undefined
               }
             >
@@ -1631,17 +1631,17 @@ export const TaxesPage = () => {
                                 item.state === "completed" &&
                                 !item.disable_date &&
                                 (item.type === "account" || item.type === "ofd")
-                                  ? CONTENT.OFF_SOURCE
+                                  ? CONTENT.OFF_SOURCE_TOOLTIP
                                   : item.state === "failed"
-                                  ? CONTENT.DELETE_SOURCE
+                                  ? CONTENT.DELETE_SOURCE_TOOLTIP
                                   : item.is_integrated === true &&
                                     item.state === "in_progress" &&
                                     !!item.link
-                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                                   : item.is_integrated === true &&
                                     item.state === "completed" &&
                                     !item.disable_date
-                                  ? CONTENT.OFF_INTEGRATION_SOURCE
+                                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
                                   : undefined
                               }
                             >
@@ -1810,21 +1810,12 @@ export const TaxesPage = () => {
                           {!(item.state == "in_progress" && !item.link) && (
                             <Tooltip
                               title={
-                                item.is_integrated === false &&
-                                item.state === "completed" &&
-                                !item.disable_date &&
-                                (item.type === "account" || item.type === "ofd")
-                                  ? CONTENT.OFF_SOURCE
-                                  : item.state === "failed"
-                                  ? CONTENT.DELETE_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "in_progress" &&
-                                    !!item.link
-                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                  : item.is_integrated === true &&
-                                    item.state === "completed"
-                                  ? CONTENT.OFF_INTEGRATION_SOURCE &&
-                                    !item.disable_date
+                                item.state === "failed"
+                                  ? CONTENT.DELETE_SOURCE_TOOLTIP
+                                  : item.state === "completed"
+                                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
+                                  : item.state === "in_progress" && !!item.link
+                                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                                   : undefined
                               }
                             >
@@ -2111,16 +2102,16 @@ export const TaxesPage = () => {
                                   !item.disable_date &&
                                   (item.type === "account" ||
                                     item.type === "ofd")
-                                    ? CONTENT.OFF_SOURCE
+                                    ? CONTENT.OFF_SOURCE_TOOLTIP
                                     : item.state === "failed"
-                                    ? CONTENT.DELETE_SOURCE
+                                    ? CONTENT.DELETE_SOURCE_TOOLTIP
                                     : item.is_integrated === true &&
                                       item.state === "in_progress" &&
                                       !!item.link
-                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                                     : item.is_integrated === true &&
                                       item.state === "completed"
-                                    ? CONTENT.OFF_INTEGRATION_SOURCE &&
+                                    ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP &&
                                       !item.disable_date
                                     : undefined
                                 }
@@ -2289,17 +2280,17 @@ export const TaxesPage = () => {
                                   !item.disable_date &&
                                   (item.type === "account" ||
                                     item.type === "ofd")
-                                    ? CONTENT.OFF_SOURCE
+                                    ? CONTENT.OFF_SOURCE_TOOLTIP
                                     : item.state === "failed"
-                                    ? CONTENT.DELETE_SOURCE
+                                    ? CONTENT.DELETE_SOURCE_TOOLTIP
                                     : item.is_integrated === true &&
                                       item.state === "in_progress" &&
                                       !!item.link
-                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
                                     : item.is_integrated === true &&
                                       item.state === "completed" &&
                                       !item.disable_date
-                                    ? CONTENT.OFF_INTEGRATION_SOURCE
+                                    ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
                                     : undefined
                                 }
                               >

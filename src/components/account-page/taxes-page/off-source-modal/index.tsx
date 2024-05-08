@@ -1,5 +1,6 @@
 import { Button, DatePicker, Modal, Typography, message } from "antd"
 import { OffSourceProps } from "./types"
+import "./styles.scss"
 import styles from "./styles.module.scss"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
@@ -118,9 +119,7 @@ export const OffSourceModal = ({
         footer={null}
       >
         <div className={styles["modal-wrapper"]}>
-          <Title level={3} style={{ margin: "0 0 32px" }}>
-            {titleModal}
-          </Title>
+          <Text className={styles["off-title"]}>{titleModal}</Text>
           <div className={styles["list-wrapper"]}>
             <div className={styles["list-text"]}>
               {account && (
@@ -150,6 +149,7 @@ export const OffSourceModal = ({
                   maxDate={dayjs(formatDateString(), dateFormat)}
                   locale={locale}
                   format={dateFormat}
+                  className="picker-off"
                   value={
                     dateOperation ? dayjs(dateOperation, dateFormat) : null
                   }
@@ -160,19 +160,19 @@ export const OffSourceModal = ({
                 />
               </div>
             ) : typeSource === 3 ? (
-              <Text className={styles["text-input"]}>
+              <Text className={styles["text-input-load"]}>
                 {CONTENT.DATA_NOT_LOAD}
               </Text>
             ) : typeSource === 4 ? (
-              <Text className={styles["text-input"]}>
+              <Text className={styles["text-input-load"]}>
                 {CONTENT.CANCEL_INTEGRATION_DESCRIPTION}
               </Text>
             ) : typeSource === 5 ? (
               <div className={styles["list-text"]}>
-                <Text className={styles["text-input"]}>
+                <Text className={styles["text-input-load"]}>
                   {CONTENT.DATA_WILL_SAVE}
                 </Text>
-                <Text className={styles["text-input"]}>
+                <Text className={styles["text-input-load"]}>
                   {CONTENT.SYMBOL_S}
                   <Text className={styles["text-date"]}>
                     {convertReverseFormat(getCurrentDate())}
