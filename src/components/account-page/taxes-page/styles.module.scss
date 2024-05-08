@@ -714,6 +714,11 @@ $xxl: 2560px;
     opacity 0.3s ease;
   border: none;
   padding: 5px;
+  background-color: inherit;
+
+  :hover {
+    background-color: $brand-secondary-pale !important;
+  }
 }
 
 .source-delete-icon-disable {
@@ -738,10 +743,11 @@ $xxl: 2560px;
 }
 
 .source-completed-icon {
-  padding: 6px 0 0;
+  padding: 0;
   margin: 0;
   border: none;
   height: auto;
+  background-color: inherit;
 }
 
 .collapse-style {

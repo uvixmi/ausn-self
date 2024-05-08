@@ -1,3 +1,4 @@
+@import "../../../ui-kit/theme/colors.scss";
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -93,4 +94,18 @@ $xxl: 2560px;
 }
 .hide-sources .ant-collapse-content-box {
   padding: 0;
+}
+
+.ant-list-item:hover {
+  border-radius: 8px;
+  background-color: $brand-secondary-pale !important;
+  cursor: pointer;
+}
+
+.ant-list-item {
+  height: 36px;
+}
+
+.ant-btn-default:hover {
+  background-color: $brand-secondary-pale !important;
 }
