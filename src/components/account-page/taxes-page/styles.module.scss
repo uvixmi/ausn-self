@@ -748,7 +748,7 @@ $xxl: 2560px;
     opacity 0.3s ease;
   border: none;
   padding: 5px;
-  background-color: inherit;
+  background-color: inherit !important;
 
   :hover {
     background-color: $brand-secondary-pale !important;

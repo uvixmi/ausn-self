@@ -481,6 +481,8 @@ export const TaxesPage = () => {
     handleSourcesChange([])
   }
 
+  const [haveData, setHaveDate] = useState(false)
+
   const fetchOperations = useCallback(async () => {
     if (isFetching) {
       try {
@@ -744,7 +746,7 @@ export const TaxesPage = () => {
               }
             >
               <Button
-                className={cn({
+                className={cn("delete-fly-icon", {
                   [styles["source-delete-icon-disable"]]: item.disable_date,
                   [styles["source-delete-icon"]]: !item.disable_date,
                 })}
@@ -857,7 +859,7 @@ export const TaxesPage = () => {
               }
             >
               <Button
-                className={cn({
+                className={cn("delete-fly-icon", {
                   [styles["source-delete-icon-disable"]]: item.disable_date,
                   [styles["source-delete-icon"]]: !item.disable_date,
                 })}
@@ -1649,7 +1651,7 @@ export const TaxesPage = () => {
                                 item.state === "completed" && item.disable_date
                               ) ? (
                                 <Button
-                                  className={cn({
+                                  className={cn("delete-fly-icon", {
                                     [styles["source-delete-icon-disable"]]:
                                       item.disable_date,
                                     [styles["source-delete-icon"]]:
@@ -1823,7 +1825,7 @@ export const TaxesPage = () => {
                                 item.state === "completed" && item.disable_date
                               ) ? (
                                 <Button
-                                  className={cn({
+                                  className={cn("delete-fly-icon", {
                                     [styles["source-delete-icon-disable"]]:
                                       item.disable_date,
                                     [styles["source-delete-icon"]]:
@@ -2121,7 +2123,7 @@ export const TaxesPage = () => {
                                   item.disable_date
                                 ) ? (
                                   <Button
-                                    className={cn({
+                                    className={cn("delete-fly-icon", {
                                       [styles["source-delete-icon-disable"]]:
                                         item.disable_date,
                                       [styles["source-delete-icon"]]:
@@ -2299,7 +2301,7 @@ export const TaxesPage = () => {
                                   item.disable_date
                                 ) ? (
                                   <Button
-                                    className={cn({
+                                    className={cn("delete-fly-icon", {
                                       [styles["source-delete-icon-disable"]]:
                                         item.disable_date,
                                       [styles["source-delete-icon"]]:

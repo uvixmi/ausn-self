@@ -106,6 +106,7 @@ $xxl: 2560px;
   height: 36px;
 }
 
-.ant-btn-default:hover {
+.delete-fly-icon .ant-btn:hover {
   background-color: $brand-secondary-pale !important;
+  padding: 0;
 }
