@@ -254,9 +254,12 @@ export const AddOperationModal = ({
           <div className={styles["modal-inner"]}>
             <div className={styles["operation-inner"]}>
               <div className={styles["description-item"]}>
-                <Title level={3} style={{ marginTop: 0, marginBottom: "8px" }}>
+                <Text
+                  style={{ marginBottom: "8px" }}
+                  className={styles["title-font"]}
+                >
                   {CONTENT.HEADING_MODAL}
-                </Title>
+                </Text>
                 <Text className={styles["title-description"]}>
                   {CONTENT.OPERATION_DESCRIPTION_FIRST_LINE}
                 </Text>
@@ -299,12 +302,14 @@ export const AddOperationModal = ({
                     <Text className={styles["necessary"]}>
                       {CONTENT.NECESSARY}
                     </Text>{" "}
-                    <Tooltip title={CONTENT.TOOLTIP_TEXT}>
-                      <InfoCircleOutlined
-                        style={{ color: "#8C8C8C" }}
-                        size={14}
-                      />
-                    </Tooltip>
+                    {income !== 4 && (
+                      <Tooltip title={CONTENT.TOOLTIP_TEXT}>
+                        <InfoCircleOutlined
+                          style={{ color: "#8C8C8C" }}
+                          size={14}
+                        />
+                      </Tooltip>
+                    )}
                   </Text>
                   <Form.Item
                     className={styles["form-inner"]}
@@ -519,7 +524,11 @@ export const AddOperationModal = ({
               </div>
             </div>
             <div className={styles["footer-button"]}>
-              <ButtonOne className={styles["pay-inner"]} onClick={addOperation}>
+              <ButtonOne
+                className={styles["pay-inner"]}
+                onClick={addOperation}
+                disabled={isButtonDisabled}
+              >
                 {CONTENT.BUTTON_ADD}
               </ButtonOne>
             </div>

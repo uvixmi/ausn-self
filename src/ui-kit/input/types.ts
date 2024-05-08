@@ -5,8 +5,11 @@ import {
   ButtonHTMLAttributes,
   AriaAttributes,
   ChangeEvent,
+  LegacyRef,
+  RefObject,
 } from "react"
 import { BUTTON_TYPES, BUTTON_SIZES } from "./constants"
+import { InputRef } from "antd"
 
 type Values<T> = T[keyof T]
 type ButtonSize = Values<typeof BUTTON_SIZES>
@@ -22,6 +25,7 @@ export type ButtonProps = {
    * Тип кнопки
    */
   type?: string
+  ref?: RefObject<InputRef>
   showCount?: boolean
   /**
    * Размер кнопки

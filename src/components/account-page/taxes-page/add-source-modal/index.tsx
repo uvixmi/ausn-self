@@ -3,6 +3,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputRef,
   Modal,
   Typography,
   message,
@@ -21,7 +22,7 @@ import { CONTENT } from "./constants"
 import { BankBalanceIcon } from "../type-operation/icons/bank_balance"
 import { OnlineCashierIcon } from "../type-operation/icons/online-cashier"
 import { MarketplaceIcon } from "../type-operation/icons/marketplace"
-import { useEffect, useState } from "react"
+import { RefObject, useEffect, useRef, useState } from "react"
 import Dragger from "antd/es/upload/Dragger"
 import { DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons"
 import alpha from "./bank-logos/alpha.png"
@@ -205,17 +206,6 @@ export const AddSourceModal = ({
   const [integrateAccount, setIntegrateAccount] = useState("")
   const [isIntegrateButtonDisabled, setIsIntegrateButtonDisabled] =
     useState(true)
-
-  useEffect(() => {
-    if (
-      integrateLogin !== "" &&
-      integratePassword !== "" &&
-      integrateBik.length == 9 &&
-      integrateAccount.length == 20
-    )
-      setIsIntegrateButtonDisabled(false)
-    else setIsIntegrateButtonDisabled(true)
-  }, [integrateLogin, integratePassword, integrateBik, integrateAccount])
 
   const sendOtherSource = async () => {
     const data = {
@@ -408,6 +398,8 @@ export const AddSourceModal = ({
   const [dateMarketPlace, setDateMarketPlace] = useState("")
   const [dateMarketPlaceError, setDateMarketplaceError] = useState(false)
 
+  const nextInput = useRef<InputRef>(null)
+
   useEffect(() => {
     if (ofdLogin !== "" && ofdPassword !== "" && dateSource !== "")
       setIsOfdButtonDisabled(false)
@@ -428,6 +420,24 @@ export const AddSourceModal = ({
         setIsButtonMarketplaceDisabled(false)
       else setIsButtonMarketplaceDisabled(true)
   }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace])
+
+  useEffect(() => {
+    if (
+      integrateLogin !== "" &&
+      integratePassword !== "" &&
+      integrateBik.length == 9 &&
+      integrateAccount.length == 20 &&
+      !integrateAccountError
+    )
+      setIsIntegrateButtonDisabled(false)
+    else setIsIntegrateButtonDisabled(true)
+  }, [
+    integrateLogin,
+    integratePassword,
+    integrateBik,
+    integrateAccount,
+    integrateAccountError,
+  ])
 
   return (
     <>
@@ -564,7 +574,9 @@ export const AddSourceModal = ({
                       ? CONTENT.TEXT_OFD_DIFFERENT_DESCRIPTION
                       : ""
                     : marketplaceMode !== ""
-                    ? CONTENT.TEXT_OTHER_INTEGRATE
+                    ? marketplaceMode !== "4"
+                      ? CONTENT.TEXT_OTHER_INTEGRATE
+                      : null
                     : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
                 </Text>
               ) : (
@@ -983,6 +995,7 @@ export const AddSourceModal = ({
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         maxLength={20}
                         showCount
+                        ref={nextInput}
                         onChange={(event) => {
                           const numericValue = event.target.value.replace(
                             /\D/g,
@@ -1330,6 +1343,7 @@ export const AddSourceModal = ({
                       >
                         <Input.Password
                           value={ofdPassword}
+                          maxLength={225}
                           type="password"
                           onChange={(event) => {
                             setOfdPassword(event.target.value)
@@ -1424,6 +1438,8 @@ export const AddSourceModal = ({
                         setOfdLogin("")
                         setOfdLoginError(false)
                         setOfdPasswordError(false)
+                        setDateError(false)
+                        setDateSource("")
                       }}
                       className={styles["generate-back"]}
                       type="secondary"
@@ -1568,8 +1584,8 @@ export const AddSourceModal = ({
                   </div>
                 </div>
               ) : (
-                <div>
-                  <Text className={styles["text-title"]}>
+                <div className={styles["ofd-wrapper"]}>
+                  <Text className={styles["text-title-ofd"]}>
                     {CONTENT.TEXT_OFD_OTHER}
                   </Text>
                   <div className={styles["input-item"]}>
@@ -1583,7 +1599,9 @@ export const AddSourceModal = ({
                     </Text>
                     <div className={styles["bank-row"]}>
                       <InputOne
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
                         value={otherOfd}
+                        maxLength={225}
                         onChange={(event) => setOtherOfd(event.target.value)}
                       />
                       <Button
@@ -1596,7 +1614,8 @@ export const AddSourceModal = ({
                       </Button>
                     </div>
                   </div>
-                  <Text className={styles["text-title"]}>
+                  <div className={styles["divider"]}></div>
+                  <Text className={styles["text-title-ofd"]}>
                     {CONTENT.TEXT_OFD_OTHER_DESCRIPTION}
                   </Text>
                   <div className={styles["buttons-generate"]}>
@@ -1712,6 +1731,7 @@ export const AddSourceModal = ({
                   >
                     <InputOne
                       value={marketplaceId}
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
                       onChange={(event) => {
                         setMarketplaceId(event.target.value)
                         if (event.target.value !== "")
@@ -1750,6 +1770,7 @@ export const AddSourceModal = ({
                   >
                     <InputOne
                       value={marketplaceKey}
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
                       onChange={(event) => {
                         setMarketplaceKey(event.target.value)
                         if (event.target.value !== "")
@@ -1881,6 +1902,7 @@ export const AddSourceModal = ({
                   >
                     <InputOne
                       value={marketplaceKey}
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
                       onChange={(event) => {
                         setMarketplaceKey(event.target.value)
                         if (event.target.value !== "")
@@ -2007,8 +2029,8 @@ export const AddSourceModal = ({
                 </div>
               </div>
             ) : (
-              <div className={styles["wrapper-other"]}>
-                <Text className={styles["text-title"]}>
+              <div className={styles["ofd-wrapper"]}>
+                <Text className={styles["text-title-ofd"]}>
                   {CONTENT.TEXT_MARKETPLACE_OTHER}
                 </Text>
 
@@ -2024,6 +2046,7 @@ export const AddSourceModal = ({
                   <div className={styles["bank-row"]}>
                     <InputOne
                       value={otherMarketplace}
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
                       onChange={(event) =>
                         setOtherMarketplace(event.target.value)
                       }
@@ -2038,7 +2061,8 @@ export const AddSourceModal = ({
                     </Button>
                   </div>
                 </div>
-                <Text className={styles["text-title"]}>
+                <div className={styles["divider"]}></div>
+                <Text className={styles["text-title-ofd"]}>
                   {CONTENT.TEXT_MARKETPLACE_OTHER_DESCRIPTION}
                 </Text>
                 <div className={styles["buttons-generate"]}>

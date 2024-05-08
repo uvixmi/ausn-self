@@ -41,9 +41,6 @@ $xxl: 2560px;
   color: $base-secondary-1 !important; // Используйте вашу переменную здесь
 }
 
-.custom-password-input .ant-input-password > input {
-}
-
 .ant-input-password {
   height: 34px !important;
   padding: 6px 16px;
@@ -59,6 +56,15 @@ $xxl: 2560px;
   border: 1px solid $base-secondary-2;
 
   &::placeholder {
-    color: $base-secondary-1;
+    font-family: "Inter";
+    color: $base-secondary-1 !important;
   }
+}
+
+.ant-input-password > input::placeholder {
+  font-family: "Inter";
+  color: $base-secondary-1 !important;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
 }

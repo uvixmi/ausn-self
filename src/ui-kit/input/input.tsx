@@ -16,6 +16,7 @@ export const InputOne = ({
   className,
   autoComplete,
   value,
+  ref,
   onBlur,
   onFocus,
   onChange,
@@ -50,6 +51,7 @@ export const InputOne = ({
       {...ariaAttributes}
       value={value}
       id={id}
+      ref={ref}
       disabled={disabled}
       data-test-id={dataTestId}
       maxLength={maxLength}
