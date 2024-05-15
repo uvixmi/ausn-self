@@ -4,7 +4,10 @@ export interface AddSourceModalProps {
   setAddOperation: (arg: boolean) => void
   completedSource: number | null
   setCompletedSource: (arg: number | null) => void
+  failedBankBik: string | null
+  failedSubName: string | null
   fetchSourcesHand: () => Promise<void>
+  setMarketplaceOperation: (arg: boolean) => void
 }
 export interface ErrorResponse {
   error: {

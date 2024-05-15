@@ -155,7 +155,6 @@ $xxl: 2560px;
 }
 
 .arrow-left-icon {
-  height: 8px;
   color: #6159ff;
 }
 
@@ -286,7 +285,10 @@ $xxl: 2560px;
 }
 
 .generate-back {
+  display: flex;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .wrapper-marketplace {
@@ -309,7 +311,7 @@ $xxl: 2560px;
   border-radius: 4px;
   background: #6159ff;
   color: #fff;
-  height: 100%;
+
   width: 100%;
 }
 

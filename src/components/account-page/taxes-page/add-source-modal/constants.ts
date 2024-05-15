@@ -11,13 +11,14 @@ export const CONTENT = {
   DESCRIPTION_ONLINE_CASHIER:
     "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и\u00A0т.д.",
   TITLE_MARKETPLACE_INTEGRATION: "Маркетплейс",
-  DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries",
+  DESCRIPTION_MARKETPLACE_INTEGRATION: "Ozon, Wildberries, Яндекс Маркет",
   NOTIFICATION_PROCESSING_SUCCESS: "Данные сохранены",
   NOTIFICATION_PROCESSING_FAILED: "Не удалось сохранить. Попробуйте еще раз",
   NOTIFICATION_INTEGRATE_ALPHA_FAILED:
     "Ошибка генерации ссылки. Повторите попытку",
   NOTIFICATION_INTEGRATE_OTHER_FAILED:
     "Ошибка сохранения данных. Повторите попытку",
+  NOTIFICATION_YANDEX_LINK_FAILED: "Ошибка генерации ссылки. Повторите попытку",
 
   TEXT_UPLOAD_BANK_STATEMENT:
     "Подгрузите выписку в формате .txt (1С), сформированную в ЛК банка. Файл должен содержать все входящие и исходящие операции по одному счету\u00A0ИП",
@@ -84,10 +85,14 @@ export const CONTENT = {
     "ID клиента и ключ для подключения через API необходимо сгенерировать в ЛК OZON.",
   TEXT_MARKETPLACE_WB_DESCRIPTION:
     "Ключ для подключения через API необходимо сгенерировать в ЛК Wildberries",
-  TEXT_MARKETPLACE_YANDEX:
-    "Мы сгенерируем ссылку для предоставления доступа к данным. Ссылка отобразится в Источники данных. Для успешного подключения перейдите по ссылке и предоставьте доступ.",
-  TEXT_MARKETPLACE_YANDEX_DESCRIPTION:
-    "Как только мы получим доступ, ваши продажи на Яндекс.Маркет отобразятся в разделе Операции",
+  TEXT_MARKETPLACE_YANDEX_ONE:
+    "Мы сгенерируем ссылку для предоставления доступа к данным. Ссылка отобразится в ",
+  TEXT_MARKETPLACE_YANDEX_TWO: "Источники\u00A0данных. ",
+  TEXT_MARKETPLACE_YANDEX_THREE:
+    "Для успешного подключения перейдите по ссылке и предоставьте доступ.",
+  TEXT_MARKETPLACE_YANDEX_DESCRIPTION_ONE:
+    "Как только мы получим доступ, ваши продажи на Яндекс.Маркет отобразятся в разделе ",
+  TEXT_MARKETPLACE_YANDEX_DESCRIPTION_TWO: "Операции",
   TEXT_MARKETPLACE_OTHER:
     "К сожалению, синхронизация с другими маркетплейсами сейчас не поддерживается, но вы можете указать название и мы постараемся добавить его в наш сервис.",
   TEXT_MARKETPLACE_OTHER_DESCRIPTION:
@@ -102,4 +107,12 @@ export const CONTENT = {
   DATEPICKER_PLACEHOLDER: "Укажите дату",
   DATEPICKER_TITLE: "Дата начала загрузки отчетов по чекам",
   DATEPICKER_MARKETPLACE_TITLE: "Дата начала загрузки отчетов о реализации",
+  LOAD_REPORT_XLS: "Отчёт в формате .xls",
+  LOAD_API: "Интеграция по API",
+  LOAD_MANUAL: "Добавить вручную",
+  LOAD_YANDEX_DATE: "Дата начала загрузки отчетов о реализации",
+  TILTE_YANDEX_INTEGRATE: "Синхронизация с Яндекс.Маркет",
+  TITLE_MARKETPLACE_PICK: "Выберите способ загрузки",
+  TITLE_MARKETPLACE_XLS: "Загрузите отчёт о реализации в формате .xlsx",
+  LOAD_MARKETPLACE_XLS: "Загрузите файл в формате .xlsx",
 } as const

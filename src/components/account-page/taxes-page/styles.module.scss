@@ -34,16 +34,16 @@ $xxl: 2560px;
 .right-sider-wrapper {
   background-color: #fff;
   border-left: 1px solid #d9d9d9;
-  padding: 20px 16px;
-  max-width: 270px !important;
-  width: 270px !important;
-  min-width: 270px !important;
+  width: 340px;
+  max-width: 340px !important;
+  min-width: 340px !important;
+  padding: 20px 20px 20px 16px;
 
   @media screen and (min-width: $m) {
     width: 340px;
     max-width: 340px !important;
     min-width: 340px !important;
-    padding: 20px 24px;
+    padding: 20px 20px 20px 16px;
   }
 }
 
@@ -312,6 +312,17 @@ $xxl: 2560px;
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
+  height: 36px;
+}
+
+.list-item-hide:hover {
+  border-radius: 8px;
+  background-color: $brand-secondary-pale !important;
+  cursor: pointer;
+}
+
+.list-item-hide:hover .source-delete-icon {
+  opacity: 1;
 }
 
 .table-header {
@@ -479,6 +490,10 @@ $xxl: 2560px;
   background: #f0f0ff;
   color: #6159ff;
   padding-right: 14px;
+}
+
+.type-income-2 {
+  color: #6159ff;
 }
 
 .type-back {
@@ -701,20 +716,25 @@ $xxl: 2560px;
   display: flex;
   align-items: flex-end;
   flex-direction: column;
-  position: relative;
   justify-content: center;
   padding-right: 4px;
   height: 100%;
 }
 
 .source-date-part {
-  transition: margin-right 0.3s ease;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   min-width: 60px;
   min-height: 24px;
   justify-content: center;
+}
+
+.source-no-date-part {
+  display: flex;
+  align-items: center;
+  min-width: 60px;
+  min-height: 24px;
+  justify-content: flex-end;
 }
 
 .date-style {
@@ -728,26 +748,19 @@ $xxl: 2560px;
 
 .source-date-part-disable {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.source-date-inner:hover .source-date-part {
-  margin-right: 20px;
+  align-items: center;
 }
 
 .source-delete-icon {
-  position: absolute;
-  top: 60%;
-  right: -10px;
-  transform: translateY(-50%);
   cursor: pointer;
   opacity: 0;
-  transition:
-    right 0.3s ease,
-    opacity 0.3s ease;
+  transition: opacity 0.3s ease;
   border: none;
   padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   background-color: inherit !important;
 
   :hover {
@@ -755,25 +768,11 @@ $xxl: 2560px;
   }
 }
 
-.source-date-inner:not(:hover) .source-delete-icon {
-  right: -10px;
-  opacity: 0;
-  pointer-events: none;
-}
-
 .source-delete-icon-disable {
-  position: absolute;
-  top: 60%;
-  left: -20px;
   cursor: initial;
-  transform: translateY(-50%);
+
   border: none;
   padding: 5px;
-}
-
-.source-date-inner:hover .source-delete-icon {
-  right: 0px;
-  opacity: 1;
 }
 
 .source-completed-inner {
@@ -941,4 +940,12 @@ $xxl: 2560px;
   line-height: 20px;
   text-align: left;
   color: $base-secondary-1;
+}
+
+.source-link {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: $brand-primary !important;
 }

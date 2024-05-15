@@ -110,3 +110,12 @@ $xxl: 2560px;
   background-color: $brand-secondary-pale !important;
   padding: 0;
 }
+
+.ant-list-item:hover .delete-fly-icon {
+  opacity: 1;
+}
+
+.ant-list-itemr:not(:hover) .delete-fly-icon {
+  opacity: 0;
+  pointer-events: none;
+}

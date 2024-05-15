@@ -14,6 +14,7 @@ import "./styles.scss"
 import {
   CreateAccountResponse,
   CreateSourceResponse,
+  MarketplaceName,
   OFDSource,
   api,
 } from "../../../../api/myApi"
@@ -65,6 +66,9 @@ import {
   convertReverseFormat,
 } from "../../actions-page/payment-modal/utils"
 import { antdMonths } from "../../../../ui-kit/datepicker/localization"
+import { LoadFileIcon } from "../type-operation/icons/load-file"
+import { LoadApiIcon } from "../type-operation/icons/load-api"
+import { LoadManualIcon } from "../type-operation/icons/load-manual"
 
 export const AddSourceModal = ({
   isOpen,
@@ -72,6 +76,9 @@ export const AddSourceModal = ({
   setAddOperation,
   completedSource,
   setCompletedSource,
+  failedBankBik,
+  failedSubName,
+  setMarketplaceOperation,
   fetchSourcesHand,
 }: AddSourceModalProps) => {
   const { Title, Text } = Typography
@@ -205,6 +212,7 @@ export const AddSourceModal = ({
     setIntegrateAccount("")
     setIntegratePasswordError(false)
     setIntegrateLoginError(false)
+    setMarketplaceLoadWindow("")
   }
 
   const closeAddSource = () => {
@@ -240,18 +248,58 @@ export const AddSourceModal = ({
 
   const [marketplaceLogin, setMarketplaceLogin] = useState("login")
   const [marketplacePassword, setMarketplacePassword] = useState("password")
-  const sendYandexMarketplaceSource = async () => {
+
+  const sendMarketplaceXls = async (file: RcFile) => {
     const data = {
       marketplace_type: 1,
+      marketplace_source:
+        marketplaceMode === "3"
+          ? MarketplaceName.Ozon
+          : marketplaceMode === "2"
+          ? MarketplaceName.Wildberries
+          : MarketplaceName.ValueЯндексМаркет,
+
+      marketplace_file: file,
     }
     try {
-      await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
-        headers,
-      })
+      await api.sources.createClientMarketplaceSourcesMarketplacePost(
+        data,
+        {},
+        {
+          headers,
+        }
+      )
       await fetchSourcesHand()
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
-      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+      errorProcess(CONTENT.NOTIFICATION_YANDEX_LINK_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+
+  const sendYandexMarketplaceSource = async () => {
+    const data = {
+      marketplace_type: 3,
+      marketplace_source:
+        marketplaceMode === "3"
+          ? MarketplaceName.Ozon
+          : marketplaceMode === "2"
+          ? MarketplaceName.Wildberries
+          : MarketplaceName.ValueЯндексМаркет,
+    }
+    try {
+      await api.sources.createClientMarketplaceSourcesMarketplacePost(
+        data,
+        { date_begin: convertDateFormat(dateMarketPlace) },
+        {
+          headers,
+        }
+      )
+      await fetchSourcesHand()
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_YANDEX_LINK_FAILED)
     } finally {
       closeModal()
     }
@@ -259,22 +307,27 @@ export const AddSourceModal = ({
   const sendOtherMarketplaceSource = async (type: number) => {
     const data = {
       marketplace_type: type,
-      date_begin: convertDateFormat(dateMarketPlace),
+
       marketplace_source:
         marketplaceMode === "3"
-          ? "Ozon"
+          ? MarketplaceName.Ozon
           : marketplaceMode === "2"
-          ? "Wildberries"
-          : undefined,
-      marketplace_credentials: {
-        login: marketplaceId,
-        password: marketplaceKey,
-      },
+          ? MarketplaceName.Wildberries
+          : MarketplaceName.ValueЯндексМаркет,
+    }
+    const marketplace_credentials = {
+      login: marketplaceId,
+      password: marketplaceKey,
+      date_begin: convertDateFormat(dateMarketPlace),
     }
     try {
-      await api.sources.createClientMarketplaceSourcesMarketplacePost(data, {
-        headers,
-      })
+      await api.sources.createClientMarketplaceSourcesMarketplacePost(
+        data,
+        marketplace_credentials,
+        {
+          headers,
+        }
+      )
       await fetchSourcesHand()
       successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
     } catch (error) {
@@ -377,6 +430,15 @@ export const AddSourceModal = ({
     if (completedSource === 2) {
       setButtonMode("online_cashier")
     }
+    if (completedSource === 3) {
+      setButtonMode("bank_integration")
+    }
+    if (completedSource === 4) {
+      setButtonMode("online_cashier")
+    }
+    if (completedSource === 5) {
+      setButtonMode("marketplace_integration")
+    }
   }, [completedSource])
 
   const [bankName, setBankName] = useState("")
@@ -396,6 +458,8 @@ export const AddSourceModal = ({
     if (integrateBik.length === 9) getBankName()
     else setBankName("")
   }, [integrateBik])
+
+  const [marketplaceLoadWindow, setMarketplaceLoadWindow] = useState("")
 
   const [dateSource, setDateSource] = useState("")
   const [dateError, setDateError] = useState(false)
@@ -580,7 +644,13 @@ export const AddSourceModal = ({
                       : ""
                     : marketplaceMode !== ""
                     ? marketplaceMode !== "4"
-                      ? CONTENT.TEXT_OTHER_INTEGRATE
+                      ? marketplaceMode === "1"
+                        ? CONTENT.TILTE_YANDEX_INTEGRATE
+                        : marketplaceLoadWindow === ""
+                        ? CONTENT.TITLE_MARKETPLACE_PICK
+                        : marketplaceLoadWindow === "1"
+                        ? CONTENT.TITLE_MARKETPLACE_XLS
+                        : CONTENT.TEXT_OTHER_INTEGRATE
                       : null
                     : CONTENT.TEXT_UPLOAD_MARKETPLACE_INTEGRATION}
                 </Text>
@@ -810,12 +880,12 @@ export const AddSourceModal = ({
                         {CONTENT.BUTTON_BACK}
                       </Text>
                     </ButtonOne>
-                    <Button
+                    <ButtonOne
                       onClick={sendAlphaSource}
                       className={styles["generate-button"]}
                     >
                       {CONTENT.BUTTON_GENERATE_LINK}
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
               ) : (
@@ -1064,13 +1134,13 @@ export const AddSourceModal = ({
                         {CONTENT.BUTTON_BACK}
                       </Text>
                     </ButtonOne>
-                    <Button
+                    <ButtonOne
                       onClick={sendOtherSource}
                       className={styles["generate-button"]}
                       disabled={isIntegrateButtonDisabled}
                     >
                       {CONTENT.BUTTON_INTEGRATE_BANK}
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
               )
@@ -1466,13 +1536,13 @@ export const AddSourceModal = ({
                         {CONTENT.BUTTON_BACK}
                       </Text>
                     </ButtonOne>
-                    <Button
+                    <ButtonOne
                       onClick={() => sendApiOFDSource(ofdMode)}
                       className={styles["generate-button"]}
                       disabled={isOfdButtonDisabled}
                     >
                       {CONTENT.BUTTON_INTEGRATE_BANK}
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
               ) : ofdMode === OFDSource.ValueПлатформаОФД ||
@@ -1619,14 +1689,11 @@ export const AddSourceModal = ({
                         maxLength={225}
                         onChange={(event) => setOtherOfd(event.target.value)}
                       />
-                      <Button
-                        className={styles["send-button"]}
-                        onClick={closeModal}
-                      >
+                      <ButtonOne type="secondary" onClick={closeModal}>
                         <Text className={styles["button-back-text"]}>
                           {CONTENT.BUTTON_OFD_OTHER_SEND}
                         </Text>
-                      </Button>
+                      </ButtonOne>
                     </div>
                   </div>
                   <div className={styles["divider"]}></div>
@@ -1646,7 +1713,7 @@ export const AddSourceModal = ({
                         {CONTENT.BUTTON_BACK}
                       </Text>
                     </ButtonOne>
-                    <Button
+                    <ButtonOne
                       className={styles["generate-button"]}
                       onClick={() => {
                         closeModal()
@@ -1654,7 +1721,7 @@ export const AddSourceModal = ({
                       }}
                     >
                       {CONTENT.BUTTON_OFD_OTHER_ADD}
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
               )
@@ -1690,7 +1757,7 @@ export const AddSourceModal = ({
                   className={styles["bank-row"]}
                   style={{ justifyContent: "flex-start" }}
                 >
-                  {/*<Button
+                  <Button
                     className={styles["bank-item"]}
                     onClick={() => setMarketplaceMode("1")}
                   >
@@ -1701,7 +1768,7 @@ export const AddSourceModal = ({
                     <Text className={styles["bank-title"]}>
                       {CONTENT.MARKETPLACE_YANDEX}
                     </Text>
-            </Button>*/}
+                  </Button>
                   <Button
                     className={styles["bank-item"]}
                     onClick={() => setMarketplaceMode("4")}
@@ -1716,317 +1783,763 @@ export const AddSourceModal = ({
                 </div>
               </div>
             ) : marketplaceMode === "3" ? (
-              <div className={styles["wrapper-marketplace"]}>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
+              marketplaceLoadWindow === "" ? (
+                <div className={styles["bank-integration-wrapper"]}>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => setMarketplaceLoadWindow("1")}
+                    >
+                      <LoadFileIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_REPORT_XLS}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => setMarketplaceLoadWindow("2")}
+                    >
+                      <LoadApiIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_API}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div
+                    className={styles["bank-row"]}
+                    style={{ justifyContent: "flex-start" }}
                   >
-                    {CONTENT.TEXT_MARKETPLACE_ID_INPUT}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
-                    </Text>
-                  </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={marketplaceIdError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      marketplaceIdError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <InputOne
-                      value={marketplaceId}
-                      placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      onChange={(event) => {
-                        setMarketplaceId(event.target.value)
-                        if (event.target.value !== "")
-                          setMarketplaceIdError(false)
-                        else setMarketplaceIdError(true)
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => {
+                        setMarketplaceOperation(true)
+
+                        setMarketplaceLoadWindow("")
+
+                        setMarketplaceMode("")
+                        setDateMarketPlace("")
+
+                        closeModal()
                       }}
-                    />
-                  </Form.Item>
+                    >
+                      <LoadManualIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_MANUAL}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div className={styles["buttons-generate"]}>
+                    <ButtonOne
+                      onClick={() => setMarketplaceMode("")}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                  </div>
                 </div>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
-                  >
-                    {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
-                    </Text>
-                  </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      marketplaceKeyError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <InputOne
-                      value={marketplaceKey}
-                      placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      onChange={(event) => {
-                        setMarketplaceKey(event.target.value)
-                        if (event.target.value !== "")
-                          setMarketplaceKeyError(false)
-                        else setMarketplaceKeyError(true)
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"],
-                      styles["title-wrap"]
-                    )}
-                  >
-                    {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
-                    </Text>
-                  </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      dateMarketPlaceError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <DatePicker
-                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                      style={{ borderRadius: "4px", height: "34px" }}
+              ) : marketplaceLoadWindow === "2" ? (
+                <div className={styles["wrapper-marketplace"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
                       className={cn(
-                        "picker-source",
-                        styles["datepicker-style"]
+                        styles["text-description"],
+                        styles["default-text"]
                       )}
-                      locale={locale}
-                      minDate={
-                        currentUser.tax_date_begin
-                          ? dayjs(
-                              convertReverseFormat(currentUser.tax_date_begin),
-                              dateFormat
-                            )
-                          : undefined
-                      }
-                      maxDate={dayjs(formatDateString(), dateFormat)}
-                      format={dateFormat}
-                      value={
-                        dateMarketPlace
-                          ? dayjs(dateMarketPlace, dateFormat)
-                          : null
-                      }
-                      onChange={(value, dateString) => {
-                        typeof dateString === "string" &&
-                          setDateMarketPlace(dateString)
-                        if (dateString === "") setDateMarketplaceError(true)
-                        else setDateMarketplaceError(false)
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-                <Text className={styles["text-title"]}>
-                  {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
-                </Text>
-                <div className={styles["buttons-generate-inner"]}>
-                  <ButtonOne
-                    onClick={() => {
-                      setMarketplaceMode("")
-                      setMarketplaceKey("")
-                      setMarketplaceId("")
-                      setMarketplaceIdError(false)
-                      setMarketplaceKeyError(false)
-                      setDateMarketPlace("")
-                      setDateMarketplaceError(false)
-                    }}
-                    className={styles["generate-back"]}
-                    type="secondary"
-                  >
-                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
-                    <Text className={styles["button-back-text"]}>
-                      {CONTENT.BUTTON_BACK}
+                    >
+                      {CONTENT.TEXT_MARKETPLACE_ID_INPUT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
                     </Text>
-                  </ButtonOne>
-                  <Button
-                    className={styles["generate-button"]}
-                    onClick={() => sendOtherMarketplaceSource(3)}
-                    disabled={isButtonMarketplaceDisabled}
-                  >
-                    {CONTENT.BUTTON_INTEGRATE_BANK}
-                  </Button>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={marketplaceIdError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        marketplaceIdError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        value={marketplaceId}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          setMarketplaceId(event.target.value)
+                          if (event.target.value !== "")
+                            setMarketplaceIdError(false)
+                          else setMarketplaceIdError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        marketplaceKeyError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        value={marketplaceKey}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          setMarketplaceKey(event.target.value)
+                          if (event.target.value !== "")
+                            setMarketplaceKeyError(false)
+                          else setMarketplaceKeyError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"],
+                        styles["title-wrap"]
+                      )}
+                    >
+                      {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        dateMarketPlaceError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <DatePicker
+                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                        style={{ borderRadius: "4px", height: "34px" }}
+                        className={cn(
+                          "picker-source",
+                          styles["datepicker-style"]
+                        )}
+                        locale={locale}
+                        minDate={
+                          currentUser.tax_date_begin
+                            ? dayjs(
+                                convertReverseFormat(
+                                  currentUser.tax_date_begin
+                                ),
+                                dateFormat
+                              )
+                            : undefined
+                        }
+                        maxDate={dayjs(formatDateString(), dateFormat)}
+                        format={dateFormat}
+                        value={
+                          dateMarketPlace
+                            ? dayjs(dateMarketPlace, dateFormat)
+                            : null
+                        }
+                        onChange={(value, dateString) => {
+                          typeof dateString === "string" &&
+                            setDateMarketPlace(dateString)
+                          if (dateString === "") setDateMarketplaceError(true)
+                          else setDateMarketplaceError(false)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
+                  </Text>
+                  <div className={styles["buttons-generate-inner"]}>
+                    <ButtonOne
+                      onClick={() => {
+                        setMarketplaceKey("")
+                        setMarketplaceId("")
+                        setMarketplaceLoadWindow("")
+                        setMarketplaceIdError(false)
+                        setMarketplaceKeyError(false)
+                        setDateMarketPlace("")
+                        setDateMarketplaceError(false)
+                      }}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                    <ButtonOne
+                      className={styles["generate-button"]}
+                      onClick={() => sendOtherMarketplaceSource(2)}
+                      disabled={isButtonMarketplaceDisabled}
+                    >
+                      {CONTENT.BUTTON_INTEGRATE_BANK}
+                    </ButtonOne>
+                  </div>
                 </div>
-              </div>
+              ) : marketplaceLoadWindow === "1" ? (
+                <div className={styles["wrapper-marketplace"]}>
+                  <Dragger
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                    accept=".xls, .xlsx"
+                    showUploadList={false}
+                    maxCount={1}
+                    disabled={fileIsLoading === "loaded"}
+                    className={cn({
+                      ["dragger-loading"]: fileIsLoading === "loading",
+                      ["dragger-loaded"]: fileIsLoading === "loaded",
+                      ["dragger-error"]: fileIsLoading === "error",
+                    })}
+                    customRequest={async ({ file, onSuccess, onError }) => {
+                      try {
+                        if (!(file instanceof Blob)) {
+                          throw new Error(
+                            "Разрешены только файлы .xls и .xlsx!"
+                          )
+                        }
+                        const uploadFile = file as unknown as RcFile
+                        setFileName(uploadFile.name)
+
+                        setFileIsLoading("loading")
+
+                        await sendMarketplaceXls(uploadFile)
+
+                        if (onSuccess) {
+                          onSuccess({}, {} as XMLHttpRequest)
+                        }
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      } catch (error: any) {
+                        console.error("Ошибка загрузки файла:", error)
+
+                        if (onError) {
+                          onError(error as ProgressEvent<EventTarget>)
+                        }
+                      }
+                    }}
+                  >
+                    {fileIsLoading === "" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <DownloadOutlined className={styles["upload-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_UPLOAD_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.LOAD_MARKETPLACE_XLS}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "loading" ? (
+                      <div className={styles["dragger-inner-loading"]}>
+                        <FileLoadingIcon className={styles["loading-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#6159FF", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_LOADING_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {fileName}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "error" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <FileErrorIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_ERROR_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {errorText}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles["dragger-inner"]}>
+                        <FileLoadedIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_LOADED_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.TEXT_LOADED_DESCRIPTION}
+                          </Text>
+                        </div>
+                      </div>
+                    )}
+                  </Dragger>
+                  <div className={styles["buttons-generate"]}>
+                    <ButtonOne
+                      onClick={() => setMarketplaceLoadWindow("")}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )
             ) : marketplaceMode === "2" ? (
-              <div className={styles["wrapper-marketplace"]}>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
+              marketplaceLoadWindow === "" ? (
+                <div className={styles["bank-integration-wrapper"]}>
+                  <div className={styles["bank-row"]}>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => setMarketplaceLoadWindow("1")}
+                    >
+                      <LoadFileIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_REPORT_XLS}
+                      </Text>
+                    </Button>
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => setMarketplaceLoadWindow("2")}
+                    >
+                      <LoadApiIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_API}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div
+                    className={styles["bank-row"]}
+                    style={{ justifyContent: "flex-start" }}
                   >
-                    {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
-                    </Text>
-                  </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      marketplaceKeyError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <InputOne
-                      value={marketplaceKey}
-                      placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      onChange={(event) => {
-                        setMarketplaceKey(event.target.value)
-                        if (event.target.value !== "")
-                          setMarketplaceKeyError(false)
-                        else setMarketplaceKeyError(true)
+                    <Button
+                      className={styles["bank-item"]}
+                      onClick={() => {
+                        setMarketplaceOperation(true)
+                        setMarketplaceLoadWindow("")
+                        setMarketplaceMode("")
+                        setDateMarketPlace("")
+                        closeModal()
                       }}
-                    />
-                  </Form.Item>
+                    >
+                      <LoadManualIcon />
+                      <Text className={styles["bank-title"]}>
+                        {CONTENT.LOAD_MANUAL}
+                      </Text>
+                    </Button>
+                  </div>
+                  <div className={styles["buttons-generate"]}>
+                    <ButtonOne
+                      onClick={() => setMarketplaceMode("")}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                  </div>
                 </div>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"],
-                      styles["title-wrap"]
-                    )}
-                  >
-                    {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
-                    </Text>
-                  </Text>
-                  <Form.Item
-                    className={styles["form-inn"]}
-                    validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      dateMarketPlaceError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {CONTENT.INPUT_ERROR_HINT}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <DatePicker
-                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                      style={{ borderRadius: "4px", height: "34px" }}
-                      className={cn(
-                        "picker-source",
-                        styles["datepicker-style"]
-                      )}
-                      locale={locale}
-                      minDate={
-                        currentUser.tax_date_begin
-                          ? dayjs(
-                              convertReverseFormat(currentUser.tax_date_begin),
-                              dateFormat
-                            )
-                          : undefined
-                      }
-                      maxDate={dayjs(formatDateString(), dateFormat)}
-                      format={dateFormat}
-                      value={
-                        dateMarketPlace
-                          ? dayjs(dateMarketPlace, dateFormat)
-                          : null
-                      }
-                      onChange={(value, dateString) => {
-                        typeof dateString === "string" &&
-                          setDateMarketPlace(dateString)
-                        if (dateString === "") setDateMarketplaceError(true)
-                        else setDateMarketplaceError(false)
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-                <Text className={styles["text-title"]}>
-                  {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
-                </Text>
-                <div className={styles["buttons-generate"]}>
-                  <ButtonOne
-                    onClick={() => {
-                      setMarketplaceMode("")
-                      setMarketplaceKey("")
-                      setMarketplaceKeyError(false)
-                      setDateMarketPlace("")
-                      setDateMarketplaceError(false)
+              ) : marketplaceLoadWindow === "1" ? (
+                <div className={styles["wrapper-marketplace"]}>
+                  <Dragger
+                    style={{
+                      backgroundColor: "white",
                     }}
-                    className={styles["generate-back"]}
-                    type="secondary"
+                    accept=".xls, .xlsx"
+                    showUploadList={false}
+                    maxCount={1}
+                    disabled={fileIsLoading === "loaded"}
+                    className={cn({
+                      ["dragger-loading"]: fileIsLoading === "loading",
+                      ["dragger-loaded"]: fileIsLoading === "loaded",
+                      ["dragger-error"]: fileIsLoading === "error",
+                    })}
+                    customRequest={async ({ file, onSuccess, onError }) => {
+                      try {
+                        if (!(file instanceof Blob)) {
+                          throw new Error(
+                            "Разрешены только файлы .xls и .xlsx!"
+                          )
+                        }
+                        const uploadFile = file as unknown as RcFile
+                        setFileName(uploadFile.name)
+
+                        setFileIsLoading("loading")
+
+                        await sendMarketplaceXls(uploadFile)
+
+                        if (onSuccess) {
+                          onSuccess({}, {} as XMLHttpRequest)
+                        }
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      } catch (error: any) {
+                        console.error("Ошибка загрузки файла:", error)
+
+                        if (onError) {
+                          onError(error as ProgressEvent<EventTarget>)
+                        }
+                      }
+                    }}
                   >
-                    <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
-                    <Text className={styles["button-back-text"]}>
-                      {CONTENT.BUTTON_BACK}
-                    </Text>
-                  </ButtonOne>
-                  <Button
-                    className={styles["generate-button"]}
-                    onClick={() => sendOtherMarketplaceSource(2)}
-                    disabled={isButtonMarketplaceDisabled}
-                  >
-                    {CONTENT.BUTTON_INTEGRATE_BANK}
-                  </Button>
+                    {fileIsLoading === "" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <DownloadOutlined className={styles["upload-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_UPLOAD_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.LOAD_MARKETPLACE_XLS}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "loading" ? (
+                      <div className={styles["dragger-inner-loading"]}>
+                        <FileLoadingIcon className={styles["loading-icon"]} />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#6159FF", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_LOADING_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {fileName}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : fileIsLoading === "error" ? (
+                      <div className={styles["dragger-inner"]}>
+                        <FileErrorIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_ERROR_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {errorText}
+                          </Text>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles["dragger-inner"]}>
+                        <FileLoadedIcon />
+                        <div className={styles["dragger-text"]}>
+                          <Text
+                            className={styles["text-title"]}
+                            style={{ color: "#141414", textAlign: "center" }}
+                          >
+                            {CONTENT.TEXT_LOADED_TITLE}
+                          </Text>
+                          <Text className={styles["text-description-dragger"]}>
+                            {CONTENT.TEXT_LOADED_DESCRIPTION}
+                          </Text>
+                        </div>
+                      </div>
+                    )}
+                  </Dragger>
+                  <div className={styles["buttons-generate"]}>
+                    <ButtonOne
+                      onClick={() => setMarketplaceLoadWindow("")}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                  </div>
                 </div>
-              </div>
+              ) : marketplaceLoadWindow === "2" ? (
+                <div className={styles["wrapper-marketplace"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_MARKETPLACE_KEY_INPUT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={marketplaceKeyError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        marketplaceKeyError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        value={marketplaceKey}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) => {
+                          setMarketplaceKey(event.target.value)
+                          if (event.target.value !== "")
+                            setMarketplaceKeyError(false)
+                          else setMarketplaceKeyError(true)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"],
+                        styles["title-wrap"]
+                      )}
+                    >
+                      {CONTENT.DATEPICKER_MARKETPLACE_TITLE}{" "}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        dateMarketPlaceError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <DatePicker
+                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                        style={{ borderRadius: "4px", height: "34px" }}
+                        className={cn(
+                          "picker-source",
+                          styles["datepicker-style"]
+                        )}
+                        locale={locale}
+                        minDate={
+                          currentUser.tax_date_begin
+                            ? dayjs(
+                                convertReverseFormat(
+                                  currentUser.tax_date_begin
+                                ),
+                                dateFormat
+                              )
+                            : undefined
+                        }
+                        maxDate={dayjs(formatDateString(), dateFormat)}
+                        format={dateFormat}
+                        value={
+                          dateMarketPlace
+                            ? dayjs(dateMarketPlace, dateFormat)
+                            : null
+                        }
+                        onChange={(value, dateString) => {
+                          typeof dateString === "string" &&
+                            setDateMarketPlace(dateString)
+                          if (dateString === "") setDateMarketplaceError(true)
+                          else setDateMarketplaceError(false)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <Text className={styles["text-title"]}>
+                    {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
+                  </Text>
+                  <div className={styles["buttons-generate"]}>
+                    <ButtonOne
+                      onClick={() => {
+                        setMarketplaceLoadWindow("")
+
+                        setMarketplaceKey("")
+                        setMarketplaceKeyError(false)
+                        setDateMarketPlace("")
+                        setDateMarketplaceError(false)
+                      }}
+                      className={styles["generate-back"]}
+                      type="secondary"
+                    >
+                      <ArrowLeftOutlined
+                        className={styles["arrow-left-icon"]}
+                      />
+                      <Text className={styles["button-back-text"]}>
+                        {CONTENT.BUTTON_BACK}
+                      </Text>
+                    </ButtonOne>
+                    <ButtonOne
+                      className={styles["generate-button"]}
+                      onClick={() => sendOtherMarketplaceSource(2)}
+                      disabled={isButtonMarketplaceDisabled}
+                    >
+                      {CONTENT.BUTTON_INTEGRATE_BANK}
+                    </ButtonOne>
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )
             ) : marketplaceMode === "1" ? (
               <div className={styles["wrapper-marketplace"]}>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"],
+                      styles["title-wrap"]
+                    )}
+                  >
+                    {CONTENT.LOAD_YANDEX_DATE}{" "}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={dateMarketPlaceError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      dateMarketPlaceError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <DatePicker
+                      style={{ borderRadius: "4px", height: "34px" }}
+                      className={cn(
+                        "picker-source",
+                        styles["datepicker-style"]
+                      )}
+                      placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                      locale={locale}
+                      minDate={
+                        currentUser.tax_date_begin
+                          ? dayjs(
+                              convertReverseFormat(currentUser.tax_date_begin),
+                              dateFormat
+                            )
+                          : undefined
+                      }
+                      maxDate={dayjs(formatDateString(), dateFormat)}
+                      format={dateFormat}
+                      value={
+                        dateMarketPlace
+                          ? dayjs(dateMarketPlace, dateFormat)
+                          : null
+                      }
+                      onChange={(value, dateString) => {
+                        typeof dateString === "string" &&
+                          setDateMarketPlace(dateString)
+                        if (dateString === "") setDateMarketplaceError(true)
+                        else setDateMarketplaceError(false)
+                      }}
+                    />
+                  </Form.Item>
+                </div>
                 <Text className={styles["text-title"]}>
-                  {CONTENT.TEXT_MARKETPLACE_YANDEX}
+                  {CONTENT.TEXT_MARKETPLACE_YANDEX_ONE}
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TEXT_MARKETPLACE_YANDEX_TWO}
+                  </Text>
+                  {CONTENT.TEXT_MARKETPLACE_YANDEX_THREE}
                 </Text>
-                <Text className={styles["text-title"]}>
-                  {CONTENT.TEXT_MARKETPLACE_YANDEX_DESCRIPTION}
+                <Text
+                  className={styles["text-title"]}
+                  style={{ marginTop: "32px" }}
+                >
+                  {CONTENT.TEXT_MARKETPLACE_YANDEX_DESCRIPTION_ONE}
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TEXT_MARKETPLACE_YANDEX_DESCRIPTION_TWO}
+                  </Text>
                 </Text>
                 <div className={styles["buttons-generate"]}>
                   <ButtonOne
-                    onClick={() => setMarketplaceMode("")}
+                    onClick={() => {
+                      setMarketplaceMode("")
+                      setMarketplaceLoadWindow("")
+                      setDateMarketPlace("")
+                    }}
                     className={styles["generate-back"]}
                     type="secondary"
                   >
@@ -2035,12 +2548,13 @@ export const AddSourceModal = ({
                       {CONTENT.BUTTON_BACK}
                     </Text>
                   </ButtonOne>
-                  <Button
+                  <ButtonOne
                     className={styles["generate-button"]}
                     onClick={sendYandexMarketplaceSource}
+                    disabled={dateMarketPlace === ""}
                   >
                     {CONTENT.BUTTON_GENERATE_LINK}
-                  </Button>
+                  </ButtonOne>
                 </div>
               </div>
             ) : (
@@ -2066,14 +2580,14 @@ export const AddSourceModal = ({
                         setOtherMarketplace(event.target.value)
                       }
                     />
-                    <Button
-                      className={styles["send-button"]}
+                    <ButtonOne
+                      type="secondary"
                       //  onClick={closeModal}
                     >
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_OFD_OTHER_SEND}
                       </Text>
-                    </Button>
+                    </ButtonOne>
                   </div>
                 </div>
                 <div className={styles["divider"]}></div>
@@ -2091,15 +2605,14 @@ export const AddSourceModal = ({
                       {CONTENT.BUTTON_BACK}
                     </Text>
                   </ButtonOne>
-                  <Button
-                    className={styles["generate-button"]}
+                  <ButtonOne
                     onClick={() => {
                       closeModal()
                       setAddOperation(true)
                     }}
                   >
                     {CONTENT.BUTTON_OFD_OTHER_ADD}
-                  </Button>
+                  </ButtonOne>
                 </div>
               </div>
             )}

@@ -78,6 +78,9 @@ import { PersonEditIcon } from "./type-operation/icons/person-edit"
 import { SelectOne } from "../../../ui-kit/select"
 import { antdMonths } from "../../../ui-kit/datepicker/localization"
 import { WalletPigIcon } from "./type-operation/icons/wallet-pig"
+import { RepeatCrossIcon } from "./type-operation/icons/repeat-cross"
+import { HideEyeIcon } from "./type-operation/icons/hide-eye"
+import { AddMarketplaceOperationModal } from "./add-marketplace-operation-modal"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -129,7 +132,8 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <IncomeIcon />
+          <IncomeIcon className={styles["type-income-2"]} />
+
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
       ),
@@ -639,6 +643,20 @@ export const TaxesPage = () => {
     }
   }
 
+  const [failedBankBik, setFailedBankBik] = useState("")
+  const [failedSubName, setFailedSubName] = useState("")
+
+  const failedBank = (bik: string, sub_name: string) => {
+    setFailedBankBik(bik)
+    setFailedSubName(sub_name)
+  }
+  const failedOfd = (sub_name: string) => {
+    setFailedSubName(sub_name)
+  }
+  const failedMarketplace = (sub_name: string) => {
+    setFailedSubName(sub_name)
+  }
+
   const isMobile = useMediaQuery("(max-width: 1023px)")
   const isTablet = useMediaQuery("(max-width: 1279px)")
 
@@ -724,77 +742,39 @@ export const TaxesPage = () => {
       children:
         sourcesAutoDisabledSider &&
         sourcesAutoDisabledSider.map((item) => (
-          <div className={styles["inputs-row"]}>
-            <Tooltip
-              title={
-                item.is_integrated === false &&
-                item.state === "completed" &&
-                !item.disable_date &&
-                (item.type === "account" || item.type === "ofd")
-                  ? CONTENT.OFF_SOURCE_TOOLTIP
-                  : item.state === "failed"
-                  ? CONTENT.DELETE_SOURCE_TOOLTIP
-                  : item.is_integrated === true &&
-                    item.state === "in_progress" &&
-                    !!item.link
-                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
-                  : item.is_integrated === true &&
-                    item.state === "completed" &&
-                    !item.disable_date
-                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
-                  : undefined
-              }
-            >
-              <Button
-                className={cn("delete-fly-icon", {
-                  [styles["source-delete-icon-disable"]]: item.disable_date,
-                  [styles["source-delete-icon"]]: !item.disable_date,
-                })}
-                onClick={() => {
-                  setIsDeletedSource(true)
-                  setOffSourceTitle(
-                    item.is_integrated === false &&
-                      item.state === "completed" &&
-                      (item.type === "account" || item.type === "ofd")
-                      ? CONTENT.OFF_SOURCE
-                      : item.state === "failed"
-                      ? CONTENT.DELETE_SOURCE
-                      : item.is_integrated === true &&
-                        item.state === "in_progress" &&
-                        !!item.link
-                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                      : item.is_integrated === true &&
-                        item.state === "completed"
-                      ? CONTENT.OFF_INTEGRATION_SOURCE
-                      : ""
-                  )
-                  setTypeSource(
-                    item.is_integrated === false &&
-                      item.state === "completed" &&
-                      item.type === "account"
-                      ? 1
-                      : item.is_integrated === false &&
-                        item.state === "completed" &&
-                        item.type === "ofd"
-                      ? 2
-                      : item.state === "failed"
-                      ? 3
-                      : item.is_integrated === true &&
-                        item.state === "in_progress" &&
-                        !!item.link
-                      ? 4
-                      : item.is_integrated === true &&
-                        item.state === "completed"
-                      ? 5
-                      : 0
-                  )
-                  setTypeSourceName(item.name)
-                  setAccountSource(item.sub_name || "")
-                  setOffSourceId(item.id)
-                }}
-              >
-                <DeleteSourceIcon />
-              </Button>
+          <div className={styles["list-item-hide"]}>
+            <div className={styles["left-source-name"]}>
+              {item.short_name && item.short_name !== null ? (
+                <Tooltip title={item.name}>
+                  <Text className={styles["source-text-left"]}>
+                    {item.short_name.length > 10
+                      ? `${item.short_name.substring(0, 10)}...`
+                      : item.short_name}
+                  </Text>
+                </Tooltip>
+              ) : item.name.length > 10 ? (
+                <Tooltip title={item.name}>
+                  <Text className={styles["source-text-left"]}>
+                    {item.name.length > 10 && isTablet
+                      ? `${item.name.substring(0, 10)}...`
+                      : item.name}
+                  </Text>
+                </Tooltip>
+              ) : (
+                <Text className={styles["source-text-left"]}>{item.name}</Text>
+              )}
+
+              <Text className={styles["source-text-right"]}>
+                {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
+              </Text>
+            </div>
+            <Text className={styles["date-style"]}>
+              {CONTENT.OFF_SOURCE_DISABLED}
+            </Text>
+            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+              <Text className={styles["date-style"]}>
+                {item.disable_date && convertReverseFormat(item.disable_date)}
+              </Text>
             </Tooltip>
           </div>
         )),
@@ -820,94 +800,34 @@ export const TaxesPage = () => {
               {item.short_name && item.short_name !== null ? (
                 <Tooltip title={item.name}>
                   <Text className={styles["source-text-left"]}>
-                    {item.short_name.length > 10 && isTablet
+                    {item.short_name.length > 10
                       ? `${item.short_name.substring(0, 10)}...`
                       : item.short_name}
                   </Text>
                 </Tooltip>
+              ) : item.name.length > 10 ? (
+                <Tooltip title={item.name}>
+                  <Text className={styles["source-text-left"]}>
+                    {item.name.length > 10 && isTablet
+                      ? `${item.name.substring(0, 10)}...`
+                      : item.name}
+                  </Text>
+                </Tooltip>
               ) : (
-                <Text className={styles["source-text-left"]}>{item.name} </Text>
+                <Text className={styles["source-text-left"]}>{item.name}</Text>
               )}
 
               <Text className={styles["source-text-right"]}>
                 {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
               </Text>
             </div>
+            <Text className={styles["date-style"]}>
+              {CONTENT.OFF_SOURCE_DISABLED}
+            </Text>
             <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
               <Text className={styles["date-style"]}>
                 {item.disable_date && convertReverseFormat(item.disable_date)}
               </Text>
-            </Tooltip>
-            <Tooltip
-              title={
-                item.is_integrated === false &&
-                item.state === "completed" &&
-                !item.disable_date &&
-                (item.type === "account" || item.type === "ofd")
-                  ? CONTENT.OFF_SOURCE_TOOLTIP
-                  : item.state === "failed"
-                  ? CONTENT.DELETE_SOURCE_TOOLTIP
-                  : item.is_integrated === true &&
-                    item.state === "in_progress" &&
-                    !!item.link
-                  ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
-                  : item.is_integrated === true &&
-                    item.state === "completed" &&
-                    !item.disable_date
-                  ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
-                  : undefined
-              }
-            >
-              <Button
-                className={cn("delete-fly-icon", {
-                  [styles["source-delete-icon-disable"]]: item.disable_date,
-                  [styles["source-delete-icon"]]: !item.disable_date,
-                })}
-                onClick={() => {
-                  setIsDeletedSource(true)
-                  setOffSourceTitle(
-                    item.is_integrated === false &&
-                      item.state === "completed" &&
-                      (item.type === "account" || item.type === "ofd")
-                      ? CONTENT.OFF_SOURCE
-                      : item.state === "failed"
-                      ? CONTENT.DELETE_SOURCE
-                      : item.is_integrated === true &&
-                        item.state === "in_progress" &&
-                        !!item.link
-                      ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                      : item.is_integrated === true &&
-                        item.state === "completed"
-                      ? CONTENT.OFF_INTEGRATION_SOURCE
-                      : ""
-                  )
-                  setTypeSource(
-                    item.is_integrated === false &&
-                      item.state === "completed" &&
-                      item.type === "account"
-                      ? 1
-                      : item.is_integrated === false &&
-                        item.state === "completed" &&
-                        item.type === "ofd"
-                      ? 2
-                      : item.state === "failed"
-                      ? 3
-                      : item.is_integrated === true &&
-                        item.state === "in_progress" &&
-                        !!item.link
-                      ? 4
-                      : item.is_integrated === true &&
-                        item.state === "completed"
-                      ? 5
-                      : 0
-                  )
-                  setTypeSourceName(item.name)
-                  setAccountSource(item.sub_name || "")
-                  setOffSourceId(item.id)
-                }}
-              >
-                <DeleteSourceIcon />
-              </Button>
             </Tooltip>
           </div>
         )),
@@ -931,6 +851,8 @@ export const TaxesPage = () => {
     selectedOperationTypes,
     selectedSources,
   ])
+
+  const [marketplaceOperationOpen, setMarketplaceOperation] = useState(false)
 
   return (
     <>
@@ -1164,7 +1086,15 @@ export const TaxesPage = () => {
 
                                           {(operation.markup_mode_code === 2 ||
                                             operation.markup_mode_code ===
-                                              3) && <PersonEditIcon />}
+                                              3) && (
+                                            <Tooltip
+                                              title={
+                                                CONTENT.TOOLTIP_MARKUP_CHANGED
+                                              }
+                                            >
+                                              <PersonEditIcon />
+                                            </Tooltip>
+                                          )}
                                         </div>
                                       </div>
                                       <div className={styles["amount-inner"]}>
@@ -1532,7 +1462,7 @@ export const TaxesPage = () => {
                     >
                       <div className={styles["left-source-name"]}>
                         {item.state === "in_progress" ? (
-                          item.link || item.link == "" ? (
+                          item.link || item.link !== "" ? (
                             <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
                               <InProgressOrangeIcon />
                             </Tooltip>
@@ -1542,36 +1472,37 @@ export const TaxesPage = () => {
                             </Tooltip>
                           )
                         ) : item.state === "failed" ? (
-                          <FailedIcon />
-                        ) : item.state === "completed" &&
+                          <Tooltip title={item.reason}>
+                            <FailedIcon />
+                          </Tooltip>
+                        ) : (
+                          item.state === "completed" &&
                           item.is_integrated === false &&
-                          !item.disable_date ? (
-                          <Tooltip
-                            title={
-                              !isMobile
-                                ? CONTENT.ADD_SOURCE_COMPLETED
-                                : undefined
-                            }
-                          >
-                            <Button
-                              className={styles["source-completed-icon"]}
-                              onClick={() =>
-                                handleCompletedSource(
-                                  item.type === "account"
-                                    ? 1
-                                    : item.type === "ofd"
-                                    ? 2
-                                    : null
-                                )
+                          !item.disable_date && (
+                            <Tooltip
+                              title={
+                                !isMobile
+                                  ? CONTENT.ADD_SOURCE_COMPLETED
+                                  : undefined
                               }
                             >
-                              <CompletedHandIcon />
-                            </Button>
-                          </Tooltip>
-                        ) : item.state === "completed" &&
-                          item.is_integrated === true ? (
-                          <CompletedAutoIcon />
-                        ) : null}
+                              <Button
+                                className={styles["source-completed-icon"]}
+                                onClick={() =>
+                                  handleCompletedSource(
+                                    item.type === "account"
+                                      ? 1
+                                      : item.type === "ofd"
+                                      ? 2
+                                      : null
+                                  )
+                                }
+                              >
+                                <CompletedHandIcon />
+                              </Button>
+                            </Tooltip>
+                          )
+                        )}
                         {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
@@ -1602,30 +1533,67 @@ export const TaxesPage = () => {
                             [styles["source-date-part-disable"]]:
                               item.disable_date,
                             [styles["source-date-part"]]: !item.disable_date,
+                            [styles["source-no-date-part"]]:
+                              !item.disable_date && !item.last_info,
                           })}
                         >
-                          {item.state === "completed" && !item.disable_date ? (
+                          {item.state === "completed" &&
+                          !item.disable_date &&
+                          item.last_info ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
                               <Text className={styles["date-style"]}>
                                 {item.last_info &&
                                   convertReverseFormat(item.last_info)}
                               </Text>
                             </Tooltip>
-                          ) : item.state === "completed" &&
-                            item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                              <Text className={styles["date-style"]}>
-                                {convertReverseFormat(item.disable_date)}
-                              </Text>
-                            </Tooltip>
-                          ) : item.state === "failed" ? null : item.state === // <Link>{"Повторить"}</Link>
-                            "in_progress" ? (
-                            item.link ? (
-                              <Link>{"Подключить"}</Link>
-                            ) : (
-                              "—"
-                            )
-                          ) : null}
+                          ) : item.state === "failed" ? (
+                            <Link
+                              className={styles["source-link"]}
+                              onClick={() => {
+                                handleCompletedSource(
+                                  item.type === "account" &&
+                                    item.is_integrated === false
+                                    ? 1
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === false
+                                    ? 2
+                                    : item.type === "account" &&
+                                      item.is_integrated === true
+                                    ? 3
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === true
+                                    ? 4
+                                    : item.type === "marketplace" &&
+                                      item.is_integrated === true
+                                    ? 5
+                                    : null
+                                )
+                                item.type === "account" &&
+                                item.is_integrated === true
+                                  ? item.bank_bik &&
+                                    item.sub_name &&
+                                    failedBank(item.bank_bik, item.sub_name)
+                                  : item.type === "ofd" &&
+                                    item.is_integrated === true
+                                  ? item.sub_name && failedOfd(item.name)
+                                  : item.type === "marketplace" &&
+                                    item.is_integrated === true
+                                  ? item.sub_name &&
+                                    failedMarketplace(item.name)
+                                  : null
+                              }}
+                            >
+                              {"Повторить"}
+                            </Link>
+                          ) : item.state === "in_progress" &&
+                            item.link &&
+                            item.link !== "" ? (
+                            <Link className={styles["source-link"]}>
+                              {"Подключить"}
+                            </Link>
+                          ) : (
+                            CONTENT.NO_SOURCE
+                          )}
                           {!(item.state == "in_progress" && !item.link) && (
                             <Tooltip
                               title={
@@ -1701,7 +1669,14 @@ export const TaxesPage = () => {
                                     setOffSourceId(item.id)
                                   }}
                                 >
-                                  <DeleteSourceIcon />
+                                  {item.state === "failed" ? (
+                                    <DeleteSourceIcon />
+                                  ) : item.state === "completed" ? (
+                                    <HideEyeIcon />
+                                  ) : item.state === "in_progress" &&
+                                    !!item.link ? (
+                                    <HideEyeIcon />
+                                  ) : undefined}
                                 </Button>
                               ) : (
                                 <div
@@ -1743,12 +1718,12 @@ export const TaxesPage = () => {
                     >
                       <div className={styles["left-source-name"]}>
                         {item.state === "in_progress" ? (
-                          item.link || item.link == "" ? (
+                          item.link || item.link !== "" ? (
                             <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
                               <InProgressOrangeIcon />
                             </Tooltip>
                           ) : (
-                            <Tooltip title={CONTENT.TOOLTIP_GREY}>
+                            <Tooltip title={CONTENT.TOOLTIP_GREY_AUTO}>
                               <InProgressIcon />
                             </Tooltip>
                           )
@@ -1757,13 +1732,11 @@ export const TaxesPage = () => {
                             <FailedIcon />
                           </Tooltip>
                         ) : item.state === "completed" &&
-                          item.is_integrated === false &&
-                          !item.disable_date ? (
-                          <CompletedHandIcon />
-                        ) : item.state === "completed" &&
                           item.is_integrated === true &&
                           !item.disable_date ? (
-                          <CompletedAutoIcon />
+                          <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                            <CompletedAutoIcon />
+                          </Tooltip>
                         ) : null}
 
                         {item.short_name && item.short_name !== null ? (
@@ -1789,26 +1762,32 @@ export const TaxesPage = () => {
                             [styles["source-date-part-disable"]]:
                               item.disable_date,
                             [styles["source-date-part"]]: !item.disable_date,
+                            [styles["source-no-date-part"]]:
+                              !item.disable_date && !item.last_info,
                           })}
                         >
-                          {item.state === "completed" && !item.disable_date ? (
+                          {item.state === "completed" &&
+                          !item.disable_date &&
+                          item.last_info ? (
                             <Tooltip title={CONTENT.TOOLTIP_DATE}>
-                              <Text>
+                              <Text className={styles["date-style"]}>
                                 {item.last_info &&
                                   convertReverseFormat(item.last_info)}
                               </Text>
                             </Tooltip>
-                          ) : item.state === "completed" &&
-                            item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                              <Text>
-                                {convertReverseFormat(item.disable_date)}
-                              </Text>{" "}
-                            </Tooltip>
-                          ) : item.state === "failed" ? null : item.state === //<Link>{"Повторить"}</Link>
-                              "in_progress" && item.link ? (
-                            <Link href={item.link}>{"Подключить"}</Link>
-                          ) : null}
+                          ) : item.state === "failed" ? (
+                            <Link className={styles["source-link"]}>
+                              {"Повторить"}
+                            </Link>
+                          ) : item.state === "in_progress" &&
+                            item.link &&
+                            item.link !== "" ? (
+                            <Link className={styles["source-link"]}>
+                              {"Подключить"}
+                            </Link>
+                          ) : (
+                            CONTENT.NO_SOURCE
+                          )}
                           {!(item.state == "in_progress" && !item.link) && (
                             <Tooltip
                               title={
@@ -1874,7 +1853,14 @@ export const TaxesPage = () => {
                                     setOffSourceId(item.id)
                                   }}
                                 >
-                                  <DeleteSourceIcon />
+                                  {item.state === "failed" ? (
+                                    <DeleteSourceIcon />
+                                  ) : item.state === "completed" ? (
+                                    <RepeatCrossIcon />
+                                  ) : item.state === "in_progress" &&
+                                    !!item.link ? (
+                                    <DeleteSourceIcon />
+                                  ) : undefined}
                                 </Button>
                               ) : (
                                 <div
@@ -2221,11 +2207,15 @@ export const TaxesPage = () => {
                           ) : item.state === "completed" &&
                             item.is_integrated === false &&
                             !item.disable_date ? (
-                            <CompletedHandIcon />
+                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                              <CompletedHandIcon />
+                            </Tooltip>
                           ) : item.state === "completed" &&
                             item.is_integrated === true &&
                             !item.disable_date ? (
-                            <CompletedAutoIcon />
+                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                              <CompletedAutoIcon />
+                            </Tooltip>
                           ) : null}
 
                           {item.short_name && item.short_name !== null ? (
@@ -2386,10 +2376,18 @@ export const TaxesPage = () => {
           completedSource={sourceCompleted}
           setCompletedSource={setSourceCompleted}
           fetchSourcesHand={fetchSourcesHand}
+          failedBankBik={failedBankBik}
+          failedSubName={failedSubName}
+          setMarketplaceOperation={setMarketplaceOperation}
         />
         <AddOperationModal
           isOpen={addOperation}
           setOpen={setAddOperation}
+          setWasDeleted={setWasDeleted}
+        />
+        <AddMarketplaceOperationModal
+          isOpen={marketplaceOperationOpen}
+          setOpen={setMarketplaceOperation}
           setWasDeleted={setWasDeleted}
         />
         <OffSourceModal

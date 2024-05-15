@@ -29,10 +29,10 @@ export interface AccountDetails {
    * Account Number
    * Номер счета пользователя. Обязателен для заполнения, если integration_type = 1. Также обязателен при прямом добавлении счета.
    */
-  account_number: string
+  account_number?: string | null
   /**
    * Bank Bik
-   * БИК банка. Обязателен для заполнения, если integration_type = 1. Также обязателен при прямом добавлении счета.
+   * БИК банка. Обязателен для заполнения, если integration_type = 1 или 3. Также обязателен при прямом добавлении счета.
    */
   bank_bik: string
 }
@@ -80,6 +80,41 @@ export enum BannerType {
   UpdateUserInfo = "update_user_info",
   NewUser = "new_user",
   Advertisement = "advertisement",
+}
+
+/** Body_create_client_marketplace_sources_marketplace_post */
+export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
+  /**
+   *
+   *                     Тип синхронизации. Возможные значения:
+   *
+   *                     1 - Отчет по реализации (как при подгрузке табличной формы)
+   *                     2 - API МП (как при автозагрузке по API)
+   *                     3 - OAuth 2.0 (для последующей генерации ссылки)
+   */
+  marketplace_type: MarketplaceType
+  /**
+   *
+   *                     Наименование маркетплейса
+   *
+   *                     Возможные варианты:
+   *                         - если marketplace_type = 1:
+   *                             - Ozon
+   *                             - Wildberries
+   *                         - если marketplace_type = 2:
+   *                             - Ozon
+   *                             - Wildberries
+   *                         - если marketplace_type = 3:
+   *                             - Яндекс Маркет
+   *
+   */
+  marketplace_source: MarketplaceName
+  /**
+   * Marketplace File
+   * Файл с отчетом по реализации из файла xlsx, закодированный в base64
+   * @format binary
+   */
+  marketplace_file?: File
 }
 
 /** Body_create_client_ofd_sources_ofd_post */
@@ -190,14 +225,6 @@ export interface CreateAccountResponse {
   request_id: string
   /** Source Id */
   source_id?: string | null
-}
-
-/** CreateMarketplaceRequest */
-export interface CreateMarketplaceRequest {
-  /** Тип синхронизации. Возможные значения: 1 - Яндекс OAuth. 2 - ЛК Wildberries. 3 - ЛК Ozon. */
-  marketplace_type: MarketplaceType
-  /** Данные для доступа к подключению маркетплейса */
-  marketplace_credentials?: MarketplaceCredentials | null
 }
 
 /**
@@ -670,20 +697,6 @@ export enum LeadReason {
   Other = "other",
 }
 
-/** MarketplaceCredentials */
-export interface MarketplaceCredentials {
-  /**
-   * Login
-   * Логин. Необязателен в случае marketplace_type - 2.
-   */
-  login?: string | null
-  /**
-   * Password
-   * Пароль / токен доступа
-   */
-  password: string
-}
-
 /** MarketplaceName */
 export enum MarketplaceName {
   ValueЯндексМаркет = "Яндекс Маркет",
@@ -881,6 +894,11 @@ export interface OperationMarkup {
    * 1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов.
    */
   operation_type: OperationType
+  /**
+   * Update Time
+   * Дата обновления разметки
+   */
+  update_time?: string | null
   /**
    * Amount
    * Сумма, участвующая в разметке операции
@@ -2041,7 +2059,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.17
+ * @version 0.1.19
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2316,7 +2334,7 @@ export class Api<
       data: AccountDetails,
       params: RequestParams = {}
     ) =>
-      this.request<CreateAccountResponse, HTTPValidationError | void>({
+      this.request<CreateAccountResponse, void>({
         path: `/sources/account`,
         method: "POST",
         body: data,
@@ -2370,7 +2388,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<CreateSourceResponse, HTTPValidationError | void>({
+      this.request<CreateSourceResponse, void>({
         path: `/sources/ofd`,
         method: "POST",
         query: query,
@@ -2391,15 +2409,24 @@ export class Api<
      * @secure
      */
     createClientMarketplaceSourcesMarketplacePost: (
-      data: CreateMarketplaceRequest,
+      data: BodyCreateClientMarketplaceSourcesMarketplacePost,
+      query?: {
+        /** Date Begin */
+        date_begin?: string | null
+        /** Login */
+        login?: string | null
+        /** Password */
+        password?: string | null
+      },
       params: RequestParams = {}
     ) =>
-      this.request<CreateSourceResponse, HTTPValidationError | void>({
+      this.request<CreateSourceResponse, void>({
         path: `/sources/marketplace`,
         method: "POST",
+        query: query,
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),

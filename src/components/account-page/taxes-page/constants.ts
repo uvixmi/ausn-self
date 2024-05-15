@@ -65,7 +65,8 @@ export const CONTENT = {
   OFF_INTEGRATION_SOURCE_TOOLTIP: "Отключить",
   ADD_SOURCE_COMPLETED: "Добавить данные",
   TOOLTIP_ORANGE: "Требуется дополнительное действие",
-  TOOLTIP_GREY: "Данные в процессе добавления. Ожидайте завершения",
+  TOOLTIP_GREY: "В процессе обработки",
+  TOOLTIP_GREY_AUTO: "В процессе подключения",
   TOOLTIP_DATE: "Дата последней операции",
   TOOLTIP_DISABLE_DATE: "Дата отключения",
   FILTER_HEADING: "Фильтр",
@@ -94,4 +95,9 @@ export const CONTENT = {
     "Произошла ошибка при загрузке. Попробуйте обновить список источников по кнопке обновления.",
   SOURCES_ERROR_TWO:
     "Если ошибка повторилась, напишите  тех. специалисту код ошибки. ",
+  NO_SOURCE: "—",
+  OFF_SOURCE_HIDDEN: "Скрыт",
+  OFF_SOURCE_DISABLED: "Закрыт",
+  TOOLTIP_AUTO_INTEGRATED: "Интеграция подключена",
+  TOOLTIP_MARKUP_CHANGED: "Разметка изменена клиентом",
 }
