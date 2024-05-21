@@ -341,10 +341,14 @@ export const TaxesPage = () => {
           headers,
         })
         setSources(sourcesResponse.data)
+        setSourcesLoaded(true)
+        setSourcesError(false)
       } catch (error) {
         if ((error as ApiError).status === 422) {
           logout(), dispatch(clearData()), navigate("/login")
         }
+        setSourcesLoaded(false)
+        setSourcesError(true)
       }
     }
     fetchOperations()
@@ -404,6 +408,8 @@ export const TaxesPage = () => {
     if (selectedSources.length === 0) setEndOfPage(false)
   }
 
+  const [operationsValue, setOperationsValue] = useState([{ id: "", value: 1 }])
+
   const handleChangeMarkup = async (newMarkup: number) => {
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
@@ -416,12 +422,24 @@ export const TaxesPage = () => {
       if (operation.id === hoveredIndex) {
         const newOperation = { ...operation, operation_type: newMarkup }
         updatedGroupedOperations[date].push(newOperation)
-        console.log(newOperation)
       } else updatedGroupedOperations[date].push(operation)
     })
 
     setGroupedOperations(updatedGroupedOperations)
-    debugger
+    hoveredIndex &&
+      setOperationsValue((prevData) => {
+        const indexToUpdate = prevData.findIndex(
+          (item) => item.id === hoveredIndex
+        )
+        if (indexToUpdate !== -1) {
+          const updatedData = [...prevData]
+          updatedData[indexToUpdate] = { id: hoveredIndex, value: newMarkup }
+          return updatedData
+        } else {
+          return [...prevData, { id: hoveredIndex, value: newMarkup }]
+        }
+      })
+
     try {
       if (hoveredIndex && hoveredAmount) {
         await api.operations.updateOperationOperationsMarkupPut(
@@ -430,7 +448,6 @@ export const TaxesPage = () => {
           { headers }
         )
         successMarkup()
-        console.log(groupedOperations)
       }
     } catch (error) {
       errorMarkup()
@@ -531,6 +548,11 @@ export const TaxesPage = () => {
             operations: [...operations.data.operations],
             pages_count: operations.data.pages_count,
           }))
+          setOperationsValue(
+            operations.data.operations.map((item) => {
+              return { id: item.id, value: item.markup.operation_type }
+            })
+          )
         } else {
           setOperationsData((prevData) => ({
             ...prevData,
@@ -540,12 +562,42 @@ export const TaxesPage = () => {
             ],
             pages_count: operations.data.pages_count,
           }))
+          setOperationsValue((prevData) => [
+            ...prevData,
+            ...operations.data.operations.map((item) => ({
+              id: item.id,
+              value: item.markup.operation_type,
+            })),
+          ])
         }
 
-        setPagination((prevPagination) => ({
-          ...prevPagination,
-          page_number: prevPagination.page_number + 1,
-        }))
+        if (
+          pagination.page_number === 1 &&
+          operations.data.operations.length === 0 &&
+          selectedStartDate === null &&
+          selectedEndDate === null &&
+          selectedOperationTypes.length === 0 &&
+          selectedSources.length === 0
+        )
+          setFirstLoadedEmpty(true)
+        else setFirstLoadedEmpty(false)
+
+        if (
+          pagination.page_number === 1 &&
+          operations.data.operations.length === 0 &&
+          (selectedStartDate !== null ||
+            selectedEndDate !== null ||
+            selectedOperationTypes.length !== 0 ||
+            selectedSources.length !== 0)
+        )
+          setFilteredLoadedEmpty(true)
+        else setFilteredLoadedEmpty(false)
+
+        if (operations.data.operations.length !== 0)
+          setPagination((prevPagination) => ({
+            ...prevPagination,
+            page_number: prevPagination.page_number + 1,
+          }))
         setIsFetching(false)
         setOperationsLoaded(true)
       } catch (error) {
@@ -902,6 +954,10 @@ export const TaxesPage = () => {
 
   const [marketplaceOperationOpen, setMarketplaceOperation] = useState(false)
 
+  const [firstLoadedEmpty, setFirstLoadedEmpty] = useState(true)
+
+  const [filteredLoadedEmpty, setFilteredLoadedEmpty] = useState(false)
+
   return (
     <>
       <ConfigProvider
@@ -961,86 +1017,91 @@ export const TaxesPage = () => {
 
           {!taxesErrorImage ? (
             <div className={styles["income-table"]}>
-              {isMobile ? (
-                <Collapse
-                  items={collapseItems}
-                  bordered={true}
-                  className="filter-collapse"
-                  expandIconPosition="end"
-                  onChange={(ckeyshange) => {
-                    setActiveKey(ckeyshange)
-                    console.log(ckeyshange)
-                  }}
-                />
-              ) : (
-                <div className={styles["income-header-wrapper"]}>
-                  <SelectOne
-                    placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
-                    className={styles["account-select"]}
-                    options={optionsSources}
-                    onChange={handleSourcesChange}
-                    value={selectedSources}
-                    mode="multiple"
-                    dropdownStyle={{
-                      width: "250px",
-                    }}
-                    maxTagCount={1}
-                    allowClear
-                  />
-                  <SelectOne
-                    placeholder={CONTENT.SELECT_OPERATION_TYPE}
-                    className={cn(
-                      "select-operations-custom",
-                      styles["operation-select"]
-                    )}
-                    options={optionsTypesSelect}
-                    onChange={handleOperationTypesChange}
-                    value={selectedOperationTypes}
-                    mode="multiple"
-                    dropdownStyle={{
-                      width: "250px",
-                    }}
-                    maxTagCount={1}
-                    allowClear
-                  />
-                  <DatePicker.RangePicker
-                    locale={locale}
-                    format={dateFormat}
-                    placeholder={["от", "до"]}
-                    className={cn("datepicker", styles["datepicker-item"])}
-                    minDate={
-                      currentUser.tax_date_begin
-                        ? dayjs(
-                            convertReverseFormat(currentUser.tax_date_begin),
-                            dateFormat
-                          )
-                        : undefined
-                    }
-                    style={{ borderRadius: "4px" }}
-                    value={[
-                      selectedStartDate !== null
-                        ? dayjs(selectedStartDate)
-                        : null,
-                      selectedEndDate !== null ? dayjs(selectedEndDate) : null,
-                    ]}
-                    allowClear
-                    onChange={(dates, dateStrings) =>
-                      handleDateRangeChange(dateStrings)
-                    }
-                  />
-                  <ButtonOne
-                    onClick={resetFilter}
-                    type="secondary"
-                    disabled={filterButtonDisabled}
-                  >
-                    {CONTENT.RESET_FILTERS}
-                  </ButtonOne>
-                </div>
-              )}
+              {isMobile
+                ? !firstLoadedEmpty && (
+                    <Collapse
+                      items={collapseItems}
+                      bordered={true}
+                      className="filter-collapse"
+                      expandIconPosition="end"
+                      onChange={(ckeyshange) => {
+                        setActiveKey(ckeyshange)
+                      }}
+                    />
+                  )
+                : !firstLoadedEmpty && (
+                    <div className={styles["income-header-wrapper"]}>
+                      <SelectOne
+                        placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
+                        className={styles["account-select"]}
+                        options={optionsSources}
+                        onChange={handleSourcesChange}
+                        value={selectedSources}
+                        mode="multiple"
+                        dropdownStyle={{
+                          width: "250px",
+                        }}
+                        maxTagCount={1}
+                        allowClear
+                      />
+                      <SelectOne
+                        placeholder={CONTENT.SELECT_OPERATION_TYPE}
+                        className={cn(
+                          "select-operations-custom",
+                          styles["operation-select"]
+                        )}
+                        options={optionsTypesSelect}
+                        onChange={handleOperationTypesChange}
+                        value={selectedOperationTypes}
+                        mode="multiple"
+                        dropdownStyle={{
+                          width: "250px",
+                        }}
+                        maxTagCount={1}
+                        allowClear
+                      />
+                      <DatePicker.RangePicker
+                        locale={locale}
+                        format={dateFormat}
+                        placeholder={["от", "до"]}
+                        className={cn("datepicker", styles["datepicker-item"])}
+                        minDate={
+                          currentUser.tax_date_begin
+                            ? dayjs(
+                                convertReverseFormat(
+                                  currentUser.tax_date_begin
+                                ),
+                                dateFormat
+                              )
+                            : undefined
+                        }
+                        style={{ borderRadius: "4px" }}
+                        value={[
+                          selectedStartDate !== null
+                            ? dayjs(selectedStartDate)
+                            : null,
+                          selectedEndDate !== null
+                            ? dayjs(selectedEndDate)
+                            : null,
+                        ]}
+                        allowClear
+                        onChange={(dates, dateStrings) =>
+                          handleDateRangeChange(dateStrings)
+                        }
+                      />
+                      <ButtonOne
+                        onClick={resetFilter}
+                        type="secondary"
+                        disabled={filterButtonDisabled}
+                      >
+                        {CONTENT.RESET_FILTERS}
+                      </ButtonOne>
+                    </div>
+                  )}
 
               <div className={styles["operations-table-wrapper"]}>
                 <div className={styles["operations-table-inner"]}>
-                  {!isMobile && (
+                  {!isMobile && !firstLoadedEmpty && !filteredLoadedEmpty && (
                     <div className={styles["table-header"]}>
                       {columns.map((item, index) => (
                         <div
@@ -1054,215 +1115,194 @@ export const TaxesPage = () => {
                   )}
                   {operationsLoaded ? (
                     operationsData && operationsData?.operations.length > 0 ? (
-                      Object.entries(groupedOperations).length > 0 ? (
-                        Object.entries(groupedOperations).map(
-                          ([date, operations]) => (
-                            <div key={date}>
-                              <div className={styles["table-date-row"]}>
-                                {formatToPayDate(date)}
-                              </div>
-                              <div>
-                                {operations.map((operation, index) => (
-                                  <>
+                      Object.entries(groupedOperations).length > 0 &&
+                      Object.entries(groupedOperations).map(
+                        ([date, operations]) => (
+                          <div key={date}>
+                            <div className={styles["table-date-row"]}>
+                              {formatToPayDate(date)}
+                            </div>
+                            <div>
+                              {operations.map((operation, index) => (
+                                <>
+                                  <div
+                                    className={cn(styles["table-info-row"], {
+                                      [styles["hovered-row"]]:
+                                        hoveredIndex === operation.id,
+                                    })}
+                                    key={operation.id}
+                                    onMouseEnter={() => {
+                                      setHoveredIndex(operation.id),
+                                        setHoveredAmount(
+                                          operation.markup.amount
+                                        )
+                                    }}
+                                  >
+                                    <div className={styles["source-inner"]}>
+                                      <Text className={styles["source-title"]}>
+                                        {operation.counterparty_name ||
+                                          "Нет контрагента"}
+                                      </Text>
+                                      <Text className={styles["source-text"]}>
+                                        {operation.purpose || "Нет данных"}
+                                      </Text>
+                                    </div>
                                     <div
-                                      className={cn(styles["table-info-row"], {
-                                        [styles["hovered-row"]]:
-                                          hoveredIndex === operation.id,
-                                      })}
-                                      key={operation.id}
-                                      onMouseEnter={() => {
-                                        setHoveredIndex(operation.id),
-                                          setHoveredAmount(
-                                            operation.markup.amount
-                                          )
-                                      }}
+                                      className={
+                                        styles["operation-type-wrapper"]
+                                      }
                                     >
-                                      <div className={styles["source-inner"]}>
-                                        <Text
-                                          className={styles["source-title"]}
-                                        >
-                                          {operation.counterparty_name ||
-                                            "Нет контрагента"}
-                                        </Text>
-                                        <Text className={styles["source-text"]}>
-                                          {operation.purpose || "Нет данных"}
-                                        </Text>
-                                      </div>
                                       <div
                                         className={
-                                          styles["operation-type-wrapper"]
+                                          styles["operation-type-inner"]
                                         }
                                       >
-                                        <div
-                                          className={
-                                            styles["operation-type-inner"]
+                                        <Select
+                                          options={
+                                            operation.category === "debet"
+                                              ? optionsTypes.filter(
+                                                  (item) =>
+                                                    item.value !== 3 &&
+                                                    item.value !== 4
+                                                )
+                                              : operation.category === "credit"
+                                              ? optionsTypes.filter(
+                                                  (item) => item.value !== 1
+                                                )
+                                              : optionsTypes
+                                          }
+                                          defaultValue={
+                                            operation.markup.operation_type
+                                          }
+                                          dropdownStyle={{
+                                            width: "300px",
+                                            padding: 0,
+                                            borderRadius: "1px",
+                                          }}
+                                          className={cn(
+                                            "type-item-select",
+                                            styles["type-select-inner"],
+                                            {
+                                              ["type-income"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0].value === 1,
+                                              ["type-non"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0].value === 2,
+                                              ["type-back"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0].value === 3,
+                                              ["type-taxes"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0].value === 4,
+                                            }
+                                          )}
+                                          onChange={(value) => {
+                                            handleChangeMarkup(value)
+                                          }}
+                                        />
+
+                                        {operation.markup_mode_code === 2 ||
+                                        operation.markup_mode_code === 3 ? (
+                                          <Tooltip
+                                            title={
+                                              CONTENT.TOOLTIP_MARKUP_CHANGED
+                                            }
+                                          >
+                                            <PersonEditIcon />
+                                          </Tooltip>
+                                        ) : null}
+                                      </div>
+                                      {isMobile && (
+                                        <Button
+                                          className={cn(
+                                            styles["no-border-button"],
+                                            styles["button-delete-mobile"]
+                                          )}
+                                          onClick={() =>
+                                            setIsDeleteModalOpen(true)
                                           }
                                         >
-                                          <Select
-                                            options={
-                                              operation.category === "debet"
-                                                ? optionsTypes.filter(
-                                                    (item) =>
-                                                      item.value !== 3 &&
-                                                      item.value !== 4
-                                                  )
-                                                : operation.category ===
-                                                  "credit"
-                                                ? optionsTypes.filter(
-                                                    (item) => item.value !== 1
-                                                  )
-                                                : optionsTypes
-                                            }
-                                            defaultValue={
-                                              operation.markup.operation_type
-                                            }
-                                            dropdownStyle={{
-                                              width: "300px",
-                                              padding: 0,
-                                              borderRadius: "1px",
-                                            }}
-                                            className={cn(
-                                              "type-item-select",
-                                              styles["type-select-inner"],
-                                              {
-                                                ["type-income"]:
-                                                  operation.markup
-                                                    .operation_type === 1,
-                                                ["type-non"]:
-                                                  operation.markup
-                                                    .operation_type === 2,
-                                                ["type-back"]:
-                                                  operation.markup
-                                                    .operation_type === 3,
-                                                ["type-taxes"]:
-                                                  operation.markup
-                                                    .operation_type === 4,
+                                          <DeleteOperationIcon />
+                                        </Button>
+                                      )}
+                                    </div>
+                                    <div className={styles["amount-inner"]}>
+                                      <div
+                                        className={cn(styles["amount-part"], {
+                                          [styles["amount-part-hovered"]]:
+                                            hoveredIndex === operation.id,
+                                        })}
+                                      >
+                                        <Text
+                                          className={styles["currency-income"]}
+                                        >
+                                          {operation.markup.amount >= 0 ? (
+                                            <Amount
+                                              prefix={
+                                                operation.category === "debet"
+                                                  ? "plus"
+                                                  : "minus"
                                               }
-                                            )}
-                                            onChange={(value) => {
-                                              handleChangeMarkup(value)
-                                            }}
-                                          />
+                                              currency="RUB"
+                                              value={operation.markup.amount}
+                                              className={
+                                                styles["amount-nowrap"]
+                                              }
+                                            />
+                                          ) : (
+                                            getCurrency(
+                                              operation.amount_doc,
+                                              operation.category
+                                            )
+                                          )}
+                                        </Text>
+                                        <Text
+                                          className={
+                                            styles["source-account-text"]
+                                          }
+                                        >
+                                          {getSourceText(
+                                            operation.source_name,
+                                            operation.account_number,
+                                            operation.short_name
+                                          )}
+                                        </Text>
+                                      </div>
 
-                                          {operation.markup_mode_code === 2 ||
-                                          operation.markup_mode_code === 3 ? (
-                                            <Tooltip
-                                              title={
-                                                CONTENT.TOOLTIP_MARKUP_CHANGED
-                                              }
-                                            >
-                                              <PersonEditIcon />
-                                            </Tooltip>
-                                          ) : null}
-                                        </div>
-                                        {isMobile && (
-                                          <Button
-                                            className={cn(
-                                              styles["no-border-button"],
-                                              styles["button-delete-mobile"]
-                                            )}
+                                      {!isMobile && (
+                                        <Tooltip title={CONTENT.DELETE_TOOLTIP}>
+                                          <ButtonOne
+                                            className={styles["delete-icon"]}
+                                            type="danger"
                                             onClick={() =>
                                               setIsDeleteModalOpen(true)
                                             }
                                           >
-                                            <DeleteOperationIcon />
-                                          </Button>
-                                        )}
-                                      </div>
-                                      <div className={styles["amount-inner"]}>
-                                        <div
-                                          className={cn(styles["amount-part"], {
-                                            [styles["amount-part-hovered"]]:
-                                              hoveredIndex === operation.id,
-                                          })}
-                                        >
-                                          <Text
-                                            className={
-                                              styles["currency-income"]
-                                            }
-                                          >
-                                            {operation.markup.amount >= 0 ? (
-                                              <Amount
-                                                prefix={
-                                                  operation.category === "debet"
-                                                    ? "plus"
-                                                    : "minus"
-                                                }
-                                                currency="RUB"
-                                                value={operation.markup.amount}
-                                                className={
-                                                  styles["amount-nowrap"]
-                                                }
-                                              />
-                                            ) : (
-                                              getCurrency(
-                                                operation.amount_doc,
-                                                operation.category
-                                              )
-                                            )}
-                                          </Text>
-                                          <Text
-                                            className={
-                                              styles["source-account-text"]
-                                            }
-                                          >
-                                            {getSourceText(
-                                              operation.source_name,
-                                              operation.account_number,
-                                              operation.short_name
-                                            )}
-                                          </Text>
-                                        </div>
-
-                                        {!isMobile && (
-                                          <Tooltip
-                                            title={CONTENT.DELETE_TOOLTIP}
-                                          >
-                                            <ButtonOne
-                                              className={styles["delete-icon"]}
-                                              type="danger"
-                                              onClick={() =>
-                                                setIsDeleteModalOpen(true)
-                                              }
-                                            >
-                                              <DeleteOutlined />
-                                            </ButtonOne>
-                                          </Tooltip>
-                                        )}
-                                      </div>
+                                            <DeleteOutlined />
+                                          </ButtonOne>
+                                        </Tooltip>
+                                      )}
                                     </div>
-                                    {/*isMobile && (
+                                  </div>
+                                  {/*isMobile && (
                                       <div className={styles["divider"]}></div>
                                     )*/}
-                                  </>
-                                ))}
-                              </div>
+                                </>
+                              ))}
                             </div>
-                          )
-                        )
-                      ) : (
-                        groupedOperationsLoaded && (
-                          <div className={styles["non-taxes"]}>
-                            <NonTaxesImage />
-                            <div className={styles["non-wrapper"]}>
-                              <Text className={styles["non-text"]}>
-                                {CONTENT.TEXT_NON_TAXES}
-                              </Text>
-                            </div>
-                            {/*<ButtonOne
-                            className={styles["non-source-button"]}
-                            onClick={() => setIsAddSourceOpen(true)}
-                          >
-                            <PlusOutlined
-                              className={styles["plus-non-icon"]}
-                              style={{ marginInlineStart: "4px" }}
-                            />
-                            {CONTENT.BUTTON_ADD_SOURCE_NON}
-                      </ButtonOne>*/}
                           </div>
                         )
                       )
-                    ) : (
+                    ) : firstLoadedEmpty ? (
                       <div className={styles["non-taxes-operations"]}>
                         <NonTaxesImage />
                         <div className={styles["non-operations-wrapper"]}>
@@ -1290,6 +1330,28 @@ export const TaxesPage = () => {
                           {CONTENT.BUTTON_ADD_SOURCE_NON}
                         </ButtonOne>
                       </div>
+                    ) : (
+                      filteredLoadedEmpty &&
+                      filteredLoadedEmpty && (
+                        <div className={styles["non-taxes"]}>
+                          <NonTaxesImage />
+                          <div className={styles["non-wrapper"]}>
+                            <Text className={styles["non-text"]}>
+                              {CONTENT.TEXT_NON_TAXES}
+                            </Text>
+                          </div>
+                          {/*<ButtonOne
+                          className={styles["non-source-button"]}
+                          onClick={() => setIsAddSourceOpen(true)}
+                        >
+                          <PlusOutlined
+                            className={styles["plus-non-icon"]}
+                            style={{ marginInlineStart: "4px" }}
+                          />
+                          {CONTENT.BUTTON_ADD_SOURCE_NON}
+                    </ButtonOne>*/}
+                        </div>
+                      )
                     )
                   ) : !isMobile ? (
                     <div
@@ -2572,9 +2634,8 @@ export const TaxesPage = () => {
                 )}
               {sourcesLoaded &&
                 sources?.sources?.length == 0 &&
-                sources.sources.filter(
-                  (item) => item.name !== "Ручной ввод"
-                ) && (
+                sources.sources.filter((item) => item.name !== "Ручной ввод")
+                  .length === 0 && (
                   <div className={styles["sources-non-banner"]}>
                     <div className={styles["sources-non-banner-inner"]}>
                       <WalletPigIcon />

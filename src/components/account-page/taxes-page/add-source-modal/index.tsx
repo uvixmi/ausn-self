@@ -14,6 +14,7 @@ import "./styles.scss"
 import {
   CreateAccountResponse,
   CreateSourceResponse,
+  LeadReason,
   MarketplaceName,
   OFDSource,
   api,
@@ -512,6 +513,24 @@ export const AddSourceModal = ({
     integrateAccount,
     integrateAccountError,
   ])
+
+  const sendNewMarketplace = async () => {
+    try {
+      await api.users.saveUserLeadUsersLeadPut(
+        {
+          description: otherMarketplace,
+          reason: LeadReason.Marketplace,
+        },
+        { headers }
+      )
+      dispatch(fetchSourcesInfo())
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
 
   return (
     <>
@@ -2602,7 +2621,8 @@ export const AddSourceModal = ({
                     />
                     <ButtonOne
                       type="secondary"
-                      //  onClick={closeModal}
+                      onClick={sendNewMarketplace}
+                      disabled={otherMarketplace.length === 0}
                     >
                       <Text className={styles["button-back-text"]}>
                         {CONTENT.BUTTON_OFD_OTHER_SEND}
