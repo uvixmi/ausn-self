@@ -46,7 +46,18 @@ export const Amount = ({
           {decimalPart}
         </span>
       )}
-      {currency && currencySymbol && SPACE + currencySymbol}
+      {currency && currencySymbol && SPACE && (
+        <span
+          className={cn(
+            styles.decimal,
+            styles[amountStyle],
+            styles[decimalStyle]
+          )}
+          data-test-id={`${dataTestId}-decimal`}
+        >
+          {currencySymbol}
+        </span>
+      )}
     </span>
   )
 }

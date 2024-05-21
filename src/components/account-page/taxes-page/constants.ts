@@ -63,7 +63,7 @@ export const CONTENT = {
   CANCEL_INTEGRATION_SOURCE_TOOPLTIP: "Удалить",
   OFF_INTEGRATION_SOURCE: "Отключить интеграцию",
   OFF_INTEGRATION_SOURCE_TOOLTIP: "Отключить",
-  ADD_SOURCE_COMPLETED: "Добавить данные",
+  ADD_SOURCE_COMPLETED: "Загрузить выписку",
   TOOLTIP_ORANGE: "Требуется дополнительное действие",
   TOOLTIP_GREY: "В процессе обработки",
   TOOLTIP_GREY_AUTO: "В процессе подключения",

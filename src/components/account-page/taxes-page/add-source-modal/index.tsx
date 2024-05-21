@@ -316,7 +316,12 @@ export const AddSourceModal = ({
           : MarketplaceName.ValueЯндексМаркет,
     }
     const marketplace_credentials = {
-      login: marketplaceId,
+      login:
+        marketplaceMode === "3"
+          ? marketplaceId
+          : marketplaceMode === "2"
+          ? undefined
+          : marketplaceId,
       password: marketplaceKey,
       date_begin: convertDateFormat(dateMarketPlace),
     }
@@ -531,87 +536,89 @@ export const AddSourceModal = ({
             <Title level={3} style={{ marginTop: "0", marginBottom: "24px" }}>
               {CONTENT.TITLE_ADD_SOURCE}
             </Title>
-            <Button
-              onClick={() => {
-                setAddOperation(true)
-                setOpen(false)
-              }}
-              className={styles["button-source-item"]}
-            >
-              <PencilBigIcon />
-              <div className={styles["button-source-inner"]}>
-                <Text className={styles["bank-title"]}>
-                  {CONTENT.TITLE_MANUAL_LOAD}
-                </Text>
-                <Text className={styles["text-description-button"]}>
-                  {CONTENT.DESCRIPTION_MANUAL_LOAD}
-                </Text>
-              </div>
-            </Button>
-            <Button
-              onClick={() => {
-                setButtonMode("bank_statement")
-              }}
-              className={styles["button-source-item"]}
-            >
-              <BankBalanceIcon />
-              <div className={styles["button-source-inner"]}>
-                <Text className={styles["bank-title"]}>
-                  {CONTENT.TITLE_BANK_STATEMENT}
-                </Text>
-                <Text className={styles["text-description-button"]}>
-                  {CONTENT.DESCRIPTION_BANK_STATEMENT}
-                </Text>
-              </div>
-            </Button>
-            <Button
-              onClick={() => {
-                setButtonMode("bank_integration")
-              }}
-              className={styles["button-source-item"]}
-            >
-              <BankBalanceIcon />
-              <div className={styles["button-source-inner"]}>
-                <Text className={styles["bank-title"]}>
-                  {CONTENT.TITLE_BANK_INTEGRATION}
-                </Text>
-                <Text className={styles["text-description-button"]}>
-                  {CONTENT.DESCRIPTION_BANK_INTEGRATION}
-                </Text>
-              </div>
-            </Button>
-            <Button
-              onClick={() => {
-                setButtonMode("online_cashier")
-              }}
-              className={styles["button-source-item"]}
-            >
-              <OnlineCashierIcon />
-              <div className={styles["button-source-inner"]}>
-                <Text className={styles["bank-title"]}>
-                  {CONTENT.TITLE_ONLINE_CASHIER}
-                </Text>
-                <Text className={styles["text-description-button"]}>
-                  {CONTENT.DESCRIPTION_ONLINE_CASHIER}
-                </Text>
-              </div>
-            </Button>
-            <Button
-              onClick={() => {
-                setButtonMode("marketplace_integration")
-              }}
-              className={styles["button-source-item"]}
-            >
-              <MarketplaceIcon />
-              <div className={styles["button-source-inner"]}>
-                <Text className={styles["bank-title"]}>
-                  {CONTENT.TITLE_MARKETPLACE_INTEGRATION}
-                </Text>
-                <Text className={styles["text-description-button"]}>
-                  {CONTENT.DESCRIPTION_MARKETPLACE_INTEGRATION}
-                </Text>
-              </div>
-            </Button>
+            <div className={styles["main-buttons-wrapper"]}>
+              <Button
+                onClick={() => {
+                  setAddOperation(true)
+                  setOpen(false)
+                }}
+                className={styles["button-source-item"]}
+              >
+                <PencilBigIcon />
+                <div className={styles["button-source-inner"]}>
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TITLE_MANUAL_LOAD}
+                  </Text>
+                  <Text className={styles["text-description-button"]}>
+                    {CONTENT.DESCRIPTION_MANUAL_LOAD}
+                  </Text>
+                </div>
+              </Button>
+              <Button
+                onClick={() => {
+                  setButtonMode("bank_statement")
+                }}
+                className={styles["button-source-item"]}
+              >
+                <BankBalanceIcon />
+                <div className={styles["button-source-inner"]}>
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TITLE_BANK_STATEMENT}
+                  </Text>
+                  <Text className={styles["text-description-button"]}>
+                    {CONTENT.DESCRIPTION_BANK_STATEMENT}
+                  </Text>
+                </div>
+              </Button>
+              <Button
+                onClick={() => {
+                  setButtonMode("bank_integration")
+                }}
+                className={styles["button-source-item"]}
+              >
+                <BankBalanceIcon />
+                <div className={styles["button-source-inner"]}>
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TITLE_BANK_INTEGRATION}
+                  </Text>
+                  <Text className={styles["text-description-button"]}>
+                    {CONTENT.DESCRIPTION_BANK_INTEGRATION}
+                  </Text>
+                </div>
+              </Button>
+              <Button
+                onClick={() => {
+                  setButtonMode("online_cashier")
+                }}
+                className={styles["button-source-item"]}
+              >
+                <OnlineCashierIcon />
+                <div className={styles["button-source-inner"]}>
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TITLE_ONLINE_CASHIER}
+                  </Text>
+                  <Text className={styles["text-description-button"]}>
+                    {CONTENT.DESCRIPTION_ONLINE_CASHIER}
+                  </Text>
+                </div>
+              </Button>
+              <Button
+                onClick={() => {
+                  setButtonMode("marketplace_integration")
+                }}
+                className={styles["button-source-item"]}
+              >
+                <MarketplaceIcon />
+                <div className={styles["button-source-inner"]}>
+                  <Text className={styles["bank-title"]}>
+                    {CONTENT.TITLE_MARKETPLACE_INTEGRATION}
+                  </Text>
+                  <Text className={styles["text-description-button"]}>
+                    {CONTENT.DESCRIPTION_MARKETPLACE_INTEGRATION}
+                  </Text>
+                </div>
+              </Button>
+            </div>
           </div>
         ) : (
           <div className={styles["upload-wrapper"]}>
@@ -1753,12 +1760,9 @@ export const AddSourceModal = ({
                     </Text>
                   </Button>
                 </div>
-                <div
-                  className={styles["bank-row"]}
-                  style={{ justifyContent: "flex-start" }}
-                >
+                <div className={styles["bank-row"]}>
                   <Button
-                    className={styles["bank-item"]}
+                    className={cn(styles["bank-item"], styles["yandex-button"])}
                     onClick={() => setMarketplaceMode("1")}
                   >
                     <div
@@ -1809,7 +1813,7 @@ export const AddSourceModal = ({
                     className={styles["bank-row"]}
                     style={{ justifyContent: "flex-start" }}
                   >
-                    <Button
+                    {/*<Button
                       className={styles["bank-item"]}
                       onClick={() => {
                         setMarketplaceOperation(true)
@@ -1826,7 +1830,7 @@ export const AddSourceModal = ({
                       <Text className={styles["bank-title"]}>
                         {CONTENT.LOAD_MANUAL}
                       </Text>
-                    </Button>
+                    </Button>*/}
                   </div>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
@@ -1987,6 +1991,14 @@ export const AddSourceModal = ({
                   </div>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
+                    <Link
+                      className={styles["instructions"]}
+                      style={{ color: "#6159ff" }}
+                      target="_blink"
+                      href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                    >
+                      {CONTENT.LINK_INSTRUCTIONS}
+                    </Link>
                   </Text>
                   <div className={styles["buttons-generate-inner"]}>
                     <ButtonOne
@@ -2167,7 +2179,7 @@ export const AddSourceModal = ({
                     className={styles["bank-row"]}
                     style={{ justifyContent: "flex-start" }}
                   >
-                    <Button
+                    {/*<Button
                       className={styles["bank-item"]}
                       onClick={() => {
                         setMarketplaceOperation(true)
@@ -2181,7 +2193,7 @@ export const AddSourceModal = ({
                       <Text className={styles["bank-title"]}>
                         {CONTENT.LOAD_MANUAL}
                       </Text>
-                    </Button>
+                    </Button>*/}
                   </div>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
@@ -2422,6 +2434,14 @@ export const AddSourceModal = ({
                   </div>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
+                    <Link
+                      className={styles["instructions"]}
+                      style={{ color: "#6159ff" }}
+                      target="_blink"
+                      href="https://www.google.com/url?q=https://drive.google.com/drive/u/1/folders/1yFkiwQuDDGUrHxINyXWVs8x3wtf_aLw_&sa=D&source=docs&ust=1709622100158746&usg=AOvVaw10cI6RyE9EYj20GIbB9DCu"
+                    >
+                      {CONTENT.LINK_INSTRUCTIONS}
+                    </Link>
                   </Text>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
@@ -2606,6 +2626,7 @@ export const AddSourceModal = ({
                     </Text>
                   </ButtonOne>
                   <ButtonOne
+                    className={styles["generate-back"]}
                     onClick={() => {
                       closeModal()
                       setAddOperation(true)

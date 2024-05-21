@@ -5,7 +5,7 @@ export const CONTENT = {
   TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
   TITLE_MANUAL_LOAD: "Ручная загрузка операции",
-  DESCRIPTION_MANUAL_LOAD: "Добавить операцию, не отраженную в списке",
+  DESCRIPTION_MANUAL_LOAD: "Добавить операцию, не отраженную в сервисе",
   DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка, Хайс",
   TITLE_ONLINE_CASHIER: "Онлайн-касса",
   DESCRIPTION_ONLINE_CASHIER:
@@ -84,7 +84,7 @@ export const CONTENT = {
   TEXT_MARKETPLACE_OZON_DESCRIPTION:
     "ID клиента и ключ для подключения через API необходимо сгенерировать в ЛК OZON.",
   TEXT_MARKETPLACE_WB_DESCRIPTION:
-    "Ключ для подключения через API необходимо сгенерировать в ЛК Wildberries",
+    "Ключ для подключения через API необходимо сгенерировать в ЛК Wildberries.",
   TEXT_MARKETPLACE_YANDEX_ONE:
     "Мы сгенерируем ссылку для предоставления доступа к данным. Ссылка отобразится в ",
   TEXT_MARKETPLACE_YANDEX_TWO: "Источники\u00A0данных. ",

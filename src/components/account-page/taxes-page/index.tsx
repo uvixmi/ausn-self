@@ -62,7 +62,7 @@ import { AddSourceModal } from "./add-source-modal"
 import { ArrowCounterIcon } from "./type-operation/icons/arrow-counter"
 import { fetchSourcesInfo } from "../client/sources/thunks"
 import { AddOperationModal } from "./add-operation-modal"
-import { DeleteSourceIcon } from "./type-operation/icons/delete-source"
+import { TrashNewIcon as DeleteSourceIcon } from "./type-operation/icons/trash-new-icon"
 import { OffSourceModal } from "./off-source-modal"
 import { useMediaQuery } from "@react-hook/media-query"
 import { InProgressOrangeIcon } from "./type-operation/icons/in-progress-orange"
@@ -81,6 +81,8 @@ import { WalletPigIcon } from "./type-operation/icons/wallet-pig"
 import { RepeatCrossIcon } from "./type-operation/icons/repeat-cross"
 import { HideEyeIcon } from "./type-operation/icons/hide-eye"
 import { AddMarketplaceOperationModal } from "./add-marketplace-operation-modal"
+import { CollapseFilterIcon } from "./type-operation/icons/collapse-filter"
+import { DeleteOperationIcon } from "./type-operation/icons/delete-operation"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -403,6 +405,23 @@ export const TaxesPage = () => {
   }
 
   const handleChangeMarkup = async (newMarkup: number) => {
+    const updatedGroupedOperations: Record<string, Operation[]> = {}
+
+    operationsData?.operations.forEach((operation) => {
+      const date = operation.date
+
+      if (!updatedGroupedOperations[date]) {
+        updatedGroupedOperations[date] = []
+      }
+      if (operation.id === hoveredIndex) {
+        const newOperation = { ...operation, operation_type: newMarkup }
+        updatedGroupedOperations[date].push(newOperation)
+        console.log(newOperation)
+      } else updatedGroupedOperations[date].push(operation)
+    })
+
+    setGroupedOperations(updatedGroupedOperations)
+    debugger
     try {
       if (hoveredIndex && hoveredAmount) {
         await api.operations.updateOperationOperationsMarkupPut(
@@ -411,6 +430,7 @@ export const TaxesPage = () => {
           { headers }
         )
         successMarkup()
+        console.log(groupedOperations)
       }
     } catch (error) {
       errorMarkup()
@@ -590,6 +610,8 @@ export const TaxesPage = () => {
       dispatch(fetchCurrentUser())
   }, [dispatch, loaded, loading])
 
+  const [filterButtonDisabled, setFilterButtonDisabled] = useState(true)
+
   useEffect(() => {
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
@@ -635,14 +657,11 @@ export const TaxesPage = () => {
 
   const handleCompletedSource = (completedSource: number | null) => {
     setSourceCompleted(completedSource)
-    if (completedSource === 1) {
-      setIsAddSourceOpen(true)
-    }
-    if (completedSource === 2) {
-      setIsAddSourceOpen(true)
-    }
+
+    setIsAddSourceOpen(true)
   }
 
+  const [failedType, setFailedType] = useState("")
   const [failedBankBik, setFailedBankBik] = useState("")
   const [failedSubName, setFailedSubName] = useState("")
 
@@ -662,29 +681,53 @@ export const TaxesPage = () => {
 
   const [downloadKudir, setDownloadKudir] = useState(false)
 
+  const [activeKey, setActiveKey] = useState<string | string[]>([])
+
   const collapseItems = [
     {
       key: 1,
-      label: CONTENT.FILTER_HEADING,
+      label: (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <CollapseFilterIcon />{" "}
+            <Text className={styles["sources-non-text"]}>
+              {CONTENT.FILTER_HEADING}
+            </Text>
+          </div>
+          {activeKey.length === 0 && !filterButtonDisabled && (
+            <Link
+              className={styles["reset-filter-link"]}
+              onClick={(eve) => {
+                eve.stopPropagation()
+                resetFilter()
+              }}
+            >
+              {CONTENT.RESET_FILTERS}
+            </Link>
+          )}
+        </div>
+      ),
+
       children: (
         <div className={styles["income-header-wrapper"]}>
-          <Select
+          <SelectOne
             placeholder={CONTENT.SELECT_ACCOUNT_NUMBER}
             className={styles["account-select"]}
             options={optionsSources}
-            style={{ borderRadius: "4px" }}
             onChange={handleSourcesChange}
             mode="multiple"
             maxTagCount={1}
             value={selectedSources}
             allowClear
           />
-          <Select
+          <SelectOne
             placeholder={CONTENT.SELECT_OPERATION_TYPE}
             className={styles["operation-select"]}
-            style={{ borderRadius: "4px" }}
             options={optionsTypesSelect}
             onChange={handleOperationTypesChange}
+            dropdownStyle={{
+              width: "250px",
+            }}
             onClear={() => setOptionsTypesSelect(initialOptionTypesSelect)}
             value={selectedOperationTypes}
             mode="multiple"
@@ -695,7 +738,7 @@ export const TaxesPage = () => {
             format={dateFormat}
             allowClear
             placeholder={["от", "до"]}
-            className={styles["datepicker-item"]}
+            className={cn("datepicker", styles["datepicker-item"])}
             minDate={
               currentUser.tax_date_begin
                 ? dayjs(
@@ -713,6 +756,13 @@ export const TaxesPage = () => {
               handleDateRangeChange(dateStrings)
             }
           />
+          <ButtonOne
+            onClick={resetFilter}
+            type="secondary"
+            disabled={filterButtonDisabled}
+          >
+            {CONTENT.RESET_FILTERS}
+          </ButtonOne>
         </div>
       ),
     },
@@ -834,8 +884,6 @@ export const TaxesPage = () => {
     },
   ]
 
-  const [filterButtonDisabled, setFilterButtonDisabled] = useState(true)
-
   useEffect(() => {
     if (
       !selectedEndDate &&
@@ -916,10 +964,13 @@ export const TaxesPage = () => {
               {isMobile ? (
                 <Collapse
                   items={collapseItems}
-                  bordered={false}
+                  bordered={true}
                   className="filter-collapse"
-                  ghost
                   expandIconPosition="end"
+                  onChange={(ckeyshange) => {
+                    setActiveKey(ckeyshange)
+                    console.log(ckeyshange)
+                  }}
                 />
               ) : (
                 <div className={styles["income-header-wrapper"]}>
@@ -930,16 +981,25 @@ export const TaxesPage = () => {
                     onChange={handleSourcesChange}
                     value={selectedSources}
                     mode="multiple"
+                    dropdownStyle={{
+                      width: "250px",
+                    }}
                     maxTagCount={1}
                     allowClear
                   />
                   <SelectOne
                     placeholder={CONTENT.SELECT_OPERATION_TYPE}
-                    className={styles["operation-select"]}
+                    className={cn(
+                      "select-operations-custom",
+                      styles["operation-select"]
+                    )}
                     options={optionsTypesSelect}
                     onChange={handleOperationTypesChange}
                     value={selectedOperationTypes}
                     mode="multiple"
+                    dropdownStyle={{
+                      width: "250px",
+                    }}
                     maxTagCount={1}
                     allowClear
                   />
@@ -1084,9 +1144,8 @@ export const TaxesPage = () => {
                                             }}
                                           />
 
-                                          {(operation.markup_mode_code === 2 ||
-                                            operation.markup_mode_code ===
-                                              3) && (
+                                          {operation.markup_mode_code === 2 ||
+                                          operation.markup_mode_code === 3 ? (
                                             <Tooltip
                                               title={
                                                 CONTENT.TOOLTIP_MARKUP_CHANGED
@@ -1094,8 +1153,21 @@ export const TaxesPage = () => {
                                             >
                                               <PersonEditIcon />
                                             </Tooltip>
-                                          )}
+                                          ) : null}
                                         </div>
+                                        {isMobile && (
+                                          <Button
+                                            className={cn(
+                                              styles["no-border-button"],
+                                              styles["button-delete-mobile"]
+                                            )}
+                                            onClick={() =>
+                                              setIsDeleteModalOpen(true)
+                                            }
+                                          >
+                                            <DeleteOperationIcon />
+                                          </Button>
+                                        )}
                                       </div>
                                       <div className={styles["amount-inner"]}>
                                         <div
@@ -1141,13 +1213,10 @@ export const TaxesPage = () => {
                                             )}
                                           </Text>
                                         </div>
-                                        {
+
+                                        {!isMobile && (
                                           <Tooltip
-                                            title={
-                                              !isMobile
-                                                ? CONTENT.DELETE_TOOLTIP
-                                                : undefined
-                                            }
+                                            title={CONTENT.DELETE_TOOLTIP}
                                           >
                                             <ButtonOne
                                               className={styles["delete-icon"]}
@@ -1159,12 +1228,12 @@ export const TaxesPage = () => {
                                               <DeleteOutlined />
                                             </ButtonOne>
                                           </Tooltip>
-                                        }
+                                        )}
                                       </div>
                                     </div>
-                                    {isMobile && (
+                                    {/*isMobile && (
                                       <div className={styles["divider"]}></div>
-                                    )}
+                                    )*/}
                                   </>
                                 ))}
                               </div>
@@ -1462,7 +1531,7 @@ export const TaxesPage = () => {
                     >
                       <div className={styles["left-source-name"]}>
                         {item.state === "in_progress" ? (
-                          item.link || item.link !== "" ? (
+                          item.link && item.link !== "" ? (
                             <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
                               <InProgressOrangeIcon />
                             </Tooltip>
@@ -1550,6 +1619,7 @@ export const TaxesPage = () => {
                             <Link
                               className={styles["source-link"]}
                               onClick={() => {
+                                isMobile && closeDrawer()
                                 handleCompletedSource(
                                   item.type === "account" &&
                                     item.is_integrated === false
@@ -1575,11 +1645,10 @@ export const TaxesPage = () => {
                                     failedBank(item.bank_bik, item.sub_name)
                                   : item.type === "ofd" &&
                                     item.is_integrated === true
-                                  ? item.sub_name && failedOfd(item.name)
+                                  ? failedOfd(item.name)
                                   : item.type === "marketplace" &&
                                     item.is_integrated === true
-                                  ? item.sub_name &&
-                                    failedMarketplace(item.name)
+                                  ? failedMarketplace(item.name)
                                   : null
                               }}
                             >
@@ -1718,7 +1787,7 @@ export const TaxesPage = () => {
                     >
                       <div className={styles["left-source-name"]}>
                         {item.state === "in_progress" ? (
-                          item.link || item.link !== "" ? (
+                          item.link && item.link !== "" ? (
                             <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
                               <InProgressOrangeIcon />
                             </Tooltip>
@@ -1776,7 +1845,42 @@ export const TaxesPage = () => {
                               </Text>
                             </Tooltip>
                           ) : item.state === "failed" ? (
-                            <Link className={styles["source-link"]}>
+                            <Link
+                              className={styles["source-link"]}
+                              onClick={() => {
+                                isMobile && closeDrawer()
+                                handleCompletedSource(
+                                  item.type === "account" &&
+                                    item.is_integrated === false
+                                    ? 1
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === false
+                                    ? 2
+                                    : item.type === "account" &&
+                                      item.is_integrated === true
+                                    ? 3
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === true
+                                    ? 4
+                                    : item.type === "marketplace" &&
+                                      item.is_integrated === true
+                                    ? 5
+                                    : null
+                                )
+                                item.type === "account" &&
+                                item.is_integrated === true
+                                  ? item.bank_bik &&
+                                    item.sub_name &&
+                                    failedBank(item.bank_bik, item.sub_name)
+                                  : item.type === "ofd" &&
+                                    item.is_integrated === true
+                                  ? failedOfd(item.name)
+                                  : item.type === "marketplace" &&
+                                    item.is_integrated === true
+                                  ? failedMarketplace(item.name)
+                                  : null
+                              }}
+                            >
                               {"Повторить"}
                             </Link>
                           ) : item.state === "in_progress" &&
@@ -1890,30 +1994,32 @@ export const TaxesPage = () => {
                   expandIconPosition="right"
                 />
               )}
-            {sourcesLoaded && sources?.sources?.length == 0 && (
-              <div className={styles["sources-non-banner"]}>
-                <div className={styles["sources-non-banner-inner"]}>
-                  <WalletPigIcon />
-                  <Text className={styles["sources-non-title"]}>
-                    {CONTENT.SOURCES_LOADED_EMPTY_TITLE}
-                  </Text>
-                  <Text className={styles["sources-non-text"]}>
-                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_ONE}
-                    <Text className={styles["sources-non-bold"]}>
-                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_TWO}
+            {sourcesLoaded &&
+              sources?.sources?.length == 0 &&
+              sources.sources.filter((item) => item.name !== "Ручной ввод") && (
+                <div className={styles["sources-non-banner"]}>
+                  <div className={styles["sources-non-banner-inner"]}>
+                    <WalletPigIcon />
+                    <Text className={styles["sources-non-title"]}>
+                      {CONTENT.SOURCES_LOADED_EMPTY_TITLE}
                     </Text>
-                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_THREE}
-                    <Text className={styles["sources-non-bold"]}>
-                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FOUR}
+                    <Text className={styles["sources-non-text"]}>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_ONE}
+                      <Text className={styles["sources-non-bold"]}>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_TWO}
+                      </Text>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_THREE}
+                      <Text className={styles["sources-non-bold"]}>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FOUR}
+                      </Text>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FIVE}
                     </Text>
-                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FIVE}
-                  </Text>
-                  <Text className={styles["sources-non-text"]}>
-                    {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_SIX}
-                  </Text>
+                    <Text className={styles["sources-non-text"]}>
+                      {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_SIX}
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             {sourcesError && (
               <div className={styles["sources-error-banner"]}>
                 <div className={styles["sources-error-banner-inner"]}>
@@ -1982,7 +2088,7 @@ export const TaxesPage = () => {
                       >
                         <div className={styles["left-source-name"]}>
                           {item.state === "in_progress" ? (
-                            item.link || item.link == "" ? (
+                            item.link && item.link !== "" ? (
                               <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
                                 <InProgressOrangeIcon />
                               </Tooltip>
@@ -1992,37 +2098,38 @@ export const TaxesPage = () => {
                               </Tooltip>
                             )
                           ) : item.state === "failed" ? (
-                            <FailedIcon />
-                          ) : item.state === "completed" &&
+                            <Tooltip title={item.reason}>
+                              <FailedIcon />
+                            </Tooltip>
+                          ) : (
+                            item.state === "completed" &&
                             item.is_integrated === false &&
-                            !item.disable_date ? (
-                            <Tooltip
-                              title={
-                                !isMobile
-                                  ? CONTENT.ADD_SOURCE_COMPLETED
-                                  : undefined
-                              }
-                            >
-                              <Button
-                                className={styles["source-completed-icon"]}
-                                onClick={() =>
-                                  handleCompletedSource(
-                                    item.type === "account"
-                                      ? 1
-                                      : item.type === "ofd"
-                                      ? 2
-                                      : null
-                                  )
+                            !item.disable_date && (
+                              <Tooltip
+                                title={
+                                  !isMobile
+                                    ? CONTENT.ADD_SOURCE_COMPLETED
+                                    : undefined
                                 }
                               >
-                                <CompletedHandIcon />
-                              </Button>
-                            </Tooltip>
-                          ) : item.state === "completed" &&
-                            item.is_integrated === true &&
-                            !item.disable_date ? (
-                            <CompletedAutoIcon />
-                          ) : null}
+                                <Button
+                                  className={styles["source-completed-icon"]}
+                                  onClick={() => {
+                                    closeDrawer()
+                                    handleCompletedSource(
+                                      item.type === "account"
+                                        ? 1
+                                        : item.type === "ofd"
+                                        ? 2
+                                        : null
+                                    )
+                                  }}
+                                >
+                                  <CompletedHandIcon />
+                                </Button>
+                              </Tooltip>
+                            )
+                          )}
                           {item.short_name && item.short_name !== null ? (
                             <Tooltip title={item.name}>
                               <Text className={styles["source-text-left"]}>
@@ -2034,9 +2141,7 @@ export const TaxesPage = () => {
                           ) : item.name.length > 10 ? (
                             <Tooltip title={item.name}>
                               <Text className={styles["source-text-left"]}>
-                                {item.name.length > 10 && isTablet
-                                  ? `${item.name.substring(0, 10)}...`
-                                  : item.name}
+                                {`${item.name.substring(0, 10)}..`}{" "}
                               </Text>
                             </Tooltip>
                           ) : (
@@ -2057,221 +2162,77 @@ export const TaxesPage = () => {
                               [styles["source-date-part-disable"]]:
                                 item.disable_date,
                               [styles["source-date-part"]]: !item.disable_date,
+                              [styles["source-no-date-part"]]:
+                                !item.disable_date && !item.last_info,
                             })}
                           >
                             {item.state === "completed" &&
-                            !item.disable_date ? (
+                            !item.disable_date &&
+                            item.last_info ? (
                               <Tooltip title={CONTENT.TOOLTIP_DATE}>
                                 <Text className={styles["date-style"]}>
                                   {item.last_info &&
                                     convertReverseFormat(item.last_info)}
                                 </Text>
                               </Tooltip>
-                            ) : item.state === "completed" &&
-                              item.disable_date ? (
-                              <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                                <Text className={styles["date-style"]}>
-                                  {convertReverseFormat(item.disable_date)}
-                                </Text>
-                              </Tooltip>
-                            ) : item.state === "failed" ? null : item.state === //<Link>{"Повторить"}</Link>
-                              "in_progress" ? (
-                              item.link ? (
-                                <Link>{"Подключить"}</Link>
-                              ) : (
-                                "—"
-                              )
-                            ) : null}
-                            {!(item.state == "in_progress" && !item.link) && (
-                              <Tooltip
-                                title={
-                                  item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  !item.disable_date &&
-                                  (item.type === "account" ||
-                                    item.type === "ofd")
-                                    ? CONTENT.OFF_SOURCE_TOOLTIP
-                                    : item.state === "failed"
-                                    ? CONTENT.DELETE_SOURCE_TOOLTIP
-                                    : item.is_integrated === true &&
-                                      item.state === "in_progress" &&
-                                      !!item.link
-                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
-                                    : item.is_integrated === true &&
-                                      item.state === "completed"
-                                    ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP &&
-                                      !item.disable_date
-                                    : undefined
-                                }
+                            ) : item.state === "failed" ? (
+                              <Link
+                                className={styles["source-link"]}
+                                onClick={() => {
+                                  isMobile && closeDrawer()
+                                  handleCompletedSource(
+                                    item.type === "account" &&
+                                      item.is_integrated === false
+                                      ? 1
+                                      : item.type === "ofd" &&
+                                        item.is_integrated === false
+                                      ? 2
+                                      : item.type === "account" &&
+                                        item.is_integrated === true
+                                      ? 3
+                                      : item.type === "ofd" &&
+                                        item.is_integrated === true
+                                      ? 4
+                                      : item.type === "marketplace" &&
+                                        item.is_integrated === true
+                                      ? 5
+                                      : null
+                                  )
+                                  item.type === "account" &&
+                                  item.is_integrated === true
+                                    ? item.bank_bik &&
+                                      item.sub_name &&
+                                      failedBank(item.bank_bik, item.sub_name)
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === true
+                                    ? failedOfd(item.name)
+                                    : item.type === "marketplace" &&
+                                      item.is_integrated === true
+                                    ? failedMarketplace(item.name)
+                                    : null
+                                }}
                               >
-                                {!(
-                                  item.state === "completed" &&
-                                  item.disable_date
-                                ) ? (
-                                  <Button
-                                    className={cn("delete-fly-icon", {
-                                      [styles["source-delete-icon-disable"]]:
-                                        item.disable_date,
-                                      [styles["source-delete-icon"]]:
-                                        !item.disable_date,
-                                    })}
-                                    onClick={() => {
-                                      setIsDeletedSource(true)
-                                      setOffSourceTitle(
-                                        item.is_integrated === false &&
-                                          item.state === "completed" &&
-                                          (item.type === "account" ||
-                                            item.type === "ofd")
-                                          ? CONTENT.OFF_SOURCE
-                                          : item.state === "failed"
-                                          ? CONTENT.DELETE_SOURCE
-                                          : item.is_integrated === true &&
-                                            item.state === "in_progress" &&
-                                            !!item.link
-                                          ? CONTENT.CANCEL_INTEGRATION_SOURCE
-                                          : item.is_integrated === true &&
-                                            item.state === "completed"
-                                          ? CONTENT.OFF_INTEGRATION_SOURCE
-                                          : ""
-                                      )
-                                      setTypeSource(
-                                        item.is_integrated === false &&
-                                          item.state === "completed" &&
-                                          item.type === "account"
-                                          ? 1
-                                          : item.is_integrated === false &&
-                                            item.state === "completed" &&
-                                            item.type === "ofd"
-                                          ? 2
-                                          : item.state === "failed"
-                                          ? 3
-                                          : item.is_integrated === true &&
-                                            item.state === "in_progress" &&
-                                            !!item.link
-                                          ? 4
-                                          : item.is_integrated === true &&
-                                            item.state === "completed"
-                                          ? 5
-                                          : 0
-                                      )
-                                      setTypeSourceName(item.name)
-                                      setAccountSource(item.sub_name || "")
-                                      setOffSourceId(item.id)
-                                    }}
-                                  >
-                                    <DeleteSourceIcon />
-                                  </Button>
-                                ) : (
-                                  <div
-                                    className={
-                                      styles["source-delete-icon-disable"]
-                                    }
-                                  >
-                                    <DeleteSourceIcon />
-                                  </div>
-                                )}
-                              </Tooltip>
-                            )}
-                          </div>
-                        </div>
-                      </List.Item>
-                    )}
-                  />
-                </>
-              )}
-              {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
-                <>
-                  <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
-                  <List
-                    dataSource={sourcesAutoSider}
-                    renderItem={(item) => (
-                      <List.Item
-                        className={styles["list-item-right"]}
-                        style={{ borderBlockEnd: "none" }}
-                      >
-                        <div className={styles["left-source-name"]}>
-                          {item.state === "in_progress" ? (
-                            item.link || item.link == "" ? (
-                              <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
-                                <InProgressOrangeIcon />
-                              </Tooltip>
+                                {"Повторить"}
+                              </Link>
+                            ) : item.state === "in_progress" &&
+                              item.link &&
+                              item.link !== "" ? (
+                              <Link className={styles["source-link"]}>
+                                {"Подключить"}
+                              </Link>
                             ) : (
-                              <Tooltip title={CONTENT.TOOLTIP_GREY}>
-                                <InProgressIcon />
-                              </Tooltip>
-                            )
-                          ) : item.state === "failed" ? (
-                            <Tooltip title={item.reason}>
-                              <FailedIcon />
-                            </Tooltip>
-                          ) : item.state === "completed" &&
-                            item.is_integrated === false &&
-                            !item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
-                              <CompletedHandIcon />
-                            </Tooltip>
-                          ) : item.state === "completed" &&
-                            item.is_integrated === true &&
-                            !item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
-                              <CompletedAutoIcon />
-                            </Tooltip>
-                          ) : null}
-
-                          {item.short_name && item.short_name !== null ? (
-                            <Tooltip title={item.name}>
-                              <Text className={styles["source-text-left"]}>
-                                {item.short_name.length > 10 && isTablet
-                                  ? `${item.short_name.substring(0, 10)}...`
-                                  : item.short_name}
-                              </Text>
-                            </Tooltip>
-                          ) : (
-                            <Text className={styles["source-text-left"]}>
-                              {item.name}{" "}
-                            </Text>
-                          )}
-                          <Text className={styles["source-text-right"]}>
-                            {item.sub_name
-                              ? " *" + item.sub_name?.slice(-4)
-                              : ""}
-                          </Text>
-                        </div>
-                        <div className={styles["source-date-inner"]}>
-                          <div
-                            className={cn({
-                              [styles["source-date-part-disable"]]:
-                                item.disable_date,
-                              [styles["source-date-part"]]: !item.disable_date,
-                            })}
-                          >
-                            {item.state === "completed" &&
-                            !item.disable_date ? (
-                              <Tooltip title={CONTENT.TOOLTIP_DATE}>
-                                <Text className={styles["date-style"]}>
-                                  {item.last_info &&
-                                    convertReverseFormat(item.last_info)}
-                                </Text>
-                              </Tooltip>
-                            ) : item.state === "completed" &&
-                              item.disable_date ? (
-                              <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
-                                <Text className={styles["date-style"]}>
-                                  {convertReverseFormat(item.disable_date)}
-                                </Text>
-                              </Tooltip>
-                            ) : item.state === "failed" ? null : item.state === // <Link>{"Повторить"}</Link>
-                                "in_progress" && item.link ? (
-                              <Link href={item.link}>{"Подключить"}</Link>
-                            ) : null}
+                              CONTENT.NO_SOURCE
+                            )}
                             {!(item.state == "in_progress" && !item.link) && (
                               <Tooltip
                                 title={
-                                  item.is_integrated === false &&
-                                  item.state === "completed" &&
-                                  !item.disable_date &&
-                                  (item.type === "account" ||
-                                    item.type === "ofd")
+                                  isMobile
+                                    ? undefined
+                                    : item.is_integrated === false &&
+                                      item.state === "completed" &&
+                                      !item.disable_date &&
+                                      (item.type === "account" ||
+                                        item.type === "ofd")
                                     ? CONTENT.OFF_SOURCE_TOOLTIP
                                     : item.state === "failed"
                                     ? CONTENT.DELETE_SOURCE_TOOLTIP
@@ -2337,10 +2298,18 @@ export const TaxesPage = () => {
                                           : 0
                                       )
                                       setTypeSourceName(item.name)
+                                      setAccountSource(item.sub_name || "")
                                       setOffSourceId(item.id)
                                     }}
                                   >
-                                    <DeleteSourceIcon />
+                                    {item.state === "failed" ? (
+                                      <DeleteSourceIcon />
+                                    ) : item.state === "completed" ? (
+                                      <HideEyeIcon />
+                                    ) : item.state === "in_progress" &&
+                                      !!item.link ? (
+                                      <HideEyeIcon />
+                                    ) : undefined}
                                   </Button>
                                 ) : (
                                   <div
@@ -2359,6 +2328,291 @@ export const TaxesPage = () => {
                     )}
                   />
                 </>
+              )}
+              {sourcesHandDisabledSider &&
+                sourcesHandDisabledSider.length > 0 && (
+                  <Collapse
+                    items={collapsedHandSources}
+                    bordered={false}
+                    className="hide-sources payment-collapse"
+                    ghost
+                    expandIconPosition="right"
+                  />
+                )}
+              {sourcesAutoSider && sourcesAutoSider?.length > 0 && (
+                <>
+                  <Title level={4}>{CONTENT.HEADING_AUTO_SOURCERS}</Title>
+                  <List
+                    dataSource={sourcesAutoSider}
+                    renderItem={(item) => (
+                      <List.Item
+                        className={styles["list-item-right"]}
+                        style={{ borderBlockEnd: "none" }}
+                      >
+                        <div className={styles["left-source-name"]}>
+                          {item.state === "in_progress" ? (
+                            item.link && item.link !== "" ? (
+                              <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
+                                <InProgressOrangeIcon />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title={CONTENT.TOOLTIP_GREY}>
+                                <InProgressIcon />
+                              </Tooltip>
+                            )
+                          ) : item.state === "failed" ? (
+                            <Tooltip title={item.reason}>
+                              <FailedIcon />
+                            </Tooltip>
+                          ) : item.state === "completed" &&
+                            item.is_integrated === false &&
+                            !item.disable_date ? (
+                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                              <CompletedHandIcon />
+                            </Tooltip>
+                          ) : item.state === "completed" &&
+                            item.is_integrated === true &&
+                            !item.disable_date ? (
+                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                              <CompletedAutoIcon />
+                            </Tooltip>
+                          ) : null}
+
+                          {item.short_name && item.short_name !== null ? (
+                            <Tooltip title={item.name}>
+                              <Text className={styles["source-text-left"]}>
+                                {item.short_name.length > 10 && isTablet
+                                  ? `${item.short_name.substring(0, 10)}...`
+                                  : item.short_name}
+                              </Text>
+                            </Tooltip>
+                          ) : (
+                            <Text className={styles["source-text-left"]}>
+                              {item.name}{" "}
+                            </Text>
+                          )}
+                          <Text className={styles["source-text-right"]}>
+                            {item.sub_name
+                              ? " *" + item.sub_name?.slice(-4)
+                              : ""}
+                          </Text>
+                        </div>
+                        <div className={styles["source-date-inner"]}>
+                          <div
+                            className={cn({
+                              [styles["source-date-part-disable"]]:
+                                item.disable_date,
+                              [styles["source-date-part"]]: !item.disable_date,
+                              [styles["source-no-date-part"]]:
+                                !item.disable_date && !item.last_info,
+                            })}
+                          >
+                            {item.state === "completed" &&
+                            !item.disable_date &&
+                            item.last_info ? (
+                              <Tooltip title={CONTENT.TOOLTIP_DATE}>
+                                <Text className={styles["date-style"]}>
+                                  {item.last_info &&
+                                    convertReverseFormat(item.last_info)}
+                                </Text>
+                              </Tooltip>
+                            ) : item.state === "failed" ? (
+                              <Link
+                                className={styles["source-link"]}
+                                onClick={() => {
+                                  isMobile && closeDrawer()
+                                  handleCompletedSource(
+                                    item.type === "account" &&
+                                      item.is_integrated === false
+                                      ? 1
+                                      : item.type === "ofd" &&
+                                        item.is_integrated === false
+                                      ? 2
+                                      : item.type === "account" &&
+                                        item.is_integrated === true
+                                      ? 3
+                                      : item.type === "ofd" &&
+                                        item.is_integrated === true
+                                      ? 4
+                                      : item.type === "marketplace" &&
+                                        item.is_integrated === true
+                                      ? 5
+                                      : null
+                                  )
+                                  item.type === "account" &&
+                                  item.is_integrated === true
+                                    ? item.bank_bik &&
+                                      item.sub_name &&
+                                      failedBank(item.bank_bik, item.sub_name)
+                                    : item.type === "ofd" &&
+                                      item.is_integrated === true
+                                    ? failedOfd(item.name)
+                                    : item.type === "marketplace" &&
+                                      item.is_integrated === true
+                                    ? failedMarketplace(item.name)
+                                    : null
+                                }}
+                              >
+                                {"Повторить"}
+                              </Link>
+                            ) : item.state === "in_progress" &&
+                              item.link &&
+                              item.link !== "" ? (
+                              <Link className={styles["source-link"]}>
+                                {"Подключить"}
+                              </Link>
+                            ) : (
+                              CONTENT.NO_SOURCE
+                            )}
+                            {!(item.state == "in_progress" && !item.link) && (
+                              <Tooltip
+                                title={
+                                  isMobile
+                                    ? undefined
+                                    : item.state === "failed"
+                                    ? CONTENT.DELETE_SOURCE_TOOLTIP
+                                    : item.state === "completed"
+                                    ? CONTENT.OFF_INTEGRATION_SOURCE_TOOLTIP
+                                    : item.state === "in_progress" &&
+                                      !!item.link
+                                    ? CONTENT.CANCEL_INTEGRATION_SOURCE_TOOPLTIP
+                                    : undefined
+                                }
+                              >
+                                {!(
+                                  item.state === "completed" &&
+                                  item.disable_date
+                                ) ? (
+                                  <Button
+                                    className={cn("delete-fly-icon", {
+                                      [styles["source-delete-icon-disable"]]:
+                                        item.disable_date,
+                                      [styles["source-delete-icon"]]:
+                                        !item.disable_date,
+                                    })}
+                                    onClick={() => {
+                                      setIsDeletedSource(true)
+                                      setOffSourceTitle(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          (item.type === "account" ||
+                                            item.type === "ofd")
+                                          ? CONTENT.OFF_SOURCE
+                                          : item.state === "failed"
+                                          ? CONTENT.DELETE_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? CONTENT.CANCEL_INTEGRATION_SOURCE
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? CONTENT.OFF_INTEGRATION_SOURCE
+                                          : ""
+                                      )
+                                      setTypeSource(
+                                        item.is_integrated === false &&
+                                          item.state === "completed" &&
+                                          item.type === "account"
+                                          ? 1
+                                          : item.is_integrated === false &&
+                                            item.state === "completed" &&
+                                            item.type === "ofd"
+                                          ? 2
+                                          : item.state === "failed"
+                                          ? 3
+                                          : item.is_integrated === true &&
+                                            item.state === "in_progress" &&
+                                            !!item.link
+                                          ? 4
+                                          : item.is_integrated === true &&
+                                            item.state === "completed"
+                                          ? 5
+                                          : 0
+                                      )
+                                      setTypeSourceName(item.name)
+                                      setOffSourceId(item.id)
+                                    }}
+                                  >
+                                    {item.state === "failed" ? (
+                                      <DeleteSourceIcon />
+                                    ) : item.state === "completed" ? (
+                                      <RepeatCrossIcon />
+                                    ) : item.state === "in_progress" &&
+                                      !!item.link ? (
+                                      <DeleteSourceIcon />
+                                    ) : undefined}
+                                  </Button>
+                                ) : (
+                                  <div
+                                    className={
+                                      styles["source-delete-icon-disable"]
+                                    }
+                                  >
+                                    <DeleteSourceIcon />
+                                  </div>
+                                )}
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                </>
+              )}
+              {sourcesAutoDisabledSider &&
+                sourcesAutoDisabledSider.length > 0 && (
+                  <Collapse
+                    items={collapsedAutoSources}
+                    bordered={false}
+                    className="hide-sources payment-collapse"
+                    ghost
+                    expandIconPosition="right"
+                  />
+                )}
+              {sourcesLoaded &&
+                sources?.sources?.length == 0 &&
+                sources.sources.filter(
+                  (item) => item.name !== "Ручной ввод"
+                ) && (
+                  <div className={styles["sources-non-banner"]}>
+                    <div className={styles["sources-non-banner-inner"]}>
+                      <WalletPigIcon />
+                      <Text className={styles["sources-non-title"]}>
+                        {CONTENT.SOURCES_LOADED_EMPTY_TITLE}
+                      </Text>
+                      <Text className={styles["sources-non-text"]}>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_ONE}
+                        <Text className={styles["sources-non-bold"]}>
+                          {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_TWO}
+                        </Text>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_THREE}
+                        <Text className={styles["sources-non-bold"]}>
+                          {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FOUR}
+                        </Text>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_FIVE}
+                      </Text>
+                      <Text className={styles["sources-non-text"]}>
+                        {CONTENT.SOURCES_LOADED_EMPTY_DESCRIPTION_SIX}
+                      </Text>
+                    </div>
+                  </div>
+                )}
+              {sourcesError && (
+                <div className={styles["sources-error-banner"]}>
+                  <div className={styles["sources-error-banner-inner"]}>
+                    <FailedIcon />
+                    <Text className={styles["sources-non-title"]}>
+                      {CONTENT.SOURCES_ERROR_TITLE}
+                    </Text>
+                    <Text className={styles["sources-non-text"]}>
+                      {CONTENT.SOURCES_ERROR_ONE}
+                    </Text>
+                    <Text className={styles["sources-non-text"]}>
+                      {CONTENT.SOURCES_ERROR_TWO}
+                    </Text>
+                  </div>
+                </div>
               )}
             </div>
           </Drawer>

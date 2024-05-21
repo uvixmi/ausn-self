@@ -7,24 +7,15 @@ $xl: 1920px;
 $xxl: 2560px;
 
 .button-item-enter {
-  border-radius: 4px;
-  background: red;
-  color: #fff;
-  height: 32px;
   margin-top: 0 !important;
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     width: 50%;
     margin: 0 !important;
   }
 }
 
 .button-item-cancel {
-  border-radius: 4px;
-  background: #fff;
-  color: #6159ff;
-  height: 32px;
-
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     width: 50%;
     margin: 0 !important;
   }
@@ -34,8 +25,8 @@ $xxl: 2560px;
   display: flex;
   gap: 8px;
   flex-direction: column;
-  margin-top: 16px;
-  @media screen and (min-width: $tablet) {
+
+  @media screen and (min-width: $s) {
     flex-direction: row;
     gap: 10px;
     margin-top: 0;
@@ -55,10 +46,11 @@ $xxl: 2560px;
   line-height: 28px !important;
   text-align: left;
   color: #141414;
-  margin-top: 8px;
+  margin-top: 4px;
   margin-bottom: 0 !important;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
+    margin-top: 8px;
     font-size: 24px !important;
     line-height: 32px !important;
   }
@@ -66,16 +58,25 @@ $xxl: 2560px;
 
 .description-text {
   font-family: "Inter";
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 22px;
   text-align: left;
   color: #505050;
+
+  @media screen and (min-width: $s) {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .modal-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 12px 16px;
+  gap: 16px;
+
+  @media screen and (min-width: $s) {
+    gap: 32px;
+    padding: 12px 16px;
+  }
 }

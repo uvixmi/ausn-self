@@ -7,7 +7,14 @@ $xl: 1920px;
 $xxl: 2560px;
 
 .modal-wrapper {
-  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media screen and (min-width: $s) {
+    gap: 32px;
+    padding: 20px 16px;
+  }
 }
 
 .button-item-enter {
@@ -19,11 +26,6 @@ $xxl: 2560px;
 }
 
 .button-item-download {
-  height: 32px;
-  padding: 8px 16px;
-  border-radius: 4px;
-  background: #6159ff;
-  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,10 +36,6 @@ $xxl: 2560px;
 }
 
 .button-item-cancel {
-  border-radius: 4px;
-  background: #fff;
-  color: #6159ff;
-  height: 32px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -51,10 +49,10 @@ $xxl: 2560px;
 .buttons-row {
   display: flex;
   gap: 10px;
-  margin-top: 32px;
+
   flex-direction: column;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     flex-direction: row;
   }
 }
@@ -62,8 +60,8 @@ $xxl: 2560px;
 .list-wrapper {
   display: flex;
   flex-direction: column;
-  margin-top: 12px;
-  gap: 16px;
+
+  gap: 24px;
 }
 
 .list-text {
@@ -114,20 +112,45 @@ $xxl: 2560px;
 .input-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+
   width: 100%;
+
+  @media screen and (min-width: $s) {
+    gap: 8px;
+  }
 }
 
-.text-description {
+.description-text {
   font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
-  letter-spacing: 0em;
   text-align: left;
   color: #505050;
+
+  @media screen and (min-width: $s) {
+    font-size: 16px;
+    line-height: 24px;
+  }
 }
 
 .default-text {
   color: #141414;
+}
+
+.heading-text {
+  font-family: "Inter";
+  font-size: 20px !important;
+  font-weight: 600;
+  line-height: 28px !important;
+  text-align: left;
+  color: #141414;
+  margin-top: 4px;
+  margin-bottom: 0 !important;
+
+  @media screen and (min-width: $s) {
+    margin-top: 8px;
+    font-size: 24px !important;
+    line-height: 32px !important;
+  }
 }

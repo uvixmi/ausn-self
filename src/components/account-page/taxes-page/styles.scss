@@ -70,6 +70,17 @@ $xxl: 2560px;
 
 .filter-collapse .ant-collapse-content-box {
   padding: 0 !important;
+  border-radius: 4px 0px 0px 0px;
+  border: 1px solid $brand-secondary-pale !important;
+}
+
+.filter-collapse {
+  background-color: #fff !important;
+}
+
+.filter-collapse .ant-collapse-header {
+  padding: 8px !important;
+  border: 1px solid $brand-secondary-pale !important;
 }
 
 .taxes-drawer .ant-drawer-content-wrapper {
@@ -93,7 +104,7 @@ $xxl: 2560px;
   width: 130px;
 }
 .hide-sources .ant-collapse-content-box {
-  padding: 0;
+  padding: 0 !important;
 }
 
 .ant-list-item:hover {
@@ -118,4 +129,17 @@ $xxl: 2560px;
 .ant-list-itemr:not(:hover) .delete-fly-icon {
   opacity: 0;
   pointer-events: none;
+}
+
+.datepicker .ant-picker-input > input::placeholder {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1 !important;
+}
+
+.select-operations-custom .ant-select-dropdown-placement-bottomLeft {
+  width: 250px !important;
 }

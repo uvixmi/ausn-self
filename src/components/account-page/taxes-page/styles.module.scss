@@ -167,6 +167,7 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 8px;
 
   @media screen and (min-width: $tablet) {
     flex-direction: row;
@@ -177,6 +178,7 @@ $xxl: 2560px;
 .datepicker-item {
   width: 100%;
   border-radius: 4px;
+  height: 34px;
   @media screen and (min-width: $s) {
     width: 225px !important;
     max-width: 300px;
@@ -311,8 +313,12 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+
   height: 36px;
+
+  @media screen and (min-width: $s) {
+    padding: 12px 0;
+  }
 }
 
 .list-item-hide:hover {
@@ -343,7 +349,7 @@ $xxl: 2560px;
   &:first-child {
     width: 36%;
     @media screen and (min-width: $l) {
-      width: 50%;
+      width: 40%;
     }
   }
 
@@ -351,7 +357,7 @@ $xxl: 2560px;
     width: 30%;
 
     @media screen and (min-width: $l) {
-      width: 16%;
+      width: 11%;
     }
   }
   &:nth-child(3) {
@@ -373,7 +379,11 @@ $xxl: 2560px;
   letter-spacing: 0em;
   text-align: left;
   color: #6159ff;
-  padding: 12px 8px;
+  padding: 12px 0px;
+
+  @media screen and (min-width: $s) {
+    padding: 12px 8px;
+  }
 }
 
 .table-info-row {
@@ -384,6 +394,7 @@ $xxl: 2560px;
   gap: 2%;
   &:hover {
     background-color: #f0f0ff;
+    cursor: pointer;
   }
 
   @media screen and (min-width: $tablet) {
@@ -393,12 +404,12 @@ $xxl: 2560px;
 }
 
 .source-inner {
-  padding: 13px 8px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 
   @media screen and (min-width: $tablet) {
+    padding: 13px 8px;
     width: 262px;
   }
 
@@ -533,7 +544,7 @@ $xxl: 2560px;
 
 .amount-inner {
   display: flex;
-
+  padding: 16px 0px;
   position: relative;
   justify-content: space-between;
   @media screen and (min-width: $tablet) {
@@ -697,10 +708,11 @@ $xxl: 2560px;
 
 .operation-type-wrapper {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   width: 100%;
   order: 1;
   @media screen and (min-width: $tablet) {
+    justify-content: flex-start;
     width: 20%;
     order: 0;
   }
@@ -948,4 +960,18 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 16px;
   color: $brand-primary !important;
+}
+
+.reset-filter-link {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: $brand-primary !important;
+}
+
+.button-delete-mobile {
+  color: $red-primary;
+  height: auto;
+  background-color: inherit !important;
 }

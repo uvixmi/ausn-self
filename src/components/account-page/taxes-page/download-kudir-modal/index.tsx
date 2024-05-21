@@ -27,6 +27,7 @@ import { fetchSourcesInfo } from "../../client/sources/thunks"
 import cn from "classnames"
 import { formatDateString } from "../../actions-page/utils"
 import { fetchCurrentUser } from "../../../authorization-page/slice"
+import { ButtonOne } from "../../../../ui-kit/button"
 
 export const DownloadKudirModal = ({
   isOpen,
@@ -161,7 +162,7 @@ export const DownloadKudirModal = ({
         footer={null}
       >
         <div className={styles["modal-wrapper"]}>
-          <Title level={3} style={{ margin: "0 0 32px" }}>
+          <Title level={3} className={styles["heading-text"]}>
             {CONTENT.TITLE_KUDIR}
           </Title>
           <div className={styles["list-wrapper"]}>
@@ -210,8 +211,9 @@ export const DownloadKudirModal = ({
           </div>
 
           <div className={styles["buttons-row"]}>
-            <Button
+            <ButtonOne
               key="back"
+              type="secondary"
               onClick={() => {
                 setOpen(false)
                 clear()
@@ -219,16 +221,16 @@ export const DownloadKudirModal = ({
               className={styles["button-item-cancel"]}
             >
               {CONTENT.CANCEL_BUTTON}
-            </Button>
+            </ButtonOne>
 
-            <Button
+            <ButtonOne
               key="delete"
               onClick={downloadKudir}
               className={styles["button-item-download"]}
               disabled={isButtonDisabled}
             >
               {CONTENT.BUTTON_DOWNLOAD}
-            </Button>
+            </ButtonOne>
           </div>
         </div>
       </Modal>

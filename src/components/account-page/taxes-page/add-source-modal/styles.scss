@@ -10,7 +10,7 @@ $xxl: 2560px;
 .modal-source .ant-modal-content {
   border-radius: 4px;
   padding: 24px !important;
-  width: 347px;
+
   margin-top: 18px;
 
   @media screen and (min-width: $s) {
@@ -43,7 +43,7 @@ $xxl: 2560px;
 
 .ant-input-password {
   height: 34px !important;
-  padding: 6px 16px;
+  padding: 6px 12px;
   display: flex;
 
   width: 100%;
