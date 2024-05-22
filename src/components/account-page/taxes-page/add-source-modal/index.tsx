@@ -532,6 +532,24 @@ export const AddSourceModal = ({
     }
   }
 
+  const sendNewOfd = async () => {
+    try {
+      await api.users.saveUserLeadUsersLeadPut(
+        {
+          description: otherOfd,
+          reason: LeadReason.Ofd,
+        },
+        { headers }
+      )
+      dispatch(fetchSourcesInfo())
+      successProcess(CONTENT.NOTIFICATION_PROCESSING_SUCCESS)
+    } catch (error) {
+      errorProcess(CONTENT.NOTIFICATION_INTEGRATE_OTHER_FAILED)
+    } finally {
+      closeModal()
+    }
+  }
+
   return (
     <>
       {contextHolder}
@@ -1715,7 +1733,11 @@ export const AddSourceModal = ({
                         maxLength={225}
                         onChange={(event) => setOtherOfd(event.target.value)}
                       />
-                      <ButtonOne type="secondary" onClick={closeModal}>
+                      <ButtonOne
+                        type="secondary"
+                        onClick={sendNewOfd}
+                        disabled={otherOfd.length === 0}
+                      >
                         <Text className={styles["button-back-text"]}>
                           {CONTENT.BUTTON_OFD_OTHER_SEND}
                         </Text>

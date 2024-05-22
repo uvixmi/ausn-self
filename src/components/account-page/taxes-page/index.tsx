@@ -1187,8 +1187,16 @@ export const TaxesPage = () => {
                                                 operationsValue.filter(
                                                   (item) =>
                                                     item.id === operation.id
+                                                )[0] &&
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
                                                 )[0].value === 1,
                                               ["type-non"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0] &&
                                                 operationsValue.filter(
                                                   (item) =>
                                                     item.id === operation.id
@@ -1197,8 +1205,16 @@ export const TaxesPage = () => {
                                                 operationsValue.filter(
                                                   (item) =>
                                                     item.id === operation.id
+                                                )[0] &&
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
                                                 )[0].value === 3,
                                               ["type-taxes"]:
+                                                operationsValue.filter(
+                                                  (item) =>
+                                                    item.id === operation.id
+                                                )[0] &&
                                                 operationsValue.filter(
                                                   (item) =>
                                                     item.id === operation.id
