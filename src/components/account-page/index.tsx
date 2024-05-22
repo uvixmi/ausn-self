@@ -64,11 +64,7 @@ export const AccountPage = ({
             [styles["footer-item-active"]]: location.pathname === "/main",
           })}
         >
-          <MenuActionsIcon
-            className={cn({
-              [styles["footer-item-active"]]: location.pathname === "/main",
-            })}
-          />
+          <MenuActionsIcon />
           {CONTENT.SIDER_HEADING_EVENTS}
         </Link>
       ),
@@ -82,11 +78,7 @@ export const AccountPage = ({
             [styles["footer-item-active"]]: location.pathname === "/taxes",
           })}
         >
-          <MenuTaxesIcon
-            className={cn({
-              [styles["footer-item-active"]]: location.pathname === "/taxes",
-            })}
-          />
+          <MenuTaxesIcon />
           {CONTENT.SIDER_HEADING_TAXES}
         </Link>
       ),

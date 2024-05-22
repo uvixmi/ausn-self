@@ -1,4 +1,11 @@
 @import "../../ui-kit/theme/colors.scss";
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
 
 .left-sider-wrapper {
   background-color: #fff;
@@ -248,9 +255,14 @@
 .menu-footer-inner {
   display: flex;
   justify-content: space-between;
-  height: 44px;
+  height: 52px;
   padding: 4px 2px 4px 2px;
   box-shadow: 0px -8px 12px 2px #2000540a;
+
+  @media screen and (min-width: $s) {
+    height: 82px;
+    padding: 24px 16px;
+  }
 }
 
 .menu-footer-item {
@@ -274,8 +286,24 @@
     background-color: $brand-secondary-pale !important;
     color: $brand-primary !important;
   }
+
+  @media screen and (min-width: $s) {
+    flex-direction: row;
+    width: 100%;
+    gap: 8px;
+    font-family: "Inter";
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+  }
 }
 
 .footer-item-active {
-  color: #6159ff !important;
+  background-color: $brand-primary !important;
+  color: $base-color-white !important;
+
+  &:hover {
+    background-color: $brand-primary !important;
+    color: $base-color-white !important;
+  }
 }
