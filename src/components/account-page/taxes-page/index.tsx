@@ -181,7 +181,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <IncomeIcon />
+          <IncomeIcon className={styles["type-income-2"]} />
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
       ),
@@ -871,7 +871,7 @@ export const TaxesPage = () => {
               </Text>
             </div>
             <Text className={styles["date-style"]}>
-              {CONTENT.OFF_SOURCE_DISABLED}
+              {CONTENT.OFF_AUTO_SOURCE_DISABLED}
             </Text>
             <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
               <Text className={styles["date-style"]}>

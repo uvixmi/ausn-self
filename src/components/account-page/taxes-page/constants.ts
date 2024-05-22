@@ -98,6 +98,7 @@ export const CONTENT = {
   NO_SOURCE: "—",
   OFF_SOURCE_HIDDEN: "Скрыт",
   OFF_SOURCE_DISABLED: "Закрыт",
+  OFF_AUTO_SOURCE_DISABLED: "Отключен",
   TOOLTIP_AUTO_INTEGRATED: "Интеграция подключена",
   TOOLTIP_MARKUP_CHANGED: "Разметка изменена клиентом",
 }
