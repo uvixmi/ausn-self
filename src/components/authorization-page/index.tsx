@@ -54,11 +54,11 @@ export const AuthorizationPage = ({
       })
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    window.carrotqueыst == null
+    window.carrotquest == null
     function deleteCookie() {
       document.cookie = "carrotquest_uid=; max-age=0; path=/"
       document.cookie = "carrotquest_auth_token=; max-age=0; path=/"
-
+      localStorage.removeItem("carrotquest_data")
       console.log("deleted")
     }
 

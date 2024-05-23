@@ -92,6 +92,7 @@
   &:hover {
     background-color: $red-secondary-1 !important;
     color: $base-color-white !important;
+    border: 1px solid $red-secondary-1 !important;
   }
 
   &:focus {

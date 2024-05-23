@@ -299,11 +299,18 @@ $xxl: 2560px;
 }
 
 .footer-item-active {
-  background-color: $brand-primary !important;
-  color: $base-color-white !important;
-
+  color: $brand-primary !important;
   &:hover {
+    color: $brand-primary !important;
+  }
+
+  @media screen and (min-width: $tablet) {
     background-color: $brand-primary !important;
     color: $base-color-white !important;
+
+    &:hover {
+      background-color: $brand-primary !important;
+      color: $base-color-white !important;
+    }
   }
 }

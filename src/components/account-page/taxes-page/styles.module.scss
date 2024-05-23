@@ -799,6 +799,7 @@ $xxl: 2560px;
   border: none;
   height: auto;
   background-color: inherit;
+  display: flex;
 }
 
 .collapse-style {
@@ -816,7 +817,12 @@ $xxl: 2560px;
 
 .open-source-wrapper {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-bottom: 14px;
+
+  @media screen and (min-width: $tablet) {
+    margin-bottom: auto;
+  }
 }
 
 .no-border-button {
@@ -962,6 +968,17 @@ $xxl: 2560px;
   color: $brand-primary !important;
 }
 
+.source-link-title {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: $brand-primary !important;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
 .reset-filter-link {
   font-family: "Inter";
   font-size: 14px;
@@ -974,4 +991,17 @@ $xxl: 2560px;
   color: $red-primary;
   height: auto;
   background-color: inherit !important;
+  display: flex;
+  align-items: center;
+}
+
+.buttons-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.button-drawer-item {
+  max-width: 347px;
+  width: 100%;
 }

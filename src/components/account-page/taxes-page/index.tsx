@@ -22,6 +22,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
   DownloadOutlined,
+  CloseOutlined,
 } from "@ant-design/icons"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { v4 as uuid, v4 } from "uuid"
@@ -83,6 +84,7 @@ import { HideEyeIcon } from "./type-operation/icons/hide-eye"
 import { AddMarketplaceOperationModal } from "./add-marketplace-operation-modal"
 import { CollapseFilterIcon } from "./type-operation/icons/collapse-filter"
 import { DeleteOperationIcon } from "./type-operation/icons/delete-operation"
+import { SourceMobileIcon } from "./type-operation/icons/source-mobile"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -980,17 +982,35 @@ export const TaxesPage = () => {
           <div className={styles["title-button-header"]}>
             {isMobile && (
               <div className={styles["open-source-wrapper"]}>
-                <Button
-                  className={styles["no-border-button"]}
+                <Title
+                  level={2}
+                  className={styles["heading-text"]}
+                  style={{ margin: "0" }}
+                >
+                  {CONTENT.HEADING_INCOME}
+                </Title>
+                <Link
+                  className={styles["source-link-title"]}
                   onClick={showDrawer}
                 >
-                  <OpenSourceIcon />
-                </Button>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <SourceMobileIcon />
+                  </div>
+                  {CONTENT.SOURCE_MOBILE_TITLE}
+                </Link>
               </div>
             )}
-            <Title level={2} className={styles["heading-text"]}>
-              {CONTENT.HEADING_INCOME}
-            </Title>
+            {!isMobile && (
+              <Title level={2} className={styles["heading-text"]}>
+                {CONTENT.HEADING_INCOME}
+              </Title>
+            )}
             <div className={styles["buttons-header"]}>
               <ButtonOne
                 type="secondary"
@@ -2122,18 +2142,40 @@ export const TaxesPage = () => {
             onClose={closeDrawer}
             width={"100%"}
             className="taxes-drawer"
+            closeIcon={false}
           >
             <div className={styles["drawer-wrapper"]}>
-              <Title level={3}>
-                {CONTENT.HEADING_DATA_SOURCES}{" "}
-                <Button
-                  onClick={() => dispatch(fetchSourcesInfo())}
-                  className={styles["refresh-sources"]}
+              <div className={styles["open-source-wrapper"]}>
+                <Title level={3}>{CONTENT.HEADING_DATA_SOURCES} </Title>
+                <CloseOutlined
+                  className="custom-close-icon"
+                  onClick={closeDrawer}
+                />
+              </div>
+              <div className={styles["buttons-drawer"]}>
+                <ButtonOne
+                  onClick={() => fetchSourcesHand()}
+                  type="secondary"
+                  className={styles["button-drawer-item"]}
                 >
                   <ArrowCounterIcon />
-                </Button>
-              </Title>
-
+                  {CONTENT.SOURCE_MOBILE_UPDATE}
+                </ButtonOne>
+                <ButtonOne
+                  className={cn(
+                    styles["buttons-row-item"],
+                    styles["button-make"],
+                    styles["button-drawer-item"]
+                  )}
+                  onClick={() => setIsAddSourceOpen(true)}
+                >
+                  <PlusOutlined
+                    className={styles["plus-icon"]}
+                    style={{ marginInlineStart: "4px" }}
+                  />
+                  {CONTENT.BUTTON_ADD_OPERATION}
+                </ButtonOne>
+              </div>
               {/*<div className={styles["sider-buttons"]}>
               <Button
                 className={styles["default-button"]}

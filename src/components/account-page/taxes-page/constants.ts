@@ -101,4 +101,6 @@ export const CONTENT = {
   OFF_AUTO_SOURCE_DISABLED: "Отключен",
   TOOLTIP_AUTO_INTEGRATED: "Интеграция подключена",
   TOOLTIP_MARKUP_CHANGED: "Разметка изменена клиентом",
+  SOURCE_MOBILE_TITLE: "Источники",
+  SOURCE_MOBILE_UPDATE: "Обновить",
 }
