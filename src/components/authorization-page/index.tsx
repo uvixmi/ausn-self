@@ -63,6 +63,27 @@ export const AuthorizationPage = ({
     }
 
     deleteCookie()
+
+    function deleteCookieOne(name: string) {
+      document.cookie =
+        name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    }
+
+    // Удаление всех куки, начинающихся с "carrotquest"
+    function deleteCarrotquestCookies() {
+      const cookies = document.cookie.split(";")
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim()
+        if (cookie.startsWith("carrotquest")) {
+          const cookieName = cookie.split("=")[0]
+          deleteCookieOne(cookieName)
+        }
+      }
+    }
+
+    // Удаление данных и куки
+    deleteCarrotquestCookies()
   }, [])
 
   return (
