@@ -86,7 +86,10 @@ export const AuthorizationPage = ({
 
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim()
-        if (cookie.startsWith("carrotquest_uid")) {
+        if (
+          cookie.startsWith("carrotquest_uid") ||
+          cookie.startsWith("carrotquest_auth_token")
+        ) {
           const cookieName = cookie.split("=")[0]
           deleteCookieTwo(cookieName) // Удаляем куки для текущего домена
           deleteCookieTwo(cookieName, ".buh.app") // Удаляем куки для домена .buh.app
