@@ -69,6 +69,17 @@ export const AuthorizationPage = ({
         name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
     }
 
+    function deleteCookieTwo(name: string, domain?: string) {
+      if (domain) {
+        document.cookie =
+          name +
+          "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" +
+          domain
+      } else {
+        document.cookie =
+          name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+      }
+    }
     // Удаление всех куки, начинающихся с "carrotquest"
     function deleteCarrotquestCookies() {
       const cookies = document.cookie.split(";")
@@ -77,7 +88,8 @@ export const AuthorizationPage = ({
         const cookie = cookies[i].trim()
         if (cookie.startsWith("carrotquest")) {
           const cookieName = cookie.split("=")[0]
-          deleteCookieOne(cookieName)
+          deleteCookieTwo(cookieName) // Удаляем куки для текущего домена
+          deleteCookieTwo(cookieName, ".buh.app") // Удаляем куки для домена .buh.app
         }
       }
     }
