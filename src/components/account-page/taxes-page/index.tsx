@@ -982,13 +982,12 @@ export const TaxesPage = () => {
           <div className={styles["title-button-header"]}>
             {isMobile && (
               <div className={styles["open-source-wrapper"]}>
-                <Title
-                  level={2}
-                  className={styles["heading-text"]}
+                <Text
+                  className={styles["mobile-source-title"]}
                   style={{ margin: "0" }}
                 >
                   {CONTENT.HEADING_INCOME}
-                </Title>
+                </Text>
                 <Link
                   className={styles["source-link-title"]}
                   onClick={showDrawer}
@@ -2146,7 +2145,9 @@ export const TaxesPage = () => {
           >
             <div className={styles["drawer-wrapper"]}>
               <div className={styles["open-source-wrapper"]}>
-                <Title level={3}>{CONTENT.HEADING_DATA_SOURCES} </Title>
+                <Text className={styles["mobile-source-title"]}>
+                  {CONTENT.HEADING_DATA_SOURCES}{" "}
+                </Text>
                 <CloseOutlined
                   className="custom-close-icon"
                   onClick={closeDrawer}

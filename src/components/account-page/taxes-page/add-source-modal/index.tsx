@@ -198,6 +198,7 @@ export const AddSourceModal = ({
     setButtonMode("default")
     setFileIsLoading("")
     setFileName("")
+    setErrorText("")
     setBankToIntegrate("")
     setIntegrateAccount("")
     setIntegrateBik("")
@@ -765,7 +766,6 @@ export const AddSourceModal = ({
                   } catch (error: any) {
                     console.error("Ошибка загрузки файла:", error)
 
-                    // Убедитесь, что onError определен, прежде чем вызывать его
                     if (onError) {
                       onError(error as ProgressEvent<EventTarget>)
                     }
@@ -1699,7 +1699,12 @@ export const AddSourceModal = ({
                   </Dragger>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
-                      onClick={() => setOfdMode("")}
+                      onClick={() => {
+                        setOfdMode("")
+                        setFileIsLoading("")
+                        setFileName("")
+                        setErrorText("")
+                      }}
                       className={styles["generate-back"]}
                       type="secondary"
                     >
@@ -2177,7 +2182,12 @@ export const AddSourceModal = ({
                   </Dragger>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
-                      onClick={() => setMarketplaceLoadWindow("")}
+                      onClick={() => {
+                        setMarketplaceLoadWindow("")
+                        setFileIsLoading("")
+                        setFileName("")
+                        setErrorText("")
+                      }}
                       className={styles["generate-back"]}
                       type="secondary"
                     >
@@ -2357,7 +2367,13 @@ export const AddSourceModal = ({
                   </Dragger>
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
-                      onClick={() => setMarketplaceLoadWindow("")}
+                      onClick={() => {
+                        setMarketplaceLoadWindow("")
+
+                        setFileIsLoading("")
+                        setFileName("")
+                        setErrorText("")
+                      }}
                       className={styles["generate-back"]}
                       type="secondary"
                     >
@@ -2684,7 +2700,12 @@ export const AddSourceModal = ({
               ofdMode === "" &&
               marketplaceMode === "" && (
                 <ButtonOne
-                  onClick={() => setButtonMode("default")}
+                  onClick={() => {
+                    setButtonMode("default")
+                    setFileIsLoading("")
+                    setFileName("")
+                    setErrorText("")
+                  }}
                   className={styles["generate-back"]}
                   type="secondary"
                 >
