@@ -307,6 +307,7 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: initial !important;
 }
 
 .list-item-hide {

@@ -215,6 +215,12 @@ export const AddSourceModal = ({
     setIntegratePasswordError(false)
     setIntegrateLoginError(false)
     setMarketplaceLoadWindow("")
+    setMarketplaceKey("")
+    setMarketplaceId("")
+    setMarketplaceIdError(false)
+    setMarketplaceKeyError(false)
+    setDateMarketPlace("")
+    setDateMarketplaceError(false)
   }
 
   const closeAddSource = () => {
