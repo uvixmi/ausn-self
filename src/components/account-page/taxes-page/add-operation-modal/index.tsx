@@ -409,7 +409,7 @@ export const AddOperationModal = ({
                         amountError ? (
                           <div>
                             <Text className={styles["error-text"]}>
-                              {amountInput === "0"
+                              {amountInput === "0" || amountInput === ""
                                 ? CONTENT.INPUT_ERROR_HINT
                                 : CONTENT.INPUT_FAULT_HINT}
                             </Text>
