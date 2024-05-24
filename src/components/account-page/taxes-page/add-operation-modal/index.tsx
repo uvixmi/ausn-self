@@ -248,7 +248,7 @@ export const AddOperationModal = ({
         mask={true}
         onCancel={closeModal}
         footer={null}
-        className={cn(styles["ant-modal"], "modal-payment")}
+        className={cn(styles["ant-modal"], "modal-payment-add")}
       >
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
@@ -410,8 +410,8 @@ export const AddOperationModal = ({
                           <div>
                             <Text className={styles["error-text"]}>
                               {amountInput === "0"
-                                ? CONTENT.INPUT_FAULT_HINT
-                                : CONTENT.INPUT_ERROR_HINT}
+                                ? CONTENT.INPUT_ERROR_HINT
+                                : CONTENT.INPUT_FAULT_HINT}
                             </Text>
                           </div>
                         ) : (
