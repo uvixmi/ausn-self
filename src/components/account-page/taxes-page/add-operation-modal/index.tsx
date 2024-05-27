@@ -92,17 +92,16 @@ export const AddOperationModal = ({
     const reg = /^-?\d+(\.\d{0,2})?$/
 
     if (reg.test(amount) || amount === "-" || amount === "") {
-      setAmountInput(numberWithSpaces(amount))
-      if (amount[amount.length - 1] !== ".") setAmount(parseFloat(amount))
-
+      if (
+        parseFloat(amount) <= 9999999999999.99 ||
+        Number.isNaN(parseFloat(amount))
+      ) {
+        setAmountInput(numberWithSpaces(amount))
+        if (amount[amount.length - 1] !== ".") setAmount(parseFloat(amount))
+      }
       if (amount === "") setAmount(0)
     }
-    if (
-      parseFloat(amount) > 0 &&
-      parseFloat(amount) <= 9999999999999.99 &&
-      inputValue !== ""
-    )
-      setAmountError(false)
+    if (parseFloat(amount) > 0 && inputValue !== "") setAmountError(false)
     else setAmountError(true)
   }
 
