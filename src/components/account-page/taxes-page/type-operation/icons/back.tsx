@@ -1,15 +1,23 @@
 import { SVGProps } from "react"
 import { JSX } from "react/jsx-runtime"
 
-export const BackIcon = (
-  props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
-) => (
+interface ArrowCounterIconProps
+  extends JSX.IntrinsicAttributes,
+    SVGProps<SVGSVGElement> {
+  className?: string
+}
+
+export const BackIcon = ({
+  className = "",
+  ...props
+}: ArrowCounterIconProps) => (
   <svg
     width="18"
     height="18"
     viewBox="0 0 18 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className={`${className} arrow-color-icon`}
     {...props}
   >
     <path

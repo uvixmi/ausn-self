@@ -36,6 +36,37 @@ $xxl: 2560px;
   color: #6159ff !important;
   padding-left: 8px !important;
   padding-right: 8px !important;
+
+  &:hover {
+    background: #f0f0ff !important;
+    color: $brand-additional-dark !important;
+  }
+
+  &:focus {
+    background-color: $brand-primary !important;
+    color: $base-color-white !important;
+  }
+}
+
+.type-income .ant-select-focused .ant-select-selector {
+  background-color: $brand-primary !important;
+  color: $base-color-white !important;
+}
+
+.type-income .ant-select-arrow {
+  color: #6159ff !important;
+}
+
+.type-income .ant-select-focused .ant-select-arrow {
+  color: $base-color-white !important;
+}
+
+.type-income .ant-select-focused .ant-select-selector .income-inner {
+  color: $base-color-white !important;
+}
+
+.type-income .ant-select-focused .ant-select-selector .income-inner svg rect {
+  fill: $brand-primary !important;
 }
 
 .type-back .ant-select-selector {
@@ -43,6 +74,37 @@ $xxl: 2560px;
   color: #158fe8 !important;
   padding-left: 8px !important;
   padding-right: 8px !important;
+
+  &:hover {
+    background: #ecf9ff !important;
+    color: $blue-additional-dark !important;
+  }
+
+  &:focus {
+    background-color: $blue-primary !important;
+    color: $base-color-white !important;
+  }
+}
+
+.type-back .ant-select-focused .ant-select-selector {
+  background-color: $blue-primary !important;
+  color: $base-color-white !important;
+}
+
+.type-back .ant-select-arrow {
+  color: #158fe8 !important;
+}
+
+.type-back .ant-select-focused .ant-select-arrow {
+  color: $base-color-white !important;
+}
+
+.type-back .ant-select-focused .ant-select-selector .back-inner {
+  color: $base-color-white !important;
+}
+
+.type-back .ant-select-focused .ant-select-selector .back-inner svg rect {
+  fill: $blue-primary !important;
 }
 
 .type-non .ant-select-selector {
@@ -50,6 +112,36 @@ $xxl: 2560px;
   color: #505050 !important;
   padding-left: 8px !important;
   padding-right: 8px !important;
+
+  &:hover {
+    background: #f0f0f0 !important;
+    color: $base-primary-dark !important;
+  }
+
+  &:focus {
+    background-color: $base-additional-grey !important;
+    color: $base-color-white !important;
+  }
+}
+.type-non .ant-select-focused .ant-select-selector {
+  background-color: $base-additional-grey !important;
+  color: $base-color-white !important;
+}
+
+.type-non .ant-select-arrow {
+  color: #505050 !important;
+}
+
+.type-non .ant-select-focused .ant-select-arrow {
+  color: $base-color-white !important;
+}
+
+.type-non .ant-select-focused .ant-select-selector .non-inner {
+  color: $base-color-white !important;
+}
+
+.type-non .ant-select-focused .ant-select-selector .non-inner svg rect {
+  fill: $base-additional-grey !important;
 }
 
 .type-taxes .ant-select-selector {
@@ -57,6 +149,37 @@ $xxl: 2560px;
   color: #389e0d !important;
   padding-left: 8px !important;
   padding-right: 8px !important;
+
+  &:hover {
+    background: #f6ffed !important;
+    color: $green-additional-dark !important;
+  }
+
+  &:focus {
+    background-color: $green-primary !important;
+    color: $base-color-white !important;
+  }
+}
+
+.type-taxes .ant-select-focused .ant-select-selector {
+  background-color: $green-primary !important;
+  color: $base-color-white !important;
+}
+
+.type-taxes .ant-select-arrow {
+  color: #389e0d !important;
+}
+
+.type-taxes .ant-select-focused .ant-select-arrow {
+  color: $base-color-white !important;
+}
+
+.type-taxes .ant-select-focused .ant-select-selector .taxes-inner {
+  color: $base-color-white !important;
+}
+
+.ant-select-item-option-content .taxes-inner {
+  color: #389e0d !important;
 }
 
 .type-item-select .ant-select-selection-item {
@@ -107,10 +230,12 @@ $xxl: 2560px;
   padding: 0 !important;
 }
 
-.ant-list-item:hover {
+.sources-list-item .ant-list-item:hover {
   border-radius: 8px;
   background-color: $brand-secondary-pale !important;
   cursor: pointer;
+  margin-left: -8px;
+  padding-left: 8px;
 }
 
 .ant-list-item {

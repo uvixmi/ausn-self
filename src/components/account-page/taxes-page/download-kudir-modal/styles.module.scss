@@ -97,6 +97,7 @@ $xxl: 2560px;
   line-height: 18px;
   letter-spacing: 0em;
   text-align: left;
+  align-self: flex-start;
 }
 
 .text-date {
@@ -116,7 +117,7 @@ $xxl: 2560px;
   width: 100%;
 
   @media screen and (min-width: $s) {
-    gap: 8px;
+    gap: 2px;
   }
 }
 
@@ -127,11 +128,8 @@ $xxl: 2560px;
   line-height: 22px;
   text-align: left;
   color: #505050;
-
-  @media screen and (min-width: $s) {
-    font-size: 16px;
-    line-height: 24px;
-  }
+  display: flex;
+  gap: 4px;
 }
 
 .default-text {
@@ -145,7 +143,7 @@ $xxl: 2560px;
   line-height: 28px !important;
   text-align: left;
   color: #141414;
-  margin-top: 4px;
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
 
   @media screen and (min-width: $s) {

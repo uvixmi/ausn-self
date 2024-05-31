@@ -5,6 +5,7 @@ export interface OffSourceProps {
   titleModal: string
   account?: string
   source: string
+  fetchSourcesHand: () => Promise<void>
   typeSource: number
   source_id?: string | null
 }

@@ -28,6 +28,7 @@ import cn from "classnames"
 import { formatDateString } from "../../actions-page/utils"
 import { fetchCurrentUser } from "../../../authorization-page/slice"
 import { ButtonOne } from "../../../../ui-kit/button"
+import { SelectOne } from "../../../../ui-kit/select"
 
 export const DownloadKudirModal = ({
   isOpen,
@@ -160,6 +161,7 @@ export const DownloadKudirModal = ({
           setOpen(false), clear()
         }}
         footer={null}
+        style={{ borderRadius: "4px" }}
       >
         <div className={styles["modal-wrapper"]}>
           <Title level={3} className={styles["heading-text"]}>
@@ -169,7 +171,7 @@ export const DownloadKudirModal = ({
             <div className={styles["input-item"]}>
               <Text
                 className={cn(
-                  styles["text-description"],
+                  styles["description-text"],
                   styles["default-text"]
                 )}
               >
@@ -179,8 +181,7 @@ export const DownloadKudirModal = ({
                 </Text>
               </Text>
 
-              <Select
-                style={{ borderRadius: "4px" }}
+              <SelectOne
                 value={selectedYear}
                 placeholder={CONTENT.SELECT_PLACEHOLDER}
                 options={yearsOptions}
@@ -190,7 +191,7 @@ export const DownloadKudirModal = ({
             <div className={styles["input-item"]}>
               <Text
                 className={cn(
-                  styles["text-description"],
+                  styles["description-text"],
                   styles["default-text"]
                 )}
               >
@@ -200,8 +201,7 @@ export const DownloadKudirModal = ({
                 </Text>
               </Text>
 
-              <Select
-                style={{ borderRadius: "4px" }}
+              <SelectOne
                 value={selectedFormat}
                 options={formatOptions}
                 placeholder={CONTENT.SELECT_PLACEHOLDER}

@@ -29,6 +29,7 @@ export const OffSourceModal = ({
   source,
   account,
   source_id,
+  fetchSourcesHand,
 }: OffSourceProps) => {
   const { Title, Text } = Typography
   const token = Cookies.get("token")
@@ -94,6 +95,7 @@ export const OffSourceModal = ({
     } finally {
       setOpen(false)
       clear()
+      fetchSourcesHand()
     }
   }
 

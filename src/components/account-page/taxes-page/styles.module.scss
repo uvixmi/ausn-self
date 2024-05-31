@@ -393,15 +393,18 @@ $xxl: 2560px;
   justify-content: space-between;
   flex-direction: column;
   gap: 2%;
-  &:hover {
-    background-color: #f0f0ff;
-    cursor: pointer;
-  }
 
   @media screen and (min-width: $tablet) {
     flex-direction: row;
   }
   border-bottom: 1px solid $base-secondary-pale;
+
+  @media screen and (min-width: $s) {
+    &:hover {
+      background-color: #f0f0ff;
+      cursor: pointer;
+    }
+  }
 }
 
 .source-inner {
@@ -505,7 +508,7 @@ $xxl: 2560px;
 }
 
 .type-income-2 {
-  color: #6159ff;
+  color: inherit;
 }
 
 .type-back {
@@ -558,7 +561,6 @@ $xxl: 2560px;
 }
 
 .amount-part {
-  transition: margin-right 0.5s ease;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -567,10 +569,15 @@ $xxl: 2560px;
     flex-direction: column;
     align-items: flex-end;
   }
+  @media screen and (min-width: $s) {
+    transition: margin-right 0.5s ease;
+  }
 }
 
 .amount-inner:hover .amount-part {
-  margin-right: 50px;
+  @media screen and (min-width: $s) {
+    margin-right: 50px;
+  }
 }
 
 .delete-icon {
@@ -698,7 +705,7 @@ $xxl: 2560px;
   align-items: center;
 
   @media screen and (min-width: $m) {
-    gap: 10px;
+    gap: 8px;
   }
 }
 
@@ -1012,4 +1019,15 @@ $xxl: 2560px;
   font-size: 24px;
   font-weight: 600;
   line-height: 32px;
+}
+
+.operation-list-item {
+  margin-bottom: 28px;
+}
+
+.hide-right-part {
+  display: flex;
+  gap: 8px;
+  padding-right: 26px;
+  justify-content: center;
 }

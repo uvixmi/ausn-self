@@ -6,6 +6,7 @@ import {
   Drawer,
   Layout,
   List,
+  RefSelectProps,
   Select,
   Skeleton,
   Table,
@@ -13,6 +14,7 @@ import {
   Typography,
   message,
 } from "antd"
+import type { PickerRef } from "rc-picker"
 import Link from "antd/es/typography/Link"
 import { CONTENT } from "./constants"
 import styles from "./styles.module.scss"
@@ -40,7 +42,7 @@ import { AppDispatch, RootState } from "../../main-page/store"
 import Cookies from "js-cookie"
 import { formatToPayDate } from "../../main-page/utils"
 import { TypeOperation } from "./type-operation"
-import { getCurrency } from "../actions-page/utils"
+import { formatDateString, getCurrency } from "../actions-page/utils"
 import { ApiError, getFormattedYearDate, getSourceText } from "./utils"
 import { IncomeIcon } from "./type-operation/icons/income"
 import { TaxesIcon } from "./type-operation/icons/taxes"
@@ -56,6 +58,7 @@ import { CompletedAutoIcon } from "./type-operation/icons/completed-auto"
 import {
   convertDateFormat,
   convertReverseFormat,
+  getCurrentDate,
 } from "../actions-page/payment-modal/utils"
 import { DeleteOperationModal } from "./delete-modal"
 import { NonTaxesImage } from "./images/non-operations"
@@ -85,6 +88,8 @@ import { AddMarketplaceOperationModal } from "./add-marketplace-operation-modal"
 import { CollapseFilterIcon } from "./type-operation/icons/collapse-filter"
 import { DeleteOperationIcon } from "./type-operation/icons/delete-operation"
 import { SourceMobileIcon } from "./type-operation/icons/source-mobile"
+import { SelectProps, SelectValue } from "antd/lib/select"
+import { PickerProps } from "antd/lib/date-picker/generatePicker"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -182,7 +187,7 @@ export const TaxesPage = () => {
   const optionsTypes = [
     {
       label: (
-        <div className={cn([styles["type-new-income"]])}>
+        <div className={cn("income-inner", [styles["type-new-income"]])}>
           <IncomeIcon className={styles["type-income-2"]} />
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
@@ -191,8 +196,8 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn([styles["type-new-income"]])}>
-          <NonIcon />
+        <div className={cn("non-inner", [styles["type-new-income"]])}>
+          <NonIcon className={styles["type-income-2"]} />
           <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
           </Text>
@@ -202,8 +207,8 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn([styles["type-new-income"]])}>
-          <BackIcon />
+        <div className={cn("back-inner", [styles["type-new-income"]])}>
+          <BackIcon className={styles["type-income-2"]} />
           <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
       ),
@@ -211,8 +216,8 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn([styles["type-new-income"]])}>
-          <TaxesIcon />
+        <div className={cn("taxes-inner", [styles["type-new-income"]])}>
+          <TaxesIcon className={styles["type-income-2"]} />
           <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
           </Text>
@@ -410,9 +415,14 @@ export const TaxesPage = () => {
     if (selectedSources.length === 0) setEndOfPage(false)
   }
 
+  const selectRef = useRef<RefSelectProps>(null)
+
   const [operationsValue, setOperationsValue] = useState([{ id: "", value: 1 }])
 
   const handleChangeMarkup = async (newMarkup: number) => {
+    if (selectRef.current) {
+      selectRef.current.blur()
+    }
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
     operationsData?.operations.forEach((operation) => {
@@ -435,7 +445,10 @@ export const TaxesPage = () => {
         )
         if (indexToUpdate !== -1) {
           const updatedData = [...prevData]
-          updatedData[indexToUpdate] = { id: hoveredIndex, value: newMarkup }
+          updatedData[indexToUpdate] = {
+            id: hoveredIndex,
+            value: newMarkup,
+          }
           return updatedData
         } else {
           return [...prevData, { id: hoveredIndex, value: newMarkup }]
@@ -453,6 +466,7 @@ export const TaxesPage = () => {
       }
     } catch (error) {
       errorMarkup()
+    } finally {
     }
   }
 
@@ -479,6 +493,37 @@ export const TaxesPage = () => {
 
       setSelectedStartDate(convertDateFormat(dateStrings[0]))
       setSelectedEndDate(convertDateFormat(dateStrings[1]))
+      setIsFetching(true)
+    } else {
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
+      setEndOfPage(false)
+      setSelectedStartDate(null)
+      setSelectedEndDate(null)
+      setIsFetching(true)
+    }
+  }
+  const startDateRef = useRef<PickerRef>(null)
+
+  const endDateRef = useRef<PickerRef>(null)
+
+  const handleMinDateRangeChange = (dateStrings: string) => {
+    setSelectedStartDate(convertDateFormat(dateStrings))
+    endDateRef.current?.focus()
+  }
+
+  const handleMaxDateRangeChange = (dateStrings: string) => {
+    if (selectedStartDate !== "" && dateStrings != "") {
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
+
+      setSelectedEndDate(convertDateFormat(dateStrings))
       setIsFetching(true)
     } else {
       setPagination({
@@ -787,29 +832,91 @@ export const TaxesPage = () => {
             mode="multiple"
             maxTagCount={1}
           />
-          <DatePicker.RangePicker
-            locale={locale}
-            format={dateFormat}
-            allowClear
-            placeholder={["от", "до"]}
-            className={cn("datepicker", styles["datepicker-item"])}
-            minDate={
-              currentUser.tax_date_begin
-                ? dayjs(
-                    convertReverseFormat(currentUser.tax_date_begin),
-                    dateFormat
-                  )
-                : undefined
-            }
-            style={{ borderRadius: "4px" }}
-            value={[
-              selectedStartDate !== null ? dayjs(selectedStartDate) : null,
-              selectedEndDate !== null ? dayjs(selectedEndDate) : null,
-            ]}
-            onChange={(dates, dateStrings) =>
-              handleDateRangeChange(dateStrings)
-            }
-          />
+          {!isMobile ? (
+            <DatePicker.RangePicker
+              locale={locale}
+              format={dateFormat}
+              allowClear
+              placeholder={["Дата с", "Дата по"]}
+              className={cn("datepicker", styles["datepicker-item"])}
+              minDate={
+                currentUser.tax_date_begin
+                  ? dayjs(
+                      convertReverseFormat(currentUser.tax_date_begin),
+                      dateFormat
+                    )
+                  : undefined
+              }
+              maxDate={dayjs(
+                convertReverseFormat(getCurrentDate()),
+                dateFormat
+              )}
+              style={{ borderRadius: "4px" }}
+              value={[
+                selectedStartDate !== null ? dayjs(selectedStartDate) : null,
+                selectedEndDate !== null ? dayjs(selectedEndDate) : null,
+              ]}
+              onChange={(dates, dateStrings) =>
+                handleDateRangeChange(dateStrings)
+              }
+            />
+          ) : (
+            <>
+              <DatePicker
+                locale={locale}
+                format={dateFormat}
+                allowClear
+                ref={startDateRef}
+                placeholder={"Дата с"}
+                style={{ borderRadius: "4px" }}
+                className={cn("datepicker", styles["datepicker-item"])}
+                minDate={
+                  currentUser.tax_date_begin
+                    ? dayjs(
+                        convertReverseFormat(currentUser.tax_date_begin),
+                        dateFormat
+                      )
+                    : undefined
+                }
+                maxDate={dayjs(formatDateString(), dateFormat)}
+                value={
+                  selectedStartDate !== null
+                    ? dayjs(selectedStartDate, "YYYY-MM-DD")
+                    : null
+                }
+                onChange={(value, dateString) => {
+                  typeof dateString === "string" &&
+                    handleMinDateRangeChange(dateString)
+                }}
+              />
+              <DatePicker
+                locale={locale}
+                ref={endDateRef}
+                format={dateFormat}
+                allowClear
+                placeholder={"Дата по"}
+                style={{ borderRadius: "4px" }}
+                className={cn("datepicker", styles["datepicker-item"])}
+                minDate={
+                  currentUser.tax_date_begin
+                    ? dayjs(
+                        convertReverseFormat(currentUser.tax_date_begin),
+                        dateFormat
+                      )
+                    : undefined
+                }
+                maxDate={dayjs(formatDateString(), dateFormat)}
+                value={
+                  selectedEndDate !== null
+                    ? dayjs(selectedEndDate, "YYYY-MM-DD")
+                    : null
+                }
+                onChange={(dates, value) =>
+                  typeof value === "string" && handleMaxDateRangeChange(value)
+                }
+              />
+            </>
+          )}
           <ButtonOne
             onClick={resetFilter}
             type="secondary"
@@ -872,14 +979,16 @@ export const TaxesPage = () => {
                 {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
               </Text>
             </div>
-            <Text className={styles["date-style"]}>
-              {CONTENT.OFF_AUTO_SOURCE_DISABLED}
-            </Text>
-            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+            <div className={styles["hide-right-part"]}>
               <Text className={styles["date-style"]}>
-                {item.disable_date && convertReverseFormat(item.disable_date)}
+                {CONTENT.OFF_AUTO_SOURCE_DISABLED}
               </Text>
-            </Tooltip>
+              <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+                <Text className={styles["date-style"]}>
+                  {item.disable_date && convertReverseFormat(item.disable_date)}
+                </Text>
+              </Tooltip>
+            </div>
           </div>
         )),
     },
@@ -925,14 +1034,16 @@ export const TaxesPage = () => {
                 {item.sub_name ? " *" + item.sub_name?.slice(-4) : ""}
               </Text>
             </div>
-            <Text className={styles["date-style"]}>
-              {CONTENT.OFF_SOURCE_DISABLED}
-            </Text>
-            <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+            <div className={styles["hide-right-part"]}>
               <Text className={styles["date-style"]}>
-                {item.disable_date && convertReverseFormat(item.disable_date)}
+                {CONTENT.OFF_SOURCE_DISABLED}
               </Text>
-            </Tooltip>
+              <Tooltip title={CONTENT.TOOLTIP_DISABLE_DATE}>
+                <Text className={styles["date-style"]}>
+                  {item.disable_date && convertReverseFormat(item.disable_date)}
+                </Text>
+              </Tooltip>
+            </div>
           </div>
         )),
     },
@@ -1082,7 +1193,7 @@ export const TaxesPage = () => {
                       <DatePicker.RangePicker
                         locale={locale}
                         format={dateFormat}
-                        placeholder={["от", "до"]}
+                        placeholder={["Дата с", "Дата по"]}
                         className={cn("datepicker", styles["datepicker-item"])}
                         minDate={
                           currentUser.tax_date_begin
@@ -1094,6 +1205,10 @@ export const TaxesPage = () => {
                               )
                             : undefined
                         }
+                        maxDate={dayjs(
+                          convertReverseFormat(getCurrentDate()),
+                          dateFormat
+                        )}
                         style={{ borderRadius: "4px" }}
                         value={[
                           selectedStartDate !== null
@@ -1141,7 +1256,7 @@ export const TaxesPage = () => {
                             <div className={styles["table-date-row"]}>
                               {formatToPayDate(date)}
                             </div>
-                            <div>
+                            <div className={styles["operation-list-item"]}>
                               {operations.map((operation, index) => (
                                 <>
                                   <div
@@ -1172,11 +1287,55 @@ export const TaxesPage = () => {
                                       }
                                     >
                                       <div
-                                        className={
-                                          styles["operation-type-inner"]
-                                        }
+                                        className={cn(
+                                          styles["operation-type-inner"],
+                                          {
+                                            ["type-income"]:
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0] &&
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0].value === 1,
+                                            ["type-non"]:
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0] &&
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0].value === 2,
+                                            ["type-back"]:
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0] &&
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0].value === 3,
+                                            ["type-taxes"]:
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0] &&
+                                              operationsValue.filter(
+                                                (item) =>
+                                                  item.id === operation.id
+                                              )[0].value === 4,
+                                          }
+                                        )}
                                       >
                                         <Select
+                                          onSelect={() => {
+                                            if (selectRef.current) {
+                                              selectRef.current.blur()
+                                            }
+                                          }}
+                                          ref={selectRef}
                                           options={
                                             operation.category === "debet"
                                               ? optionsTypes.filter(
@@ -1246,7 +1405,11 @@ export const TaxesPage = () => {
                                         />
 
                                         {operation.markup_mode_code === 2 ||
-                                        operation.markup_mode_code === 3 ? (
+                                        operation.markup_mode_code === 3 ||
+                                        operationsValue.filter(
+                                          (item) => item.id === operation.id
+                                        )[0].value !==
+                                          operation.markup.operation_type ? (
                                           <Tooltip
                                             title={
                                               CONTENT.TOOLTIP_MARKUP_CHANGED
@@ -1623,7 +1786,10 @@ export const TaxesPage = () => {
                   dataSource={sourcesHandSider}
                   renderItem={(item) => (
                     <List.Item
-                      className={styles["list-item-right"]}
+                      className={cn(
+                        "sources-list-item",
+                        styles["list-item-right"]
+                      )}
                       style={{ borderBlockEnd: "none" }}
                     >
                       <div className={styles["left-source-name"]}>
@@ -2773,6 +2939,7 @@ export const TaxesPage = () => {
           source={typeSourceName}
           account={accountSource}
           source_id={offSourceId}
+          fetchSourcesHand={fetchSourcesHand}
         />
         <DownloadKudirModal isOpen={downloadKudir} setOpen={setDownloadKudir} />
       </ConfigProvider>
