@@ -421,8 +421,10 @@ export const TaxesPage = () => {
 
   const handleChangeMarkup = async (newMarkup: number) => {
     if (selectRef.current) {
+      console.log("попал сюда")
       selectRef.current.blur()
     }
+  
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
     operationsData?.operations.forEach((operation) => {

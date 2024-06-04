@@ -41,14 +41,9 @@ $xxl: 2560px;
     background: #f0f0ff !important;
     color: $brand-additional-dark !important;
   }
-
-  &:focus {
-    background-color: $brand-primary !important;
-    color: $base-color-white !important;
-  }
 }
 
-.type-income .ant-select-focused .ant-select-selector {
+.type-income .ant-select-open .ant-select-selector {
   background-color: $brand-primary !important;
   color: $base-color-white !important;
 }
@@ -57,15 +52,15 @@ $xxl: 2560px;
   color: #6159ff !important;
 }
 
-.type-income .ant-select-focused .ant-select-arrow {
+.type-income .ant-select-open .ant-select-arrow {
   color: $base-color-white !important;
 }
 
-.type-income .ant-select-focused .ant-select-selector .income-inner {
+.type-income .ant-select-open .ant-select-selector .income-inner {
   color: $base-color-white !important;
 }
 
-.type-income .ant-select-focused .ant-select-selector .income-inner svg rect {
+.type-income .ant-select-open .ant-select-selector .income-inner svg rect {
   fill: $brand-primary !important;
 }
 
@@ -79,14 +74,9 @@ $xxl: 2560px;
     background: #ecf9ff !important;
     color: $blue-additional-dark !important;
   }
-
-  &:focus {
-    background-color: $blue-primary !important;
-    color: $base-color-white !important;
-  }
 }
 
-.type-back .ant-select-focused .ant-select-selector {
+.type-back .ant-select-open .ant-select-selector {
   background-color: $blue-primary !important;
   color: $base-color-white !important;
 }
@@ -95,15 +85,15 @@ $xxl: 2560px;
   color: #158fe8 !important;
 }
 
-.type-back .ant-select-focused .ant-select-arrow {
+.type-back .ant-select-open .ant-select-arrow {
   color: $base-color-white !important;
 }
 
-.type-back .ant-select-focused .ant-select-selector .back-inner {
+.type-back .ant-select-open .ant-select-selector .back-inner {
   color: $base-color-white !important;
 }
 
-.type-back .ant-select-focused .ant-select-selector .back-inner svg rect {
+.type-back .ant-select-open .ant-select-selector .back-inner svg rect {
   fill: $blue-primary !important;
 }
 
@@ -117,13 +107,8 @@ $xxl: 2560px;
     background: #f0f0f0 !important;
     color: $base-primary-dark !important;
   }
-
-  &:focus {
-    background-color: $base-additional-grey !important;
-    color: $base-color-white !important;
-  }
 }
-.type-non .ant-select-focused .ant-select-selector {
+.type-non .ant-select-open .ant-select-selector {
   background-color: $base-additional-grey !important;
   color: $base-color-white !important;
 }
@@ -132,15 +117,15 @@ $xxl: 2560px;
   color: #505050 !important;
 }
 
-.type-non .ant-select-focused .ant-select-arrow {
+.type-non .ant-select-open .ant-select-arrow {
   color: $base-color-white !important;
 }
 
-.type-non .ant-select-focused .ant-select-selector .non-inner {
+.type-non .ant-select-open .ant-select-selector .non-inner {
   color: $base-color-white !important;
 }
 
-.type-non .ant-select-focused .ant-select-selector .non-inner svg rect {
+.type-non .ant-select-open .ant-select-selector .non-inner svg rect {
   fill: $base-additional-grey !important;
 }
 
@@ -154,14 +139,9 @@ $xxl: 2560px;
     background: #f6ffed !important;
     color: $green-additional-dark !important;
   }
-
-  &:focus {
-    background-color: $green-primary !important;
-    color: $base-color-white !important;
-  }
 }
 
-.type-taxes .ant-select-focused .ant-select-selector {
+.type-taxes .ant-select-open .ant-select-selector {
   background-color: $green-primary !important;
   color: $base-color-white !important;
 }
@@ -170,11 +150,11 @@ $xxl: 2560px;
   color: #389e0d !important;
 }
 
-.type-taxes .ant-select-focused .ant-select-arrow {
+.type-taxes .ant-select-open .ant-select-arrow {
   color: $base-color-white !important;
 }
 
-.type-taxes .ant-select-focused .ant-select-selector .taxes-inner {
+.type-taxes .ant-select-open .ant-select-selector .taxes-inner {
   color: $base-color-white !important;
 }
 
