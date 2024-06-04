@@ -540,16 +540,6 @@ export const TaxesPage = () => {
 
         setSelectedEndDate(dateStrings)
         setIsFetching(true)
-      } else {
-        setPagination({
-          page_number: 1,
-          row_count: 30,
-          request_id: v4(),
-        })
-        setEndOfPage(false)
-        setSelectedStartDate(null)
-        setSelectedEndDate(null)
-        setIsFetching(true)
       }
     }
   }
@@ -920,7 +910,7 @@ export const TaxesPage = () => {
                 className={cn("datepicker", styles["datepicker-item"])}
                 minDate={
                   currentUser.tax_date_begin && selectedStartDate !== null
-                    ? dayjs(convertReverseFormat(selectedStartDate), dateFormat)
+                    ? dayjs(selectedStartDate, dateFormat)
                     : currentUser.tax_date_begin && selectedStartDate === null
                     ? dayjs(
                         convertReverseFormat(currentUser.tax_date_begin),
@@ -929,7 +919,9 @@ export const TaxesPage = () => {
                     : undefined
                 }
                 maxDate={dayjs(formatDateString(), dateFormat)}
-                value={selectedEndDate !== null ? dayjs(selectedEndDate) : null}
+                value={
+                  selectedEndDate ? dayjs(selectedEndDate, dateFormat) : null
+                }
                 onChange={(dates, value) =>
                   typeof value === "string" && handleMaxDateRangeChange(value)
                 }
