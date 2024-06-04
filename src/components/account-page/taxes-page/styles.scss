@@ -158,8 +158,20 @@ $xxl: 2560px;
   color: $base-color-white !important;
 }
 
-.ant-select-item-option-content .taxes-inner {
+.ant-select-item-option-content .taxes-inner .inner-icon-2 {
   color: #389e0d !important;
+}
+
+.ant-select-item-option-content .back-inner .inner-icon-2 {
+  color: #158fe8 !important;
+}
+
+.ant-select-item-option-content .non-inner .inner-icon-2 {
+  color: #505050 !important;
+}
+
+.ant-select-item-option-content .type-content-type .inner-icon-2 {
+  color: #6159ff !important;
 }
 
 .type-item-select .ant-select-selection-item {
@@ -247,4 +259,8 @@ $xxl: 2560px;
 
 .select-operations-custom .ant-select-dropdown-placement-bottomLeft {
   width: 250px !important;
+}
+
+.type-content-type {
+  height: 24px;
 }

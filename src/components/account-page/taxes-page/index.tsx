@@ -141,7 +141,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <IncomeIcon className={styles["type-income-2"]} />
+          <IncomeIcon className={styles["type-income-3"]} />
 
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
@@ -151,7 +151,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <NonIcon />
+          <NonIcon className={styles["type-non-3"]} />
           <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
           </Text>
@@ -162,7 +162,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <BackIcon />
+          <BackIcon className={styles["type-back-3"]} />
           <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
       ),
@@ -171,7 +171,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn([styles["type-new-income"]])}>
-          <TaxesIcon />
+          <TaxesIcon className={styles["type-taxes-3"]} />
           <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
           </Text>
@@ -188,7 +188,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn("income-inner", [styles["type-new-income"]])}>
-          <IncomeIcon className={styles["type-income-2"]} />
+          <IncomeIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
       ),
@@ -197,7 +197,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn("non-inner", [styles["type-new-income"]])}>
-          <NonIcon className={styles["type-income-2"]} />
+          <NonIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
           </Text>
@@ -208,7 +208,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn("back-inner", [styles["type-new-income"]])}>
-          <BackIcon className={styles["type-income-2"]} />
+          <BackIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
       ),
@@ -217,7 +217,7 @@ export const TaxesPage = () => {
     {
       label: (
         <div className={cn("taxes-inner", [styles["type-new-income"]])}>
-          <TaxesIcon className={styles["type-income-2"]} />
+          <TaxesIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
           </Text>
@@ -421,10 +421,9 @@ export const TaxesPage = () => {
 
   const handleChangeMarkup = async (newMarkup: number) => {
     if (selectRef.current) {
-      console.log("попал сюда")
       selectRef.current.blur()
     }
-  
+
     const updatedGroupedOperations: Record<string, Operation[]> = {}
 
     operationsData?.operations.forEach((operation) => {
@@ -493,8 +492,8 @@ export const TaxesPage = () => {
         request_id: v4(),
       })
 
-      setSelectedStartDate(convertDateFormat(dateStrings[0]))
-      setSelectedEndDate(convertDateFormat(dateStrings[1]))
+      setSelectedStartDate(dateStrings[0])
+      setSelectedEndDate(dateStrings[1])
       setIsFetching(true)
     } else {
       setPagination({
@@ -513,30 +512,45 @@ export const TaxesPage = () => {
   const endDateRef = useRef<PickerRef>(null)
 
   const handleMinDateRangeChange = (dateStrings: string) => {
-    setSelectedStartDate(convertDateFormat(dateStrings))
-    endDateRef.current?.focus()
+    if (selectedEndDate === null) {
+      setSelectedStartDate(dateStrings)
+      endDateRef.current?.focus()
+    } else {
+      setSelectedStartDate(dateStrings)
+      setPagination({
+        page_number: 1,
+        row_count: 30,
+        request_id: v4(),
+      })
+      setIsFetching(true)
+    }
   }
 
   const handleMaxDateRangeChange = (dateStrings: string) => {
-    if (selectedStartDate !== "" && dateStrings != "") {
-      setPagination({
-        page_number: 1,
-        row_count: 30,
-        request_id: v4(),
-      })
-
-      setSelectedEndDate(convertDateFormat(dateStrings))
-      setIsFetching(true)
+    if (selectedStartDate === null) {
+      setSelectedEndDate(dateStrings)
+      startDateRef.current?.focus()
     } else {
-      setPagination({
-        page_number: 1,
-        row_count: 30,
-        request_id: v4(),
-      })
-      setEndOfPage(false)
-      setSelectedStartDate(null)
-      setSelectedEndDate(null)
-      setIsFetching(true)
+      if (selectedStartDate !== "" && dateStrings != "") {
+        setPagination({
+          page_number: 1,
+          row_count: 30,
+          request_id: v4(),
+        })
+
+        setSelectedEndDate(dateStrings)
+        setIsFetching(true)
+      } else {
+        setPagination({
+          page_number: 1,
+          row_count: 30,
+          request_id: v4(),
+        })
+        setEndOfPage(false)
+        setSelectedStartDate(null)
+        setSelectedEndDate(null)
+        setIsFetching(true)
+      }
     }
   }
   const [isFetching, setIsFetching] = useState(true)
@@ -577,8 +591,12 @@ export const TaxesPage = () => {
     if (isFetching) {
       try {
         const filters: GetOperationsRequest = {
-          start_date: selectedStartDate || undefined,
-          end_date: selectedEndDate || undefined,
+          start_date: selectedStartDate
+            ? convertDateFormat(selectedStartDate)
+            : undefined,
+          end_date: selectedEndDate
+            ? convertDateFormat(selectedEndDate)
+            : undefined,
           operations_types:
             selectedOperationTypes.length > 0
               ? selectedOperationTypes
@@ -597,6 +615,7 @@ export const TaxesPage = () => {
             operations: [...operations.data.operations],
             pages_count: operations.data.pages_count,
           }))
+
           setOperationsValue(
             operations.data.operations.map((item) => {
               return { id: item.id, value: item.markup.operation_type }
@@ -882,8 +901,8 @@ export const TaxesPage = () => {
                 }
                 maxDate={dayjs(formatDateString(), dateFormat)}
                 value={
-                  selectedStartDate !== null
-                    ? dayjs(selectedStartDate, "YYYY-MM-DD")
+                  selectedStartDate
+                    ? dayjs(selectedStartDate, dateFormat)
                     : null
                 }
                 onChange={(value, dateString) => {
@@ -900,7 +919,9 @@ export const TaxesPage = () => {
                 style={{ borderRadius: "4px" }}
                 className={cn("datepicker", styles["datepicker-item"])}
                 minDate={
-                  currentUser.tax_date_begin
+                  currentUser.tax_date_begin && selectedStartDate !== null
+                    ? dayjs(convertReverseFormat(selectedStartDate), dateFormat)
+                    : currentUser.tax_date_begin && selectedStartDate === null
                     ? dayjs(
                         convertReverseFormat(currentUser.tax_date_begin),
                         dateFormat
@@ -908,11 +929,7 @@ export const TaxesPage = () => {
                     : undefined
                 }
                 maxDate={dayjs(formatDateString(), dateFormat)}
-                value={
-                  selectedEndDate !== null
-                    ? dayjs(selectedEndDate, "YYYY-MM-DD")
-                    : null
-                }
+                value={selectedEndDate !== null ? dayjs(selectedEndDate) : null}
                 onChange={(dates, value) =>
                   typeof value === "string" && handleMaxDateRangeChange(value)
                 }
@@ -1408,10 +1425,13 @@ export const TaxesPage = () => {
 
                                         {operation.markup_mode_code === 2 ||
                                         operation.markup_mode_code === 3 ||
-                                        operationsValue.filter(
+                                        (operationsValue.filter(
                                           (item) => item.id === operation.id
-                                        )[0].value !==
-                                          operation.markup.operation_type ? (
+                                        )[0] &&
+                                          operationsValue.filter(
+                                            (item) => item.id === operation.id
+                                          )[0].value !==
+                                            operation.markup.operation_type) ? (
                                           <Tooltip
                                             title={
                                               CONTENT.TOOLTIP_MARKUP_CHANGED
