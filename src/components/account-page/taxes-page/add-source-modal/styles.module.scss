@@ -418,3 +418,29 @@ $xxl: 2560px;
   padding-left: 8px !important;
   padding-right: 8px !important;
 }
+
+.mobile-back {
+  max-width: 298px;
+  align-self: center;
+
+  @media screen and (min-width: $s) {
+    max-width: none;
+  }
+}
+
+.mobile-cashier-back {
+  max-width: 290px;
+  align-self: center;
+
+  @media screen and (min-width: $s) {
+    max-width: none;
+  }
+}
+
+.mobile-api-back {
+  max-width: 390px;
+  align-self: center;
+  @media screen and (min-width: $s) {
+    max-width: none;
+  }
+}

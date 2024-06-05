@@ -187,7 +187,10 @@ export const TaxesPage = () => {
   const optionsTypes = [
     {
       label: (
-        <div className={cn("income-inner", [styles["type-new-income"]])}>
+        <div
+          className={cn("income-inner", [styles["type-new-income"]])}
+          style={{ justifyContent: "center" }}
+        >
           <IncomeIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
@@ -196,7 +199,10 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn("non-inner", [styles["type-new-income"]])}>
+        <div
+          className={cn("non-inner", [styles["type-new-income"]])}
+          style={{ justifyContent: "center" }}
+        >
           <NonIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
@@ -207,7 +213,10 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn("back-inner", [styles["type-new-income"]])}>
+        <div
+          className={cn("back-inner", [styles["type-new-income"]])}
+          style={{ justifyContent: "center" }}
+        >
           <BackIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
@@ -216,7 +225,10 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div className={cn("taxes-inner", [styles["type-new-income"]])}>
+        <div
+          className={cn("taxes-inner", [styles["type-new-income"]])}
+          style={{ justifyContent: "center" }}
+        >
           <TaxesIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
@@ -1128,9 +1140,9 @@ export const TaxesPage = () => {
               </div>
             )}
             {!isMobile && (
-              <Title level={2} className={styles["heading-text"]}>
+              <Text className={styles["heading-operations"]}>
                 {CONTENT.HEADING_INCOME}
-              </Title>
+              </Text>
             )}
             <div className={styles["buttons-header"]}>
               <ButtonOne
@@ -1940,7 +1952,7 @@ export const TaxesPage = () => {
                           ) : (
                             CONTENT.NO_SOURCE
                           )}
-                          {!(item.state == "in_progress" && !item.link) && (
+                          {!(item.state == "in_progress" && !item.link) ? (
                             <Tooltip
                               title={
                                 item.is_integrated === false &&
@@ -2034,6 +2046,8 @@ export const TaxesPage = () => {
                                 </div>
                               )}
                             </Tooltip>
+                          ) : (
+                            <div style={{ width: "26px" }}></div>
                           )}
                         </div>
                       </div>
@@ -2171,7 +2185,7 @@ export const TaxesPage = () => {
                           ) : (
                             CONTENT.NO_SOURCE
                           )}
-                          {!(item.state == "in_progress" && !item.link) && (
+                          {!(item.state == "in_progress" && !item.link) ? (
                             <Tooltip
                               title={
                                 item.state === "failed"
@@ -2255,6 +2269,8 @@ export const TaxesPage = () => {
                                 </div>
                               )}
                             </Tooltip>
+                          ) : (
+                            <div style={{ width: "26px" }}></div>
                           )}
                         </div>
                       </div>
@@ -2350,7 +2366,10 @@ export const TaxesPage = () => {
                     styles["button-make"],
                     styles["button-drawer-item"]
                   )}
-                  onClick={() => setIsAddSourceOpen(true)}
+                  onClick={() => {
+                    closeDrawer()
+                    setIsAddSourceOpen(true)
+                  }}
                 >
                   <PlusOutlined
                     className={styles["plus-icon"]}
@@ -2526,7 +2545,7 @@ export const TaxesPage = () => {
                             ) : (
                               CONTENT.NO_SOURCE
                             )}
-                            {!(item.state == "in_progress" && !item.link) && (
+                            {!(item.state == "in_progress" && !item.link) ? (
                               <Tooltip
                                 title={
                                   isMobile
@@ -2624,6 +2643,8 @@ export const TaxesPage = () => {
                                   </div>
                                 )}
                               </Tooltip>
+                            ) : (
+                              <div style={{ width: "26px" }}></div>
                             )}
                           </div>
                         </div>
@@ -2769,7 +2790,7 @@ export const TaxesPage = () => {
                             ) : (
                               CONTENT.NO_SOURCE
                             )}
-                            {!(item.state == "in_progress" && !item.link) && (
+                            {!(item.state == "in_progress" && !item.link) ? (
                               <Tooltip
                                 title={
                                   isMobile
@@ -2857,6 +2878,8 @@ export const TaxesPage = () => {
                                   </div>
                                 )}
                               </Tooltip>
+                            ) : (
+                              <div style={{ width: "26px" }}></div>
                             )}
                           </div>
                         </div>

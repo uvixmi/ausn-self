@@ -1047,3 +1047,20 @@ $xxl: 2560px;
   padding-right: 26px;
   justify-content: center;
 }
+
+.heading-operations {
+  font-family: "Inter";
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+
+  @media screen and (min-width: $l) {
+    font-size: 36px;
+    line-height: 44px;
+  }
+
+  @media screen and (min-width: $xl) {
+    font-size: 42px;
+    line-height: 50px;
+  }
+}

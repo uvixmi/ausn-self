@@ -1903,7 +1903,10 @@ export const AddSourceModal = ({
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
                       onClick={() => setMarketplaceMode("")}
-                      className={styles["generate-back"]}
+                      className={cn(
+                        styles["generate-back"],
+                        styles["mobile-api-back"]
+                      )}
                       type="secondary"
                     >
                       <ArrowLeftOutlined
@@ -2310,7 +2313,10 @@ export const AddSourceModal = ({
                   <div className={styles["buttons-generate"]}>
                     <ButtonOne
                       onClick={() => setMarketplaceMode("")}
-                      className={styles["generate-back"]}
+                      className={cn(
+                        styles["generate-back"],
+                        styles["mobile-api-back"]
+                      )}
                       type="secondary"
                     >
                       <ArrowLeftOutlined
@@ -2435,7 +2441,7 @@ export const AddSourceModal = ({
                         setFileName("")
                         setErrorText("")
                       }}
-                      className={styles["generate-back"]}
+                      className={cn(styles["generate-back"])}
                       type="secondary"
                     >
                       <ArrowLeftOutlined
@@ -2848,7 +2854,18 @@ export const AddSourceModal = ({
                     setFileName("")
                     setErrorText("")
                   }}
-                  className={styles["generate-back"]}
+                  className={cn(
+                    styles["generate-back"],
+
+                    {
+                      [styles["mobile-back"]]:
+                        buttonMode === "bank_integration" ||
+                        buttonMode === "marketplace_integration",
+
+                      [styles["mobile-cashier-back"]]:
+                        buttonMode === "online_cashier",
+                    }
+                  )}
                   type="secondary"
                 >
                   <ArrowLeftOutlined className={styles["arrow-left-icon"]} />
