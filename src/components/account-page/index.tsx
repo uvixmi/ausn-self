@@ -184,7 +184,7 @@ export const AccountPage = ({
           },
         }}
       >
-        <Layout>
+        <Layout className={styles["style-overflow"]}>
           {!isMobile && (
             <Sider
               className={styles["left-sider-wrapper"]}

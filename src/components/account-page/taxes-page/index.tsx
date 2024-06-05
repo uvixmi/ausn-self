@@ -187,10 +187,7 @@ export const TaxesPage = () => {
   const optionsTypes = [
     {
       label: (
-        <div
-          className={cn("income-inner", [styles["type-new-income"]])}
-          style={{ justifyContent: "center" }}
-        >
+        <div className={cn("income-inner", [styles["type-new-income"]])}>
           <IncomeIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
         </div>
@@ -199,10 +196,7 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div
-          className={cn("non-inner", [styles["type-new-income"]])}
-          style={{ justifyContent: "center" }}
-        >
+        <div className={cn("non-inner", [styles["type-new-income"]])}>
           <NonIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Не учитывается"}
@@ -213,10 +207,7 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div
-          className={cn("back-inner", [styles["type-new-income"]])}
-          style={{ justifyContent: "center" }}
-        >
+        <div className={cn("back-inner", [styles["type-new-income"]])}>
           <BackIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
         </div>
@@ -225,10 +216,7 @@ export const TaxesPage = () => {
     },
     {
       label: (
-        <div
-          className={cn("taxes-inner", [styles["type-new-income"]])}
-          style={{ justifyContent: "center" }}
-        >
+        <div className={cn("taxes-inner", [styles["type-new-income"]])}>
           <TaxesIcon className={cn("inner-icon-2", styles["type-income-2"])} />
           <Text className={cn(styles["type-new-text"])}>
             {"Налоги и взносы"}
