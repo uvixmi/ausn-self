@@ -2,12 +2,14 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.19"
+    "version": "0.1.21"
   },
   "paths": {
     "/auth": {
       "post": {
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "summary": "Login",
         "operationId": "login_auth_post",
         "requestBody": {
@@ -57,7 +59,9 @@
     },
     "/users/registration": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Зарегистрироваться. Шаг регистрации 1.",
         "description": "Метод реализует базовый механизм регистрации в сервисе. При вызове метода на почту пользователя направляется письмо с дальнейшей инструкцией по регистрации. Актуально только для поэтапной регистрации.",
         "operationId": "create_user_users_registration_post",
@@ -108,7 +112,9 @@
     },
     "/users/registration/inn_info": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Получить информацию пользователя по ИНН. Шаг регистрации 2. Доступно, только если пользователь не имеет сохраненного ИНН в ЛК.",
         "description": "Метод реализует второй шаг регистрации в сервисе. При вызове метода в БРН происходит инициализация карточки клиента с базовой информацией по нему. Актуально только для поэтапной регистрации.",
         "operationId": "get_inn_info_users_registration_inn_info_get",
@@ -208,7 +214,9 @@
     },
     "/users/registration/tax_info": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Сохранить налоговую информацию по пользователю. Шаг регистрации 3. Доступно, только если пользователь не имеет сохраненного ИНН в ЛК.",
         "description": "Метод реализует третий шаг регистрации в сервисе. При вызове метода в БРН сохраняется необходимая информация для дальнейшей работы сервиса. Актуально только для поэтапной регистрации.",
         "operationId": "save_tax_info_users_registration_tax_info_put",
@@ -264,7 +272,9 @@
     },
     "/users/registration/lead_info": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Сохранить лида по пользователю. Альтернативный шаг регистрации 3. Метод нужен для сохранения лида пользователя, который не проходит по СНО.",
         "description": "Метод реализует альтернативный шаг регистрации в сервисе. При вызове метода в БРН сохраняется информация по лиду пользователя. Дальнейшая работа в сервисе не предусмотрена, после сохранения лида вся функциональность сервиса становится недоступной. Актуально только для поэтапной регистрации.",
         "operationId": "save_lead_info_users_registration_lead_info_put",
@@ -342,7 +352,9 @@
     },
     "/users": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Получить текущего пользователя",
         "description": "Метод возвращает информацию по зарегистрированному пользователю. Данный должен вызываться после каждой авторизации пользователя, а также при открытии страницы сервиса впервые при запуске сервиса.",
         "operationId": "current_user_users_get",
@@ -378,7 +390,9 @@
     },
     "/users/lead": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Сохранить лида по пользователю",
         "description": "Метод реализует сохранение лида по пользователю, использующему сервис.",
         "operationId": "save_user_lead_users_lead_put",
@@ -432,7 +446,9 @@
     },
     "/users/change_tax": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Изменение настроек системы налогообложения ",
         "description": "Метод реализует изменение настроен СНО пользователя.",
         "operationId": "change_tax_users_change_tax_put",
@@ -487,7 +503,9 @@
     },
     "/users/disable": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Отключить текущего пользователя от сервиса бухгалтерии",
         "description": "Метод реализует отключение пользователя от сервиса бухгалтерии. Повторное подключение сервиса реализуется через повторную регистрацию.",
         "operationId": "disable_user_users_disable_put",
@@ -521,7 +539,9 @@
     },
     "/sources": {
       "get": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Получить информацию о подключенных счетах, макретплейсах и ОФД пользователя",
         "description": "Метод возвращает информацию об источниках данных пользователя. Данный метод следует вызывать при открытии страниц, содержащих информацию об источниках пользователя. В источниках в том числе возвращаются те, что в данный момент находятся в обработке системой (например, недавно добавленные счета). Также метод возвращает информацию по клиенту на тот случай, если информация, получаемая по ИНН, как-то отличается от данных, выданных ранее. Данная информация также обновляется и внутри сервиса, после выполнения данного метода получение текущего пользователя также выдаст актуальную информацию.",
         "operationId": "get_sources_info_sources_get",
@@ -557,7 +577,9 @@
     },
     "/sources/{request_id}/state": {
       "get": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Получить статус запроса добавления источника данных",
         "description": "Метод возвращает информацию по статусу добавления источника данных в мастер системе",
         "operationId": "get_source_request_state_sources__request_id__state_get",
@@ -628,7 +650,9 @@
     },
     "/sources/disable": {
       "put": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Отключить источник данных",
         "description": "Данный метод реализует отключение источника данных. По отключенному источнику данных приостанавливается интеграция. Данные по нему возвращаться будут, однако новых в систему поступать не будет.",
         "operationId": "disable_source_sources_disable_put",
@@ -705,7 +729,9 @@
     },
     "/sources/account": {
       "post": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Добавление счета пользователя напрямую",
         "description": "Данный метод реализует добавление счета для отображение его в источниках данных.",
         "operationId": "create_client_account_sources_account_post",
@@ -817,7 +843,9 @@
     },
     "/sources/account/integration": {
       "post": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Добавление интеграции счета пользователя",
         "description": "Данный метод реализует добавление прямой интеграции с банком по счету клиента.",
         "operationId": "create_user_account_integration_sources_account_integration_post",
@@ -941,7 +969,9 @@
     },
     "/sources/ofd": {
       "post": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Добавление ОФД пользователя",
         "description": "Данный метод реализует добавление ОФД пользователя.",
         "operationId": "create_client_ofd_sources_ofd_post",
@@ -1077,75 +1107,21 @@
     },
     "/sources/marketplace": {
       "post": {
-        "tags": ["Sources"],
+        "tags": [
+          "Sources"
+        ],
         "summary": "Добавление маркетплейс пользователя",
         "description": "Данный метод реализует добавление маркетплейс пользователя.",
         "operationId": "create_client_marketplace_sources_marketplace_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "date_begin",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Date Begin"
-            }
-          },
-          {
-            "name": "login",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Login"
-            }
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Password"
-            }
-          }
-        ],
         "requestBody": {
-          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Body_create_client_marketplace_sources_marketplace_post"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -1154,6 +1130,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateSourceResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Данная интеграция МП уже в процессе добавления.",
+                  "error_key": "marketplace_already_in_progress"
                 }
               }
             }
@@ -1209,8 +1196,8 @@
                       "error_key": "date_required_oauth_sync"
                     },
                     {
-                      "message": "При синхронизации по OAuth, данные для подключения к API МП, передавать не нужно.",
-                      "error_key": "credentials_not_required_auth_sync"
+                      "message": "При синхронизации по OAuth, нужно передавать shop_id, не передавая password",
+                      "error_key": "credentials_required_auth_sync"
                     },
                     {
                       "message": "При синхронизации по OAuth, файл с отчетом по реализации передавать не нужно.",
@@ -1236,12 +1223,19 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
       }
     },
     "/operations": {
       "post": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Получить список размеченных операций",
         "description": "Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.",
         "operationId": "get_operations_operations_post",
@@ -1295,7 +1289,9 @@
         }
       },
       "delete": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Удалить операцию",
         "description": "Данный метод реализует удаление операции пользователем.",
         "operationId": "delete_operation_operations_delete",
@@ -1350,7 +1346,9 @@
     },
     "/operations/by_hand": {
       "post": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Добавить операцию вручную",
         "description": "Данный метод реализует ручное добавление операций пользователем.",
         "operationId": "create_operation_operations_by_hand_post",
@@ -1404,7 +1402,9 @@
     },
     "/operations/file": {
       "post": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Добавить операции из банковской выписки",
         "description": "Данный метод реализует добавление операций пользователя из выгруженной банковской выписки.",
         "operationId": "create_operations_from_file_operations_file_post",
@@ -1504,7 +1504,9 @@
     },
     "/operations/markup": {
       "put": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Переразметить операцию",
         "description": "Данный метод реализует обновление разметки операции пользователем.",
         "operationId": "update_operation_operations_markup_put",
@@ -1581,7 +1583,9 @@
     },
     "/operations/tax_payment": {
       "post": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Добавить уплату налога",
         "description": "Данный метод реализует ручное добавление операции уплаты налога.",
         "operationId": "create_operation_tax_payment_operations_tax_payment_post",
@@ -1646,7 +1650,9 @@
     },
     "/operations/{operation_id}": {
       "get": {
-        "tags": ["Operations"],
+        "tags": [
+          "Operations"
+        ],
         "summary": "Получить список размеченных операций",
         "description": "Метод возвращает размеченные и обработанные операции по заданным фильтрам. Данные операции формируют налоговую базу пользователя. Есть возможность фильтрации операций по номеру счета, периоду совершения операций, а также по типу размеченной операции.",
         "operationId": "get_operation_by_id_operations__operation_id__get",
@@ -1716,7 +1722,9 @@
     },
     "/taxes/systems": {
       "get": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Получить справочник по системам налогообложения",
         "description": "Метод возвращает справочник по СНО.В некоторых СНО имеется диапазон значений процента НО.",
         "operationId": "get_sno_references_taxes_systems_get",
@@ -1747,7 +1755,9 @@
     },
     "/taxes/calculation": {
       "get": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Получить рассчитанные налоги и взносы",
         "description": "Метод возвращает информацию по рассчитанным налогам и взносам по налоговой базе пользователя. Метод возвращает подсчеты, а также информацию об их актуальности. Каждое изменение налоговой базы инициирует процесс пересчета. В зависимости от полученного статуса по актуальности также меняется и взаимодействие пользователя с сервисом (например, ему предлагается заново сгенерировать декларацию по доходам).",
         "operationId": "get_tax_calculation_taxes_calculation_get",
@@ -1817,7 +1827,9 @@
     },
     "/taxes/ens_requisites": {
       "get": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Получить информацию для формирования платежного поручения",
         "description": "Данный метод возвращает информацию, необходимую для формирования платежного поручения на уплату налога.",
         "operationId": "get_ens_info_taxes_ens_requisites_get",
@@ -1853,7 +1865,9 @@
     },
     "/taxes/ens_order": {
       "post": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Сформировать платежное поручение",
         "description": "Данный метод возвращает заполненное платежное поручение на уплату налога.",
         "operationId": "generate_ens_order_taxes_ens_order_post",
@@ -1909,7 +1923,9 @@
     },
     "/taxes/ens_order/txt": {
       "post": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Сформировать платежное поручение, получить файл txt",
         "description": "Данный метод возвращает заполненное платежное поручение на уплату налога в формате txt.",
         "operationId": "generate_ens_order_txt_taxes_ens_order_txt_post",
@@ -1958,7 +1974,9 @@
     },
     "/taxes/recalculation": {
       "put": {
-        "tags": ["Taxes"],
+        "tags": [
+          "Taxes"
+        ],
         "summary": "Обновление расчета налога",
         "operationId": "recalculation_taxes_taxes_recalculation_put",
         "responses": {
@@ -1993,7 +2011,9 @@
     },
     "/tasks": {
       "get": {
-        "tags": ["Tasks"],
+        "tags": [
+          "Tasks"
+        ],
         "summary": "Получить задачи пользователя",
         "description": "Метод возвращает информацию о предстоящих задачах - налогах и взносах к уплате, сроках сдачи уведомлений и деклараций. Актуальность данной информации зависит от статуса расчета налоговой базы (taxes/calculation).",
         "operationId": "get_tasks_tasks_get",
@@ -2040,7 +2060,9 @@
     },
     "/tasks/reports_info": {
       "get": {
-        "tags": ["Tasks"],
+        "tags": [
+          "Tasks"
+        ],
         "summary": "Получить дополнительную информацию по задачам налоговой отчетности",
         "description": "Метод возвращает дополнительную информацию по задачам налоговой отчетности - статусы сдачи, суммы в уведомлениях. Данную информацию возможно запрашивать для указанного налогового периода (года). Актуальность данной информации зависит от статуса расчета налоговой базы (taxes/calculation).",
         "operationId": "get_tasks_reports_info_tasks_reports_info_get",
@@ -2097,7 +2119,9 @@
     },
     "/tasks/references": {
       "get": {
-        "tags": ["Tasks"],
+        "tags": [
+          "Tasks"
+        ],
         "summary": "Получить справочник задачи пользователя",
         "description": "Метод возвращает справочник задач пользователя для их типизации и отображения справки по ним.",
         "operationId": "get_tasks_references_tasks_references_get",
@@ -2123,17 +2147,14 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/tasks/status": {
       "put": {
-        "tags": ["Tasks"],
+        "tags": [
+          "Tasks"
+        ],
         "summary": "Обновить статус задачи",
         "description": "Данный метод реализует механизм изменения статуса приема деклараций и уведомлений в ЛК клиента.",
         "operationId": "update_report_status_tasks_status_put",
@@ -2207,7 +2228,9 @@
     },
     "/reports": {
       "post": {
-        "tags": ["Reports"],
+        "tags": [
+          "Reports"
+        ],
         "summary": "Сгенерировать отчетность выбранного типа за выбранный период",
         "description": "Данный метод реализует генерацию отчетности пользователя (уведомления и декларации). Сгенерированная отчетность при этом запросе хранится на сервере и возвращается пользователю отдельным запросом. Актуальность сформированной отчетности зависит от статуса расчета налоговой базы (taxes/calculation).",
         "operationId": "generate_reports_reports_post",
@@ -2263,7 +2286,9 @@
     },
     "/reports/kudir": {
       "get": {
-        "tags": ["Reports"],
+        "tags": [
+          "Reports"
+        ],
         "summary": "Получить КУДиР за выбранный период",
         "description": "Данный метод реализует генерацию и возврат КУДиР пользователя. Сгенерированная отчетность при этом НЕ хранится на сервере. Актуальность сформированной отчетности зависит  от статуса расчета налоговой базы (taxes/calculation).",
         "operationId": "get_kudir_report_reports_kudir_get",
@@ -2346,7 +2371,9 @@
     },
     "/reports/{report_id}.{report_format}": {
       "get": {
-        "tags": ["Reports"],
+        "tags": [
+          "Reports"
+        ],
         "summary": "Получить сгенерированный файл отчетности в выбранном формате",
         "description": "Данный метод возвращает сгенерированный файл в отчетности в формате pdf / xml.",
         "operationId": "get_report_by_id_reports__report_id___report_format__get",
@@ -2404,7 +2431,9 @@
     },
     "/banners": {
       "get": {
-        "tags": ["Banners"],
+        "tags": [
+          "Banners"
+        ],
         "summary": "Получить информационные баннеры пользователя",
         "operationId": "get_user_banners_banners_get",
         "security": [
@@ -2472,7 +2501,9 @@
         }
       },
       "put": {
-        "tags": ["Banners"],
+        "tags": [
+          "Banners"
+        ],
         "summary": "Обновить статус информационного баннера у пользователя",
         "description": "Данный метод реализует обновление статуса баннера пользователя - на данный момент возможность скрыть баннер.",
         "operationId": "update_user_banner_state_banners_put",
@@ -2538,7 +2569,9 @@
     },
     "/references/bank_info": {
       "get": {
-        "tags": ["References"],
+        "tags": [
+          "References"
+        ],
         "summary": "Получить информацию по банку по БИК",
         "description": "Метод возвращает информацию по банку по БИК.",
         "operationId": "get_bank_info_references_bank_info_get",
@@ -2597,7 +2630,9 @@
     },
     "/references/tax_limits": {
       "get": {
-        "tags": ["References"],
+        "tags": [
+          "References"
+        ],
         "summary": "Получить лимиты по налогам и взносам",
         "description": "Метод возвращает лимиты по налогам и взносам. При отправке пустого списка years, вернутся лимиты за текущий год - 1, текущий год и текущий год + 1",
         "operationId": "get_tax_limits_references_tax_limits_get",
@@ -2674,7 +2709,10 @@
           }
         },
         "type": "object",
-        "required": ["login", "password"],
+        "required": [
+          "login",
+          "password"
+        ],
         "title": "AccountCredentials"
       },
       "AccountDetails": {
@@ -2698,12 +2736,18 @@
           }
         },
         "type": "object",
-        "required": ["bank_bik"],
+        "required": [
+          "bank_bik"
+        ],
         "title": "AccountDetails"
       },
       "AccountIntegrationType": {
         "type": "integer",
-        "enum": [1, 2, 3],
+        "enum": [
+          1,
+          2,
+          3
+        ],
         "title": "AccountIntegrationType"
       },
       "BRNOkResponse": {
@@ -2714,7 +2758,9 @@
           }
         },
         "type": "object",
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "title": "BRNOkResponse"
       },
       "BankReferenceResponse": {
@@ -2748,7 +2794,11 @@
           }
         },
         "type": "object",
-        "required": ["bik", "bank_name", "cor_account"],
+        "required": [
+          "bik",
+          "bank_name",
+          "cor_account"
+        ],
         "title": "BankReferenceResponse"
       },
       "BannerType": {
@@ -2763,7 +2813,56 @@
       },
       "Body_create_client_marketplace_sources_marketplace_post": {
         "properties": {
-          "marketplace_type": {
+          "date_begin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Begin",
+            "description": "Дата с которой необходимо подгружать отчеты по реализации"
+          },
+          "shop_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shop Id",
+            "description": "\n                    Идентификатор магазина.\n                    Обязательно для заполнения, если source_name = ozon или ya_market:\n                    Для Ozon = Seller ID\n                    Для Яндекс Маркет = ID магазина\n                    "
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password",
+            "description": "\n                    Пароль / токен доступа.\n                    Обязательно для заполнения, если sync_type = 2\n                    "
+          },
+          "saldo": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saldo",
+            "description": "Сумма, еще не поступившая на банковский счет от МП за предыдущий период. Не передается, если сальдо = 0. Отправляется только sync_type = 2, source_name = ozon или wbn"
+          },
+          "sync_type": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/MarketplaceType"
@@ -2771,13 +2870,13 @@
             ],
             "description": "\n                    Тип синхронизации. Возможные значения: \n\n                    1 - Отчет по реализации (как при подгрузке табличной формы)\n                    2 - API МП (как при автозагрузке по API)\n                    3 - OAuth 2.0 (для последующей генерации ссылки)"
           },
-          "marketplace_source": {
+          "source_name": {
             "allOf": [
               {
                 "$ref": "#/components/schemas/MarketplaceName"
               }
             ],
-            "description": "\n                    Наименование маркетплейса\n\n                    Возможные варианты:\n                        - если marketplace_type = 1:\n                            - Ozon\n                            - Wildberries\n                        - если marketplace_type = 2:\n                            - Ozon\n                            - Wildberries\n                        - если marketplace_type = 3:\n                            - Яндекс Маркет\n                    "
+            "description": "\n                    Наименование маркетплейса\n\n                    Возможные варианты:\n                        - если sync_type = 1:\n                            - ozon\n                            - wb\n                        - если sync_type = 2:\n                            - ozon\n                            - wb\n                        - если sync_type = 3:\n                            - ya_market\n                    "
           },
           "marketplace_file": {
             "type": "string",
@@ -2787,7 +2886,10 @@
           }
         },
         "type": "object",
-        "required": ["marketplace_type", "marketplace_source"],
+        "required": [
+          "sync_type",
+          "source_name"
+        ],
         "title": "Body_create_client_marketplace_sources_marketplace_post"
       },
       "Body_create_client_ofd_sources_ofd_post": {
@@ -2816,7 +2918,10 @@
           }
         },
         "type": "object",
-        "required": ["ofd_type", "ofd_source"],
+        "required": [
+          "ofd_type",
+          "ofd_source"
+        ],
         "title": "Body_create_client_ofd_sources_ofd_post"
       },
       "Body_create_operations_from_file_operations_file_post": {
@@ -2829,7 +2934,9 @@
           }
         },
         "type": "object",
-        "required": ["account_file"],
+        "required": [
+          "account_file"
+        ],
         "title": "Body_create_operations_from_file_operations_file_post"
       },
       "Body_login_auth_post": {
@@ -2883,7 +2990,10 @@
           }
         },
         "type": "object",
-        "required": ["username", "password"],
+        "required": [
+          "username",
+          "password"
+        ],
         "title": "Body_login_auth_post"
       },
       "ChangeTax": {
@@ -2938,7 +3048,10 @@
           }
         },
         "type": "object",
-        "required": ["year", "tax_system"],
+        "required": [
+          "year",
+          "tax_system"
+        ],
         "title": "ChangeTax",
         "example": {
           "rate_reason": "01.200010002",
@@ -2971,7 +3084,9 @@
           }
         },
         "type": "object",
-        "required": ["fixed_fees"],
+        "required": [
+          "fixed_fees"
+        ],
         "title": "ContributionsInfo"
       },
       "CreateAccountIntegration": {
@@ -3008,7 +3123,9 @@
           }
         },
         "type": "object",
-        "required": ["integration_type"],
+        "required": [
+          "integration_type"
+        ],
         "title": "CreateAccountIntegration"
       },
       "CreateAccountResponse": {
@@ -3099,7 +3216,9 @@
           }
         },
         "type": "object",
-        "required": ["request_id"],
+        "required": [
+          "request_id"
+        ],
         "title": "CreateAccountResponse"
       },
       "CreateOperation": {
@@ -3114,7 +3233,11 @@
           },
           "operation_type": {
             "type": "integer",
-            "enum": [1, 2, 3],
+            "enum": [
+              1,
+              2,
+              3
+            ],
             "title": "Operation Type",
             "description": "Признак налоговой базы. Возможные значения: Если category = debet: 1 - Доход. 2 - Не влияет на налоговую базу. Если category = credit: 2 - Не влияет на налоговую базу. 3 - Возврат покупателю."
           },
@@ -3192,7 +3315,9 @@
           }
         },
         "type": "object",
-        "required": ["request_id"],
+        "required": [
+          "request_id"
+        ],
         "title": "CreateSourceResponse"
       },
       "CreateTaxPaymentOperation": {
@@ -3234,7 +3359,12 @@
           }
         },
         "type": "object",
-        "required": ["date", "tax_period", "tax_type", "amount"],
+        "required": [
+          "date",
+          "tax_period",
+          "tax_type",
+          "amount"
+        ],
         "title": "CreateTaxPaymentOperation"
       },
       "CreateTaxPaymentOperationsRequest": {
@@ -3249,7 +3379,9 @@
           }
         },
         "type": "object",
-        "required": ["tax_payments"],
+        "required": [
+          "tax_payments"
+        ],
         "title": "CreateTaxPaymentOperationsRequest",
         "example": {
           "tax_payments": [
@@ -3284,7 +3416,9 @@
           }
         },
         "type": "object",
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "title": "CreateUser"
       },
       "CreateUserLead": {
@@ -3323,7 +3457,9 @@
           }
         },
         "type": "object",
-        "required": ["reason"],
+        "required": [
+          "reason"
+        ],
         "title": "CreateUserLead",
         "example": {
           "phone_number": "+79114651111",
@@ -3352,7 +3488,9 @@
           }
         },
         "type": "object",
-        "required": ["source_id"],
+        "required": [
+          "source_id"
+        ],
         "title": "DisableSource"
       },
       "DueDate": {
@@ -3370,7 +3508,10 @@
           }
         },
         "type": "object",
-        "required": ["year", "date"],
+        "required": [
+          "year",
+          "date"
+        ],
         "title": "DueDate"
       },
       "ENSBalanceInfo": {
@@ -3387,7 +3528,10 @@
           }
         },
         "type": "object",
-        "required": ["opening_balance", "closing_balance"],
+        "required": [
+          "opening_balance",
+          "closing_balance"
+        ],
         "title": "ENSBalanceInfo"
       },
       "ENSInfo": {
@@ -3475,7 +3619,12 @@
           }
         },
         "type": "object",
-        "required": ["accrued_ff", "paid_ff", "due_ff", "due_date_ff"],
+        "required": [
+          "accrued_ff",
+          "paid_ff",
+          "due_ff",
+          "due_date_ff"
+        ],
         "title": "FixedFeesInfo"
       },
       "GenerateENSOrder": {
@@ -3497,7 +3646,11 @@
           }
         },
         "type": "object",
-        "required": ["account_number", "purpose", "amount"],
+        "required": [
+          "account_number",
+          "purpose",
+          "amount"
+        ],
         "title": "GenerateENSOrder",
         "example": {
           "account_number": "40702810845370000004",
@@ -3530,7 +3683,11 @@
           }
         },
         "type": "object",
-        "required": ["report_type", "period_type", "period_year"],
+        "required": [
+          "report_type",
+          "period_type",
+          "period_year"
+        ],
         "title": "GenerateReportsRequest",
         "example": {
           "period_type": 1,
@@ -3601,7 +3758,9 @@
           }
         },
         "type": "object",
-        "required": ["pagination"],
+        "required": [
+          "pagination"
+        ],
         "title": "GetOperationsRequest"
       },
       "HTTPValidationError": {
@@ -3668,7 +3827,9 @@
           }
         },
         "type": "object",
-        "required": ["banners"],
+        "required": [
+          "banners"
+        ],
         "title": "InfoBannersResponse"
       },
       "InnInfo": {
@@ -3781,12 +3942,20 @@
           }
         },
         "type": "object",
-        "required": ["inn", "tax_system", "tax_rate", "start_year"],
+        "required": [
+          "inn",
+          "tax_system",
+          "tax_rate",
+          "start_year"
+        ],
         "title": "InnInfoToSave"
       },
       "KudirFormat": {
         "type": "string",
-        "enum": ["pdf", "xlsx"],
+        "enum": [
+          "pdf",
+          "xlsx"
+        ],
         "title": "KudirFormat"
       },
       "LeadInfoToSave": {
@@ -3858,27 +4027,49 @@
           }
         },
         "type": "object",
-        "required": ["inn", "tax_system", "start_year"],
+        "required": [
+          "inn",
+          "tax_system",
+          "start_year"
+        ],
         "title": "LeadInfoToSave"
       },
       "LeadReason": {
         "type": "string",
-        "enum": ["ens", "marketplace", "ofd", "service_disable", "other"],
+        "enum": [
+          "ens",
+          "marketplace",
+          "ofd",
+          "service_disable",
+          "other"
+        ],
         "title": "LeadReason"
       },
       "MarketplaceName": {
         "type": "string",
-        "enum": ["Яндекс Маркет", "Wildberries", "Ozon"],
+        "enum": [
+          "ya_market",
+          "wb",
+          "ozon"
+        ],
         "title": "MarketplaceName"
       },
       "MarketplaceType": {
         "type": "integer",
-        "enum": [1, 2, 3],
+        "enum": [
+          1,
+          2,
+          3
+        ],
         "title": "MarketplaceType"
       },
       "MarkupModeCode": {
         "type": "integer",
-        "enum": [1, 2, 3],
+        "enum": [
+          1,
+          2,
+          3
+        ],
         "title": "MarkupModeCode"
       },
       "NoticeInfo": {
@@ -3905,7 +4096,12 @@
           }
         },
         "type": "object",
-        "required": ["usn_1_kv", "usn_2_kv", "usn_3_kv", "usn_4_kv"],
+        "required": [
+          "usn_1_kv",
+          "usn_2_kv",
+          "usn_3_kv",
+          "usn_4_kv"
+        ],
         "title": "NoticeInfo"
       },
       "OFDSource": {
@@ -3923,7 +4119,10 @@
       },
       "OFDType": {
         "type": "integer",
-        "enum": [1, 2],
+        "enum": [
+          1,
+          2
+        ],
         "title": "OFDType"
       },
       "Operation": {
@@ -4061,7 +4260,10 @@
       },
       "OperationCategory": {
         "type": "string",
-        "enum": ["debet", "credit"],
+        "enum": [
+          "debet",
+          "credit"
+        ],
         "title": "OperationCategory"
       },
       "OperationCreditDescription": {
@@ -4170,7 +4372,10 @@
           }
         },
         "type": "object",
-        "required": ["operation_type", "amount"],
+        "required": [
+          "operation_type",
+          "amount"
+        ],
         "title": "OperationMarkup",
         "example": {
           "amount": 500.9,
@@ -4179,7 +4384,12 @@
       },
       "OperationType": {
         "type": "integer",
-        "enum": [1, 2, 3, 4],
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
         "title": "OperationType"
       },
       "OperationsPagination": {
@@ -4202,7 +4412,11 @@
           }
         },
         "type": "object",
-        "required": ["page_number", "row_count", "request_id"],
+        "required": [
+          "page_number",
+          "row_count",
+          "request_id"
+        ],
         "title": "OperationsPagination"
       },
       "OperationsResponse": {
@@ -4222,7 +4436,10 @@
           }
         },
         "type": "object",
-        "required": ["operations", "pages_count"],
+        "required": [
+          "operations",
+          "pages_count"
+        ],
         "title": "OperationsResponse",
         "example": {
           "operations": [
@@ -4383,12 +4600,19 @@
       },
       "RateReasonType": {
         "type": "string",
-        "enum": ["nothing", "crimea", "tax_holidays"],
+        "enum": [
+          "nothing",
+          "crimea",
+          "tax_holidays"
+        ],
         "title": "RateReasonType"
       },
       "ReportFormat": {
         "type": "string",
-        "enum": ["pdf", "xml"],
+        "enum": [
+          "pdf",
+          "xml"
+        ],
         "title": "ReportFormat"
       },
       "ReportInfo": {
@@ -4448,12 +4672,23 @@
           }
         },
         "type": "object",
-        "required": ["type", "report_status"],
+        "required": [
+          "type",
+          "report_status"
+        ],
         "title": "ReportInfo"
       },
       "ReportPeriodType": {
         "type": "integer",
-        "enum": [1, 2, 3, 4, 6, 9, 0],
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          9,
+          0
+        ],
         "title": "ReportPeriodType"
       },
       "ReportResponse": {
@@ -4465,17 +4700,29 @@
           }
         },
         "type": "object",
-        "required": ["report_code"],
+        "required": [
+          "report_code"
+        ],
         "title": "ReportResponse"
       },
       "ReportStatus": {
         "type": "integer",
-        "enum": [0, 1, 2, 3, 4],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
         "title": "ReportStatus"
       },
       "ReportType": {
         "type": "integer",
-        "enum": [1, 2, 3],
+        "enum": [
+          1,
+          2,
+          3
+        ],
         "title": "ReportType"
       },
       "ReportsInfoResponse": {
@@ -4490,7 +4737,9 @@
           }
         },
         "type": "object",
-        "required": ["reports_info"],
+        "required": [
+          "reports_info"
+        ],
         "title": "ReportsInfoResponse",
         "example": {
           "reports_info": [
@@ -4524,7 +4773,11 @@
       },
       "RequestState": {
         "type": "string",
-        "enum": ["in_progress", "completed", "failed"],
+        "enum": [
+          "in_progress",
+          "completed",
+          "failed"
+        ],
         "title": "RequestState"
       },
       "ResultInfo": {
@@ -4583,7 +4836,10 @@
           }
         },
         "type": "object",
-        "required": ["id", "status"],
+        "required": [
+          "id",
+          "status"
+        ],
         "title": "ResultInfo"
       },
       "SNOReference": {
@@ -4630,7 +4886,12 @@
           }
         },
         "type": "object",
-        "required": ["title", "key", "range_start", "range_end"],
+        "required": [
+          "title",
+          "key",
+          "range_start",
+          "range_end"
+        ],
         "title": "SNOReference"
       },
       "SNOReferencesResponse": {
@@ -4645,7 +4906,9 @@
           }
         },
         "type": "object",
-        "required": ["references"],
+        "required": [
+          "references"
+        ],
         "title": "SNOReferencesResponse",
         "example": {
           "references": [
@@ -4826,12 +5089,21 @@
           }
         },
         "type": "object",
-        "required": ["type", "name", "is_integrated"],
+        "required": [
+          "type",
+          "name",
+          "is_integrated"
+        ],
         "title": "Source"
       },
       "SourceType": {
         "type": "string",
-        "enum": ["account", "ofd", "marketplace", "hand"],
+        "enum": [
+          "account",
+          "ofd",
+          "marketplace",
+          "hand"
+        ],
         "title": "SourceType"
       },
       "SourcesInfo": {
@@ -5154,7 +5426,13 @@
           }
         },
         "type": "object",
-        "required": ["type", "code", "title", "description", "due_dates"],
+        "required": [
+          "type",
+          "code",
+          "title",
+          "description",
+          "due_dates"
+        ],
         "title": "TaskReference"
       },
       "TaskReferencesResponse": {
@@ -5169,7 +5447,9 @@
           }
         },
         "type": "object",
-        "required": ["tasks"],
+        "required": [
+          "tasks"
+        ],
         "title": "TaskReferencesResponse",
         "example": {
           "tasks": [
@@ -5268,7 +5548,12 @@
       },
       "TaskReportType": {
         "type": "string",
-        "enum": ["notice_1_kv", "notice_2_kv", "notice_3_kv", "declaration"],
+        "enum": [
+          "notice_1_kv",
+          "notice_2_kv",
+          "notice_3_kv",
+          "declaration"
+        ],
         "title": "TaskReportType"
       },
       "TaskResponse": {
@@ -5288,7 +5573,10 @@
           }
         },
         "type": "object",
-        "required": ["tasks", "is_relevant"],
+        "required": [
+          "tasks",
+          "is_relevant"
+        ],
         "title": "TaskResponse",
         "example": {
           "tasks": [
@@ -5389,7 +5677,13 @@
       },
       "TaskType": {
         "type": "string",
-        "enum": ["usn", "fixed_fees", "income_percentage", "report", "other"],
+        "enum": [
+          "usn",
+          "fixed_fees",
+          "income_percentage",
+          "report",
+          "other"
+        ],
         "title": "TaskType"
       },
       "TaxCalculationResponse": {
@@ -5553,17 +5847,30 @@
           }
         },
         "type": "object",
-        "required": ["limits"],
+        "required": [
+          "limits"
+        ],
         "title": "TaxLimitsResponse"
       },
       "TaxSystemType": {
         "type": "string",
-        "enum": ["usn_d", "usn_d_r", "osn", "eshn", "patent"],
+        "enum": [
+          "usn_d",
+          "usn_d_r",
+          "osn",
+          "eshn",
+          "patent"
+        ],
         "title": "TaxSystemType"
       },
       "TaxType": {
         "type": "integer",
-        "enum": [1, 2, 3, 4],
+        "enum": [
+          1,
+          2,
+          3,
+          4
+        ],
         "title": "TaxType"
       },
       "Token": {
@@ -5578,7 +5885,10 @@
           }
         },
         "type": "object",
-        "required": ["access_token", "token_type"],
+        "required": [
+          "access_token",
+          "token_type"
+        ],
         "title": "Token"
       },
       "USNTaxInfo": {
@@ -5675,7 +5985,14 @@
           }
         },
         "type": "object",
-        "required": ["tax_rate", "notices", "usn_1", "usn_6", "usn_9", "usn_0"],
+        "required": [
+          "tax_rate",
+          "notices",
+          "usn_1",
+          "usn_6",
+          "usn_9",
+          "usn_0"
+        ],
         "title": "USNTaxes"
       },
       "UpdateOperationMarkup": {
@@ -5695,7 +6012,10 @@
           }
         },
         "type": "object",
-        "required": ["operation_type", "amount"],
+        "required": [
+          "operation_type",
+          "amount"
+        ],
         "title": "UpdateOperationMarkup"
       },
       "UpdateReportRequest": {
@@ -5760,7 +6080,11 @@
       },
       "UpdateRepostStatus": {
         "type": "integer",
-        "enum": [2, 3, 4],
+        "enum": [
+          2,
+          3,
+          4
+        ],
         "title": "UpdateRepostStatus"
       },
       "User": {
@@ -5940,6 +6264,18 @@
             "title": "Fns Reg Date",
             "description": "Дата регистрации ИП в ФНС"
           },
+          "last_closed_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Closed Year",
+            "description": "Год последней сданной декларации"
+          },
           "email": {
             "anyOf": [
               {
@@ -6004,7 +6340,11 @@
           }
         },
         "type": "object",
-        "required": ["id", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "created_at",
+          "updated_at"
+        ],
         "title": "User"
       },
       "UserInfoBanner": {
@@ -6026,7 +6366,12 @@
           }
         },
         "type": "object",
-        "required": ["id", "banner_type", "title", "description"],
+        "required": [
+          "id",
+          "banner_type",
+          "title",
+          "description"
+        ],
         "title": "UserInfoBanner"
       },
       "ValidationError": {
@@ -6055,7 +6400,11 @@
           }
         },
         "type": "object",
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError"
       }
     },

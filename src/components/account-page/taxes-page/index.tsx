@@ -969,7 +969,7 @@ export const TaxesPage = () => {
               {item.short_name && item.short_name !== null ? (
                 <Tooltip title={item.name}>
                   <Text className={styles["source-text-left"]}>
-                    {item.short_name.length > 10
+                    {item.short_name.length > 10 && item.type !== "marketplace"
                       ? `${item.short_name.substring(0, 10)}...`
                       : item.short_name}
                   </Text>
@@ -2088,7 +2088,9 @@ export const TaxesPage = () => {
                         {item.short_name && item.short_name !== null ? (
                           <Tooltip title={item.name}>
                             <Text className={styles["source-text-left"]}>
-                              {item.short_name.length > 10 && isTablet
+                              {item.short_name.length > 10 &&
+                              isTablet &&
+                              item.type !== "marketplace"
                                 ? `${item.short_name.substring(0, 10)}...`
                                 : item.short_name}
                             </Text>
@@ -2682,7 +2684,9 @@ export const TaxesPage = () => {
                           {item.short_name && item.short_name !== null ? (
                             <Tooltip title={item.name}>
                               <Text className={styles["source-text-left"]}>
-                                {item.short_name.length > 10 && isTablet
+                                {item.short_name.length > 10 &&
+                                isTablet &&
+                                item.type !== "marketplace"
                                   ? `${item.short_name.substring(0, 10)}...`
                                   : item.short_name}
                               </Text>

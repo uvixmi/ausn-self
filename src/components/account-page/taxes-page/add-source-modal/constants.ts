@@ -115,4 +115,6 @@ export const CONTENT = {
   TITLE_MARKETPLACE_PICK: "Выберите способ загрузки",
   TITLE_MARKETPLACE_XLS: "Загрузите отчёт о реализации в формате .xlsx",
   LOAD_MARKETPLACE_XLS: "Загрузите файл в формате .xlsx",
+  TEXT_MARKETPLACE_YA_ID_INPUT: "ID магазина",
+  INPUT_SALDO_TITLE: "Сальдо",
 } as const

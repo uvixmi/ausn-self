@@ -131,7 +131,7 @@ export const AddMarketplaceOperationModal = ({
     },
     {
       label: <Text className={styles["select-text"]}>{"Wildberries"}</Text>,
-      value: MarketplaceName.Wildberries,
+      value: MarketplaceName.Wb,
     },
   ]
 

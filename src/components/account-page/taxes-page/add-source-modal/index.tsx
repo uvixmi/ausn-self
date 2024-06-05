@@ -65,6 +65,7 @@ import "dayjs/locale/ru"
 import {
   convertDateFormat,
   convertReverseFormat,
+  numberWithSpaces,
 } from "../../actions-page/payment-modal/utils"
 import { antdMonths } from "../../../../ui-kit/datepicker/localization"
 import { LoadFileIcon } from "../type-operation/icons/load-file"
@@ -259,20 +260,20 @@ export const AddSourceModal = ({
 
   const sendMarketplaceXls = async (file: RcFile) => {
     const data = {
-      marketplace_type: 1,
-      marketplace_source:
+      sync_type: 1,
+      source_name:
         marketplaceMode === "3"
           ? MarketplaceName.Ozon
           : marketplaceMode === "2"
-          ? MarketplaceName.Wildberries
-          : MarketplaceName.ValueЯндексМаркет,
+          ? MarketplaceName.Wb
+          : MarketplaceName.YaMarket,
 
       marketplace_file: file,
     }
     try {
       await api.sources.createClientMarketplaceSourcesMarketplacePost(
         data,
-        {},
+
         {
           headers,
         }
@@ -288,18 +289,15 @@ export const AddSourceModal = ({
 
   const sendYandexMarketplaceSource = async () => {
     const data = {
-      marketplace_type: 3,
-      marketplace_source:
-        marketplaceMode === "3"
-          ? MarketplaceName.Ozon
-          : marketplaceMode === "2"
-          ? MarketplaceName.Wildberries
-          : MarketplaceName.ValueЯндексМаркет,
+      shop_id: marketplaceId,
+      sync_type: 3,
+      source_name: MarketplaceName.YaMarket,
+      date_begin: convertDateFormat(dateMarketPlace),
     }
     try {
       await api.sources.createClientMarketplaceSourcesMarketplacePost(
         data,
-        { date_begin: convertDateFormat(dateMarketPlace) },
+
         {
           headers,
         }
@@ -314,29 +312,28 @@ export const AddSourceModal = ({
   }
   const sendOtherMarketplaceSource = async (type: number) => {
     const data = {
-      marketplace_type: type,
-
-      marketplace_source:
+      date_begin: convertDateFormat(dateMarketPlace),
+      sync_type: type,
+      saldo: saldo > 0 ? saldo : undefined,
+      password: marketplaceKey,
+      source_name:
         marketplaceMode === "3"
           ? MarketplaceName.Ozon
           : marketplaceMode === "2"
-          ? MarketplaceName.Wildberries
-          : MarketplaceName.ValueЯндексМаркет,
-    }
-    const marketplace_credentials = {
+          ? MarketplaceName.Wb
+          : MarketplaceName.YaMarket,
       login:
         marketplaceMode === "3"
           ? marketplaceId
           : marketplaceMode === "2"
           ? undefined
           : marketplaceId,
-      password: marketplaceKey,
-      date_begin: convertDateFormat(dateMarketPlace),
     }
+
     try {
       await api.sources.createClientMarketplaceSourcesMarketplacePost(
         data,
-        marketplace_credentials,
+
         {
           headers,
         }
@@ -482,6 +479,24 @@ export const AddSourceModal = ({
 
   const nextInput = useRef<InputRef>(null)
 
+  const [saldo, setSaldo] = useState(0)
+  const [saldoInput, setSaldoInput] = useState("")
+  const [saldoError, setSaldoError] = useState(false)
+  const handleChangeSaldo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value: inputValue } = e.target
+    const amount = inputValue.replace(/\s/g, "")
+    const reg = /^-?\d+(\.\d{0,2})?$/
+
+    if (reg.test(amount) || amount === "-" || amount === "") {
+      setSaldoInput(numberWithSpaces(amount))
+      if (amount[amount.length - 1] !== ".") setSaldo(parseFloat(amount))
+
+      if (amount === "") setSaldo(0)
+    }
+    if (parseFloat(amount) > 0 && inputValue !== "") setSaldoError(false)
+    else setSaldoError(true)
+  }
+
   useEffect(() => {
     if (ofdLogin !== "" && ofdPassword !== "" && dateSource !== "")
       setIsOfdButtonDisabled(false)
@@ -493,15 +508,16 @@ export const AddSourceModal = ({
       if (
         marketplaceId !== "" &&
         marketplaceKey !== "" &&
-        dateMarketPlace !== ""
+        dateMarketPlace !== "" &&
+        saldo !== 0
       )
         setIsButtonMarketplaceDisabled(false)
       else setIsButtonMarketplaceDisabled(true)
     else if (marketplaceMode === "2")
-      if (marketplaceKey !== "" && dateMarketPlace !== "")
+      if (marketplaceKey !== "" && dateMarketPlace !== "" && saldo !== 0)
         setIsButtonMarketplaceDisabled(false)
       else setIsButtonMarketplaceDisabled(true)
-  }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace])
+  }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace, saldo])
 
   useEffect(() => {
     if (
@@ -2041,6 +2057,42 @@ export const AddSourceModal = ({
                       />
                     </Form.Item>
                   </div>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.INPUT_SALDO_TITLE}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
+                    </Text>
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={saldoError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        saldoError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {saldoInput === "0" || saldoInput === ""
+                                ? CONTENT.INPUT_ERROR_HINT
+                                : CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        value={saldoInput}
+                        onChange={handleChangeSaldo}
+                      />
+                    </Form.Item>
+                  </div>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_MARKETPLACE_OZON_DESCRIPTION}
                     <Link
@@ -2062,6 +2114,9 @@ export const AddSourceModal = ({
                         setMarketplaceKeyError(false)
                         setDateMarketPlace("")
                         setDateMarketplaceError(false)
+                        setSaldoInput("")
+                        setSaldoError(false)
+                        setSaldo(0)
                       }}
                       className={styles["generate-back"]}
                       type="secondary"
@@ -2494,6 +2549,42 @@ export const AddSourceModal = ({
                         }}
                       />
                     </Form.Item>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.INPUT_SALDO_TITLE}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+                      <Form.Item
+                        className={styles["form-inn"]}
+                        validateStatus={saldoError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          saldoError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {saldoInput === "0" || saldoInput === ""
+                                  ? CONTENT.INPUT_ERROR_HINT
+                                  : CONTENT.INPUT_ERROR_HINT}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <InputOne
+                          placeholder={CONTENT.INPUT_PLACEHOLDER}
+                          value={saldoInput}
+                          onChange={handleChangeSaldo}
+                        />
+                      </Form.Item>
+                    </div>
                   </div>
                   <Text className={styles["text-title"]}>
                     {CONTENT.TEXT_MARKETPLACE_WB_DESCRIPTION}
@@ -2515,6 +2606,9 @@ export const AddSourceModal = ({
                         setMarketplaceKeyError(false)
                         setDateMarketPlace("")
                         setDateMarketplaceError(false)
+                        setSaldo(0)
+                        setSaldoInput("")
+                        setSaldoError(false)
                       }}
                       className={styles["generate-back"]}
                       type="secondary"
@@ -2540,6 +2634,45 @@ export const AddSourceModal = ({
               )
             ) : marketplaceMode === "1" ? (
               <div className={styles["wrapper-marketplace"]}>
+                <div className={styles["input-item"]}>
+                  <Text
+                    className={cn(
+                      styles["text-description"],
+                      styles["default-text"]
+                    )}
+                  >
+                    {CONTENT.TEXT_MARKETPLACE_YA_ID_INPUT}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
+                  </Text>
+                  <Form.Item
+                    className={styles["form-inn"]}
+                    validateStatus={marketplaceIdError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      marketplaceIdError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR_HINT}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
+                  >
+                    <InputOne
+                      value={marketplaceId}
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      onChange={(event) => {
+                        setMarketplaceId(event.target.value)
+                        if (event.target.value !== "")
+                          setMarketplaceIdError(false)
+                        else setMarketplaceIdError(true)
+                      }}
+                    />
+                  </Form.Item>
+                </div>
                 <div className={styles["input-item"]}>
                   <Text
                     className={cn(
@@ -2622,6 +2755,9 @@ export const AddSourceModal = ({
                       setMarketplaceMode("")
                       setMarketplaceLoadWindow("")
                       setDateMarketPlace("")
+                      setMarketplaceId("")
+                      setMarketplaceIdError(false)
+                      setDateMarketplaceError(false)
                     }}
                     className={styles["generate-back"]}
                     type="secondary"
@@ -2634,7 +2770,7 @@ export const AddSourceModal = ({
                   <ButtonOne
                     className={styles["generate-button"]}
                     onClick={sendYandexMarketplaceSource}
-                    disabled={dateMarketPlace === ""}
+                    disabled={!(dateMarketPlace !== "" && marketplaceId !== "")}
                   >
                     {CONTENT.BUTTON_GENERATE_LINK}
                   </ButtonOne>
