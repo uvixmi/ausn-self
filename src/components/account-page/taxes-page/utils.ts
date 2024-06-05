@@ -6,7 +6,7 @@ export const getSourceText = (
   if (shortName && shortName !== null) {
     const last4Digits = accountNumber
       ? `${shortName} *${accountNumber.slice(-4)}`
-      : sourceName
+      : shortName
     return last4Digits
   } else {
     const last4Digits = accountNumber
