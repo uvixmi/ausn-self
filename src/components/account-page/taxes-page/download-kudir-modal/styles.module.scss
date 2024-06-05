@@ -52,7 +52,7 @@ $xxl: 2560px;
 
   flex-direction: column;
 
-  @media screen and (min-width: $s) {
+  @media screen and (min-width: $tablet) {
     flex-direction: row;
   }
 }
@@ -145,10 +145,12 @@ $xxl: 2560px;
   color: #141414;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
+  max-width: 330px;
 
   @media screen and (min-width: $s) {
     margin-top: 8px;
     font-size: 24px !important;
     line-height: 32px !important;
+    max-width: none;
   }
 }
