@@ -593,9 +593,9 @@ export const AddSourceModal = ({
       >
         {buttonMode === "default" ? (
           <div className={styles["list-wrapper"]}>
-            <Title level={3} style={{ marginTop: "0", marginBottom: "24px" }}>
+            <Text className={styles["text-heading-add-data"]} style={{ marginTop: "0", marginBottom: "24px" }}>
               {CONTENT.TITLE_ADD_SOURCE}
-            </Title>
+            </Text>
             <div className={styles["main-buttons-wrapper"]}>
               <Button
                 onClick={() => {

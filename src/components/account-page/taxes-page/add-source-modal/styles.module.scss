@@ -67,12 +67,16 @@ $xxl: 2560px;
 }
 
 .title-modal {
-  font-family: "Inter";
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 32px;
-  text-align: left;
   color: #141414;
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media screen and (min-width: $s) {
+    font-size: 24px;
+    line-height: 32px;
+  }
 }
 
 .text-title {
@@ -442,5 +446,17 @@ $xxl: 2560px;
   align-self: center;
   @media screen and (min-width: $s) {
     max-width: none;
+  }
+}
+
+.text-heading-add-data {
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media screen and (min-width: $s) {
+    font-size: 24px;
+    line-height: 32px;
   }
 }

@@ -4,10 +4,10 @@ export const CONTENT = {
   DESCRIPTION_BANK_STATEMENT: "Загрузить выписку в формате\u00A01С\u00A0(.txt)",
   TEXT_UPLOAD_DESCRIPTION_OFD_XLSX: "Загрузить выписку в формате .xlsx",
   TITLE_BANK_INTEGRATION: "Интеграция с банком",
-  TITLE_MANUAL_LOAD: "Ручная загрузка операции",
+  TITLE_MANUAL_LOAD: "Ручной ввод операции",
   DESCRIPTION_MANUAL_LOAD: "Добавить операцию, не отраженную в сервисе",
   DESCRIPTION_BANK_INTEGRATION: "Модульбанк, Тинькофф, Точка, Хайс",
-  TITLE_ONLINE_CASHIER: "Онлайн-касса",
+  TITLE_ONLINE_CASHIER: "Данные онлайн-кассы  ",
   DESCRIPTION_ONLINE_CASHIER:
     "ОФД.ру, Первый ОФД, Платформа, СБИС, Контур и\u00A0т.д.",
   TITLE_MARKETPLACE_INTEGRATION: "Маркетплейс",

@@ -354,9 +354,9 @@ export const ActionsPage = () => {
       >
         {contextHolder}
         <Content className={styles["content-wrapper"]}>
-          <Title level={2} className={styles["heading-text"]}>
+          <Text className={styles["heading-text"]}>
             {CONTENT.ACTIONS_HEADING}
-          </Title>
+          </Text>
           <div className={styles["remark-wrapper"]}>
             <Button
               className={styles["remark-button"]}
