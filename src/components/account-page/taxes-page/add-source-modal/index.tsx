@@ -311,24 +311,44 @@ export const AddSourceModal = ({
     }
   }
   const sendOtherMarketplaceSource = async (type: number) => {
-    const data = {
-      date_begin: convertDateFormat(dateMarketPlace),
-      sync_type: type,
-      saldo: saldo > 0 ? saldo : undefined,
-      password: marketplaceKey,
-      source_name:
-        marketplaceMode === "3"
-          ? MarketplaceName.Ozon
-          : marketplaceMode === "2"
-          ? MarketplaceName.Wb
-          : MarketplaceName.YaMarket,
-      login:
-        marketplaceMode === "3"
-          ? marketplaceId
-          : marketplaceMode === "2"
-          ? undefined
-          : marketplaceId,
-    }
+    const data =
+      saldo > 0
+        ? {
+            date_begin: convertDateFormat(dateMarketPlace),
+            sync_type: type,
+            saldo: saldo,
+            password: marketplaceKey,
+            source_name:
+              marketplaceMode === "3"
+                ? MarketplaceName.Ozon
+                : marketplaceMode === "2"
+                ? MarketplaceName.Wb
+                : MarketplaceName.YaMarket,
+            login:
+              marketplaceMode === "3"
+                ? marketplaceId
+                : marketplaceMode === "2"
+                ? undefined
+                : marketplaceId,
+          }
+        : {
+            date_begin: convertDateFormat(dateMarketPlace),
+            sync_type: type,
+
+            password: marketplaceKey,
+            source_name:
+              marketplaceMode === "3"
+                ? MarketplaceName.Ozon
+                : marketplaceMode === "2"
+                ? MarketplaceName.Wb
+                : MarketplaceName.YaMarket,
+            login:
+              marketplaceMode === "3"
+                ? marketplaceId
+                : marketplaceMode === "2"
+                ? undefined
+                : marketplaceId,
+          }
 
     try {
       await api.sources.createClientMarketplaceSourcesMarketplacePost(
@@ -508,16 +528,15 @@ export const AddSourceModal = ({
       if (
         marketplaceId !== "" &&
         marketplaceKey !== "" &&
-        dateMarketPlace !== "" &&
-        saldo !== 0
+        dateMarketPlace !== ""
       )
         setIsButtonMarketplaceDisabled(false)
       else setIsButtonMarketplaceDisabled(true)
     else if (marketplaceMode === "2")
-      if (marketplaceKey !== "" && dateMarketPlace !== "" && saldo !== 0)
+      if (marketplaceKey !== "" && dateMarketPlace !== "")
         setIsButtonMarketplaceDisabled(false)
       else setIsButtonMarketplaceDisabled(true)
-  }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace, saldo])
+  }, [marketplaceId, marketplaceKey, marketplaceMode, dateMarketPlace])
 
   useEffect(() => {
     if (
@@ -2075,27 +2094,8 @@ export const AddSourceModal = ({
                       )}
                     >
                       {CONTENT.INPUT_SALDO_TITLE}
-                      <Text className={styles["necessary"]}>
-                        {CONTENT.NECESSARY}
-                      </Text>
                     </Text>
-                    <Form.Item
-                      className={styles["form-inn"]}
-                      validateStatus={saldoError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                      help={
-                        saldoError ? (
-                          <div>
-                            <Text className={styles["error-text"]}>
-                              {saldoInput === "0" || saldoInput === ""
-                                ? CONTENT.INPUT_ERROR_HINT
-                                : CONTENT.INPUT_ERROR_HINT}
-                            </Text>
-                          </div>
-                        ) : (
-                          ""
-                        )
-                      }
-                    >
+                    <Form.Item className={styles["form-inn"]}>
                       <InputOne
                         placeholder={CONTENT.INPUT_PLACEHOLDER}
                         value={saldoInput}
@@ -2574,27 +2574,8 @@ export const AddSourceModal = ({
                         )}
                       >
                         {CONTENT.INPUT_SALDO_TITLE}
-                        <Text className={styles["necessary"]}>
-                          {CONTENT.NECESSARY}
-                        </Text>
                       </Text>
-                      <Form.Item
-                        className={styles["form-inn"]}
-                        validateStatus={saldoError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                        help={
-                          saldoError ? (
-                            <div>
-                              <Text className={styles["error-text"]}>
-                                {saldoInput === "0" || saldoInput === ""
-                                  ? CONTENT.INPUT_ERROR_HINT
-                                  : CONTENT.INPUT_ERROR_HINT}
-                              </Text>
-                            </div>
-                          ) : (
-                            ""
-                          )
-                        }
-                      >
+                      <Form.Item className={styles["form-inn"]}>
                         <InputOne
                           placeholder={CONTENT.INPUT_PLACEHOLDER}
                           value={saldoInput}
