@@ -1789,12 +1789,12 @@ export const TaxesPage = () => {
               <>
                 <Title level={4}>
                   {CONTENT.HEADING_HAND_SOURCERS + " "}
-                  <Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
+                  {/*<Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
                     <InfoCircleOutlined
                       className={styles["sider-icon"]}
                       size={24}
                     />
-                  </Tooltip>
+            </Tooltip>*/}
                 </Title>
                 <List
                   dataSource={sourcesHandSider}
@@ -2385,12 +2385,12 @@ export const TaxesPage = () => {
                 <>
                   <Title level={4}>
                     {CONTENT.HEADING_HAND_SOURCERS + " "}
-                    <Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
+                    {/*<Tooltip title={CONTENT.HAND_LOAD_INFO_TOOLTIP}>
                       <InfoCircleOutlined
                         className={styles["sider-icon"]}
                         size={24}
                       />
-                    </Tooltip>
+              </Tooltip>*/}
                   </Title>
                   <List
                     dataSource={sourcesHandSider}
