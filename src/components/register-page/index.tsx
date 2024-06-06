@@ -253,7 +253,7 @@ export const RegisterPage = ({
     if (sno == TaxSystemType.UsnD) {
       setMaxSlider(6)
     }
-  }, [marks])
+  }, [marks, sno])
 
   const [rate, setRate] = useState<string | undefined>(undefined)
 

@@ -189,7 +189,7 @@ export const TaxesPage = () => {
       label: (
         <div className={cn("income-inner", [styles["type-new-income"]])}>
           <IncomeIcon className={cn("inner-icon-2", styles["type-income-2"])} />
-          <Text className={cn(styles["type-new-text"])}>{"Доход"}</Text>
+          <Text className={cn(styles["type-new-text-2"])}>{"Доход"}</Text>
         </div>
       ),
       value: 1,
@@ -198,7 +198,7 @@ export const TaxesPage = () => {
       label: (
         <div className={cn("non-inner", [styles["type-new-income"]])}>
           <NonIcon className={cn("inner-icon-2", styles["type-income-2"])} />
-          <Text className={cn(styles["type-new-text"])}>
+          <Text className={cn(styles["type-new-text-2"])}>
             {"Не учитывается"}
           </Text>
         </div>
@@ -209,7 +209,7 @@ export const TaxesPage = () => {
       label: (
         <div className={cn("back-inner", [styles["type-new-income"]])}>
           <BackIcon className={cn("inner-icon-2", styles["type-income-2"])} />
-          <Text className={cn(styles["type-new-text"])}>{"Возврат"}</Text>
+          <Text className={cn(styles["type-new-text-2"])}>{"Возврат"}</Text>
         </div>
       ),
       value: 3,
@@ -218,7 +218,7 @@ export const TaxesPage = () => {
       label: (
         <div className={cn("taxes-inner", [styles["type-new-income"]])}>
           <TaxesIcon className={cn("inner-icon-2", styles["type-income-2"])} />
-          <Text className={cn(styles["type-new-text"])}>
+          <Text className={cn(styles["type-new-text-2"])}>
             {"Налоги и взносы"}
           </Text>
         </div>
@@ -2061,7 +2061,10 @@ export const TaxesPage = () => {
                   dataSource={sourcesAutoSider}
                   renderItem={(item) => (
                     <List.Item
-                      className={styles["list-item-right"]}
+                      className={cn(
+                        "sources-list-item",
+                        styles["list-item-right"]
+                      )}
                       style={{ borderBlockEnd: "none" }}
                     >
                       <div className={styles["left-source-name"]}>

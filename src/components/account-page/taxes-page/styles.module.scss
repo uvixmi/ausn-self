@@ -323,9 +323,14 @@ $xxl: 2560px;
 }
 
 .list-item-hide:hover {
-  border-radius: 8px;
-  background-color: $brand-secondary-pale !important;
-  cursor: pointer;
+  @media screen and (min-width: $s) {
+    border-radius: 8px;
+    background-color: $brand-secondary-pale !important;
+    cursor: pointer;
+
+    margin-left: -8px;
+    padding-left: 8px;
+  }
 }
 
 .list-item-hide:hover .source-delete-icon {
@@ -557,6 +562,15 @@ $xxl: 2560px;
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
+  text-align: left;
+  color: inherit;
+}
+
+.type-new-text-2 {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
   text-align: left;
   color: inherit;
 }
