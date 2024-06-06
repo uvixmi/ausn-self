@@ -967,7 +967,13 @@ export const TaxesPage = () => {
           <div className={styles["list-item-hide"]}>
             <div className={styles["left-source-name"]}>
               {item.short_name && item.short_name !== null ? (
-                <Tooltip title={item.name}>
+                <Tooltip
+                  title={
+                    item.type !== "marketplace" &&
+                    item.type !== "ofd" &&
+                    item.name
+                  }
+                >
                   <Text className={styles["source-text-left"]}>
                     {item.short_name.length > 10 && item.type !== "marketplace"
                       ? `${item.short_name.substring(0, 10)}...`
@@ -975,7 +981,13 @@ export const TaxesPage = () => {
                   </Text>
                 </Tooltip>
               ) : item.name.length > 10 ? (
-                <Tooltip title={item.name}>
+                <Tooltip
+                  title={
+                    item.type !== "marketplace" &&
+                    item.type !== "ofd" &&
+                    item.name
+                  }
+                >
                   <Text className={styles["source-text-left"]}>
                     {item.name.length > 10 && isTablet
                       ? `${item.name.substring(0, 10)}...`
@@ -1022,7 +1034,13 @@ export const TaxesPage = () => {
           <div className={styles["list-item-hide"]}>
             <div className={styles["left-source-name"]}>
               {item.short_name && item.short_name !== null ? (
-                <Tooltip title={item.name}>
+                <Tooltip
+                  title={
+                    item.type !== "marketplace" &&
+                    item.type !== "ofd" &&
+                    item.name
+                  }
+                >
                   <Text className={styles["source-text-left"]}>
                     {item.short_name.length > 10
                       ? `${item.short_name.substring(0, 10)}...`
@@ -1030,7 +1048,13 @@ export const TaxesPage = () => {
                   </Text>
                 </Tooltip>
               ) : item.name.length > 10 ? (
-                <Tooltip title={item.name}>
+                <Tooltip
+                  title={
+                    item.type !== "marketplace" &&
+                    item.type !== "ofd" &&
+                    item.name
+                  }
+                >
                   <Text className={styles["source-text-left"]}>
                     {item.name.length > 10 && isTablet
                       ? `${item.name.substring(0, 10)}...`
@@ -1850,7 +1874,13 @@ export const TaxesPage = () => {
                           )
                         )}
                         {item.short_name && item.short_name !== null ? (
-                          <Tooltip title={item.name}>
+                          <Tooltip
+                            title={
+                              item.type !== "marketplace" &&
+                              item.type !== "ofd" &&
+                              item.name
+                            }
+                          >
                             <Text className={styles["source-text-left"]}>
                               {item.short_name.length > 10 && isTablet
                                 ? `${item.short_name.substring(0, 10)}...`
@@ -1858,7 +1888,13 @@ export const TaxesPage = () => {
                             </Text>
                           </Tooltip>
                         ) : item.name.length > 10 ? (
-                          <Tooltip title={item.name}>
+                          <Tooltip
+                            title={
+                              item.type !== "marketplace" &&
+                              item.type !== "ofd" &&
+                              item.name
+                            }
+                          >
                             <Text className={styles["source-text-left"]}>
                               {`${item.name.substring(0, 10)}..`}{" "}
                             </Text>
@@ -2091,7 +2127,13 @@ export const TaxesPage = () => {
                         ) : null}
 
                         {item.short_name && item.short_name !== null ? (
-                          <Tooltip title={item.name}>
+                          <Tooltip
+                            title={
+                              item.type !== "marketplace" &&
+                              item.type !== "ofd" &&
+                              item.name
+                            }
+                          >
                             <Text className={styles["source-text-left"]}>
                               {item.short_name.length > 10 &&
                               isTablet &&
@@ -2444,7 +2486,13 @@ export const TaxesPage = () => {
                             )
                           )}
                           {item.short_name && item.short_name !== null ? (
-                            <Tooltip title={item.name}>
+                            <Tooltip
+                              title={
+                                item.type !== "marketplace" &&
+                                item.type !== "ofd" &&
+                                item.name
+                              }
+                            >
                               <Text className={styles["source-text-left"]}>
                                 {item.short_name.length > 10 && isTablet
                                   ? `${item.short_name.substring(0, 10)}...`
@@ -2452,7 +2500,13 @@ export const TaxesPage = () => {
                               </Text>
                             </Tooltip>
                           ) : item.name.length > 10 ? (
-                            <Tooltip title={item.name}>
+                            <Tooltip
+                              title={
+                                item.type !== "marketplace" &&
+                                item.type !== "ofd" &&
+                                item.name
+                              }
+                            >
                               <Text className={styles["source-text-left"]}>
                                 {`${item.name.substring(0, 10)}..`}{" "}
                               </Text>
@@ -2694,7 +2748,13 @@ export const TaxesPage = () => {
                           ) : null}
 
                           {item.short_name && item.short_name !== null ? (
-                            <Tooltip title={item.name}>
+                            <Tooltip
+                              title={
+                                item.type !== "marketplace" &&
+                                item.type !== "ofd" &&
+                                item.name
+                              }
+                            >
                               <Text className={styles["source-text-left"]}>
                                 {item.short_name.length > 10 &&
                                 isTablet &&

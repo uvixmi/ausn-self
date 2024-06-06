@@ -1,5 +1,5 @@
 export const CONTENT = {
-  TITLE_KUDIR: "Книга учетов доходов и расходов",
+  TITLE_KUDIR: "Книга учёта доходов и расходов",
   BUTTON_DOWNLOAD: "Скачать КУДиР",
   SELECT_PERIOD_TITLE: "Налоговый период",
   SELECT_FORMAT_TITLE: "Формат файла",
