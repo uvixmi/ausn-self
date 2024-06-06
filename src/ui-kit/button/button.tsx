@@ -11,11 +11,13 @@ export const ButtonOne = ({
   dataTestId = "button",
   children,
   className,
+  ref,
   onBlur,
   onFocus,
   onClick,
   onMouseEnter,
   onMouseLeave,
+  onTouchEnd,
   ...ariaAttributes
 }: ButtonProps) => {
   const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,6 +52,7 @@ export const ButtonOne = ({
     <Button
       {...ariaAttributes}
       id={id}
+      ref={ref}
       disabled={disabled}
       data-test-id={dataTestId}
       className={buttonClassnames}
@@ -58,6 +61,7 @@ export const ButtonOne = ({
       onFocus={handleFocus}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchEnd={onTouchEnd}
     >
       {children}
     </Button>

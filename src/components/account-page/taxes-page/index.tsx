@@ -26,7 +26,7 @@ import {
   DownloadOutlined,
   CloseOutlined,
 } from "@ant-design/icons"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { LegacyRef, useCallback, useEffect, useRef, useState } from "react"
 import { v4 as uuid, v4 } from "uuid"
 import { useDispatch, useSelector } from "react-redux"
 import "./styles.scss"
@@ -183,6 +183,8 @@ export const TaxesPage = () => {
   const [optionsTypesSelect, setOptionsTypesSelect] = useState(
     initialOptionTypesSelect
   )
+
+  const updateRef = useRef<HTMLElement>(null)
 
   const optionsTypes = [
     {
@@ -2396,7 +2398,16 @@ export const TaxesPage = () => {
               </div>
               <div className={styles["buttons-drawer"]}>
                 <ButtonOne
-                  onClick={() => fetchSourcesHand()}
+                  onClick={(e) => {
+                 
+                    e.currentTarget.blur()
+updateRef.current?.blur()
+                    fetchSourcesHand()
+                  }}
+                  ref={updateRef}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.blur() // Убедитесь, что фокус убирается при касании на мобильных устройствах
+                  }}
                   type="secondary"
                   className={styles["button-drawer-item"]}
                 >
@@ -2454,16 +2465,22 @@ export const TaxesPage = () => {
                         <div className={styles["left-source-name"]}>
                           {item.state === "in_progress" ? (
                             item.link && item.link !== "" ? (
-                              <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
+                              <Tooltip
+                                title={CONTENT.TOOLTIP_ORANGE}
+                                placement="topLeft"
+                              >
                                 <InProgressOrangeIcon />
                               </Tooltip>
                             ) : (
-                              <Tooltip title={CONTENT.TOOLTIP_GREY}>
+                              <Tooltip
+                                title={CONTENT.TOOLTIP_GREY}
+                                placement="topLeft"
+                              >
                                 <InProgressIcon />
                               </Tooltip>
                             )
                           ) : item.state === "failed" ? (
-                            <Tooltip title={item.reason}>
+                            <Tooltip title={item.reason} placement="topLeft">
                               <FailedIcon />
                             </Tooltip>
                           ) : (
@@ -2736,28 +2753,40 @@ export const TaxesPage = () => {
                         <div className={styles["left-source-name"]}>
                           {item.state === "in_progress" ? (
                             item.link && item.link !== "" ? (
-                              <Tooltip title={CONTENT.TOOLTIP_ORANGE}>
+                              <Tooltip
+                                title={CONTENT.TOOLTIP_ORANGE}
+                                placement="topLeft"
+                              >
                                 <InProgressOrangeIcon />
                               </Tooltip>
                             ) : (
-                              <Tooltip title={CONTENT.TOOLTIP_GREY}>
+                              <Tooltip
+                                title={CONTENT.TOOLTIP_GREY}
+                                placement="topLeft"
+                              >
                                 <InProgressIcon />
                               </Tooltip>
                             )
                           ) : item.state === "failed" ? (
-                            <Tooltip title={item.reason}>
+                            <Tooltip title={item.reason} placement="topLeft">
                               <FailedIcon />
                             </Tooltip>
                           ) : item.state === "completed" &&
                             item.is_integrated === false &&
                             !item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                            <Tooltip
+                              placement="topLeft"
+                              title={CONTENT.TOOLTIP_AUTO_INTEGRATED}
+                            >
                               <CompletedHandIcon />
                             </Tooltip>
                           ) : item.state === "completed" &&
                             item.is_integrated === true &&
                             !item.disable_date ? (
-                            <Tooltip title={CONTENT.TOOLTIP_AUTO_INTEGRATED}>
+                            <Tooltip
+                              placement="topLeft"
+                              title={CONTENT.TOOLTIP_AUTO_INTEGRATED}
+                            >
                               <CompletedAutoIcon />
                             </Tooltip>
                           ) : null}

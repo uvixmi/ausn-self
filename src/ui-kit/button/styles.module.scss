@@ -40,7 +40,6 @@
     color: $brand-secondary-1 !important;
   }
 }
-
 .secondary {
   background-color: $base-color-white;
   color: $brand-primary;
@@ -51,26 +50,27 @@
     border: 1px solid $base-secondary-pale !important;
 
     &:hover,
-    &:focus {
+    &:active {
       background-color: $base-color-white !important;
       color: $base-secondary-2 !important;
       border: 1px solid $base-secondary-pale !important;
     }
   }
 
-  &:hover {
-    background-color: $brand-secondary-pale !important;
-    color: $brand-primary !important;
-    border: 1px solid $brand-primary !important;
+  @media (hover: hover) {
+    &:hover {
+      background-color: $brand-secondary-pale !important;
+      color: $brand-primary !important;
+      border: 1px solid $brand-primary !important;
+    }
   }
 
-  &:focus {
+  &:active {
     background-color: $base-secondary-pale !important;
     color: $brand-additional-dark !important;
     border: 1px solid $brand-additional-dark !important;
   }
 }
-
 .danger {
   background-color: $base-color-white;
   color: $red-primary;
