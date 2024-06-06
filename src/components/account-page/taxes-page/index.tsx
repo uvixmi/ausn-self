@@ -2046,7 +2046,12 @@ export const TaxesPage = () => {
                                         ? 5
                                         : 0
                                     )
-                                    setTypeSourceName(item.name)
+                                    setTypeSourceName(
+                                      item.type === "marketplace" &&
+                                        item.short_name
+                                        ? item.short_name
+                                        : item.name
+                                    )
                                     setAccountSource(item.sub_name || "")
                                     setOffSourceId(item.id)
                                   }}
@@ -2279,7 +2284,12 @@ export const TaxesPage = () => {
                                         ? 5
                                         : 0
                                     )
-                                    setTypeSourceName(item.name)
+                                    setTypeSourceName(
+                                      item.type === "marketplace" &&
+                                        item.short_name
+                                        ? item.short_name
+                                        : item.name
+                                    )
                                     setOffSourceId(item.id)
                                   }}
                                 >
@@ -2664,7 +2674,12 @@ export const TaxesPage = () => {
                                           ? 5
                                           : 0
                                       )
-                                      setTypeSourceName(item.name)
+                                      setTypeSourceName(
+                                        item.type === "marketplace" &&
+                                          item.short_name
+                                          ? item.short_name
+                                          : item.name
+                                      )
                                       setAccountSource(item.sub_name || "")
                                       setOffSourceId(item.id)
                                     }}
@@ -2906,7 +2921,12 @@ export const TaxesPage = () => {
                                           ? 5
                                           : 0
                                       )
-                                      setTypeSourceName(item.name)
+                                      setTypeSourceName(
+                                        item.type === "marketplace" &&
+                                          item.short_name
+                                          ? item.short_name
+                                          : item.name
+                                      )
                                       setOffSourceId(item.id)
                                     }}
                                   >
