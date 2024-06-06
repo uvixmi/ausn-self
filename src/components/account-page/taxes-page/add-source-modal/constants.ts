@@ -23,6 +23,7 @@ export const CONTENT = {
   TEXT_UPLOAD_BANK_STATEMENT:
     "Подгрузите выписку в формате .txt (1С), сформированную в ЛК банка. Файл должен содержать все входящие и исходящие операции по одному счету\u00A0ИП",
   TEXT_UPLOAD_TITLE: "Выберите или перетащите файлы",
+  TEXT_UPLOAD_TITLE_MOBILE: "Выберите файлы",
   TEXT_LOADING_TITLE: "Загрузка..",
   TEXT_ERROR_TITLE: "Не удалось загрузить данные",
   TEXT_LOADED_TITLE: "Документ загружен",

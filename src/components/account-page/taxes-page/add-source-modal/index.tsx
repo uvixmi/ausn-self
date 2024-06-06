@@ -593,7 +593,10 @@ export const AddSourceModal = ({
       >
         {buttonMode === "default" ? (
           <div className={styles["list-wrapper"]}>
-            <Text className={styles["text-heading-add-data"]} style={{ marginTop: "0", marginBottom: "24px" }}>
+            <Text
+              className={styles["text-heading-add-data"]}
+              style={{ marginTop: "0", marginBottom: "24px" }}
+            >
               {CONTENT.TITLE_ADD_SOURCE}
             </Text>
             <div className={styles["main-buttons-wrapper"]}>
@@ -802,7 +805,9 @@ export const AddSourceModal = ({
                         className={styles["text-title"]}
                         style={{ color: "#141414", textAlign: "center" }}
                       >
-                        {CONTENT.TEXT_UPLOAD_TITLE}
+                        {isMobile
+                          ? CONTENT.TEXT_UPLOAD_TITLE_MOBILE
+                          : CONTENT.TEXT_UPLOAD_TITLE}
                       </Text>
                       <Text className={styles["text-description-dragger"]}>
                         {CONTENT.TEXT_UPLOAD_DESCRIPTION}
@@ -1665,7 +1670,9 @@ export const AddSourceModal = ({
                             className={styles["text-title"]}
                             style={{ color: "#141414", textAlign: "center" }}
                           >
-                            {CONTENT.TEXT_UPLOAD_TITLE}
+                            {isMobile
+                              ? CONTENT.TEXT_UPLOAD_TITLE_MOBILE
+                              : CONTENT.TEXT_UPLOAD_TITLE}
                           </Text>
                           <Text className={styles["text-description-dragger"]}>
                             {CONTENT.TEXT_UPLOAD_DESCRIPTION_OFD_XLSX}
@@ -2190,7 +2197,9 @@ export const AddSourceModal = ({
                             className={styles["text-title"]}
                             style={{ color: "#141414", textAlign: "center" }}
                           >
-                            {CONTENT.TEXT_UPLOAD_TITLE}
+                            {isMobile
+                              ? CONTENT.TEXT_UPLOAD_TITLE_MOBILE
+                              : CONTENT.TEXT_UPLOAD_TITLE}
                           </Text>
                           <Text className={styles["text-description-dragger"]}>
                             {CONTENT.LOAD_MARKETPLACE_XLS}
@@ -2378,7 +2387,9 @@ export const AddSourceModal = ({
                             className={styles["text-title"]}
                             style={{ color: "#141414", textAlign: "center" }}
                           >
-                            {CONTENT.TEXT_UPLOAD_TITLE}
+                            {isMobile
+                              ? CONTENT.TEXT_UPLOAD_TITLE_MOBILE
+                              : CONTENT.TEXT_UPLOAD_TITLE}
                           </Text>
                           <Text className={styles["text-description-dragger"]}>
                             {CONTENT.LOAD_MARKETPLACE_XLS}
