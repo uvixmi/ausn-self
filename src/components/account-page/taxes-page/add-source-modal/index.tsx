@@ -222,6 +222,9 @@ export const AddSourceModal = ({
     setMarketplaceKeyError(false)
     setDateMarketPlace("")
     setDateMarketplaceError(false)
+    setSaldo(0)
+    setSaldoInput("")
+    setSaldoError(false)
   }
 
   const closeAddSource = () => {
@@ -312,24 +315,40 @@ export const AddSourceModal = ({
   }
   const sendOtherMarketplaceSource = async (type: number) => {
     const data =
-      saldo > 0
+      saldo !== 0
+        ? marketplaceMode === "2"
+          ? {
+              date_begin: convertDateFormat(dateMarketPlace),
+              sync_type: type,
+              saldo: saldo,
+              password: marketplaceKey,
+              source_name: MarketplaceName.Wb,
+            }
+          : {
+              date_begin: convertDateFormat(dateMarketPlace),
+              sync_type: type,
+              saldo: saldo,
+              password: marketplaceKey,
+              source_name:
+                marketplaceMode === "3"
+                  ? MarketplaceName.Ozon
+                  : marketplaceMode === "2"
+                  ? MarketplaceName.Wb
+                  : MarketplaceName.YaMarket,
+              shop_id:
+                marketplaceMode === "3"
+                  ? marketplaceId
+                  : marketplaceMode === "2"
+                  ? undefined
+                  : marketplaceId,
+            }
+        : marketplaceMode === "2"
         ? {
             date_begin: convertDateFormat(dateMarketPlace),
             sync_type: type,
-            saldo: saldo,
+
             password: marketplaceKey,
-            source_name:
-              marketplaceMode === "3"
-                ? MarketplaceName.Ozon
-                : marketplaceMode === "2"
-                ? MarketplaceName.Wb
-                : MarketplaceName.YaMarket,
-            login:
-              marketplaceMode === "3"
-                ? marketplaceId
-                : marketplaceMode === "2"
-                ? undefined
-                : marketplaceId,
+            source_name: MarketplaceName.Wb,
           }
         : {
             date_begin: convertDateFormat(dateMarketPlace),
@@ -342,7 +361,7 @@ export const AddSourceModal = ({
                 : marketplaceMode === "2"
                 ? MarketplaceName.Wb
                 : MarketplaceName.YaMarket,
-            login:
+            shop_id:
               marketplaceMode === "3"
                 ? marketplaceId
                 : marketplaceMode === "2"
