@@ -118,4 +118,5 @@ export const CONTENT = {
   LOAD_MARKETPLACE_XLS: "Загрузите файл в формате .xlsx",
   TEXT_MARKETPLACE_YA_ID_INPUT: "ID магазина",
   INPUT_SALDO_TITLE: "Сальдо",
+  ERROR_TXT_FORMAT: "Некорректный формат файла. Повторите попытку",
 } as const

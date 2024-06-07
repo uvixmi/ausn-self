@@ -814,6 +814,7 @@ export const AddSourceModal = ({
                 customRequest={async ({ file, onSuccess, onError }) => {
                   try {
                     if (file instanceof Blob && file.type !== "text/plain") {
+                      errorProcess(CONTENT.ERROR_TXT_FORMAT)
                       throw new Error("Разрешены только файлы .txt!")
                     }
                     const uploadFile = file as RcFile
