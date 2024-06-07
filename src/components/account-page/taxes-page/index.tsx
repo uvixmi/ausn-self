@@ -895,7 +895,11 @@ export const TaxesPage = () => {
                       )
                     : undefined
                 }
-                maxDate={dayjs(formatDateString(), dateFormat)}
+                maxDate={
+                  selectedEndDate !== null
+                    ? dayjs(selectedEndDate, dateFormat)
+                    : dayjs(formatDateString(), dateFormat)
+                }
                 value={
                   selectedStartDate
                     ? dayjs(selectedStartDate, dateFormat)
