@@ -866,8 +866,12 @@ export const TaxesPage = () => {
               )}
               style={{ borderRadius: "4px" }}
               value={[
-                selectedStartDate !== null ? dayjs(selectedStartDate) : null,
-                selectedEndDate !== null ? dayjs(selectedEndDate) : null,
+                selectedStartDate !== null
+                  ? dayjs(selectedStartDate, dateFormat)
+                  : null,
+                selectedEndDate !== null
+                  ? dayjs(selectedEndDate, dateFormat)
+                  : null,
               ]}
               onChange={(dates, dateStrings) =>
                 handleDateRangeChange(dateStrings)
@@ -1249,10 +1253,10 @@ export const TaxesPage = () => {
                         style={{ borderRadius: "4px" }}
                         value={[
                           selectedStartDate !== null
-                            ? dayjs(selectedStartDate)
+                            ? dayjs(selectedStartDate, dateFormat)
                             : null,
                           selectedEndDate !== null
-                            ? dayjs(selectedEndDate)
+                            ? dayjs(selectedEndDate, dateFormat)
                             : null,
                         ]}
                         allowClear
@@ -2399,9 +2403,8 @@ export const TaxesPage = () => {
               <div className={styles["buttons-drawer"]}>
                 <ButtonOne
                   onClick={(e) => {
-                 
                     e.currentTarget.blur()
-updateRef.current?.blur()
+                    updateRef.current?.blur()
                     fetchSourcesHand()
                   }}
                   ref={updateRef}
