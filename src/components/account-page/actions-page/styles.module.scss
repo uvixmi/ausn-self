@@ -1,3 +1,6 @@
+@import "../../../ui-kit/theme/colors.scss";
+@import "../../../ui-kit/theme/fonts.scss";
+
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -33,8 +36,12 @@ $xxl: 2560px;
   background-color: #fff;
   border-left: 1px solid #d9d9d9;
   padding-top: 20px;
-  padding-left: 24px;
+  padding-left: 16px;
   padding-right: 16px;
+
+  @media screen and (min-width: $l) {
+    padding-left: 24px;
+  }
 }
 
 .heading-text {
@@ -82,8 +89,9 @@ $xxl: 2560px;
   width: 100%;
   gap: 4px;
   flex-direction: column;
+  justify-content: space-between;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     flex-direction: row;
     height: 42px;
     gap: 16px;
@@ -103,19 +111,18 @@ $xxl: 2560px;
 
 .remark-text {
   display: flex;
-  padding: 12px 24px 12px 12px;
+  padding: 12px 54px 12px 12px;
   border-radius: 4px;
   flex-direction: column;
-  row-gap: 8px;
-  background: linear-gradient(
-    67.21deg,
-    #f0f0ff 0%,
-    rgba(245, 245, 245, 0.45) 100%
-  );
+  row-gap: 12px;
+  height: 44px;
+  width: 100%;
+  background-color: $brand-secondary-pale;
+  text-wrap: nowrap;
+  gap: 12px;
 
   @media screen and (min-width: $tablet) {
-    padding: 12px 13px;
-    flex-grow: 1;
+    width: 461px;
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
@@ -218,6 +225,10 @@ $xxl: 2560px;
 .link-details {
   color: #6159ff;
   cursor: pointer;
+
+  @media screen and (min-width: $l) {
+    margin-right: 20px;
+  }
 }
 
 .income-table {
@@ -246,20 +257,26 @@ $xxl: 2560px;
   border-bottom: 1px solid #d9d9d9;
   width: 100%;
   min-height: 178px;
-  padding: 12px 0px 12px;
+  padding: 24px 0px 24px;
   border-radius: 4px;
 
   @media screen and (min-width: $tablet) {
-    padding: 32px 0px 32px 0px;
-    gap: 64px;
+    min-height: auto;
+    padding: 16px 0px;
+    gap: 24px;
     flex-direction: row;
+  }
+
+  @media screen and (min-width: $l) {
+    padding: 24px 0px;
+    gap: 64px;
   }
 }
 
 .row-inner {
   display: flex;
   flex-direction: column;
-
+  height: 100%;
   @media screen and (min-width: $tablet) {
     justify-content: space-between;
     gap: 64px;
@@ -287,6 +304,12 @@ $xxl: 2560px;
   }
 }
 
+.info-title {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .info-heading {
   display: flex;
   flex-direction: column;
@@ -299,9 +322,12 @@ $xxl: 2560px;
   gap: 8px;
   width: 100%;
 
-  @media screen and (min-width: $tablet) {
-    width: auto;
-    max-width: 40%;
+  @media screen and (min-width: $l) {
+    width: 371px;
+  }
+
+  @media screen and (min-width: $xl) {
+    width: 100%;
   }
 }
 
@@ -312,10 +338,19 @@ $xxl: 2560px;
 .amount-part {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 
-  @media screen and (min-width: $tablet) {
-    width: 280px;
+  @media screen and (min-width: $s) {
+    gap: 16px;
+    width: 340px;
+  }
+
+  @media screen and (min-width: $l) {
+    width: 371px;
+  }
+
+  @media screen and (min-width: $xl) {
+    width: 452px;
   }
 }
 .amount-info {
@@ -324,20 +359,44 @@ $xxl: 2560px;
   gap: 4px;
 }
 .amount-paid-text {
-  font-size: 12px;
+  font-family: "Inter";
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
-  letter-spacing: -0.20000000298023224px;
+  line-height: 22px;
   text-align: left;
+  color: $base-additional-grey;
 }
 
 .amount-heading {
-  font-size: 12px;
+  font-family: "Inter";
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
-  letter-spacing: -0.20000000298023224px;
+  line-height: 22px;
   text-align: left;
-  color: #8c8c8c;
+  color: $base-secondary-1;
+}
+
+.amount-heading-formed {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+  color: $base-secondary-1;
+  width: 150px;
+
+  @media screen and (min-width: $l) {
+    text-wrap: nowrap;
+  }
+}
+
+.amount-heading-quarter {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1;
 }
 
 .amount-to-pay-text {
@@ -360,45 +419,77 @@ $xxl: 2560px;
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-  letter-spacing: -0.20000000298023224px;
+
   text-align: left;
 }
 
 .alert-date {
-  color: #f52245;
+  color: $red-secondary-1;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.alert-date-text {
+  color: $red-primary;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.soon-date {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $orange-additional-dark;
 }
 
 .text-description {
+  font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
-  line-height: 20px;
-  letter-spacing: -0.005em;
+  line-height: 22px;
   text-align: left;
-  color: #505050;
+  color: $base-additional-grey;
 }
 
 .amount-button {
-  border: 1px solid #505050;
-  flex-basis: 50%;
-  height: 30px;
-  padding: 6px 8px 6px 12px;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 233px;
+  @media screen and (min-width: $l) {
+    width: 233px;
+  }
+
+  @media screen and (min-width: $xl) {
+    width: 314px;
+  }
 }
 
 .paid-button {
   border: none;
-  background: #f0f0f0;
-  width: 50%;
-  height: 30px;
-  padding: 6px 8px 6px 12px;
-  border-radius: 2px;
+  background: none;
+  color: $brand-primary;
+  box-shadow: none;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 34px;
+  padding: 2px 0px;
 
   @media screen and (min-width: $tablet) {
-    width: auto;
-    flex-basis: 50%;
+  }
+
+  @media screen and (min-width: $xl) {
+    padding: 5px 16px;
+    width: 150px;
   }
 }
 
@@ -421,17 +512,27 @@ $xxl: 2560px;
 .update-text-inner {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .update-text {
+  font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
-  line-height: 20px;
-  letter-spacing: -0.005em;
+  line-height: 22px;
   text-align: left;
 }
 
+.update-text-link {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: left;
+  color: $brand-primary !important;
+}
+
 .update-taxes-link {
-  //styleName: Text-M-reg;
+  font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -441,44 +542,58 @@ $xxl: 2560px;
 }
 
 .declaration-wrapper {
-  padding: 8px 12px 8px 12px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: 2px;
   gap: 8px;
   display: flex;
-  background-color: #f0f0ff;
+  background-color: $base-secondary-pale;
+  flex-direction: column;
+  @media screen and (min-width: $xl) {
+    flex-direction: row;
+  }
 }
 
 .declaration-text {
-  color: #6159ff;
-  font-size: 12px;
+  font-family: "Inter";
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
-  letter-spacing: -0.20000000298023224px;
+  line-height: 22px;
   text-align: left;
+  color: $base-primary-dark;
+}
+
+.declaration-link {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $brand-primary !important;
 }
 
 .date-title-overdue {
   display: flex;
   gap: 4px;
+  align-items: center;
 }
 
 .warning-overdue {
-  background-color: #fff0f3;
+  background-color: $red-secondary-pale;
+  padding: 1px 8px;
+}
+
+.soon-overdue {
+  background-color: $oragne-secondary-pale;
   padding: 0 8px;
 }
 
 .download-button {
-  padding: 4px;
   height: auto;
-  border: 1px solid #8c8c8c;
-  border-radius: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
   width: 100%;
 
   @media screen and (min-width: $tablet) {
-    width: auto;
+    width: 50%;
   }
 }
 
@@ -497,7 +612,219 @@ $xxl: 2560px;
   gap: 8px;
 }
 
+.icon-part {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .sider-icon {
   font-size: 19px;
   color: #9984ff;
+}
+
+.left-part-row {
+  display: flex;
+  width: 100%;
+  gap: 24px;
+
+  @media screen and (min-width: $tablet) {
+    width: 340px;
+  }
+}
+
+.ordinary-icon {
+  color: #8c8c8c !important;
+}
+
+.soon-icon {
+  color: $orange-primary !important;
+}
+
+.alert-icon {
+  color: $red-primary !important;
+}
+
+.right-header-part {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.block-new {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  justify-content: center;
+  height: 100%;
+
+  @media screen and (min-width: $s) {
+    margin-top: 150px;
+  }
+}
+
+.block-new-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-block {
+  font-family: "Inter";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.text-block {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.link-block {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: $brand-primary !important;
+}
+
+.remark-text-medium {
+  display: flex;
+  padding: 12px 24px 12px 12px;
+  border-radius: 4px;
+  flex-direction: column;
+  row-gap: 12px;
+  margin-top: 6px;
+
+  background-color: $brand-secondary-pale;
+
+  @media screen and (min-width: $tablet) {
+    height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+}
+
+.buttons-header {
+  display: flex;
+  gap: 14px;
+  flex-direction: column-reverse;
+  width: 100%;
+
+  @media screen and (min-width: $s) {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+.header-button-item {
+  width: 100%;
+}
+
+.default-icon {
+  height: 18px;
+  color: $base-secondary-1;
+  margin-left: -8px;
+
+  @media screen and (min-width: $l) {
+    margin-left: auto;
+    height: auto;
+  }
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  font-family: "Inter";
+
+  color: $base-primary-dark;
+
+  @media screen and (min-width: $l) {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.info-icon-amount {
+  color: $base-secondary-1;
+}
+
+.amount-tooltip {
+  color: #fff !important;
+}
+
+.hide-icon {
+  width: 14px;
+}
+
+.banner-title {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: left;
+  color: $brand-additional-dark;
+}
+
+.formed-date {
+  display: flex;
+  padding: 1px 8px;
+  gap: 3px;
+  border-radius: 8px;
+  background: #f0f0f0;
+  width: 210px;
+  @media screen and (min-width: $l) {
+    width: auto;
+  }
+}
+
+.report-icon-amount {
+  color: $red-additional-dark;
+}
+
+.source-link-title {
+  font-family: "Inter";
+  color: $brand-primary !important;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.open-source-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  @media screen and (min-width: $s) {
+    margin-bottom: auto;
+  }
+}
+
+.notifcations-inner {
+  position: relative;
+}
+
+.notifications-count {
+  height: 6px;
+  width: 6px;
+  display: flex;
+  background: $red-primary;
+  border-radius: 50%;
+  justify-content: center;
+  justify-self: flex-end;
+  align-items: center;
+  font-family: "Inter";
+  position: absolute;
+  right: 2px;
+  top: 2px;
 }

@@ -220,7 +220,6 @@ $xxl: 2560px;
   display: flex;
   align-items: center;
   height: 34px;
-  display: flex;
   padding: 6px 8px !important;
   gap: 8px;
   border-radius: 4px;
@@ -318,4 +317,56 @@ $xxl: 2560px;
 .style-overflow {
   overflow-x: hidden;
   width: 100%;
+}
+
+.tasks-count {
+  width: 16px;
+  display: flex;
+  background: #383494;
+  border-radius: 50%;
+  justify-content: center;
+  justify-self: flex-end;
+  align-items: center;
+  font-family: "Inter";
+  height: 16px;
+  font-weight: 500;
+
+  color: #fff !important;
+  @media screen and (min-width: $s) {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.tasks-count-not {
+  width: 16px;
+  display: flex;
+  background: $brand-primary;
+  border-radius: 50%;
+  height: 16px;
+  justify-content: center;
+  justify-self: flex-end;
+  align-items: center;
+  font-family: "Inter";
+  font-weight: 500;
+  color: #fff !important;
+  @media screen and (min-width: $s) {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.tasks-inner {
+  position: absolute;
+  display: flex;
+  top: 5px;
+  left: 22px;
+  justify-content: flex-end;
+
+  @media screen and (min-width: $s) {
+    position: static;
+  }
+  @media screen and (min-width: $m) {
+    flex-grow: 1;
+  }
 }

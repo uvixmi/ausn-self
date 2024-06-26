@@ -5,6 +5,7 @@ export interface ConfirmModalProps {
   setOpen: (arg: boolean) => void
   payAmount?: number
   fetchTasks: () => void
+  openAnalysis: () => void
   taskYear: number
 }
 

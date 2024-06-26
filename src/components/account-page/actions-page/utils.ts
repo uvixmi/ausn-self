@@ -36,7 +36,7 @@ export const formatDateString = (
   }
 }
 
-export const taxesQuarterHeading = (quarter: string) => {
+export const taxesQuarterHeading = (quarter: string, year: number) => {
   const quarterText = quarter.charAt(2)
   const romeQuarter =
     quarterText === "1"
@@ -49,7 +49,8 @@ export const taxesQuarterHeading = (quarter: string) => {
 
   const yearText =
     CONTENT.TAXES_QUARTER_END + new Date().getFullYear().toString()
-  if (quarterText === "1" || quarterText === "2" || quarterText === "3")
+  if (quarter === "ZDP") return `${CONTENT.TAXES_TAXBASE_TEXT}  ${year}`
+  else if (quarterText === "1" || quarterText === "2" || quarterText === "3")
     return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${yearText}`
   else return ""
 }

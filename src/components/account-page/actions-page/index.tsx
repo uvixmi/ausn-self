@@ -34,6 +34,7 @@ import {
   LoadingOutlined,
   CloseOutlined,
   InfoCircleOutlined,
+  PlusOutlined,
 } from "@ant-design/icons"
 import { formatToPayDate } from "../../main-page/utils"
 import { setAmount } from "./payment-modal/slice"
@@ -46,6 +47,19 @@ import { useMediaQuery } from "@react-hook/media-query"
 import { ApiError } from "../taxes-page/utils"
 import { clearData } from "../../authorization-page/slice"
 import { useAuth } from "../../../AuthContext"
+import { ActionCurrencyIcon } from "../taxes-page/type-operation/icons/actions-currency"
+import { ActionsReportIcon } from "../taxes-page/type-operation/icons/actions-report"
+import { ButtonOne } from "../../../ui-kit/button"
+import { NewActionsImage } from "../taxes-page/images/new-actions"
+import { ArrowCounterIcon } from "../taxes-page/type-operation/icons/arrow-counter"
+import dayjs from "dayjs"
+import "dayjs/locale/ru"
+import { Amount } from "../../../ui-kit/amount"
+import { HideEyeIcon } from "../taxes-page/type-operation/icons/hide-eye"
+import { BellBannerIcon } from "../taxes-page/type-operation/icons/bell-banner"
+import { NoBannersIcon } from "../taxes-page/type-operation/icons/no-banners"
+import { HaveBannersIcon } from "../taxes-page/type-operation/icons/have-banners"
+import { NotificationsModal } from "./notifications-modal"
 
 export interface InfoBannerLinked {
   id: string
@@ -62,6 +76,8 @@ export interface InfoBannerLinked {
 }
 
 export const ActionsPage = () => {
+  const dateFormat = "YYYY-MM-DD"
+  dayjs.locale("ru")
   const [isPaymentOpen, setPaymentOpen] = useState(false)
   const [isEnsOpen, setEnsOpen] = useState(false)
   const { logout } = useAuth()
@@ -93,6 +109,9 @@ export const ActionsPage = () => {
   )
 
   const tasks = useSelector((state: RootState) => state.tasks.tasks?.tasks)
+  const isRelevant = useSelector(
+    (state: RootState) => state.tasks.tasks?.is_relevant
+  )
   const tasksLoaded = useSelector((state: RootState) => state.tasks.loading)
   const fetchedBanners = useSelector(
     (state: RootState) => state.banners.banners?.banners
@@ -335,7 +354,81 @@ export const ActionsPage = () => {
   const defaultAccount =
     sources && sources?.find((item) => item.is_main)?.sub_name
 
-  const isMobile = useMediaQuery("(max-width: 767px)")
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+  const isTablet = useMediaQuery("(max-width: 1439px)")
+  const isMediumSize = useMediaQuery("(max-width: 1919px)")
+
+  const compareDates = (date1: string, date2: string) => {
+    const date1Obj = new Date(date1)
+    const date2Obj = new Date(date1)
+    const date3Obj = new Date(date2)
+    date2Obj.setDate(date2Obj.getDate() - 10)
+
+    return date3Obj >= date2Obj && date3Obj <= date1Obj ? 1 : 0
+  }
+
+  const getTooltipUsn = (accrued_kv: number, accrued_amount: number) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+          {CONTENT.TOOLTIP_USN_TEXT_ONE}
+        </Text>
+        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+          <Amount value={accrued_kv} className={styles["amount-tooltip"]} />
+          {CONTENT.TOOLTIP_USN_TEXT_TWO}
+        </Text>
+        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+          <Amount
+            value={accrued_amount - accrued_kv}
+            className={styles["amount-tooltip"]}
+          />
+          {CONTENT.TOOLTIP_USN_TEXT_THREE}
+        </Text>
+      </div>
+    )
+  }
+
+  const getTooltipReport = (
+    accrued_amount?: number | null,
+    accrued_amount_now?: number | null
+  ) => {
+    if (accrued_amount && accrued_amount_now)
+      return (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+            {CONTENT.TOOLTIP_REPORT_TEXT_ONE}
+            <Amount
+              value={accrued_amount}
+              className={styles["amount-tooltip"]}
+            />
+          </Text>
+          <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+            {CONTENT.TOOLTIP_REPORT_TEXT_TWO}
+            <Amount
+              value={accrued_amount_now}
+              className={styles["amount-tooltip"]}
+            />
+          </Text>
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: "14px",
+              lineHeight: "20px",
+              marginTop: "20px",
+            }}
+          >
+            {CONTENT.TOOLTIP_REPORT_TEXT_THREE}
+          </Text>
+        </div>
+      )
+    else return undefined
+  }
+
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+
+  const showNotifications = () => {
+    setIsNotificationsOpen(true)
+  }
 
   return (
     <>
@@ -354,17 +447,76 @@ export const ActionsPage = () => {
       >
         {contextHolder}
         <Content className={styles["content-wrapper"]}>
-          <Text className={styles["heading-text"]}>
-            {CONTENT.ACTIONS_HEADING}
-          </Text>
           <div className={styles["remark-wrapper"]}>
-            <Button
-              className={styles["remark-button"]}
-              onClick={() => openEnsModal()}
-            >
-              {CONTENT.BUTTON_ENS_TEXT}
-            </Button>
-            <div className={styles["remark-text"]}>
+            <div className={styles["open-source-wrapper"]}>
+              <Text className={styles["heading-text"]}>
+                {CONTENT.ACTIONS_HEADING}
+              </Text>
+              {isMobile && (
+                <Link
+                  className={styles["source-link-title"]}
+                  onClick={
+                    banners?.length && banners?.length > 0
+                      ? showNotifications
+                      : undefined
+                  }
+                >
+                  <div
+                    style={{
+                      display: "flex",
+
+                      justifyContent: "center",
+                    }}
+                  >
+                    {banners?.length && banners?.length > 0 ? (
+                      <div className={styles["notifcations-inner"]}>
+                        <HaveBannersIcon />
+                        <div className={styles["notifications-count"]}></div>
+                      </div>
+                    ) : (
+                      <HaveBannersIcon />
+                    )}
+                  </div>
+                  {CONTENT.NOTIFICATIONS_TITLE}
+                </Link>
+              )}
+            </div>
+            <div className={styles["right-header-part"]}>
+              {!isMediumSize && (
+                <div className={styles["remark-text"]}>
+                  <Text>{CONTENT.ENS_TEXT_DETAILS}</Text>
+                  <Link
+                    className={styles["link-details"]}
+                    style={{ color: "#6159ff", whiteSpace: "nowrap" }}
+                    onClick={openAnalysis}
+                  >
+                    {CONTENT.TEXT_DETAILS}
+                  </Link>
+                </div>
+              )}
+              <div className={styles["buttons-header"]}>
+                <ButtonOne
+                  onClick={() => openEnsModal()}
+                  className={styles["header-button-item"]}
+                >
+                  <PlusOutlined
+                    className={styles["plus-icon"]}
+                    style={{ marginInlineStart: "4px" }}
+                  />
+                  {CONTENT.BUTTON_ENS_TEXT}
+                </ButtonOne>
+                <ButtonOne
+                  onClick={() => fetchTasksModal()}
+                  type="secondary"
+                  className={styles["header-button-item"]}
+                >
+                  <ArrowCounterIcon /> {CONTENT.BUTTON_UPDATE_ACTIONS}
+                </ButtonOne>
+              </div>
+            </div>
+          </div>
+          {isMediumSize && (
+            <div className={styles["remark-text-medium"]}>
               <Text>{CONTENT.ENS_TEXT_DETAILS}</Text>
               <Link
                 className={styles["link-details"]}
@@ -374,7 +526,7 @@ export const ActionsPage = () => {
                 {CONTENT.TEXT_DETAILS}
               </Link>
             </div>
-          </div>
+          )}
           <div>
             {tasks &&
               tasks
@@ -382,36 +534,131 @@ export const ActionsPage = () => {
                 .map((item, index) => (
                   <div className={styles["row-item"]} key={index}>
                     <div className={styles["row-inner"]}>
-                      <div className={styles["info-part"]}>
-                        <div className={styles["info-title"]}>
-                          <div className={styles["date-title-overdue"]}>
-                            <Text
-                              className={cn(styles["text-date"], {
-                                [styles["alert-date"]]:
-                                  new Date() > new Date(item.due_date),
-                              })}
-                            >
-                              {"до " + formatToPayDate(item.due_date)}
-                            </Text>
-                            {new Date() > new Date(item.due_date) && (
-                              <div className={styles["warning-overdue"]}>
-                                <Text
-                                  className={cn(styles["text-date"], [
-                                    styles["alert-date"],
-                                  ])}
-                                >
-                                  {CONTENT.OVERDUE_WARNING}
-                                </Text>
-                              </div>
-                            )}
+                      <div className={styles["left-part-row"]}>
+                        {!isTablet && (
+                          <div
+                            className={cn(styles["icon-part"], {
+                              [styles["alert-date"]]:
+                                new Date() > new Date(item.due_date),
+                              [styles["soon-icon"]]: compareDates(
+                                item.due_date,
+                                getCurrentDate()
+                              ),
+                            })}
+                          >
+                            {item.type === "report" ? (
+                              <ActionsReportIcon
+                                className={cn(styles["default-icon"], {
+                                  [styles["alert-icon"]]:
+                                    item.due_date <= getCurrentDate(),
+                                  [styles["soon-icon"]]: compareDates(
+                                    item.due_date,
+                                    getCurrentDate()
+                                  ),
+                                })}
+                              />
+                            ) : item.type === "fixed_fees" ||
+                              item.type === "usn" ||
+                              item.type === "income_percentage" ? (
+                              <ActionCurrencyIcon
+                                className={cn(styles["default-icon"], {
+                                  [styles["alert-icon"]]:
+                                    item.due_date <= getCurrentDate(),
+                                  [styles["soon-icon"]]: compareDates(
+                                    item.due_date,
+                                    getCurrentDate()
+                                  ),
+                                })}
+                              />
+                            ) : null}
                           </div>
-                          <Title level={4} style={{ margin: 0 }}>
-                            {item.title}
-                          </Title>
+                        )}
+                        <div className={styles["info-part"]}>
+                          <div className={styles["info-title"]}>
+                            <div className={styles["date-title-overdue"]}>
+                              {isTablet && (
+                                <div
+                                  className={cn(styles["icon-part"], {
+                                    [styles["alert-date"]]:
+                                      new Date() > new Date(item.due_date),
+                                    [styles["soon-icon"]]: compareDates(
+                                      item.due_date,
+                                      getCurrentDate()
+                                    ),
+                                  })}
+                                >
+                                  {item.type === "report" ? (
+                                    <ActionsReportIcon
+                                      className={cn(styles["default-icon"], {
+                                        [styles["alert-icon"]]:
+                                          item.due_date <= getCurrentDate(),
+                                        [styles["soon-icon"]]: compareDates(
+                                          item.due_date,
+                                          getCurrentDate()
+                                        ),
+                                      })}
+                                    />
+                                  ) : item.type === "fixed_fees" ||
+                                    item.type === "usn" ||
+                                    item.type === "income_percentage" ? (
+                                    <ActionCurrencyIcon
+                                      className={cn(styles["default-icon"], {
+                                        [styles["alert-icon"]]:
+                                          item.due_date <= getCurrentDate(),
+                                        [styles["soon-icon"]]: compareDates(
+                                          item.due_date,
+                                          getCurrentDate()
+                                        ),
+                                      })}
+                                    />
+                                  ) : null}
+                                </div>
+                              )}
+                              {new Date() > new Date(item.due_date) ? (
+                                <div className={styles["warning-overdue"]}>
+                                  <Text
+                                    className={cn(styles["text-date"], [
+                                      styles["alert-date"],
+                                    ])}
+                                  >
+                                    {CONTENT.OVERDUE_WARNING}
+                                  </Text>
+                                </div>
+                              ) : compareDates(
+                                  item.due_date,
+                                  getCurrentDate()
+                                ) ? (
+                                <div className={styles["soon-overdue"]}>
+                                  <Text
+                                    className={cn(styles["text-date"], [
+                                      styles["soon-date"],
+                                    ])}
+                                  >
+                                    {CONTENT.SOON_WARNING}
+                                  </Text>
+                                </div>
+                              ) : null}
+                              <Text
+                                className={cn(styles["text-date"], {
+                                  [styles["alert-date-text"]]:
+                                    new Date() > new Date(item.due_date),
+                                  [styles["soon-date"]]: compareDates(
+                                    item.due_date,
+                                    getCurrentDate()
+                                  ),
+                                })}
+                              >
+                                {"до " + formatToPayDate(item.due_date)}
+                              </Text>
+                            </div>
+                            <Text className={styles["card-title"]}>
+                              {item.title}
+                            </Text>
+                          </div>
+                          <Text className={styles["text-description"]}>
+                            {item.description}
+                          </Text>
                         </div>
-                        <Text className={styles["text-description"]}>
-                          {item.description}
-                        </Text>
                       </div>
                       <div className={styles["amount-part"]}>
                         <div className={styles["amount-info"]}>
@@ -449,10 +696,15 @@ export const ActionsPage = () => {
                                       : 3
                                   }
                                   showInfo={false}
-                                  status={
+                                  strokeColor={
                                     item.due_date <= getCurrentDate()
-                                      ? "exception"
-                                      : undefined
+                                      ? "#CF133C"
+                                      : compareDates(
+                                          item.due_date,
+                                          getCurrentDate()
+                                        )
+                                      ? "#FF8D00"
+                                      : "#6159FF"
                                   }
                                 />
                               )}
@@ -460,57 +712,159 @@ export const ActionsPage = () => {
                                 <Text className={styles["amount-heading"]}>
                                   {CONTENT.TEXT_AMOUNT_TO_PAY}
                                 </Text>
-                                {item.due_amount && (
-                                  <Text
-                                    className={styles["amount-to-pay-text"]}
-                                  >
-                                    {new Intl.NumberFormat("ru", {
-                                      style: "currency",
-                                      currency: "RUB",
-                                    }).format(item.due_amount)}
-                                  </Text>
-                                )}
+                                {item.due_amount &&
+                                  item.type === "usn" &&
+                                  item.accrued_amount_kv &&
+                                  item.accrued_amount &&
+                                  item.accrued_amount_kv <
+                                    item.accrued_amount && (
+                                    <>
+                                      {
+                                        <Tooltip
+                                          title={() =>
+                                            item.accrued_amount_kv &&
+                                            item.accrued_amount &&
+                                            getTooltipUsn(
+                                              item.accrued_amount_kv,
+                                              item.accrued_amount
+                                            )
+                                          }
+                                        >
+                                          <InfoCircleOutlined
+                                            className={
+                                              styles["info-icon-amount"]
+                                            }
+                                          />
+                                        </Tooltip>
+                                      }
+                                      <Text
+                                        className={styles["amount-to-pay-text"]}
+                                      >
+                                        {new Intl.NumberFormat("ru", {
+                                          style: "currency",
+                                          currency: "RUB",
+                                        }).format(item.due_amount)}
+                                      </Text>
+                                    </>
+                                  )}
                               </div>
                             </>
-                          ) : item.task_code === "ZDP" && !item.report_code ? (
-                            <div className={styles["declaration-wrapper"]}>
-                              <Text className={styles["declaration-text"]}>
-                                {CONTENT.TEXT_DECLARATION}
-                              </Text>
-                              <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
+                          ) : (
+                            item.type === "report" && (
+                              <>
+                                <div className={styles["amount-pay"]}>
+                                  <Text
+                                    className={styles["amount-heading-quarter"]}
+                                  >
+                                    {taxesQuarterHeading(
+                                      item.task_code,
+                                      item.year
+                                    )}
+                                  </Text>
+                                  {item.type === "report" && (
+                                    <div
+                                      style={{ display: "flex", gap: "6px" }}
+                                    >
+                                      {item.accrued_amount_now !==
+                                        item.accrued_amount && (
+                                        <Tooltip
+                                          title={() =>
+                                            getTooltipReport(
+                                              item.accrued_amount,
+                                              item.accrued_amount_now
+                                            )
+                                          }
+                                        >
+                                          <InfoCircleOutlined
+                                            className={
+                                              styles["report-icon-amount"]
+                                            }
+                                          />
+                                        </Tooltip>
+                                      )}
+                                      <Text
+                                        className={styles["amount-to-pay-text"]}
+                                      >
+                                        {(item.accrued_amount ||
+                                          item.accrued_amount === 0.0) &&
+                                          new Intl.NumberFormat("ru", {
+                                            style: "currency",
+                                            currency: "RUB",
+                                          }).format(item.accrued_amount)}
+                                      </Text>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className={styles["declaration-wrapper"]}>
+                                  <Text className={styles["declaration-text"]}>
+                                    {CONTENT.TEXT_DECLARATION}
+                                  </Text>
+                                  <Link
+                                    className={styles["declaration-link"]}
+                                    onClick={() => navigate("/taxes")}
+                                  >
+                                    {CONTENT.OPERATIONS_LINK}
+                                  </Link>
+                                  {/* <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
                                 <InfoCircleOutlined
                                   className={styles["sider-icon"]}
                                   size={24}
                                 />
-                              </Tooltip>
-                            </div>
-                          ) : (
-                            <div className={styles["amount-pay"]}>
-                              <Text className={styles["amount-heading"]}>
-                                {taxesQuarterHeading(item.task_code)}
-                              </Text>
-                              {item.type === "report" &&
-                                item.task_code !== "ZDP" && (
-                                  <Text
-                                    className={styles["amount-to-pay-text"]}
-                                  >
-                                    {(item.accrued_amount ||
-                                      item.accrued_amount === 0.0) &&
-                                      new Intl.NumberFormat("ru", {
-                                        style: "currency",
-                                        currency: "RUB",
-                                      }).format(item.accrued_amount)}
-                                  </Text>
-                                )}
-                            </div>
+                              </Tooltip>*/}
+                                </div>
+                              </>
+                            )
                           )}
                         </div>
+                        {((item.type === "report" &&
+                          item.report_code &&
+                          item.report_update) ||
+                          formedSuccess.includes(item.task_code)) && (
+                          <div className={styles["amount-pay"]}>
+                            <div className={styles["formed-date"]}>
+                              {formedSuccess.includes(item.task_code) ? (
+                                <Text
+                                  className={styles["amount-heading-formed"]}
+                                >
+                                  {CONTENT.TITLE_FORMED +
+                                    formatDateString("", true)}
+                                </Text>
+                              ) : (
+                                item.report_update && (
+                                  <Text
+                                    className={styles["amount-heading-formed"]}
+                                  >
+                                    {CONTENT.TITLE_FORMED +
+                                      formatDateString(
+                                        item.report_update,
+                                        true
+                                      )}
+                                  </Text>
+                                )
+                              )}
+                            </div>
+                            <Button
+                              className={styles["paid-button"]}
+                              onClick={() =>
+                                handleFormReport(item.task_code, item.year)
+                              }
+                            >
+                              <ArrowCounterIcon
+                                className={styles["hide-icon"]}
+                              />
+
+                              {CONTENT.BUTTON_UPDATE}
+                            </Button>
+                          </div>
+                        )}
                         <div className={styles["row-item-buttons"]}>
                           {(item.type === "report" && item.report_code) ||
                           formedSuccess.includes(item.task_code) ? (
                             <div className={styles["row-item-buttons-wrapper"]}>
-                              <Button
+                              <ButtonOne
                                 className={styles["download-button"]}
+                                type="secondary"
                                 onClick={() =>
                                   item.report_code &&
                                   downloadXmlReport(
@@ -522,9 +876,10 @@ export const ActionsPage = () => {
                               >
                                 <Text>{".xml"}</Text>
                                 <DownloadOutlined />
-                              </Button>
-                              <Button
+                              </ButtonOne>
+                              <ButtonOne
                                 className={styles["download-button"]}
+                                type="secondary"
                                 onClick={() =>
                                   item.report_code &&
                                   downloadPdfReport(
@@ -536,11 +891,12 @@ export const ActionsPage = () => {
                               >
                                 <Text>{".pdf"}</Text>
                                 <DownloadOutlined />
-                              </Button>
+                              </ButtonOne>
                             </div>
                           ) : (
-                            <Button
+                            <ButtonOne
                               className={styles["amount-button"]}
+                              type="secondary"
                               onClick={() =>
                                 item.type === "report"
                                   ? handleFormReport(item.task_code, item.year)
@@ -561,7 +917,7 @@ export const ActionsPage = () => {
                               ) : (
                                 ""
                               )}
-                            </Button>
+                            </ButtonOne>
                           )}
                           <Button
                             className={styles["paid-button"]}
@@ -579,51 +935,47 @@ export const ActionsPage = () => {
                                   )
                             }
                           >
+                            <HideEyeIcon className={styles["hide-icon"]} />
                             {item.type === "report"
                               ? CONTENT.BUTTON_PASSED
                               : CONTENT.BUTTON_PAID}
                           </Button>
                         </div>
-                        {((item.type === "report" &&
-                          item.report_code &&
-                          item.report_update) ||
-                          formedSuccess.includes(item.task_code)) && (
-                          <div className={styles["amount-pay"]}>
-                            {formedSuccess.includes(item.task_code) ? (
-                              <Text className={styles["amount-heading"]}>
-                                {CONTENT.TITLE_FORMED +
-                                  formatDateString("", true)}
-                              </Text>
-                            ) : (
-                              item.report_update && (
-                                <Text className={styles["amount-heading"]}>
-                                  {CONTENT.TITLE_FORMED +
-                                    formatDateString(item.report_update, true)}
-                                </Text>
-                              )
-                            )}
-                            <Link
-                              className={styles["link-details"]}
-                              underline
-                              onClick={() =>
-                                handleFormReport(item.task_code, item.year)
-                              }
-                            >
-                              {CONTENT.BUTTON_UPDATE}
-                            </Link>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
                 ))}
           </div>
+          {tasks && tasks.length === 0 && isRelevant === false && (
+            <div className={styles["block-new"]}>
+              <NewActionsImage />
+              <div className={styles["block-new-text"]}>
+                <Text className={styles["title-block"]}>
+                  {CONTENT.TITLE_NEW_ACTIONS}
+                </Text>
+                <Text className={styles["text-block"]}>
+                  {CONTENT.DESCRIPTION_NEW_ACTIONS_ONE}
+                </Text>
+                <Text className={styles["text-block"]}>
+                  {CONTENT.DESCRIPTION_NEW_ACTIONS_TWO}
+                </Text>
+                <Link
+                  className={styles["link-block"]}
+                  onClick={() => navigate("/taxes")}
+                >
+                  {CONTENT.OPERATIONS_LINK}
+                </Link>
+              </div>
+            </div>
+          )}
           {(tasks?.filter((item) => item.type === "report").length === 0 ||
             !tasks) &&
-            tasksLoaded === "succeeded" && <AllDoneBlock type="report" />}
+            tasksLoaded === "succeeded" &&
+            isRelevant === true && <AllDoneBlock type="report" />}
           {(tasks?.filter((item) => item.type !== "report").length === 0 ||
             !tasks) &&
-            tasksLoaded === "succeeded" && <AllDoneBlock type="usn" />}
+            tasksLoaded === "succeeded" &&
+            isRelevant === true && <AllDoneBlock type="usn" />}
         </Content>
         {!isMobile && (
           <Sider
@@ -638,36 +990,33 @@ export const ActionsPage = () => {
                   <div className={styles["update-wrapper"]}>
                     <div className={styles["update-inner"]}>
                       <div className={styles["update-text-inner"]}>
-                        <div>
-                          <Title
-                            style={{
-                              marginBottom: 0,
-                              marginTop: "8px",
-                              maxWidth: "200px",
-                            }}
-                            level={5}
-                          >
-                            {item.title}
-                          </Title>
-                          {item.description.map((text) => {
-                            if (text.startsWith("{") && text.endsWith("}")) {
-                              const link = text.slice("{link:".length, -1)
-                              return (
-                                <Link
-                                  className={styles["update-text"]}
-                                  onClick={() => navigate(link)}
-                                >
-                                  {LINK_MAP[link]}
-                                </Link>
-                              )
-                            } else
-                              return (
-                                <Text className={styles["update-text"]}>
-                                  {text}
-                                </Text>
-                              )
-                          })}
-                        </div>
+                        <BellBannerIcon />
+                        <Text
+                          style={{
+                            maxWidth: "200px",
+                          }}
+                          className={styles["banner-title"]}
+                        >
+                          {item.title}
+                        </Text>
+                        {item.description.map((text) => {
+                          if (text.startsWith("{") && text.endsWith("}")) {
+                            const link = text.slice("{link:".length, -1)
+                            return (
+                              <Link
+                                className={styles["update-text-link"]}
+                                onClick={() => navigate(link)}
+                              >
+                                {LINK_MAP[link]}
+                              </Link>
+                            )
+                          } else
+                            return (
+                              <Text className={styles["update-text"]}>
+                                {text}
+                              </Text>
+                            )
+                        })}
                       </div>
                       <Button
                         className={styles["delete-banner"]}
@@ -696,6 +1045,7 @@ export const ActionsPage = () => {
           payAmount={dueAmount}
           fetchTasks={fetchTasksModal}
           taskYear={taskYear}
+          openAnalysis={openAnalysis}
         />
         <EnsPaymentModal
           isOpen={isEnsOpen}
@@ -703,8 +1053,13 @@ export const ActionsPage = () => {
           payAmount={dueAmount}
           setDueAmount={setDueAmount}
           defaultAccount={defaultAccount}
+          openAnalysis={openAnalysis}
         />
         <AnalysisEnsModal isOpen={isAnalysisOpen} setOpen={setAnalysisOpen} />
+        <NotificationsModal
+          isOpen={isNotificationsOpen}
+          setOpen={setIsNotificationsOpen}
+        />
       </ConfigProvider>
     </>
   )

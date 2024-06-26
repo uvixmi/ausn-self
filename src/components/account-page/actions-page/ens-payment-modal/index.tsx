@@ -23,6 +23,10 @@ import { numberWithSpaces } from "../payment-modal/utils"
 import { formatDateString } from "../utils"
 import { RootState } from "../../../main-page/store"
 import { AddAccountModal } from "./add-account-modal"
+import { InfoCircleOutlined } from "@ant-design/icons"
+import { InputOne } from "../../../../ui-kit/input"
+import { ButtonOne } from "../../../../ui-kit/button"
+import { SelectOne } from "../../../../ui-kit/select"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -30,6 +34,7 @@ export const EnsPaymentModal = ({
   setDueAmount,
   payAmount,
   defaultAccount,
+  openAnalysis,
 }: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
   const token = Cookies.get("token")
@@ -263,7 +268,6 @@ export const EnsPaymentModal = ({
           setOpen(false)
           clear()
         }}
-        mask={false}
         onCancel={() => {
           setOpen(false)
           clear()
@@ -274,8 +278,29 @@ export const EnsPaymentModal = ({
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
             <div className={styles["payment-wrapper"]}>
-              <Title level={3}>{CONTENT.HEADING_MODAL}</Title>
-
+              <Text className={styles["title-text"]}>
+                {CONTENT.HEADING_MODAL}
+              </Text>
+              <div className={styles["update-wrapper"]}>
+                <div className={styles["update-inner"]}>
+                  <InfoCircleOutlined
+                    className={styles["info-icon"]}
+                    size={20}
+                  />
+                  <Text className={styles["banner-title"]}>
+                    {CONTENT.UPDATE_TITLE}
+                  </Text>
+                  <Text className={styles["banner-description"]}>
+                    {CONTENT.UDPATE_DESCRIPTION}
+                  </Text>
+                  <Link
+                    className={styles["banner-link"]}
+                    onClick={openAnalysis}
+                  >
+                    {CONTENT.UDPATE_LINK}
+                  </Link>
+                </div>
+              </div>
               <div className={styles["inputs-row"]}>
                 <div className={styles["input-item"]}>
                   <Text
@@ -285,10 +310,12 @@ export const EnsPaymentModal = ({
                     )}
                   >
                     {CONTENT.TEXT_ACCOUNT_NUMBER}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   {options?.length && options?.length > 0 ? (
-                    <Select
-                      style={{ borderRadius: 0 }}
+                    <SelectOne
                       options={options}
                       defaultValue={defaultAccount}
                       className={"modal-select"}
@@ -315,6 +342,9 @@ export const EnsPaymentModal = ({
                     )}
                   >
                     {CONTENT.TEXT_PAYMENT_DIRECTION}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
                   <TextArea
                     style={{ borderRadius: 0 }}
@@ -332,9 +362,11 @@ export const EnsPaymentModal = ({
                     )}
                   >
                     {CONTENT.TEXT_AMOUNT}
+                    <Text className={styles["necessary"]}>
+                      {CONTENT.NECESSARY}
+                    </Text>
                   </Text>
-                  <Input
-                    style={{ borderRadius: 0 }}
+                  <InputOne
                     placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
                     value={amountInput}
                     onChange={handleChange}
@@ -351,13 +383,13 @@ export const EnsPaymentModal = ({
               ></Collapse>
             </div>
             <div className={styles["footer-button"]}>
-              <Button
+              <ButtonOne
                 className={styles["pay-inner"]}
                 disabled={isButtonDisabled}
                 onClick={handlePayment}
               >
                 {CONTENT.BUTTON_ADD_PAYMENT}
-              </Button>
+              </ButtonOne>
             </div>
           </div>
         </div>

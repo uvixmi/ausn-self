@@ -8,7 +8,11 @@ import {
   Typography,
   message,
 } from "antd"
-import { PlusOutlined, CloseOutlined } from "@ant-design/icons"
+import {
+  PlusOutlined,
+  CloseOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import locale from "antd/lib/date-picker/locale/ru_RU"
@@ -34,6 +38,9 @@ import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import { convertDateFormat, numberWithSpaces } from "./utils"
 import { formatDateString } from "../utils"
+import Link from "antd/es/typography/Link"
+import { ButtonOne } from "../../../../ui-kit/button"
+import { InputOne } from "../../../../ui-kit/input"
 
 export const PaymentModal = ({
   isOpen,
@@ -41,6 +48,7 @@ export const PaymentModal = ({
   payAmount,
   fetchTasks,
   taskYear,
+  openAnalysis,
 }: ConfirmModalProps) => {
   const { Title, Text } = Typography
   dayjs.locale("ru")
@@ -184,7 +192,6 @@ export const PaymentModal = ({
             setOpen(false)
             dispatch(clear())
           }}
-          mask={false}
           onCancel={() => {
             setOpen(false)
             dispatch(clear())
@@ -195,10 +202,32 @@ export const PaymentModal = ({
           <div className={styles["modal-style"]}>
             <div className={styles["modal-inner"]}>
               <div className={styles["payment-wrapper"]}>
-                <Title level={3}>{CONTENT.HEADING_MODAL}</Title>
+                <Text className={styles["title-text"]}>
+                  {CONTENT.HEADING_MODAL}
+                </Text>
                 <Text className={styles["text-description"]}>
                   {CONTENT.DESCRIPTION_MODAL}
                 </Text>
+                <div className={styles["update-wrapper"]}>
+                  <div className={styles["update-inner"]}>
+                    <InfoCircleOutlined
+                      className={styles["info-icon"]}
+                      size={20}
+                    />
+                    <Text className={styles["banner-title"]}>
+                      {CONTENT.UPDATE_TITLE}
+                    </Text>
+                    <Text className={styles["banner-description"]}>
+                      {CONTENT.UDPATE_DESCRIPTION}
+                    </Text>
+                    <Link
+                      className={styles["banner-link"]}
+                      onClick={openAnalysis}
+                    >
+                      {CONTENT.UDPATE_LINK}
+                    </Link>
+                  </div>
+                </div>
                 {payments.map((item, index) => (
                   <div className={styles["payment-inner"]} key={index}>
                     {index != 0 && (
@@ -231,9 +260,11 @@ export const PaymentModal = ({
                           )}
                         >
                           {CONTENT.TEXT_AMOUNT}
+                          <Text className={styles["necessary"]}>
+                            {CONTENT.NECESSARY}
+                          </Text>
                         </Text>
-                        <Input
-                          style={{ borderRadius: 0, height: "32px" }}
+                        <InputOne
                           value={amountInputs[index].amountrrr}
                           onChange={(event) =>
                             handleAmount(event.target.value, index)
@@ -248,6 +279,9 @@ export const PaymentModal = ({
                           )}
                         >
                           {CONTENT.TEXT_DATE}
+                          <Text className={styles["necessary"]}>
+                            {CONTENT.NECESSARY}
+                          </Text>
                         </Text>
 
                         <DatePicker
@@ -295,8 +329,7 @@ export const PaymentModal = ({
                       >
                         {CONTENT.TEXT_PAYMENT_NUMBER}
                       </Text>
-                      <Input
-                        style={{ borderRadius: 0 }}
+                      <InputOne
                         value={item.doc_number ? item.doc_number : ""}
                         onChange={(event) =>
                           handleDocNumber(event.target.value, index)
@@ -308,32 +341,29 @@ export const PaymentModal = ({
                     </div>
                   </div>
                 ))}
-                <Button
-                  className={styles["add-payment-inner"]}
+                <ButtonOne
+                  type="secondary"
+                  className={styles["button-add-payment"]}
                   onClick={() => {
                     setAmountInputs([...amountInputs, { amountrrr: "" }])
 
                     dispatch(addPayment())
                   }}
                 >
-                  {CONTENT.BUTTON_ADD_PAYMENT}
                   <PlusOutlined
                     className={styles["plus-icon"]}
                     style={{ marginInlineStart: "4px" }}
                   />
-                </Button>
+                  {CONTENT.BUTTON_ADD_PAYMENT}
+                </ButtonOne>
               </div>
               <div className={styles["footer-button"]}>
-                <Button
-                  className={styles["pay-inner"]}
-                  onClick={handlePay}
-                  disabled={isButtonDisabled}
-                >
+                <ButtonOne onClick={handlePay} disabled={isButtonDisabled}>
                   {CONTENT.BUTTON_PAY}
-                </Button>
-                <Text className={styles["remark-text"]}>
+                </ButtonOne>
+                {/* <Text className={styles["remark-text"]}>
                   {CONTENT.TEXT_REMARK}
-                </Text>
+                </Text>*/}
               </div>
             </div>
           </div>

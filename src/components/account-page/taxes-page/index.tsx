@@ -1151,7 +1151,7 @@ export const TaxesPage = () => {
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
+
                       justifyContent: "center",
                     }}
                   >
@@ -2413,7 +2413,7 @@ export const TaxesPage = () => {
                   }}
                   ref={updateRef}
                   onTouchEnd={(e) => {
-                    e.currentTarget.blur() // Убедитесь, что фокус убирается при касании на мобильных устройствах
+                    e.currentTarget.blur()
                   }}
                   type="secondary"
                   className={styles["button-drawer-item"]}

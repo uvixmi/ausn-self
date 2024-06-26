@@ -8,6 +8,7 @@ import Cookies from "js-cookie"
 import { useEffect, useRef, useState } from "react"
 import { LeadReason, api } from "../../../../api/myApi"
 import { MaskedInput } from "antd-mask-input"
+import { ButtonOne } from "../../../../ui-kit/button"
 
 export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   const { Title, Text } = Typography
@@ -71,9 +72,9 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
         <div className={styles["modal-inner"]}>
           <div className={styles["payment-wrapper"]}>
             <div className={styles["heading-row"]}>
-              <Title level={3} style={{ marginBottom: 0 }}>
+              <Text className={styles["modal-title"]}>
                 {CONTENT.HEADING_MODAL}
-              </Title>
+              </Text>
               <Text className={cn(styles["text-description"])}>
                 {CONTENT.PAID_RATE_DESCRIPTION_MODAL}
               </Text>
@@ -107,15 +108,18 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
               <div className={styles["input-item"]}>
                 <Text
                   className={cn(
-                    styles["text-description"],
+                    styles["text-description-input"],
                     styles["default-text"]
                   )}
                 >
                   {CONTENT.TITLE_PHONE}
+                  <Text className={styles["necessary"]}>
+                    {CONTENT.NECESSARY}
+                  </Text>
                 </Text>
                 <MaskedInput
                   mask={PhoneMask}
-                  style={{ borderRadius: 0 }}
+                  style={{ borderRadius: "4px" }}
                   className={cn(styles["input-item"])}
                   value={phone}
                   onChange={(event) => {
@@ -129,13 +133,9 @@ export const AnalysisEnsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
             </div>
           </div>
           <div className={styles["footer-button"]}>
-            <Button
-              className={styles["pay-inner"]}
-              onClick={sendPhone}
-              disabled={isButtonDisabled}
-            >
+            <ButtonOne onClick={sendPhone} disabled={isButtonDisabled}>
               {CONTENT.BUTTON_SEND}
-            </Button>
+            </ButtonOne>
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import styles from "./styles.module.scss"
 import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
 import { AccountPageProps } from "./types"
-import { useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { clearData, fetchCurrentUser } from "../authorization-page/slice"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../main-page/store"
@@ -28,11 +28,32 @@ export const AccountPage = ({
   const { loaded, loading } = useSelector((state: RootState) => state.user)
   const location = useLocation()
 
+  const tasks = useSelector((state: RootState) => state.tasks.tasks?.tasks)
+
+  const getTaskSum = useCallback(() => {
+    const currentDate = new Date()
+    const tenDaysLater = new Date()
+    tenDaysLater.setDate(currentDate.getDate() + 10)
+
+    const overdueTasks = tasks?.filter(
+      (task) => new Date(task.due_date) < currentDate
+    )
+    const soonDueTasks = tasks?.filter((task) => {
+      const dueDate = new Date(task.due_date)
+      return dueDate >= currentDate && dueDate <= tenDaysLater
+    })
+
+    const sum =
+      soonDueTasks && overdueTasks && overdueTasks.length + soonDueTasks.length
+
+    return sum
+  }, [tasks])
+
   const data = [
     {
       title: CONTENT.SIDER_HEADING_EVENTS,
       to: "/main",
-      icon: <MenuActionsIcon />,
+      icon: <MenuActionsIcon className={styles["actions-icon"]} />,
     },
     {
       title: CONTENT.SIDER_HEADING_TAXES,
@@ -54,6 +75,24 @@ export const AccountPage = ({
     },
     // { title: CONTENT.SIDER_SUPPORT, to: "/support" },
   ]
+  const [tasksCount, setTasksCount] = useState<number | undefined>(0)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const navigate = useNavigate()
+
+  const isMobile = useMediaQuery("(max-width: 1279px)")
+
+  const { data: currentUser } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    if (!loaded && loading !== "") {
+      dispatch(fetchCurrentUser())
+
+      dispatch(fetchSourcesInfo())
+    }
+    setTasksCount(getTaskSum())
+  }, [dispatch, getTaskSum, loaded, loading])
 
   const menuItems = [
     {
@@ -66,6 +105,18 @@ export const AccountPage = ({
         >
           <MenuActionsIcon />
           {CONTENT.SIDER_HEADING_EVENTS}
+          {tasksCount && tasksCount > 0 ? (
+            <div className={styles["tasks-inner"]}>
+              <div
+                className={cn({
+                  [styles["tasks-count"]]: location.pathname === "/main",
+                  [styles["tasks-count-not"]]: location.pathname !== "/main",
+                })}
+              >
+                {getTaskSum()}
+              </div>
+            </div>
+          ) : null}
         </Link>
       ),
       key: 1,
@@ -115,22 +166,6 @@ export const AccountPage = ({
   ]
 
   const { Title, Text } = Typography
-
-  const dispatch = useDispatch<AppDispatch>()
-
-  useEffect(() => {
-    if (!loaded && loading !== "") {
-      dispatch(fetchCurrentUser())
-
-      dispatch(fetchSourcesInfo())
-    }
-  }, [dispatch, loaded, loading])
-
-  const navigate = useNavigate()
-
-  const isMobile = useMediaQuery("(max-width: 1279px)")
-
-  const { data: currentUser } = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -237,6 +272,22 @@ export const AccountPage = ({
                         >
                           {item.icon}
                           {item.title}
+                          {item.to === "/main" &&
+                          tasksCount &&
+                          tasksCount > 0 ? (
+                            <div className={styles["tasks-inner"]}>
+                              <div
+                                className={cn({
+                                  [styles["tasks-count"]]:
+                                    location.pathname === item.to,
+                                  [styles["tasks-count-not"]]:
+                                    location.pathname !== item.to,
+                                })}
+                              >
+                                {getTaskSum()}
+                              </div>
+                            </div>
+                          ) : null}
                         </Link>
                       </List.Item>
                     )}

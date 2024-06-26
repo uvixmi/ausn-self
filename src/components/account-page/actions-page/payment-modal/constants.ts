@@ -2,10 +2,10 @@ export const CONTENT = {
   HEADING_MODAL: "Добавить уплату",
   DESCRIPTION_MODAL:
     "Укажите информацию о фактически оплаченных налогах и взносах, сведения о которых не содержатся в подгруженной выписке",
-  TEXT_AMOUNT: "Сумма уплаты*",
-  DATEPICKER_PLACEHOLDER: "Выберите дату*",
+  TEXT_AMOUNT: "Сумма уплаты",
+  DATEPICKER_PLACEHOLDER: "Выберите дату",
   SELECT_YEAR_PLACEHOLDER: "Выберите год",
-  TEXT_DATE: "Дата уплаты*",
+  TEXT_DATE: "Дата уплаты",
   TEXT_YEAR: "Год, за который осуществлялась уплата*",
   TEXT_PAYMENT_NUMBER: "Номер платежного документа",
   DESCRIPTION_PAYMENT_NUMBER:
@@ -17,4 +17,9 @@ export const CONTENT = {
   NEXT_PAYMENT: "Дополнительный платеж",
   NOTIFICATION_PROCESSING_SUCCESS: "Уплата налогов и взносов добавлена",
   NOTIFCATION_PROCESSING_ERROR: "Ошибка добавления уплаты. Попробуйте еще раз",
+  UPDATE_TITLE: "Уплаты налогов и взносов формируют баланс ЕНС",
+  UDPATE_DESCRIPTION:
+    "Независимо от того, какой налог или взнос вы оплатили, оплата зачтется в погашение обязательств ИП или физлица с наиболее ранним сроком уплаты",
+  UDPATE_LINK: "Подробнее →",
+  NECESSARY: " *",
 }

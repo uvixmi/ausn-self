@@ -4,4 +4,5 @@ export interface ConfirmModalProps {
   payAmount?: number
   setDueAmount: (arg: number | undefined) => void
   defaultAccount?: string | null
+  openAnalysis: () => void
 }
