@@ -9,6 +9,9 @@ import { api } from "../../../../../api/myApi"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../../../../main-page/store"
 import { fetchSourcesInfo } from "../../../client/sources/thunks"
+import { InputOne } from "../../../../../ui-kit/input"
+import { ButtonOne } from "../../../../../ui-kit/button"
+import "./styles.scss"
 
 export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
   const { Title, Text } = Typography
@@ -42,6 +45,7 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
     })
   }
 
+  const [bankName, setBankName] = useState("")
   const closeModal = () => {
     setOpen(false)
   }
@@ -51,6 +55,22 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
       setIsIntegrateButtonDisabled(false)
     else setIsIntegrateButtonDisabled(true)
   }, [integrateBik, integrateAccount])
+
+  useEffect(() => {
+    const getBankName = async () => {
+      try {
+        const response = await api.references.getBankInfoReferencesBankInfoGet(
+          {
+            bik: integrateBik,
+          },
+          { headers }
+        )
+        setBankName(response.data.bank_name)
+      } catch (error) {}
+    }
+    if (integrateBik.length === 9) getBankName()
+    else setBankName("")
+  }, [integrateBik])
 
   const handleClick = async () => {
     try {
@@ -88,11 +108,10 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
         onCancel={closeModal}
         footer={null}
         style={{ borderRadius: "2px" }}
+        className="modal-add-account"
       >
         <div className={styles["modal-wrapper"]}>
-          <Title level={3} style={{ marginBottom: "4px" }}>
-            {CONTENT.MODAL_TITLE}
-          </Title>
+          <Text className={styles["title-text"]}>{CONTENT.MODAL_TITLE}</Text>
           <div className={styles["description-item"]}>
             <Text className={styles["title-description"]}>
               {CONTENT.MODAL_DESCRIPTION}
@@ -124,11 +143,10 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
                   )
                 }
               >
-                <Input
+                <InputOne
                   value={integrateBik}
                   placeholder={CONTENT.INPUT_PLACEHOLDER}
                   showCount
-                  style={{ borderRadius: "2px" }}
                   maxLength={9}
                   onChange={(event) => {
                     const numericValue = event.target.value.replace(/\D/g, "")
@@ -138,6 +156,19 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
                   }}
                 />
               </Form.Item>
+            </div>
+            <div
+              className={styles["input-item"]}
+              style={{ marginBottom: "24px" }}
+            >
+              <Text className={cn(styles["text-disabled"])}>
+                {CONTENT.INPUT_BANK_NAME}
+              </Text>
+              <InputOne
+                disabled
+                placeholder={CONTENT.INPUT_BANK_NAME_PLACEHOLDER}
+                value={bankName}
+              />
             </div>
             <div className={styles["input-item"]}>
               <Text
@@ -171,12 +202,11 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
                   )
                 }
               >
-                <Input
+                <InputOne
                   value={integrateAccount}
                   placeholder={CONTENT.INPUT_PLACEHOLDER}
                   maxLength={20}
                   showCount
-                  style={{ borderRadius: "2px" }}
                   onChange={(event) => {
                     const numericValue = event.target.value.replace(/\D/g, "")
                     setIntegrateAccount(numericValue)
@@ -187,13 +217,13 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
               </Form.Item>
             </div>
           </div>
-          <Button
+          <ButtonOne
             onClick={handleClick}
             disabled={isIntegrateButtonDisabled}
             className={styles["generate-button"]}
           >
             {CONTENT.BUTTON_TEXT}
-          </Button>
+          </ButtonOne>
         </div>
       </Modal>
     </>

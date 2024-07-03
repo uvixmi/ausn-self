@@ -51,7 +51,6 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        await dispatch(fetchBanners())
         const linkedBanners = fetchedBanners?.map((item) => {
           const regex = /(\{link:[^\}]+\})/g
           const parts = item.description.split(regex)
@@ -64,7 +63,7 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       }
     }
     fetchSources()
-  }, [])
+  }, [fetchedBanners])
 
   const deleteBanner = async (id: string) => {
     try {
@@ -72,6 +71,37 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
         { banner_id: id },
         { headers }
       )
+      const bannersResponse = await api.banners.getUserBannersBannersGet(
+        {
+          current_date: convertDateFormat(new Date().toLocaleDateString()),
+        },
+        {
+          headers,
+        }
+      )
+      const linkedBanners = bannersResponse.data.banners.map((item) => {
+        const regex = /(\{link:[^\}]+\})/g
+        const parts = item.description.split(regex)
+        return { ...item, description: parts }
+      })
+
+      setBanners(linkedBanners)
+    } catch (error) {
+      if ((error as ApiError).status === 422) {
+        logout(), dispatch(clearData()), navigate("/login")
+      }
+    }
+  }
+
+  const deleteAllBanners = async () => {
+    try {
+      banners?.map(async (item) => {
+        await api.banners.updateUserBannerStateBannersPut(
+          { banner_id: item.id },
+          { headers }
+        )
+      })
+
       const bannersResponse = await api.banners.getUserBannersBannersGet(
         {
           current_date: convertDateFormat(new Date().toLocaleDateString()),
@@ -162,7 +192,13 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
             </div>
           </div>
           <div className={styles["footer-button"]}>
-            <ButtonOne onClick={closeModal} type="secondary">
+            <ButtonOne
+              onClick={() => {
+                closeModal()
+                deleteAllBanners()
+              }}
+              type="secondary"
+            >
               {CONTENT.BUTTON_SEND}
             </ButtonOne>
           </div>

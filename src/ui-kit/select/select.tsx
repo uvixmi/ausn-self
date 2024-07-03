@@ -17,9 +17,11 @@ export const SelectOne = ({
   onClear,
   value,
   mode,
+  notFoundContent,
   maxTagCount,
   defaultValue,
   allowClear,
+  dropdownRender,
   dropdownStyle,
   onBlur,
   onFocus,
@@ -59,9 +61,11 @@ export const SelectOne = ({
         allowClear={allowClear}
         dropdownStyle={{ ...dropdownStyle, padding: 0, borderRadius: 0 }}
         onBlur={onBlur}
+        dropdownRender={dropdownRender}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onFocus={onFocus}
+        notFoundContent={notFoundContent}
         onClick={onClick}
         style={{ borderRadius: "4px" }}
       >

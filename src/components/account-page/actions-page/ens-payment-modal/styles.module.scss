@@ -31,7 +31,10 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height: 100%;
+
+  @media screen and (min-width: $s) {
+    height: 100%;
+  }
 }
 .payment-wrapper {
   display: flex;
@@ -49,7 +52,7 @@ $xxl: 2560px;
 .input-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
   width: 100%;
 }
 
@@ -116,17 +119,38 @@ $xxl: 2560px;
 
 .text-row {
   display: flex;
-  gap: 16px;
+  gap: 2px;
+  flex-direction: column;
+
+  @media screen and (min-width: $s) {
+    flex-direction: row;
+    gap: 16px;
+  }
 }
 
 .text-left-part {
-  width: 120px;
-  color: #8c8c8c;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1;
+
+  @media screen and (min-width: $s) {
+    width: 120px;
+  }
 }
 
 .text-right-part {
   text-align: left;
-  width: 200px;
+
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  @media screen and (min-width: $s) {
+    width: 200px;
+  }
 }
 
 .update-wrapper {
@@ -174,6 +198,7 @@ $xxl: 2560px;
 
 .info-icon {
   color: $brand-additional-dark !important;
+  font-size: 16px;
 }
 
 .necessary {
@@ -193,4 +218,21 @@ $xxl: 2560px;
   line-height: 32px;
   text-align: left;
   color: $base-primary-dark;
+}
+
+.text-area-style {
+  font-family: "Inter";
+}
+
+.add-select-button-inner {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
 }

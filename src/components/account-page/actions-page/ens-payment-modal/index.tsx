@@ -1,9 +1,11 @@
 import {
   Button,
   Collapse,
+  Divider,
   Input,
   Modal,
   Select,
+  Space,
   Typography,
   message,
 } from "antd"
@@ -23,10 +25,11 @@ import { numberWithSpaces } from "../payment-modal/utils"
 import { formatDateString } from "../utils"
 import { RootState } from "../../../main-page/store"
 import { AddAccountModal } from "./add-account-modal"
-import { InfoCircleOutlined } from "@ant-design/icons"
+import { InfoCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import { InputOne } from "../../../../ui-kit/input"
 import { ButtonOne } from "../../../../ui-kit/button"
 import { SelectOne } from "../../../../ui-kit/select"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const EnsPaymentModal = ({
   isOpen,
@@ -52,7 +55,7 @@ export const EnsPaymentModal = ({
 
   const [reason, setReason] = useState<string>("")
 
-  const handleReason = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleReason = (event: React.ChangeEvent<HTMLInputElement>) => {
     setReason(event.target.value)
   }
 
@@ -94,7 +97,19 @@ export const EnsPaymentModal = ({
     (state: RootState) => state.sources.sourcesInfo?.sources
   )
   const optionsAddSources = [
-    { label: <Button>{"Добавить счет"}</Button>, value: null },
+    {
+      label: (
+        <Button
+          className={styles["select-add-button"]}
+          onClick={() => {
+            setAddAccountOpen(true)
+          }}
+        >
+          {"Добавить новый счет"}
+        </Button>
+      ),
+      value: null,
+    },
   ]
   const options =
     sources &&
@@ -151,6 +166,18 @@ export const EnsPaymentModal = ({
       if (amount === "") setAmount(0)
     }
   }
+
+  const [handler, setHandler] = useState(false)
+
+  useEffect(() => {
+    if (handler === true) {
+      setTimeout(() => {
+        setAddAccountOpen(true)
+        setHandler(false)
+      }, 500)
+    }
+  }, [handler])
+
   const collapseItems = [
     {
       key: 1,
@@ -254,6 +281,8 @@ export const EnsPaymentModal = ({
     }
   }
 
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+
   return (
     <>
       {contextHolder}
@@ -264,6 +293,7 @@ export const EnsPaymentModal = ({
           marginRight: 0,
           borderRadius: "0",
         }}
+        centered={isMobile}
         onOk={() => {
           setOpen(false)
           clear()
@@ -273,7 +303,7 @@ export const EnsPaymentModal = ({
           clear()
         }}
         footer={null}
-        className={cn(styles["ant-modal"], "modal-payment")}
+        className={cn(styles["ant-modal"], "modal-payment-ens")}
       >
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
@@ -295,7 +325,11 @@ export const EnsPaymentModal = ({
                   </Text>
                   <Link
                     className={styles["banner-link"]}
-                    onClick={openAnalysis}
+                    onClick={() => {
+                      openAnalysis()
+                      setOpen(false)
+                      clear()
+                    }}
                   >
                     {CONTENT.UDPATE_LINK}
                   </Link>
@@ -314,23 +348,77 @@ export const EnsPaymentModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  {options?.length && options?.length > 0 ? (
-                    <SelectOne
-                      options={options}
-                      defaultValue={defaultAccount}
-                      className={"modal-select"}
-                      placeholder={CONTENT.SELECT_ACCOUNT_PLACEHOLDER}
-                      onChange={(value) => setAccount(value)}
-                    />
-                  ) : (
-                    <Button
+
+                  <SelectOne
+                    options={options}
+                    defaultValue={defaultAccount}
+                    className={"modal-select"}
+                    placeholder={CONTENT.SELECT_ACCOUNT_PLACEHOLDER}
+                    onChange={(value) => setAccount(value)}
+                    notFoundContent={
+                      <>
+                        <Space
+                          style={{
+                            padding: "0 0px 4px",
+                          }}
+                        >
+                          <Button
+                            type="text"
+                            className={styles["add-select-button-inner"]}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.currentTarget.blur()
+
+                              setHandler(true)
+                            }}
+                          >
+                            {"Добавить новый счет"}
+                          </Button>
+                        </Space>
+                      </>
+                    }
+                    dropdownRender={(menu) => (
+                      <>
+                        {menu}
+                        {options?.length && options?.length > 0 ? (
+                          <>
+                            <Divider
+                              style={{
+                                margin: "2px 0",
+                              }}
+                            />
+                            <Space
+                              style={{
+                                padding: "0 8px 4px",
+                              }}
+                            >
+                              <Button
+                                type="text"
+                                icon={<PlusOutlined />}
+                                className={styles["add-select-button-inner"]}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.currentTarget.blur()
+                                  setHandler(true)
+                                }}
+                              >
+                                {"Добавить новый счет"}
+                              </Button>
+                            </Space>
+                          </>
+                        ) : null}
+                      </>
+                    )}
+                  />
+                  {/*(
+                    <ButtonOne
                       onClick={() => {
                         setAddAccountOpen(true)
                       }}
                     >
                       {"Добавить счет"}
-                    </Button>
-                  )}
+                    </ButtonOne>
+                  )*/}
                 </div>
               </div>
               <div className={styles["inputs-row"]}>
@@ -346,10 +434,10 @@ export const EnsPaymentModal = ({
                       {CONTENT.NECESSARY}
                     </Text>
                   </Text>
-                  <TextArea
-                    style={{ borderRadius: 0 }}
+                  <InputOne
                     value={reason}
                     onChange={handleReason}
+                    className={styles["text-area-style"]}
                   />
                 </div>
               </div>

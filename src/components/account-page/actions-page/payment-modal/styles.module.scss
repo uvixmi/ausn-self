@@ -15,6 +15,7 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 22px;
   text-align: left;
+  color: $base-additional-grey;
 }
 
 .ant-modal {
@@ -31,19 +32,32 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height: 100%;
+
+  @media screen and (min-width: $s) {
+    height: 100%;
+  }
 }
 .payment-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   max-width: 440px;
+
+  @media screen and (min-width: $s) {
+    gap: 24px;
+  }
 }
 
 .inputs-row {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   justify-content: space-between;
+  flex-direction: column;
+
+  @media screen and (min-width: $s) {
+    flex-direction: row;
+    gap: 20px;
+  }
 }
 
 .input-item {
@@ -78,10 +92,10 @@ $xxl: 2560px;
   padding: 6px 8px 6px 12px;
   border-radius: 2px;
   border: 1px solid #505050;
+  font-family: "Inter";
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
-  letter-spacing: -0.20000000298023224px;
   text-align: center;
   color: #141414;
 }
@@ -89,7 +103,11 @@ $xxl: 2560px;
 .payment-inner {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
+
+  @media screen and (min-width: $s) {
+    gap: 24px;
+  }
 }
 
 .footer-button {
@@ -100,6 +118,7 @@ $xxl: 2560px;
 
 .remark-text {
   color: #505050;
+  font-family: "Inter";
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
@@ -108,8 +127,8 @@ $xxl: 2560px;
 }
 
 .plus-icon {
-  font-size: 10px;
-  color: #141414;
+  font-size: 14px;
+  color: $brand-primary;
   align-self: center;
 }
 
@@ -186,6 +205,7 @@ $xxl: 2560px;
 
 .info-icon {
   color: $brand-additional-dark !important;
+  font-size: 16px;
 }
 
 .necessary {
@@ -199,5 +219,24 @@ $xxl: 2560px;
 }
 
 .button-add-payment {
-  width: 173px;
+  @media screen and (min-width: $s) {
+    width: 173px;
+  }
+}
+
+.datepicker-style {
+  width: 100%;
+  padding: 5px 12px !important;
+  &:hover {
+    border: 1px solid $base-secondary-1;
+  }
+
+  &:focus {
+    border: 1px solid $brand-primary;
+    box-shadow: 0px 0px 0px 2px #f0f0ff;
+  }
+}
+
+.trash-icon {
+  color: $red-primary !important;
 }

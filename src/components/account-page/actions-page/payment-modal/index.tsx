@@ -41,6 +41,9 @@ import { formatDateString } from "../utils"
 import Link from "antd/es/typography/Link"
 import { ButtonOne } from "../../../../ui-kit/button"
 import { InputOne } from "../../../../ui-kit/input"
+import { TrashNewIcon } from "../../taxes-page/type-operation/icons/trash-new-icon"
+import { TrashWarningIcon } from "../../taxes-page/type-operation/icons/trash-warning-icon"
+import { useMediaQuery } from "@react-hook/media-query"
 
 export const PaymentModal = ({
   isOpen,
@@ -169,138 +172,140 @@ export const PaymentModal = ({
     else setIsButtonDisabled(true)
   }, [payments])
 
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+
   return (
     <>
-      <ConfigProvider
-        theme={{
-          components: {
-            DatePicker: {
-              cellBgDisabled: "#D1D1D1",
-            },
-          },
+      {contextHolder}
+      <Modal
+        open={isOpen}
+        centered={isMobile}
+        style={{
+          top: 0,
+          marginRight: 0,
+          borderRadius: "0",
         }}
+        onOk={() => {
+          setOpen(false)
+          dispatch(clear())
+        }}
+        onCancel={() => {
+          setOpen(false)
+          dispatch(clear())
+        }}
+        footer={null}
+        className={cn(styles["ant-modal"], "modal-payment-actions")}
       >
-        {contextHolder}
-        <Modal
-          open={isOpen}
-          style={{
-            top: 0,
-            marginRight: 0,
-            borderRadius: "0",
-          }}
-          onOk={() => {
-            setOpen(false)
-            dispatch(clear())
-          }}
-          onCancel={() => {
-            setOpen(false)
-            dispatch(clear())
-          }}
-          footer={null}
-          className={cn(styles["ant-modal"], "modal-payment")}
-        >
-          <div className={styles["modal-style"]}>
-            <div className={styles["modal-inner"]}>
-              <div className={styles["payment-wrapper"]}>
-                <Text className={styles["title-text"]}>
-                  {CONTENT.HEADING_MODAL}
-                </Text>
-                <Text className={styles["text-description"]}>
-                  {CONTENT.DESCRIPTION_MODAL}
-                </Text>
-                <div className={styles["update-wrapper"]}>
-                  <div className={styles["update-inner"]}>
-                    <InfoCircleOutlined
-                      className={styles["info-icon"]}
-                      size={20}
-                    />
-                    <Text className={styles["banner-title"]}>
-                      {CONTENT.UPDATE_TITLE}
-                    </Text>
-                    <Text className={styles["banner-description"]}>
-                      {CONTENT.UDPATE_DESCRIPTION}
-                    </Text>
-                    <Link
-                      className={styles["banner-link"]}
-                      onClick={openAnalysis}
-                    >
-                      {CONTENT.UDPATE_LINK}
-                    </Link>
-                  </div>
-                </div>
-                {payments.map((item, index) => (
-                  <div className={styles["payment-inner"]} key={index}>
-                    {index != 0 && (
-                      <div className={styles["title-next"]}>
-                        <Title
-                          level={3}
-                          style={{ marginBottom: 0, marginTop: "8px" }}
-                        >
-                          {CONTENT.NEXT_PAYMENT}
-                        </Title>
-                        <Button
-                          className={styles["delete-payment"]}
-                          onClick={() => {
-                            deletePay(index)
-                            setAmountInputs((prevAmountInputs) =>
-                              prevAmountInputs.filter((_, i) => i !== index)
-                            )
-                          }}
-                        >
-                          <CloseOutlined />
-                        </Button>
-                      </div>
-                    )}
-                    <div className={styles["inputs-row"]}>
-                      <div className={styles["input-item"]}>
-                        <Text
-                          className={cn(
-                            styles["text-description"],
-                            styles["default-text"]
-                          )}
-                        >
-                          {CONTENT.TEXT_AMOUNT}
-                          <Text className={styles["necessary"]}>
-                            {CONTENT.NECESSARY}
-                          </Text>
-                        </Text>
-                        <InputOne
-                          value={amountInputs[index].amountrrr}
-                          onChange={(event) =>
-                            handleAmount(event.target.value, index)
-                          }
-                        />
-                      </div>
-                      <div className={styles["input-item"]}>
-                        <Text
-                          className={cn(
-                            styles["text-description"],
-                            styles["default-text"]
-                          )}
-                        >
-                          {CONTENT.TEXT_DATE}
-                          <Text className={styles["necessary"]}>
-                            {CONTENT.NECESSARY}
-                          </Text>
-                        </Text>
+        <div className={styles["modal-style"]}>
+          <div className={styles["modal-inner"]}>
+            <div className={styles["payment-wrapper"]}>
+              <Text className={styles["title-text"]}>
+                {CONTENT.HEADING_MODAL}
+              </Text>
+              <Text className={styles["text-description"]}>
+                {CONTENT.DESCRIPTION_MODAL}
+              </Text>
+              <div className={styles["update-wrapper"]}>
+                <div className={styles["update-inner"]}>
+                  <InfoCircleOutlined
+                    className={styles["info-icon"]}
+                    size={20}
+                  />
+                  <Text className={styles["banner-title"]}>
+                    {CONTENT.UPDATE_TITLE}
+                  </Text>
+                  <Text className={styles["banner-description"]}>
+                    {CONTENT.UDPATE_DESCRIPTION}
+                  </Text>
+                  <Link
+                    className={styles["banner-link"]}
+                    onClick={() => {
+                      openAnalysis()
 
-                        <DatePicker
-                          style={{ borderRadius: 0, height: "32px" }}
-                          locale={locale}
-                          format={dateFormat}
-                          maxDate={dayjs(formatDateString(), dateFormat)}
-                          placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                          value={
-                            item.date ? dayjs(item.date, dateFormat) : null
-                          }
-                          onChange={(value, dateString) =>
-                            typeof dateString === "string" &&
-                            handleDate(dateString, index)
-                          }
-                        />
-                      </div>
+                      setOpen(false)
+                      dispatch(clear())
+                    }}
+                  >
+                    {CONTENT.UDPATE_LINK}
+                  </Link>
+                </div>
+              </div>
+              {payments.map((item, index) => (
+                <div className={styles["payment-inner"]} key={index}>
+                  {index != 0 && (
+                    <div className={styles["title-next"]}>
+                      <Title
+                        level={3}
+                        style={{ marginBottom: 0, marginTop: "8px" }}
+                      >
+                        {CONTENT.NEXT_PAYMENT}
+                      </Title>
+                      <Button
+                        className={styles["delete-payment"]}
+                        onClick={() => {
+                          deletePay(index)
+                          setAmountInputs((prevAmountInputs) =>
+                            prevAmountInputs.filter((_, i) => i !== index)
+                          )
+                        }}
+                      >
+                        <TrashWarningIcon />
+                      </Button>
                     </div>
-                    {/*
+                  )}
+                  <div className={styles["inputs-row"]}>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_AMOUNT}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+                      <InputOne
+                        value={amountInputs[index].amountrrr}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        onChange={(event) =>
+                          handleAmount(event.target.value, index)
+                        }
+                      />
+                    </div>
+                    <div className={styles["input-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_DATE}
+                        <Text className={styles["necessary"]}>
+                          {CONTENT.NECESSARY}
+                        </Text>
+                      </Text>
+
+                      <DatePicker
+                        style={{ borderRadius: "4px", height: "34px" }}
+                        className={cn(
+                          "picker-operation",
+                          styles["datepicker-style"]
+                        )}
+                        locale={locale}
+                        format={dateFormat}
+                        maxDate={dayjs(formatDateString(), dateFormat)}
+                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                        value={item.date ? dayjs(item.date, dateFormat) : null}
+                        onChange={(value, dateString) =>
+                          typeof dateString === "string" &&
+                          handleDate(dateString, index)
+                        }
+                      />
+                    </div>
+                  </div>
+                  {/*
                 <div className={styles["select-item"]}>
                   <Text
                     className={cn(
@@ -320,55 +325,55 @@ export const PaymentModal = ({
                     }}
                   />
                 </div>*/}
-                    <div className={styles["select-item"]}>
-                      <Text
-                        className={cn(
-                          styles["text-description"],
-                          styles["default-text"]
-                        )}
-                      >
-                        {CONTENT.TEXT_PAYMENT_NUMBER}
-                      </Text>
-                      <InputOne
-                        value={item.doc_number ? item.doc_number : ""}
-                        onChange={(event) =>
-                          handleDocNumber(event.target.value, index)
-                        }
-                      />
-                      <Text className={styles["input-description"]}>
-                        {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
-                      </Text>
-                    </div>
+                  <div className={styles["select-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_PAYMENT_NUMBER}
+                    </Text>
+                    <InputOne
+                      placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      value={item.doc_number ? item.doc_number : ""}
+                      onChange={(event) =>
+                        handleDocNumber(event.target.value, index)
+                      }
+                    />
+                    <Text className={styles["input-description"]}>
+                      {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
+                    </Text>
                   </div>
-                ))}
-                <ButtonOne
-                  type="secondary"
-                  className={styles["button-add-payment"]}
-                  onClick={() => {
-                    setAmountInputs([...amountInputs, { amountrrr: "" }])
+                </div>
+              ))}
+              <ButtonOne
+                type="secondary"
+                className={styles["button-add-payment"]}
+                onClick={() => {
+                  setAmountInputs([...amountInputs, { amountrrr: "" }])
 
-                    dispatch(addPayment())
-                  }}
-                >
-                  <PlusOutlined
-                    className={styles["plus-icon"]}
-                    style={{ marginInlineStart: "4px" }}
-                  />
-                  {CONTENT.BUTTON_ADD_PAYMENT}
-                </ButtonOne>
-              </div>
-              <div className={styles["footer-button"]}>
-                <ButtonOne onClick={handlePay} disabled={isButtonDisabled}>
-                  {CONTENT.BUTTON_PAY}
-                </ButtonOne>
-                {/* <Text className={styles["remark-text"]}>
+                  dispatch(addPayment())
+                }}
+              >
+                <PlusOutlined
+                  className={styles["plus-icon"]}
+                  style={{ marginInlineStart: "4px" }}
+                />
+                {CONTENT.BUTTON_ADD_PAYMENT}
+              </ButtonOne>
+            </div>
+            <div className={styles["footer-button"]}>
+              <ButtonOne onClick={handlePay} disabled={isButtonDisabled}>
+                {CONTENT.BUTTON_PAY_MORE}
+              </ButtonOne>
+              {/* <Text className={styles["remark-text"]}>
                   {CONTENT.TEXT_REMARK}
                 </Text>*/}
-              </div>
             </div>
           </div>
-        </Modal>
-      </ConfigProvider>
+        </div>
+      </Modal>
     </>
   )
 }

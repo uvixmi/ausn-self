@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../../main-page/store"
 import { fetchTasks } from "../../client/tasks/thunks"
+import { ButtonOne } from "../../../../ui-kit/button"
 
 export const ConfirmPassModal = ({
   isOpen,
@@ -79,7 +80,7 @@ export const ConfirmPassModal = ({
         footer={null}
       >
         <div className={styles["modal-wrapper"]}>
-          <Title level={3}>{CONTENT.TITLE_PASSED}</Title>
+          <Text className={styles["modal-title"]}>{CONTENT.TITLE_PASSED}</Text>
           <div className={styles["list-wrapper"]}>
             <Text className={styles["text-style"]}>{fnsText}</Text>
             {/*<div>
@@ -96,17 +97,18 @@ export const ConfirmPassModal = ({
   </div>*/}
           </div>
           <div className={styles["buttons-row"]}>
-            <Button
+            <ButtonOne
               key="back"
               onClick={() => {
                 setOpen(false)
               }}
+              type="secondary"
               className={styles["button-item-cancel"]}
             >
               {CONTENT.BUTTON_CANCEL}
-            </Button>
+            </ButtonOne>
 
-            <Button
+            <ButtonOne
               key="back"
               onClick={() => {
                 setOpen(false), handleSentReport(task_code, year, report_code)
@@ -114,7 +116,7 @@ export const ConfirmPassModal = ({
               className={styles["button-item-enter"]}
             >
               {CONTENT.BUTTON_CONFIRM}
-            </Button>
+            </ButtonOne>
           </div>
         </div>
       </Modal>

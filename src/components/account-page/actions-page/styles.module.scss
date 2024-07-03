@@ -119,9 +119,10 @@ $xxl: 2560px;
   width: 100%;
   background-color: $brand-secondary-pale;
   text-wrap: nowrap;
-  gap: 12px;
+  gap: 8px;
 
   @media screen and (min-width: $tablet) {
+    gap: 12px;
     width: 461px;
     align-items: center;
     justify-content: space-between;
@@ -150,6 +151,7 @@ $xxl: 2560px;
 }
 
 .card-inner {
+  font-family: "Inter";
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -171,6 +173,7 @@ $xxl: 2560px;
 }
 
 .taxes-button {
+  font-family: "Inter";
   height: 26px;
   border-radius: 2px;
   padding: 0 8px;
@@ -279,7 +282,7 @@ $xxl: 2560px;
   height: 100%;
   @media screen and (min-width: $tablet) {
     justify-content: space-between;
-    gap: 64px;
+    gap: 4px;
     flex-direction: row;
   }
 }
@@ -289,9 +292,10 @@ $xxl: 2560px;
   justify-content: space-between;
   gap: 8px;
   width: 50%;
+  min-width: 210px;
 
   @media screen and (min-width: $tablet) {
-    width: auto;
+    width: 314px;
   }
 }
 
@@ -322,8 +326,16 @@ $xxl: 2560px;
   gap: 8px;
   width: 100%;
 
+  @media screen and (min-width: $tablet) {
+    max-width: 370px;
+  }
+
+  @media screen and (min-width: $s) {
+    max-width: none;
+  }
+
   @media screen and (min-width: $l) {
-    width: 371px;
+    min-width: 371px;
   }
 
   @media screen and (min-width: $xl) {
@@ -340,16 +352,19 @@ $xxl: 2560px;
   flex-direction: column;
   gap: 8px;
 
-  @media screen and (min-width: $s) {
+  @media screen and (min-width: $tablet) {
     gap: 16px;
-    width: 340px;
+    width: 330px;
   }
 
   @media screen and (min-width: $l) {
-    width: 371px;
+    gap: 8px;
+    max-width: 371px;
+    width: 100%;
   }
 
   @media screen and (min-width: $xl) {
+    max-width: 452px;
     width: 452px;
   }
 }
@@ -361,7 +376,7 @@ $xxl: 2560px;
 .amount-paid-text {
   font-family: "Inter";
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 400 !important;
   line-height: 22px;
   text-align: left;
   color: $base-additional-grey;
@@ -387,6 +402,7 @@ $xxl: 2560px;
 
   @media screen and (min-width: $l) {
     text-wrap: nowrap;
+    width: auto;
   }
 }
 
@@ -400,11 +416,10 @@ $xxl: 2560px;
 }
 
 .amount-to-pay-text {
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 28px;
-  letter-spacing: -0.02em;
-  text-align: left;
+  font-family: "Inter";
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 28px !important;
   color: #141414;
 }
 
@@ -419,7 +434,7 @@ $xxl: 2560px;
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-
+  font-family: "Inter";
   text-align: left;
 }
 
@@ -459,8 +474,13 @@ $xxl: 2560px;
 
 .amount-button {
   width: 233px;
+
+  @media screen and (min-width: $tablet) {
+    width: 207px;
+  }
+
   @media screen and (min-width: $l) {
-    width: 233px;
+    width: 314px;
   }
 
   @media screen and (min-width: $xl) {
@@ -488,8 +508,7 @@ $xxl: 2560px;
   }
 
   @media screen and (min-width: $xl) {
-    padding: 5px 16px;
-    width: 150px;
+    width: 130px;
   }
 }
 
@@ -543,11 +562,16 @@ $xxl: 2560px;
 
 .declaration-wrapper {
   padding: 8px;
-  border-radius: 2px;
-  gap: 8px;
+  border-radius: 8px;
+
   display: flex;
   background-color: $base-secondary-pale;
   flex-direction: column;
+
+  @media screen and (min-width: $tablet) {
+    gap: 8px;
+  }
+
   @media screen and (min-width: $xl) {
     flex-direction: row;
   }
@@ -566,6 +590,15 @@ $xxl: 2560px;
   font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $brand-primary !important;
+}
+
+.declaration-link-operations {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 600;
   line-height: 22px;
   text-align: left;
   color: $brand-primary !important;
@@ -604,6 +637,20 @@ $xxl: 2560px;
   top: -10px;
   right: -10px;
   background: inherit;
+
+  &:hover {
+    background: inherit !important;
+  }
+  &:hover {
+    background: inherit !important;
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+    box-shadow: none;
+    background: inherit;
+  }
 }
 
 .sider-inner-wrapper {
@@ -625,11 +672,16 @@ $xxl: 2560px;
 
 .left-part-row {
   display: flex;
-  width: 100%;
+
   gap: 24px;
 
-  @media screen and (min-width: $tablet) {
+  @media screen and (min-width: $s) {
     width: 340px;
+  }
+
+  @media screen and (min-width: $l) {
+    min-width: 340px;
+    width: auto;
   }
 }
 
@@ -724,7 +776,13 @@ $xxl: 2560px;
 }
 
 .header-button-item {
-  width: 100%;
+  width: auto;
+}
+
+.header-button-item-update {
+  @media screen and (min-width: $s) {
+    width: 170px;
+  }
 }
 
 .default-icon {
@@ -762,6 +820,7 @@ $xxl: 2560px;
 
 .hide-icon {
   width: 14px;
+  padding: 0;
 }
 
 .banner-title {
@@ -779,9 +838,16 @@ $xxl: 2560px;
   gap: 3px;
   border-radius: 8px;
   background: #f0f0f0;
-  width: 210px;
-  @media screen and (min-width: $l) {
-    width: auto;
+  width: 50%;
+  min-width: 210px;
+  justify-content: center;
+
+  @media screen and (min-width: $s) {
+    width: 223px;
+  }
+
+  @media screen and (min-width: $m) {
+    width: 314px;
   }
 }
 
@@ -827,4 +893,36 @@ $xxl: 2560px;
   position: absolute;
   right: 2px;
   top: 2px;
+}
+
+.remark-ens-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.xml-pdf-button {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+  color: $brand-primary;
+}
+
+.button-updating {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: center;
+  color: $brand-primary;
+  margin-left: 14px;
+}
+
+.tooltip-amount {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }

@@ -1,3 +1,6 @@
+@import "../../../../../ui-kit/theme/colors.scss";
+@import "../../../../../ui-kit/theme/fonts.scss";
+
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -9,18 +12,22 @@ $xxl: 2560px;
 .input-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
   width: 100%;
 }
 
 .title-description {
   font-family: "Inter";
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
   text-align: left;
   color: #505050;
+}
+
+.description-item {
+  margin-bottom: 24px;
 }
 
 .error-text {
@@ -47,7 +54,10 @@ $xxl: 2560px;
 .modal-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+
+  @media screen and (min-width: $s) {
+    gap: 8px;
+  }
 }
 
 .generate-button {
@@ -67,14 +77,30 @@ $xxl: 2560px;
   width: 100%;
 }
 .text-description {
+  font-family: "Inter";
   font-size: 14px;
   font-weight: 400;
-  line-height: 20px;
-  letter-spacing: -0.005em;
+  line-height: 22px;
   text-align: left;
-  color: #505050;
 }
 
 .default-text {
   color: #141414;
+}
+
+.text-disabled {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1;
+}
+
+.title-text {
+  font-family: "Inter";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  text-align: left;
+  color: $base-primary-dark;
 }

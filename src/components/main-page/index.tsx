@@ -217,8 +217,11 @@ export const MainPage = () => {
             <Route path="taxes" element={<TaxesPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="/*" element={<Navigate to="/main" replace />} />
+            <Route path="/" element={<Navigate to="/main" replace />} />
           </Route>
           <Route path="/*" element={<Navigate to="/main" replace />} />
+          <Route path="/" element={<Navigate to="/main" replace />} />
         </Routes>
       </div>
     )

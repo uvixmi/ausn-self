@@ -17,7 +17,7 @@ export const CONTENT = {
   TAXES_TAXBASE_TEXT: "Налоговая база за",
   TAXES_QUARTER_END: " кв ",
   TEXT_DECLARATION: "Перед формированием проверьте раздел",
-  TEXT_DETAILS: "Инструкция →",
+  TEXT_DETAILS: "Подробнее →",
   UPDATE_TAXES_LINK: "Налоговая база",
   NOTIFCATION_REPORT_ERROR: "Ошибка формирования файлов. Попробуйте еще раз",
   NOTIFCATION_DOWNLOAD_ERROR: "Ошибка скачивания файла. Попробуйте еще раз",
@@ -42,6 +42,9 @@ export const CONTENT = {
   TOOLTIP_REPORT_TEXT_THREE:
     "Для формирования Уведомления с актуальнымиданными нажмите кнопку Обновить",
   NOTIFICATIONS_TITLE: "Уведомления",
+  TIMER_START: "Через ",
+  TIMER_SEC: " сек.",
+  BUTTON_IN_UDPATING: "Обновляется",
 }
 
 export const LINK_MAP: Record<string, string> = {

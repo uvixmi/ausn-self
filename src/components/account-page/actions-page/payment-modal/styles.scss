@@ -1,13 +1,37 @@
-.modal-payment .ant-modal-content {
-  border-radius: 0px;
-  padding: 40px;
-  height: 100vh;
+@import "../../../../ui-kit/theme/colors.scss";
+@import "../../../../ui-kit/theme/fonts.scss";
+
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.modal-payment-actions .ant-modal-content {
+  border-radius: 4px;
+  padding: 24px;
+
+  @media screen and (min-width: $s) {
+    padding: 40px;
+    height: 100vh;
+  }
 }
 
-.modal-payment .ant-modal-body {
+.modal-payment-actions .ant-modal-body {
   height: 100%;
 }
 
 .modal-select .ant-select-selector {
   border-radius: 0px;
+}
+
+.picker-operation .ant-picker-input > input::placeholder {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1 !important;
 }

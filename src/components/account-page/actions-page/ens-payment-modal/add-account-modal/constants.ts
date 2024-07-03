@@ -1,7 +1,7 @@
 export const CONTENT = {
   MODAL_TITLE: "Добавить расчетный счет",
   MODAL_DESCRIPTION: "Укажите данные вашего расчетного счета ИП",
-  TEXT_BANK_BIK: "БИК Банка",
+  TEXT_BANK_BIK: "БИК банка",
   TEXT_BANK_ACCOUNT: "Номер банковского счета",
   NECESSARY: " *",
   INPUT_PLACEHOLDER: "Введите",
@@ -10,4 +10,6 @@ export const CONTENT = {
   INPUT_FAULT_ACCOUNT: "Поле заполнено некорректно",
   NOTIFICATION_SUCCESS: "Данные сохранены",
   NOTIFICATION_ERROR: "Ошибка сохранения данных. Повторите попытку",
+  INPUT_BANK_NAME: "Наименование банка",
+  INPUT_BANK_NAME_PLACEHOLDER: "Название банка",
 } as const

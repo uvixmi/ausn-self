@@ -1,3 +1,11 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .text-description {
   font-family: "Inter";
   font-size: 16px;
@@ -17,17 +25,25 @@
 }
 
 .modal-inner {
-  padding: 20px 16px;
+  padding: 4px 0px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
   height: 100%;
+
+  @media screen and (min-width: $s) {
+    padding: 20px 16px;
+  }
 }
 .payment-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   max-width: 440px;
+
+  @media screen and (min-width: $s) {
+    gap: 32px;
+  }
 }
 
 .inputs-row {
@@ -73,6 +89,7 @@
   padding: 6px 8px 6px 12px;
   border-radius: 2px;
   border: 1px solid #505050;
+
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;

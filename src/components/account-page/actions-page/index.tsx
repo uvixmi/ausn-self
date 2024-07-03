@@ -60,6 +60,7 @@ import { BellBannerIcon } from "../taxes-page/type-operation/icons/bell-banner"
 import { NoBannersIcon } from "../taxes-page/type-operation/icons/no-banners"
 import { HaveBannersIcon } from "../taxes-page/type-operation/icons/have-banners"
 import { NotificationsModal } from "./notifications-modal"
+import { ArrowRoundUpdateIcon } from "../taxes-page/type-operation/icons/arrow-round-update"
 
 export interface InfoBannerLinked {
   id: string
@@ -163,6 +164,18 @@ export const ActionsPage = () => {
     }
   }
 
+  const recalculation = async () => {
+    try {
+      startTimer()
+      await api.taxes.recalculationTaxesTaxesRecalculationPut({ headers })
+
+      dispatch(fetchTasks())
+      setIsTasksLoaded(true)
+    } catch (error) {
+      errorTasks()
+    }
+  }
+
   const [isConfirmPass, setIsConfirmPass] = useState(false)
   const [сonfirmTaskCode, setConfirmTaskCode] = useState("")
   const [confirmYear, setConfirmYear] = useState(0)
@@ -185,12 +198,12 @@ export const ActionsPage = () => {
 
       dispatch(fetchSourcesInfo())
       try {
-        await dispatch(fetchBanners())
         const linkedBanners = fetchedBanners?.map((item) => {
           const regex = /(\{link:[^\}]+\})/g
           const parts = item.description.split(regex)
           return { ...item, description: parts }
         })
+        console.log(linkedBanners)
 
         setBanners(linkedBanners)
       } catch (error) {
@@ -198,7 +211,7 @@ export const ActionsPage = () => {
       }
     }
     fetchSources()
-  }, [])
+  }, [fetchedBanners])
 
   const [taskYear, setTaskYear] = useState(2020)
 
@@ -430,6 +443,30 @@ export const ActionsPage = () => {
     setIsNotificationsOpen(true)
   }
 
+  const [isButtonDisabled, setButtonDisabled] = useState(false)
+  const [secondsRemaining, setSecondsRemaining] = useState(0)
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (isButtonDisabled) {
+      timer = setInterval(() => {
+        if (secondsRemaining > 0) {
+          setSecondsRemaining((prev) => prev - 1)
+        } else {
+          setButtonDisabled(false)
+          clearInterval(timer)
+        }
+      }, 1000)
+    }
+    return () => {
+      clearInterval(timer)
+    }
+  }, [isButtonDisabled, secondsRemaining])
+
+  const startTimer = () => {
+    setButtonDisabled(true)
+    setSecondsRemaining(60)
+  }
+
   return (
     <>
       <ConfigProvider
@@ -484,10 +521,11 @@ export const ActionsPage = () => {
             <div className={styles["right-header-part"]}>
               {!isMediumSize && (
                 <div className={styles["remark-text"]}>
-                  <Text>{CONTENT.ENS_TEXT_DETAILS}</Text>
+                  <Text className={styles["remark-ens-text"]}>
+                    {CONTENT.ENS_TEXT_DETAILS}
+                  </Text>
                   <Link
-                    className={styles["link-details"]}
-                    style={{ color: "#6159ff", whiteSpace: "nowrap" }}
+                    className={styles["declaration-link-operations"]}
                     onClick={openAnalysis}
                   >
                     {CONTENT.TEXT_DETAILS}
@@ -506,20 +544,42 @@ export const ActionsPage = () => {
                   {CONTENT.BUTTON_ENS_TEXT}
                 </ButtonOne>
                 <ButtonOne
-                  onClick={() => fetchTasksModal()}
+                  onClick={() => {
+                    recalculation()
+                  }}
                   type="secondary"
-                  className={styles["header-button-item"]}
+                  className={styles["header-button-item-update"]}
+                  disabled={isButtonDisabled}
                 >
-                  <ArrowCounterIcon /> {CONTENT.BUTTON_UPDATE_ACTIONS}
+                  {!isButtonDisabled ? (
+                    <>
+                      <ArrowRoundUpdateIcon /> {CONTENT.BUTTON_UPDATE_ACTIONS}
+                    </>
+                  ) : secondsRemaining > 58 ? (
+                    <>
+                      <Spin indicator={antIcon} />
+                      <Text className={styles["button-updating"]}>
+                        {CONTENT.BUTTON_IN_UDPATING}
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      {CONTENT.TIMER_START +
+                        secondsRemaining +
+                        CONTENT.TIMER_SEC}
+                    </>
+                  )}
                 </ButtonOne>
               </div>
             </div>
           </div>
           {isMediumSize && (
             <div className={styles["remark-text-medium"]}>
-              <Text>{CONTENT.ENS_TEXT_DETAILS}</Text>
+              <Text className={styles["remark-ens-text"]}>
+                {CONTENT.ENS_TEXT_DETAILS}
+              </Text>
               <Link
-                className={styles["link-details"]}
+                className={styles["declaration-link-operations"]}
                 style={{ color: "#6159ff", whiteSpace: "nowrap" }}
                 onClick={openAnalysis}
               >
@@ -669,17 +729,25 @@ export const ActionsPage = () => {
                                   {CONTENT.TEXT_AMOUNT_ALREADY_PAID}
                                 </Text>
                                 <Text className={styles["amount-paid-text"]}>
-                                  {item.paid_amount &&
-                                    new Intl.NumberFormat("ru", {
-                                      style: "currency",
-                                      currency: "RUB",
-                                    }).format(item.paid_amount)}
+                                  {item.paid_amount ||
+                                    (item.paid_amount === 0 &&
+                                      item.paid_amount !== undefined && (
+                                        <Amount
+                                          value={item.paid_amount}
+                                          withDecimal
+                                          decimalStyle="translucent"
+                                          className={styles["amount-paid-text"]}
+                                        />
+                                      ))}
                                   {" из "}
-                                  {item.accrued_amount &&
-                                    new Intl.NumberFormat("ru", {
-                                      style: "currency",
-                                      currency: "RUB",
-                                    }).format(item.accrued_amount)}
+                                  {item.accrued_amount && (
+                                    <Amount
+                                      value={item.accrued_amount}
+                                      withDecimal
+                                      decimalStyle="translucent"
+                                      className={styles["amount-paid-text"]}
+                                    />
+                                  )}
                                 </Text>
                               </div>
 
@@ -712,41 +780,44 @@ export const ActionsPage = () => {
                                 <Text className={styles["amount-heading"]}>
                                   {CONTENT.TEXT_AMOUNT_TO_PAY}
                                 </Text>
-                                {item.due_amount &&
-                                  item.type === "usn" &&
-                                  item.accrued_amount_kv &&
-                                  item.accrued_amount &&
-                                  item.accrued_amount_kv <
-                                    item.accrued_amount && (
+                                <div className={styles["tooltip-amount"]}>
+                                  {item.due_amount && (
                                     <>
-                                      {
-                                        <Tooltip
-                                          title={() =>
-                                            item.accrued_amount_kv &&
-                                            item.accrued_amount &&
-                                            getTooltipUsn(
-                                              item.accrued_amount_kv,
-                                              item.accrued_amount
-                                            )
-                                          }
-                                        >
-                                          <InfoCircleOutlined
-                                            className={
-                                              styles["info-icon-amount"]
+                                      {item.accrued_amount_kv &&
+                                        item.accrued_amount &&
+                                        item.accrued_amount_kv <
+                                          item.accrued_amount && (
+                                          <Tooltip
+                                            title={() =>
+                                              item.accrued_amount_kv &&
+                                              item.accrued_amount &&
+                                              getTooltipUsn(
+                                                item.accrued_amount_kv,
+                                                item.accrued_amount
+                                              )
                                             }
-                                          />
-                                        </Tooltip>
-                                      }
+                                          >
+                                            <InfoCircleOutlined
+                                              className={
+                                                styles["info-icon-amount"]
+                                              }
+                                            />
+                                          </Tooltip>
+                                        )}
                                       <Text
                                         className={styles["amount-to-pay-text"]}
                                       >
-                                        {new Intl.NumberFormat("ru", {
-                                          style: "currency",
-                                          currency: "RUB",
-                                        }).format(item.due_amount)}
+                                        <Amount
+                                          value={item.due_amount}
+                                          withDecimal
+                                          className={
+                                            styles["amount-to-pay-text"]
+                                          }
+                                        />
                                       </Text>
                                     </>
                                   )}
+                                </div>
                               </div>
                             </>
                           ) : (
@@ -765,54 +836,68 @@ export const ActionsPage = () => {
                                     <div
                                       style={{ display: "flex", gap: "6px" }}
                                     >
-                                      {item.accrued_amount_now !==
-                                        item.accrued_amount && (
-                                        <Tooltip
-                                          title={() =>
-                                            getTooltipReport(
-                                              item.accrued_amount,
-                                              item.accrued_amount_now
-                                            )
-                                          }
-                                        >
-                                          <InfoCircleOutlined
-                                            className={
-                                              styles["report-icon-amount"]
+                                      {item.accrued_amount_now !== null &&
+                                        item.accrued_amount_now !=
+                                          item.accrued_amount && (
+                                          <Tooltip
+                                            title={() =>
+                                              getTooltipReport(
+                                                item.accrued_amount,
+                                                item.accrued_amount_now
+                                              )
                                             }
-                                          />
-                                        </Tooltip>
-                                      )}
+                                          >
+                                            <InfoCircleOutlined
+                                              className={
+                                                styles["report-icon-amount"]
+                                              }
+                                            />
+                                          </Tooltip>
+                                        )}
                                       <Text
                                         className={styles["amount-to-pay-text"]}
                                       >
                                         {(item.accrued_amount ||
-                                          item.accrued_amount === 0.0) &&
-                                          new Intl.NumberFormat("ru", {
-                                            style: "currency",
-                                            currency: "RUB",
-                                          }).format(item.accrued_amount)}
+                                          item.accrued_amount === 0.0) && (
+                                          <Amount
+                                            value={item.accrued_amount}
+                                            withDecimal
+                                            className={
+                                              styles["amount-to-pay-text"]
+                                            }
+                                          />
+                                        )}
                                       </Text>
                                     </div>
                                   )}
                                 </div>
-
-                                <div className={styles["declaration-wrapper"]}>
-                                  <Text className={styles["declaration-text"]}>
-                                    {CONTENT.TEXT_DECLARATION}
-                                  </Text>
-                                  <Link
-                                    className={styles["declaration-link"]}
-                                    onClick={() => navigate("/taxes")}
+                                {(!item.report_update ||
+                                  (!formedSuccess.includes(item.task_code) &&
+                                    !item.report_update)) && (
+                                  <div
+                                    className={styles["declaration-wrapper"]}
                                   >
-                                    {CONTENT.OPERATIONS_LINK}
-                                  </Link>
-                                  {/* <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
+                                    <Text
+                                      className={styles["declaration-text"]}
+                                    >
+                                      {CONTENT.TEXT_DECLARATION}
+                                    </Text>
+                                    <Link
+                                      className={
+                                        styles["declaration-link-operations"]
+                                      }
+                                      onClick={() => navigate("/taxes")}
+                                    >
+                                      {CONTENT.OPERATIONS_LINK}
+                                    </Link>
+                                    {/* <Tooltip title={CONTENT.DECLARATION_TOOLTIP}>
                                 <InfoCircleOutlined
                                   className={styles["sider-icon"]}
                                   size={24}
                                 />
                               </Tooltip>*/}
-                                </div>
+                                  </div>
+                                )}
                               </>
                             )
                           )}
@@ -874,8 +959,10 @@ export const ActionsPage = () => {
                                   )
                                 }
                               >
-                                <Text>{".xml"}</Text>
                                 <DownloadOutlined />
+                                <Text className={styles["xml-pdf-button"]}>
+                                  {".xml"}
+                                </Text>
                               </ButtonOne>
                               <ButtonOne
                                 className={styles["download-button"]}
@@ -889,8 +976,10 @@ export const ActionsPage = () => {
                                   )
                                 }
                               >
-                                <Text>{".pdf"}</Text>
                                 <DownloadOutlined />
+                                <Text className={styles["xml-pdf-button"]}>
+                                  {".pdf"}
+                                </Text>
                               </ButtonOne>
                             </div>
                           ) : (

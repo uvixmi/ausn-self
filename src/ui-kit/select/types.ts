@@ -53,10 +53,15 @@ export type ButtonProps = {
    * Обработчик вызываемый при наведении курсора мыши на кнопку
    */
   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>
+
+  notFoundContent?: ReactNode
   /**
    *  Обработчик вызываемый при смещении курсора мыши с кнопки
    */
   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dropdownRender?: (menu: any) => JSX.Element
 
   onChange?: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
