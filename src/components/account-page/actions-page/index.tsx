@@ -730,15 +730,15 @@ export const ActionsPage = () => {
                                 </Text>
                                 <Text className={styles["amount-paid-text"]}>
                                   {item.paid_amount ||
-                                    (item.paid_amount === 0 &&
-                                      item.paid_amount !== undefined && (
-                                        <Amount
-                                          value={item.paid_amount}
-                                          withDecimal
-                                          decimalStyle="translucent"
-                                          className={styles["amount-paid-text"]}
-                                        />
-                                      ))}
+                                  (item.paid_amount === 0 &&
+                                    item.paid_amount !== undefined) ? (
+                                    <Amount
+                                      value={item.paid_amount}
+                                      withDecimal
+                                      decimalStyle="translucent"
+                                      className={styles["amount-paid-text"]}
+                                    />
+                                  ) : null}
                                   {" из "}
                                   {item.accrued_amount && (
                                     <Amount
