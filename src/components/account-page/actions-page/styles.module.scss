@@ -291,7 +291,7 @@ $xxl: 2560px;
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  width: 50%;
+  width: 100%;
   min-width: 210px;
 
   @media screen and (min-width: $tablet) {
@@ -473,7 +473,8 @@ $xxl: 2560px;
 }
 
 .amount-button {
-  width: 233px;
+  width: 100%;
+  min-width: 210px;
 
   @media screen and (min-width: $tablet) {
     width: 207px;
@@ -503,6 +504,7 @@ $xxl: 2560px;
   gap: 4px;
   height: 34px;
   padding: 2px 0px;
+  width: 130px;
 
   @media screen and (min-width: $tablet) {
   }
@@ -838,7 +840,7 @@ $xxl: 2560px;
   gap: 3px;
   border-radius: 8px;
   background: #f0f0f0;
-  width: 50%;
+  width: 100%;
   min-width: 210px;
   justify-content: center;
 
