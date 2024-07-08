@@ -149,7 +149,7 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 22px;
   @media screen and (min-width: $s) {
-    width: 200px;
+    width: 310px;
   }
 }
 
@@ -235,4 +235,29 @@ $xxl: 2560px;
     outline: none;
     box-shadow: none;
   }
+}
+
+.options-accounts-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+}
+
+.options-accounts-digits-text {
+  font-family: "Inter";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: $base-secondary-1 !important;
+}
+
+.requisites-title {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: left;
 }

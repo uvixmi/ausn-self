@@ -51,7 +51,7 @@ export const taxesQuarterHeading = (quarter: string, year: number) => {
     CONTENT.TAXES_QUARTER_END + new Date().getFullYear().toString()
   if (quarter === "ZDP") return `${CONTENT.TAXES_TAXBASE_TEXT}  ${year}`
   else if (quarterText === "1" || quarterText === "2" || quarterText === "3")
-    return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${yearText}`
+    return `${CONTENT.TAXES_QUARTER_TEXT} ${romeQuarter} ${year}`
   else return ""
 }
 
@@ -77,4 +77,13 @@ export const getCurrency = (value: number, category?: string) => {
       style: "currency",
       currency: "RUB",
     }).format(value)
+}
+
+export const compareDates = (date1: string, date2: string) => {
+  const date1Obj = new Date(date1)
+  date1Obj.setHours(3, 0, 0, 1)
+
+  const date2Obj = new Date(date2)
+
+  return date2Obj >= date1Obj ? 1 : 0
 }

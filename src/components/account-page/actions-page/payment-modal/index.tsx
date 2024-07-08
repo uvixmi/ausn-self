@@ -21,6 +21,7 @@ import { CONTENT } from "./constants"
 import cn from "classnames"
 import "./styles.scss"
 import dayjs from "dayjs"
+import ru_RU from "antd/lib/date-picker/locale/ru_RU"
 import "dayjs/locale/ru"
 
 import { useEffect, useState } from "react"
@@ -36,14 +37,19 @@ import {
 import { RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
-import { convertDateFormat, numberWithSpaces } from "./utils"
-import { formatDateString } from "../utils"
+import {
+  convertDateFormat,
+  convertReverseFormat,
+  numberWithSpaces,
+} from "./utils"
+import { compareDates, formatDateString } from "../utils"
 import Link from "antd/es/typography/Link"
 import { ButtonOne } from "../../../../ui-kit/button"
 import { InputOne } from "../../../../ui-kit/input"
 import { TrashNewIcon } from "../../taxes-page/type-operation/icons/trash-new-icon"
 import { TrashWarningIcon } from "../../taxes-page/type-operation/icons/trash-warning-icon"
 import { useMediaQuery } from "@react-hook/media-query"
+import { antdMonths } from "../../../../ui-kit/datepicker/localization"
 
 export const PaymentModal = ({
   isOpen,
@@ -71,6 +77,19 @@ export const PaymentModal = ({
       content: CONTENT.NOTIFCATION_PROCESSING_ERROR,
       style: { textAlign: "right" },
     })
+  }
+
+  dayjs.locale("ru")
+
+  const dateFormat = "DD.MM.YYYY"
+
+  const locale = {
+    ...ru_RU,
+    lang: {
+      ...ru_RU.lang,
+      shortMonths: antdMonths.monthsShort,
+      dateFormat: dateFormat,
+    },
   }
 
   const { payments } = useSelector((state: RootState) => state.payments)
@@ -157,7 +176,8 @@ export const PaymentModal = ({
       value: currentYear,
     },
   ]
-  const dateFormat = "DD.MM.YYYY"
+
+  const { data: currentUser } = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
     setAmountInputs([
@@ -167,7 +187,12 @@ export const PaymentModal = ({
 
   useEffect(() => {
     const amountsPayments = payments.every((item) => item.amount !== 0)
-    const datesPayments = payments.every((item) => item.date !== "")
+    const datesPayments = payments.every(
+      (item) =>
+        item.date !== "" &&
+        currentUser.tax_date_begin &&
+        !compareDates(item.date, currentUser.tax_date_begin)
+    )
     if (amountsPayments && datesPayments) setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [payments])
@@ -199,12 +224,14 @@ export const PaymentModal = ({
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
             <div className={styles["payment-wrapper"]}>
-              <Text className={styles["title-text"]}>
-                {CONTENT.HEADING_MODAL}
-              </Text>
-              <Text className={styles["text-description"]}>
-                {CONTENT.DESCRIPTION_MODAL}
-              </Text>
+              <div className={styles["title-description-header"]}>
+                <Text className={styles["title-text"]}>
+                  {CONTENT.HEADING_MODAL}
+                </Text>
+                <Text className={styles["text-description-new"]}>
+                  {CONTENT.DESCRIPTION_MODAL}
+                </Text>
+              </div>
               <div className={styles["update-wrapper"]}>
                 <div className={styles["update-inner"]}>
                   <InfoCircleOutlined
@@ -286,23 +313,33 @@ export const PaymentModal = ({
                           {CONTENT.NECESSARY}
                         </Text>
                       </Text>
-
-                      <DatePicker
-                        style={{ borderRadius: "4px", height: "34px" }}
-                        className={cn(
-                          "picker-operation",
-                          styles["datepicker-style"]
-                        )}
-                        locale={locale}
-                        format={dateFormat}
-                        maxDate={dayjs(formatDateString(), dateFormat)}
-                        placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                        value={item.date ? dayjs(item.date, dateFormat) : null}
-                        onChange={(value, dateString) =>
-                          typeof dateString === "string" &&
-                          handleDate(dateString, index)
-                        }
-                      />
+                      <div className="picker-check">
+                        <DatePicker
+                          style={{ borderRadius: "4px", height: "34px" }}
+                          className={cn(styles["datepicker-style"])}
+                          locale={locale}
+                          format={dateFormat}
+                          minDate={
+                            currentUser.tax_date_begin
+                              ? dayjs(
+                                  convertReverseFormat(
+                                    currentUser.tax_date_begin
+                                  ),
+                                  dateFormat
+                                )
+                              : undefined
+                          }
+                          maxDate={dayjs(formatDateString(), dateFormat)}
+                          placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                          value={
+                            item.date ? dayjs(item.date, dateFormat) : null
+                          }
+                          onChange={(value, dateString) =>
+                            typeof dateString === "string" &&
+                            handleDate(dateString, index)
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                   {/*

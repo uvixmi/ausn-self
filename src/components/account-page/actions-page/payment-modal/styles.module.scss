@@ -18,6 +18,20 @@ $xxl: 2560px;
   color: $base-additional-grey;
 }
 
+.text-description-new {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+  color: $base-additional-grey;
+}
+
+.title-description-header {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
 .ant-modal {
   height: -webkit-fill-available;
 }

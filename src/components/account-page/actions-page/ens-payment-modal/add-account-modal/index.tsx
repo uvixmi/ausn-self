@@ -51,10 +51,14 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
   }
 
   useEffect(() => {
-    if (integrateBik.length == 9 && integrateAccount.length == 20)
+    if (
+      integrateBik.length == 9 &&
+      integrateAccount.length == 20 &&
+      integrateAccountError === false
+    )
       setIsIntegrateButtonDisabled(false)
     else setIsIntegrateButtonDisabled(true)
-  }, [integrateBik, integrateAccount])
+  }, [integrateBik, integrateAccount, integrateAccountError])
 
   useEffect(() => {
     const getBankName = async () => {

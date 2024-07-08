@@ -60,6 +60,7 @@ import { BellBannerIcon } from "../taxes-page/type-operation/icons/bell-banner"
 import { NoBannersIcon } from "../taxes-page/type-operation/icons/no-banners"
 import { HaveBannersIcon } from "../taxes-page/type-operation/icons/have-banners"
 import { NotificationsModal } from "./notifications-modal"
+import "./styles.scss"
 import { ArrowRoundUpdateIcon } from "../taxes-page/type-operation/icons/arrow-round-update"
 
 export interface InfoBannerLinked {
@@ -380,17 +381,45 @@ export const ActionsPage = () => {
     return date3Obj >= date2Obj && date3Obj <= date1Obj ? 1 : 0
   }
 
-  const getTooltipUsn = (accrued_kv: number, accrued_amount: number) => {
+  const getTooltipUsn = (
+    accrued_kv: number,
+    accrued_amount: number,
+    dueDate: string
+  ) => {
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontFamily: "Inter",
+          }}
+        >
           {CONTENT.TOOLTIP_USN_TEXT_ONE}
         </Text>
-        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontFamily: "Inter",
+            textWrap: "nowrap",
+          }}
+        >
           <Amount value={accrued_kv} className={styles["amount-tooltip"]} />
-          {CONTENT.TOOLTIP_USN_TEXT_TWO}
+          {CONTENT.TOOLTIP_USN_TEXT_TWO + " "}
+          {formatDateString(dueDate)}
         </Text>
-        <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: "14px",
+            lineHeight: "20px",
+            fontFamily: "Inter",
+            textWrap: "nowrap",
+          }}
+        >
           <Amount
             value={accrued_amount - accrued_kv}
             className={styles["amount-tooltip"]}
@@ -407,15 +436,33 @@ export const ActionsPage = () => {
   ) => {
     if (accrued_amount && accrued_amount_now)
       return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "250px" }}
+        >
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: "14px",
+              lineHeight: "20px",
+              fontFamily: "Inter",
+              textWrap: "nowrap",
+            }}
+          >
             {CONTENT.TOOLTIP_REPORT_TEXT_ONE}
             <Amount
               value={accrued_amount}
               className={styles["amount-tooltip"]}
             />
           </Text>
-          <Text style={{ color: "#fff", fontSize: "14px", lineHeight: "20px" }}>
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: "14px",
+              lineHeight: "20px",
+              fontFamily: "Inter",
+              textWrap: "nowrap",
+            }}
+          >
             {CONTENT.TOOLTIP_REPORT_TEXT_TWO}
             <Amount
               value={accrued_amount_now}
@@ -427,6 +474,7 @@ export const ActionsPage = () => {
               color: "#fff",
               fontSize: "14px",
               lineHeight: "20px",
+              fontFamily: "Inter",
               marginTop: "20px",
             }}
           >
@@ -781,7 +829,7 @@ export const ActionsPage = () => {
                                   {CONTENT.TEXT_AMOUNT_TO_PAY}
                                 </Text>
                                 <div className={styles["tooltip-amount"]}>
-                                  {item.due_amount && (
+                                  {item.due_amount ? (
                                     <>
                                       {item.accrued_amount_kv &&
                                         item.accrued_amount &&
@@ -793,9 +841,15 @@ export const ActionsPage = () => {
                                               item.accrued_amount &&
                                               getTooltipUsn(
                                                 item.accrued_amount_kv,
-                                                item.accrued_amount
+                                                item.accrued_amount,
+                                                item.due_date
                                               )
                                             }
+                                            placement="topRight"
+                                            overlayInnerStyle={{
+                                              width: "fit-content",
+                                            }}
+                                            className="tooltip-custom"
                                           >
                                             <InfoCircleOutlined
                                               className={
@@ -816,7 +870,7 @@ export const ActionsPage = () => {
                                         />
                                       </Text>
                                     </>
-                                  )}
+                                  ) : null}
                                 </div>
                               </div>
                             </>
@@ -846,6 +900,8 @@ export const ActionsPage = () => {
                                                 item.accrued_amount_now
                                               )
                                             }
+                                            placement="topRight"
+                                            className="tooltip-custom"
                                           >
                                             <InfoCircleOutlined
                                               className={
@@ -961,7 +1017,7 @@ export const ActionsPage = () => {
                               >
                                 <DownloadOutlined />
                                 <Text className={styles["xml-pdf-button"]}>
-                                  {".xml"}
+                                  {"xml"}
                                 </Text>
                               </ButtonOne>
                               <ButtonOne
@@ -978,7 +1034,7 @@ export const ActionsPage = () => {
                               >
                                 <DownloadOutlined />
                                 <Text className={styles["xml-pdf-button"]}>
-                                  {".pdf"}
+                                  {"pdf"}
                                 </Text>
                               </ButtonOne>
                             </div>

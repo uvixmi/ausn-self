@@ -124,7 +124,17 @@ export const EnsPaymentModal = ({
       )
       .map((item) => {
         return {
-          label: item.name + " *" + item.sub_name?.slice(-4),
+          label: (
+            <>
+              <Text className={styles["options-accounts-text"]}>
+                {item.name}{" "}
+              </Text>
+
+              <Text className={styles["options-accounts-digits-text"]}>
+                {" *" + item.sub_name?.slice(-4)}
+              </Text>
+            </>
+          ),
           value: item.sub_name,
         }
       })
@@ -182,13 +192,9 @@ export const EnsPaymentModal = ({
     {
       key: 1,
       label: (
-        <Title
-          className={cn(styles["text-description"], styles["default-text"])}
-          level={5}
-          style={{ marginTop: 0 }}
-        >
+        <Text className={cn(styles["requisites-title"])}>
           {CONTENT.TITLE_REQUISITES}
-        </Title>
+        </Text>
       ),
       children: (
         <div className={styles["inputs-row"]}>
@@ -327,8 +333,6 @@ export const EnsPaymentModal = ({
                     className={styles["banner-link"]}
                     onClick={() => {
                       openAnalysis()
-                      setOpen(false)
-                      clear()
                     }}
                   >
                     {CONTENT.UDPATE_LINK}
@@ -352,7 +356,7 @@ export const EnsPaymentModal = ({
                   <SelectOne
                     options={options}
                     defaultValue={defaultAccount}
-                    className={"modal-select"}
+                    className={"modal-select-ens"}
                     placeholder={CONTENT.SELECT_ACCOUNT_PLACEHOLDER}
                     onChange={(value) => setAccount(value)}
                     notFoundContent={

@@ -13,11 +13,11 @@ export const AllDoneBlock = ({ type }: AllDoneProps) => {
   const smile = type === "report" ? <Text>🥳</Text> : <Text>👍</Text>
   return (
     <div className={styles["done-wrapper"]}>
-      <Title level={5} style={{ marginTop: 0 }}>
+      <Text className={styles["done-title"]}>
         {heading} {smile}
-      </Title>
-      <Text>{textOne}</Text>
-      <Text>{textTwo}</Text>
+      </Text>
+      <Text className={styles["done-text"]}>{textOne}</Text>
+      <Text className={styles["done-text"]}>{textTwo}</Text>
     </div>
   )
 }

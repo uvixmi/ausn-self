@@ -322,7 +322,7 @@ $xxl: 2560px;
 .tasks-count {
   width: 16px;
   display: flex;
-  background: #383494;
+  background: $brand-primary;
   border-radius: 50%;
   justify-content: center;
   justify-self: flex-end;
@@ -332,7 +332,12 @@ $xxl: 2560px;
   font-weight: 500;
 
   color: #fff !important;
+
+  @media screen and (min-width: $tablet) {
+    background: #383494;
+  }
   @media screen and (min-width: $s) {
+    background: #383494;
     width: 20px;
     height: 20px;
   }
@@ -350,6 +355,7 @@ $xxl: 2560px;
   font-family: "Inter";
   font-weight: 500;
   color: #fff !important;
+
   @media screen and (min-width: $s) {
     width: 20px;
     height: 20px;
@@ -359,8 +365,8 @@ $xxl: 2560px;
 .tasks-inner {
   position: absolute;
   display: flex;
-  top: 5px;
-  left: 22px;
+  top: 4px;
+  left: 32px;
   justify-content: flex-end;
 
   @media screen and (min-width: $s) {
