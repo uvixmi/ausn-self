@@ -40,7 +40,7 @@ export const CONTENT = {
   TOOLTIP_REPORT_TEXT_ONE: "Сумма в сформированном Уведомлении: ",
   TOOLTIP_REPORT_TEXT_TWO: "Сумма налога в текущем расчете: ",
   TOOLTIP_REPORT_TEXT_THREE:
-    "Для формирования Уведомления с актуальнымиданными нажмите кнопку Обновить",
+    "Для формирования Уведомления с\u00A0актуальными данными нажмите кнопку Обновить",
   NOTIFICATIONS_TITLE: "Уведомления",
   TIMER_START: "Через ",
   TIMER_SEC: " сек.",
