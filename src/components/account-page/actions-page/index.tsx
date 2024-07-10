@@ -974,6 +974,13 @@ export const ActionsPage = () => {
                                                 item.accrued_amount_now
                                               )
                                             }
+                                            overlayInnerStyle={
+                                              !isMobile
+                                                ? {
+                                                    width: "fit-content",
+                                                  }
+                                                : undefined
+                                            }
                                             placement={
                                               !isMobile ? "topRight" : undefined
                                             }
