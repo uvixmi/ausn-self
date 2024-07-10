@@ -375,9 +375,9 @@ $xxl: 2560px;
 }
 .amount-paid-text {
   font-family: "Inter";
-  font-size: 14px;
+  font-size: 14px !important;
   font-weight: 400 !important;
-  line-height: 22px;
+  line-height: 22px !important;
   text-align: left;
   color: $base-additional-grey;
 }
