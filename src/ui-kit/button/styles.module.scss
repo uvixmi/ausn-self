@@ -43,6 +43,7 @@
 .secondary {
   background-color: $base-color-white;
   color: $brand-primary;
+  border: 1px solid $base-secondary-2;
 
   &:disabled {
     background-color: $base-color-white !important;
@@ -65,14 +66,20 @@
     }
   }
 
+  @media (hover: none) {
+    &:hover {
+      background-color: $base-color-white !important;
+      color: $brand-primary !important;
+      border: 1px solid $base-secondary-2 !important;
+    }
+  }
+
   &:active {
     background-color: $base-secondary-pale !important;
     color: $brand-additional-dark !important;
     border: 1px solid $brand-additional-dark !important;
-  }
 
-  @media (hover: none) {
-    &:active {
+    @media (hover: none) {
       background-color: $brand-secondary-pale !important;
       color: $brand-primary !important;
       border: 1px solid $brand-primary !important;
