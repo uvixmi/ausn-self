@@ -12,6 +12,8 @@ import { fetchSourcesInfo } from "../../../client/sources/thunks"
 import { InputOne } from "../../../../../ui-kit/input"
 import { ButtonOne } from "../../../../../ui-kit/button"
 import "./styles.scss"
+import { useMediaQuery } from "@react-hook/media-query"
+import { isErrorResponse } from "../../../../authorization-page/utils"
 
 export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
   const { Title, Text } = Typography
@@ -27,6 +29,7 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
   const [integrateAccount, setIntegrateAccount] = useState("")
   const [integrateBikError, setIntegrateBikError] = useState(false)
   const [integrateAccountError, setIntegrateAccountError] = useState(false)
+  const [errorText, setErrorText] = useState("")
   const [isIntegrateButtonDisabled, setIsIntegrateButtonDisabled] =
     useState(true)
   const successProcess = (text: string) => {
@@ -48,17 +51,23 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
   const [bankName, setBankName] = useState("")
   const closeModal = () => {
     setOpen(false)
+    setBankName("")
+    setIntegrateBik("")
+    setIntegrateAccount("")
+    setIntegrateBikError(false)
+    setIntegrateAccountError(false)
   }
 
   useEffect(() => {
     if (
       integrateBik.length == 9 &&
       integrateAccount.length == 20 &&
-      integrateAccountError === false
+      integrateAccountError === false &&
+      !integrateBikError
     )
       setIsIntegrateButtonDisabled(false)
     else setIsIntegrateButtonDisabled(true)
-  }, [integrateBik, integrateAccount, integrateAccountError])
+  }, [integrateBik, integrateAccount, integrateAccountError, integrateBikError])
 
   useEffect(() => {
     const getBankName = async () => {
@@ -70,7 +79,12 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
           { headers }
         )
         setBankName(response.data.bank_name)
-      } catch (error) {}
+      } catch (error) {
+        setIntegrateBikError(true)
+        if (isErrorResponse(error)) {
+          setErrorText(error.error.detail.message)
+        }
+      }
     }
     if (integrateBik.length === 9) getBankName()
     else setBankName("")
@@ -103,6 +117,8 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
       } else setIntegrateAccountError(false)
   }, [integrateAccount])
 
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+
   return (
     <>
       {contextHolder}
@@ -111,7 +127,15 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
         onOk={closeModal}
         onCancel={closeModal}
         footer={null}
-        style={{ borderRadius: "2px" }}
+        style={
+          isMobile
+            ? {
+                top: 0,
+                marginTop: "20px",
+                borderRadius: "2px",
+              }
+            : { borderRadius: "2px" }
+        }
         className="modal-add-account"
       >
         <div className={styles["modal-wrapper"]}>
@@ -139,7 +163,9 @@ export const AddAccountModal = ({ isOpen, setOpen }: AddAccountModalProps) => {
                   integrateBikError ? (
                     <div>
                       <Text className={styles["error-text"]}>
-                        {CONTENT.INPUT_ERROR_HINT}
+                        {integrateBik.length === 0
+                          ? CONTENT.INPUT_ERROR_HINT
+                          : errorText}
                       </Text>
                     </div>
                   ) : (

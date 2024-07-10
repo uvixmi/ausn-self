@@ -2,6 +2,7 @@ import {
   Button,
   ConfigProvider,
   DatePicker,
+  Form,
   Input,
   Modal,
   Select,
@@ -34,12 +35,13 @@ import {
   clear,
   deletePayment,
 } from "./slice"
-import { RootState } from "../../../main-page/store"
+import { AppDispatch, RootState } from "../../../main-page/store"
 import { api } from "../../../../api/myApi"
 import Cookies from "js-cookie"
 import {
   convertDateFormat,
   convertReverseFormat,
+  isValidDate,
   numberWithSpaces,
 } from "./utils"
 import { compareDates, formatDateString } from "../utils"
@@ -50,6 +52,7 @@ import { TrashNewIcon } from "../../taxes-page/type-operation/icons/trash-new-ic
 import { TrashWarningIcon } from "../../taxes-page/type-operation/icons/trash-warning-icon"
 import { useMediaQuery } from "@react-hook/media-query"
 import { antdMonths } from "../../../../ui-kit/datepicker/localization"
+import { fetchCurrentUser } from "../../../authorization-page/slice"
 
 export const PaymentModal = ({
   isOpen,
@@ -61,7 +64,7 @@ export const PaymentModal = ({
 }: ConfirmModalProps) => {
   const { Title, Text } = Typography
   dayjs.locale("ru")
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const [messageApi, contextHolder] = message.useMessage()
   const successProcess = () => {
     messageApi.open({
@@ -95,6 +98,7 @@ export const PaymentModal = ({
   const { payments } = useSelector((state: RootState) => state.payments)
 
   const [amountInputs, setAmountInputs] = useState([{ amountrrr: "" }])
+  const [amountErrors, setAmountErrors] = useState([{ error: false }])
 
   const handleAmount = (amountIn: string, index: number) => {
     const amount = amountIn.replace(/\s/g, "")
@@ -114,6 +118,29 @@ export const PaymentModal = ({
       }
 
       if (amount === "") dispatch(setAmount({ amount: "", index }))
+
+      if (
+        parseFloat(amount) > 0 &&
+        parseFloat(amount) <= 9999999999999.99 &&
+        amountIn !== ""
+      )
+        setAmountErrors((prevAmountErrors) => {
+          const updatedAmountInputs = [...prevAmountErrors]
+          updatedAmountInputs[index] = {
+            error: false,
+          }
+
+          return updatedAmountInputs
+        })
+      else
+        setAmountErrors((prevAmountErrors) => {
+          const updatedAmountInputs = [...prevAmountErrors]
+          updatedAmountInputs[index] = {
+            error: true,
+          }
+
+          return updatedAmountInputs
+        })
     }
   }
 
@@ -138,6 +165,13 @@ export const PaymentModal = ({
   const headers = {
     Authorization: `Bearer ${token}`,
   }
+
+  const closeModal = () => {
+    setOpen(false)
+    setAmountInputs([{ amountrrr: "" }])
+    setAmountErrors([{ error: false }])
+    dispatch(clear())
+  }
   const handlePay = async () => {
     try {
       await api.operations.createOperationTaxPaymentOperationsTaxPaymentPost(
@@ -151,14 +185,13 @@ export const PaymentModal = ({
         },
         { headers }
       )
-      setOpen(false)
+      closeModal()
       successProcess()
       dispatch(clear())
       fetchTasks()
     } catch (error) {
-      setOpen(false)
       errorProcess()
-      dispatch(clear())
+      closeModal()
     }
   }
 
@@ -177,12 +210,22 @@ export const PaymentModal = ({
     },
   ]
 
-  const { data: currentUser } = useSelector((state: RootState) => state.user)
+  const {
+    data: currentUser,
+    loaded,
+    loading,
+  } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    if (!loaded && loading !== "succeeded" && loading !== "loading")
+      dispatch(fetchCurrentUser())
+  }, [dispatch, loaded, loading])
 
   useEffect(() => {
     setAmountInputs([
       { amountrrr: numberWithSpaces(payAmount?.toString() || "") },
     ])
+    setAmountErrors([{ error: false }])
   }, [isOpen])
 
   useEffect(() => {
@@ -193,156 +236,226 @@ export const PaymentModal = ({
         currentUser.tax_date_begin &&
         !compareDates(item.date, currentUser.tax_date_begin)
     )
-    if (amountsPayments && datesPayments) setIsButtonDisabled(false)
+    const amountsError = amountErrors.every((item) => item.error === false)
+    if (amountsPayments && datesPayments && amountsError)
+      setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
-  }, [payments])
+  }, [amountErrors, currentUser.tax_date_begin, payments])
 
   const isMobile = useMediaQuery("(max-width: 1023px)")
 
   return (
     <>
-      {contextHolder}
-      <Modal
-        open={isOpen}
-        centered={isMobile}
-        style={{
-          top: 0,
-          marginRight: 0,
-          borderRadius: "0",
+      <ConfigProvider
+        theme={{
+          components: {
+            DatePicker: {
+              cellActiveWithRangeBg: "#f0f0ff;",
+              cellHoverWithRangeBg: "#6159FF",
+              hoverBorderColor: "#8c8c8c",
+              activeBorderColor: "#6159FF",
+              colorTextDisabled: "#d1d1d1",
+              fontFamily: "Inter",
+              fontSize: 14,
+            },
+          },
         }}
-        onOk={() => {
-          setOpen(false)
-          dispatch(clear())
-        }}
-        onCancel={() => {
-          setOpen(false)
-          dispatch(clear())
-        }}
-        footer={null}
-        className={cn(styles["ant-modal"], "modal-payment-actions")}
       >
-        <div className={styles["modal-style"]}>
-          <div className={styles["modal-inner"]}>
-            <div className={styles["payment-wrapper"]}>
-              <div className={styles["title-description-header"]}>
-                <Text className={styles["title-text"]}>
-                  {CONTENT.HEADING_MODAL}
-                </Text>
-                <Text className={styles["text-description-new"]}>
-                  {CONTENT.DESCRIPTION_MODAL}
-                </Text>
-              </div>
-              <div className={styles["update-wrapper"]}>
-                <div className={styles["update-inner"]}>
-                  <InfoCircleOutlined
-                    className={styles["info-icon"]}
-                    size={20}
-                  />
-                  <Text className={styles["banner-title"]}>
-                    {CONTENT.UPDATE_TITLE}
+        {contextHolder}
+        <Modal
+          open={isOpen}
+          centered={isMobile}
+          style={{
+            top: 0,
+            marginRight: 0,
+            borderRadius: "0",
+          }}
+          onOk={() => {
+            closeModal()
+          }}
+          onCancel={() => {
+            closeModal()
+          }}
+          footer={null}
+          className={cn(styles["ant-modal"], "modal-payment-actions")}
+        >
+          <div className={styles["modal-style"]}>
+            <div className={styles["modal-inner"]}>
+              <div className={styles["payment-wrapper"]}>
+                <div className={styles["title-description-header"]}>
+                  <Text className={styles["title-text"]}>
+                    {CONTENT.HEADING_MODAL}
                   </Text>
-                  <Text className={styles["banner-description"]}>
-                    {CONTENT.UDPATE_DESCRIPTION}
+                  <Text className={styles["text-description-new"]}>
+                    {CONTENT.DESCRIPTION_MODAL}
                   </Text>
-                  <Link
-                    className={styles["banner-link"]}
-                    onClick={() => {
-                      openAnalysis()
-
-                      setOpen(false)
-                      dispatch(clear())
-                    }}
-                  >
-                    {CONTENT.UDPATE_LINK}
-                  </Link>
                 </div>
-              </div>
-              {payments.map((item, index) => (
-                <div className={styles["payment-inner"]} key={index}>
-                  {index != 0 && (
-                    <div className={styles["title-next"]}>
-                      <Title
-                        level={3}
-                        style={{ marginBottom: 0, marginTop: "8px" }}
-                      >
-                        {CONTENT.NEXT_PAYMENT}
-                      </Title>
-                      <Button
-                        className={styles["delete-payment"]}
-                        onClick={() => {
-                          deletePay(index)
-                          setAmountInputs((prevAmountInputs) =>
-                            prevAmountInputs.filter((_, i) => i !== index)
-                          )
-                        }}
-                      >
-                        <TrashWarningIcon />
-                      </Button>
-                    </div>
-                  )}
-                  <div className={styles["inputs-row"]}>
-                    <div className={styles["input-item"]}>
-                      <Text
-                        className={cn(
-                          styles["text-description"],
-                          styles["default-text"]
-                        )}
-                      >
-                        {CONTENT.TEXT_AMOUNT}
-                        <Text className={styles["necessary"]}>
-                          {CONTENT.NECESSARY}
+                <div className={styles["update-wrapper"]}>
+                  <div className={styles["update-inner"]}>
+                    <InfoCircleOutlined
+                      className={styles["info-icon"]}
+                      size={20}
+                    />
+                    <Text className={styles["banner-title"]}>
+                      {CONTENT.UPDATE_TITLE}
+                    </Text>
+                    <Text className={styles["banner-description"]}>
+                      {CONTENT.UDPATE_DESCRIPTION}
+                    </Text>
+                    <Link
+                      className={styles["banner-link"]}
+                      onClick={() => {
+                        openAnalysis()
+                      }}
+                    >
+                      {CONTENT.UDPATE_LINK}
+                    </Link>
+                  </div>
+                </div>
+                {payments.map((item, index) => (
+                  <div className={styles["payment-inner"]} key={index}>
+                    {index != 0 && (
+                      <div className={styles["title-next"]}>
+                        <Title
+                          level={3}
+                          style={{ marginBottom: 0, marginTop: "8px" }}
+                        >
+                          {CONTENT.NEXT_PAYMENT}
+                        </Title>
+                        <Button
+                          className={styles["delete-payment"]}
+                          onClick={() => {
+                            deletePay(index)
+                            setAmountInputs((prevAmountInputs) =>
+                              prevAmountInputs.filter((_, i) => i !== index)
+                            )
+                            setAmountErrors((prevAmountInputs) =>
+                              prevAmountInputs.filter((_, i) => i !== index)
+                            )
+                          }}
+                        >
+                          <TrashWarningIcon />
+                        </Button>
+                      </div>
+                    )}
+                    <div className={styles["inputs-row"]}>
+                      <div className={styles["input-item"]}>
+                        <Text
+                          className={cn(
+                            styles["text-description"],
+                            styles["default-text"]
+                          )}
+                        >
+                          {CONTENT.TEXT_AMOUNT}
+                          <Text className={styles["necessary"]}>
+                            {CONTENT.NECESSARY}
+                          </Text>
                         </Text>
-                      </Text>
-                      <InputOne
-                        value={amountInputs[index].amountrrr}
-                        placeholder={CONTENT.INPUT_PLACEHOLDER}
-                        onChange={(event) =>
-                          handleAmount(event.target.value, index)
-                        }
-                      />
-                    </div>
-                    <div className={styles["input-item"]}>
-                      <Text
-                        className={cn(
-                          styles["text-description"],
-                          styles["default-text"]
-                        )}
-                      >
-                        {CONTENT.TEXT_DATE}
-                        <Text className={styles["necessary"]}>
-                          {CONTENT.NECESSARY}
+                        <Form.Item
+                          className={styles["form-inn"]}
+                          validateStatus={
+                            amountErrors[index]?.error ? "error" : ""
+                          }
+                          help={
+                            amountErrors[index]?.error ? (
+                              <div>
+                                <Text className={styles["error-text"]}>
+                                  {amountInputs[index]?.amountrrr === "0" ||
+                                  amountInputs[index]?.amountrrr[0] === "-"
+                                    ? CONTENT.INPUT_FAULT_HINT
+                                    : CONTENT.INPUT_ERROR_HINT}
+                                </Text>
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          }
+                        >
+                          <InputOne
+                            value={amountInputs[index]?.amountrrr}
+                            placeholder={CONTENT.INPUT_PLACEHOLDER}
+                            onChange={(event) =>
+                              handleAmount(event.target.value, index)
+                            }
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className={styles["input-item"]}>
+                        <Text
+                          className={cn(
+                            styles["text-description"],
+                            styles["default-text"]
+                          )}
+                        >
+                          {CONTENT.TEXT_DATE}
+                          <Text className={styles["necessary"]}>
+                            {CONTENT.NECESSARY}
+                          </Text>
                         </Text>
-                      </Text>
-                      <div className="picker-check">
-                        <DatePicker
-                          style={{ borderRadius: "4px", height: "34px" }}
-                          className={cn(styles["datepicker-style"])}
-                          locale={locale}
-                          format={dateFormat}
-                          minDate={
-                            currentUser.tax_date_begin
-                              ? dayjs(
-                                  convertReverseFormat(
-                                    currentUser.tax_date_begin
-                                  ),
-                                  dateFormat
-                                )
-                              : undefined
-                          }
-                          maxDate={dayjs(formatDateString(), dateFormat)}
-                          placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
-                          value={
-                            item.date ? dayjs(item.date, dateFormat) : null
-                          }
-                          onChange={(value, dateString) =>
-                            typeof dateString === "string" &&
-                            handleDate(dateString, index)
-                          }
-                        />
+                        <div className="picker-check">
+                          <Form.Item
+                            className={styles["form-inn"]}
+                            validateStatus={
+                              currentUser.tax_date_begin &&
+                              compareDates(
+                                item.date,
+                                currentUser.tax_date_begin
+                              )
+                                ? "error"
+                                : ""
+                            }
+                            help={
+                              currentUser.tax_date_begin &&
+                              compareDates(
+                                item.date,
+                                currentUser.tax_date_begin
+                              ) ? (
+                                <div>
+                                  <Text className={styles["error-text"]}>
+                                    {currentUser.tax_date_begin &&
+                                    compareDates(
+                                      item.date,
+                                      currentUser.tax_date_begin
+                                    )
+                                      ? CONTENT.INPUT_FAULT_HINT
+                                      : CONTENT.INPUT_ERROR_HINT}
+                                  </Text>
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            }
+                          >
+                            <DatePicker
+                              style={{ borderRadius: "4px", height: "34px" }}
+                              className={cn(styles["datepicker-style"])}
+                              locale={locale}
+                              format={dateFormat}
+                              minDate={
+                                currentUser.tax_date_begin
+                                  ? dayjs(
+                                      convertReverseFormat(
+                                        currentUser.tax_date_begin
+                                      ),
+                                      dateFormat
+                                    )
+                                  : undefined
+                              }
+                              maxDate={dayjs(formatDateString(), dateFormat)}
+                              placeholder={CONTENT.DATEPICKER_PLACEHOLDER}
+                              value={
+                                item.date ? dayjs(item.date, dateFormat) : null
+                              }
+                              onChange={(value, dateString) =>
+                                typeof dateString === "string" &&
+                                handleDate(dateString, index)
+                              }
+                            />
+                          </Form.Item>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/*
+                    {/*
                 <div className={styles["select-item"]}>
                   <Text
                     className={cn(
@@ -362,55 +475,56 @@ export const PaymentModal = ({
                     }}
                   />
                 </div>*/}
-                  <div className={styles["select-item"]}>
-                    <Text
-                      className={cn(
-                        styles["text-description"],
-                        styles["default-text"]
-                      )}
-                    >
-                      {CONTENT.TEXT_PAYMENT_NUMBER}
-                    </Text>
-                    <InputOne
-                      placeholder={CONTENT.INPUT_PLACEHOLDER}
-                      value={item.doc_number ? item.doc_number : ""}
-                      onChange={(event) =>
-                        handleDocNumber(event.target.value, index)
-                      }
-                    />
-                    <Text className={styles["input-description"]}>
-                      {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
-                    </Text>
+                    <div className={styles["select-item"]}>
+                      <Text
+                        className={cn(
+                          styles["text-description"],
+                          styles["default-text"]
+                        )}
+                      >
+                        {CONTENT.TEXT_PAYMENT_NUMBER}
+                      </Text>
+                      <InputOne
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                        value={item.doc_number ? item.doc_number : ""}
+                        onChange={(event) =>
+                          handleDocNumber(event.target.value, index)
+                        }
+                      />
+                      <Text className={styles["input-description"]}>
+                        {CONTENT.DESCRIPTION_PAYMENT_NUMBER}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              ))}
-              <ButtonOne
-                type="secondary"
-                className={styles["button-add-payment"]}
-                onClick={() => {
-                  setAmountInputs([...amountInputs, { amountrrr: "" }])
-
-                  dispatch(addPayment())
-                }}
-              >
-                <PlusOutlined
-                  className={styles["plus-icon"]}
-                  style={{ marginInlineStart: "4px" }}
-                />
-                {CONTENT.BUTTON_ADD_PAYMENT}
-              </ButtonOne>
-            </div>
-            <div className={styles["footer-button"]}>
-              <ButtonOne onClick={handlePay} disabled={isButtonDisabled}>
-                {CONTENT.BUTTON_PAY_MORE}
-              </ButtonOne>
-              {/* <Text className={styles["remark-text"]}>
+                ))}
+                <ButtonOne
+                  type="secondary"
+                  className={styles["button-add-payment"]}
+                  onClick={() => {
+                    setAmountInputs([...amountInputs, { amountrrr: "" }])
+                    setAmountErrors([...amountErrors, { error: false }])
+                    dispatch(addPayment())
+                  }}
+                >
+                  <PlusOutlined
+                    className={styles["plus-icon"]}
+                    style={{ marginInlineStart: "4px" }}
+                  />
+                  {CONTENT.BUTTON_ADD_PAYMENT}
+                </ButtonOne>
+              </div>
+              <div className={styles["footer-button"]}>
+                <ButtonOne onClick={handlePay} disabled={isButtonDisabled}>
+                  {CONTENT.BUTTON_PAY_MORE}
+                </ButtonOne>
+                {/* <Text className={styles["remark-text"]}>
                   {CONTENT.TEXT_REMARK}
                 </Text>*/}
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      </ConfigProvider>
     </>
   )
 }

@@ -7,14 +7,14 @@
   width: 100%;
   border-radius: 4px;
   color: $base-primary-dark;
-  font-family: "Inter";
+  font-family: "Inter" !important;
   font-weight: 400;
   font-size: 14px;
   line-height: 22px;
   border: 1px solid $base-secondary-2;
 
   &::placeholder {
-    font-family: "Inter";
+    font-family: "Inter" !important;
     color: $base-secondary-1;
   }
 

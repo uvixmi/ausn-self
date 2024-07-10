@@ -23,4 +23,6 @@ export const CONTENT = {
   UDPATE_LINK: "Подробнее →",
   NECESSARY: " *",
   INPUT_PLACEHOLDER: "Введите",
+  INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
+  INPUT_FAULT_HINT: "Поле заполнено некорректно",
 }

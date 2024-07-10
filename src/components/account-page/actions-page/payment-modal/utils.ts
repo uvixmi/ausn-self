@@ -32,3 +32,19 @@ export const numberWithSpaces = (amount: string) => {
 
   return parts.join(".")
 }
+
+export const isValidDate = (dateString: string): boolean => {
+  const dateFormat = /^\d{2}\.\d{2}\.\d{4}$/
+  if (!dateFormat.test(dateString)) {
+    return false
+  }
+
+  const [day, month, year] = dateString.split(".").map(Number)
+  const date = new Date(year, month - 1, day)
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  )
+}

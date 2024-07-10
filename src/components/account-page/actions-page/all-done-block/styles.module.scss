@@ -1,8 +1,20 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .done-wrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-bottom: 40px;
+  padding: 16px 0 16px;
+
+  @media screen and (min-width: $s) {
+    padding-bottom: 0 0 40px;
+  }
 }
 
 .done-title {

@@ -1,3 +1,13 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .tooltip-custom .ant-tooltip-content {
-  width: fit-content;
+  @media screen and (min-width: $s) {
+    width: fit-content;
+  }
 }

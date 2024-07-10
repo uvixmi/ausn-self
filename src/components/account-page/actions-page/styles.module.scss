@@ -615,11 +615,13 @@ $xxl: 2560px;
 .warning-overdue {
   background-color: $red-secondary-pale;
   padding: 1px 8px;
+  border-radius: 4px;
 }
 
 .soon-overdue {
   background-color: $oragne-secondary-pale;
   padding: 0 8px;
+  border-radius: 4px;
 }
 
 .download-button {
@@ -911,6 +913,7 @@ $xxl: 2560px;
   line-height: 22px;
   text-align: center;
   color: $brand-primary;
+  margin-left: 0px !important;
 }
 
 .button-updating {

@@ -288,6 +288,7 @@ export const EnsPaymentModal = ({
   }
 
   const isMobile = useMediaQuery("(max-width: 1023px)")
+  const [selectOpened, setSelectOpend] = useState(false)
 
   return (
     <>
@@ -359,6 +360,10 @@ export const EnsPaymentModal = ({
                     className={"modal-select-ens"}
                     placeholder={CONTENT.SELECT_ACCOUNT_PLACEHOLDER}
                     onChange={(value) => setAccount(value)}
+                    open={selectOpened}
+                    onDropdownVisibleChange={(visible) =>
+                      setSelectOpend(visible)
+                    }
                     notFoundContent={
                       <>
                         <Space
@@ -372,7 +377,7 @@ export const EnsPaymentModal = ({
                             onClick={(e) => {
                               e.preventDefault()
                               e.currentTarget.blur()
-
+                              setSelectOpend(false)
                               setHandler(true)
                             }}
                           >
@@ -403,6 +408,7 @@ export const EnsPaymentModal = ({
                                 onClick={(e) => {
                                   e.preventDefault()
                                   e.currentTarget.blur()
+                                  setSelectOpend(false)
                                   setHandler(true)
                                 }}
                               >

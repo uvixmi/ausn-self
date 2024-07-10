@@ -16,8 +16,9 @@ export const AllDoneBlock = ({ type }: AllDoneProps) => {
       <Text className={styles["done-title"]}>
         {heading} {smile}
       </Text>
-      <Text className={styles["done-text"]}>{textOne}</Text>
-      <Text className={styles["done-text"]}>{textTwo}</Text>
+      <Text className={styles["done-text"]}>
+        {textOne} <Text className={styles["done-text"]}>{textTwo}</Text>
+      </Text>
     </div>
   )
 }

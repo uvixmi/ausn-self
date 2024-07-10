@@ -254,3 +254,11 @@ $xxl: 2560px;
 .trash-icon {
   color: $red-primary !important;
 }
+
+.error-text {
+  color: $red-primary;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
+}

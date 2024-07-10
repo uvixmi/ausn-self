@@ -83,7 +83,9 @@ export const compareDates = (date1: string, date2: string) => {
   const date1Obj = new Date(date1)
   date1Obj.setHours(3, 0, 0, 1)
 
-  const date2Obj = new Date(date2)
+  console.log(date1Obj)
 
+  const date2Obj = new Date(date2)
+  console.log(date2Obj)
   return date2Obj >= date1Obj ? 1 : 0
 }

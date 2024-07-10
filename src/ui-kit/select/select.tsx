@@ -25,9 +25,11 @@ export const SelectOne = ({
   dropdownStyle,
   onBlur,
   onFocus,
+  open,
   onClick,
   onMouseEnter,
   onMouseLeave,
+  onDropdownVisibleChange,
   ...ariaAttributes
 }: ButtonProps) => {
   const selectClassnames = cn("select-custom", styles["default"], className)
@@ -56,6 +58,7 @@ export const SelectOne = ({
         onClear={onClear}
         value={value}
         mode={mode}
+        open={open}
         maxTagCount={maxTagCount}
         defaultValue={defaultValue}
         allowClear={allowClear}
@@ -65,6 +68,7 @@ export const SelectOne = ({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onFocus={onFocus}
+        onDropdownVisibleChange={onDropdownVisibleChange}
         notFoundContent={notFoundContent}
         onClick={onClick}
         style={{ borderRadius: "4px" }}

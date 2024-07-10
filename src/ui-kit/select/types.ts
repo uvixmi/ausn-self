@@ -29,6 +29,8 @@ export type ButtonProps = {
    * Управление отключенным состоянием кнопки
    */
   disabled?: boolean
+
+  open?: boolean
   /**
    * Пользовательское имя класса
    */
@@ -86,4 +88,6 @@ export type ButtonProps = {
     | null
   allowClear?: boolean
   dropdownStyle?: React.CSSProperties
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onDropdownVisibleChange?: (visible: any) => void
 } & AriaAttributes

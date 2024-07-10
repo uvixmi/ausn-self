@@ -189,6 +189,15 @@ export const ActionsPage = () => {
   )
 
   useEffect(() => {
+    const getBanners = async () => {
+      try {
+        dispatch(fetchBanners())
+      } catch (error) {}
+    }
+    getBanners()
+  }, [dispatch])
+
+  useEffect(() => {
     const fetchSources = async () => {
       try {
         dispatch(fetchTasks())
@@ -218,11 +227,13 @@ export const ActionsPage = () => {
 
   const [isForming, setIsForming] = useState(false)
   const [tasCodeForming, setTaskCodeForming] = useState("")
+  const [yearForming, setYearForming] = useState<number | null>(null)
   const [formedSuccess, setFormedSucces] = useState([""])
   const navigate = useNavigate()
   const handleFormReport = async (task_code: string, year: number) => {
     setIsForming(true)
     setTaskCodeForming(task_code)
+    setYearForming(year)
     try {
       const data = {
         report_type: task_code === "ZDP" ? 3 : 2,
@@ -384,10 +395,18 @@ export const ActionsPage = () => {
   const getTooltipUsn = (
     accrued_kv: number,
     accrued_amount: number,
+    paid_amount: number,
+    due_amount: number,
     dueDate: string
   ) => {
     return (
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={
+          !isMobile
+            ? { display: "flex", flexDirection: "column" }
+            : { display: "flex", flexDirection: "column", width: "250px" }
+        }
+      >
         <Text
           style={{
             color: "#fff",
@@ -399,29 +418,50 @@ export const ActionsPage = () => {
           {CONTENT.TOOLTIP_USN_TEXT_ONE}
         </Text>
         <Text
-          style={{
-            color: "#fff",
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontFamily: "Inter",
-            textWrap: "nowrap",
-          }}
+          style={
+            !isMobile
+              ? {
+                  color: "#fff",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontFamily: "Inter",
+                  textWrap: "nowrap",
+                }
+              : {
+                  color: "#fff",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontFamily: "Inter",
+                }
+          }
         >
-          <Amount value={accrued_kv} className={styles["amount-tooltip"]} />
+          <Amount
+            value={due_amount - (accrued_amount - accrued_kv - paid_amount)}
+            className={styles["amount-tooltip"]}
+          />
           {CONTENT.TOOLTIP_USN_TEXT_TWO + " "}
           {formatDateString(dueDate)}
         </Text>
         <Text
-          style={{
-            color: "#fff",
-            fontSize: "14px",
-            lineHeight: "20px",
-            fontFamily: "Inter",
-            textWrap: "nowrap",
-          }}
+          style={
+            !isMobile
+              ? {
+                  color: "#fff",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontFamily: "Inter",
+                  textWrap: "nowrap",
+                }
+              : {
+                  color: "#fff",
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  fontFamily: "Inter",
+                }
+          }
         >
           <Amount
-            value={accrued_amount - accrued_kv}
+            value={accrued_amount - accrued_kv - paid_amount}
             className={styles["amount-tooltip"]}
           />
           {CONTENT.TOOLTIP_USN_TEXT_THREE}
@@ -437,16 +477,29 @@ export const ActionsPage = () => {
     if (accrued_amount && accrued_amount_now)
       return (
         <div
-          style={{ display: "flex", flexDirection: "column", width: "250px" }}
+          style={
+            !isMobile
+              ? { display: "flex", flexDirection: "column", width: "385px" }
+              : { display: "flex", flexDirection: "column", width: "250px" }
+          }
         >
           <Text
-            style={{
-              color: "#fff",
-              fontSize: "14px",
-              lineHeight: "20px",
-              fontFamily: "Inter",
-              textWrap: "nowrap",
-            }}
+            style={
+              !isMobile
+                ? {
+                    color: "#fff",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Inter",
+                    textWrap: "nowrap",
+                  }
+                : {
+                    color: "#fff",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Inter",
+                  }
+            }
           >
             {CONTENT.TOOLTIP_REPORT_TEXT_ONE}
             <Amount
@@ -455,13 +508,22 @@ export const ActionsPage = () => {
             />
           </Text>
           <Text
-            style={{
-              color: "#fff",
-              fontSize: "14px",
-              lineHeight: "20px",
-              fontFamily: "Inter",
-              textWrap: "nowrap",
-            }}
+            style={
+              !isMobile
+                ? {
+                    color: "#fff",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Inter",
+                    textWrap: "nowrap",
+                  }
+                : {
+                    color: "#fff",
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    fontFamily: "Inter",
+                  }
+            }
           >
             {CONTENT.TOOLTIP_REPORT_TEXT_TWO}
             <Amount
@@ -839,16 +901,28 @@ export const ActionsPage = () => {
                                             title={() =>
                                               item.accrued_amount_kv &&
                                               item.accrued_amount &&
-                                              getTooltipUsn(
-                                                item.accrued_amount_kv,
-                                                item.accrued_amount,
-                                                item.due_date
-                                              )
+                                              item.paid_amount &&
+                                              item.due_amount
+                                                ? getTooltipUsn(
+                                                    item.accrued_amount_kv,
+                                                    item.accrued_amount,
+                                                    item.paid_amount,
+                                                    item.due_amount,
+                                                    item.due_date
+                                                  )
+                                                : null
                                             }
-                                            placement="topRight"
-                                            overlayInnerStyle={{
-                                              width: "fit-content",
-                                            }}
+                                            placement={
+                                              !isMobile ? "topRight" : undefined
+                                            }
+                                            arrow={{ pointAtCenter: true }}
+                                            overlayInnerStyle={
+                                              !isMobile
+                                                ? {
+                                                    width: "fit-content",
+                                                  }
+                                                : undefined
+                                            }
                                             className="tooltip-custom"
                                           >
                                             <InfoCircleOutlined
@@ -900,8 +974,11 @@ export const ActionsPage = () => {
                                                 item.accrued_amount_now
                                               )
                                             }
-                                            placement="topRight"
+                                            placement={
+                                              !isMobile ? "topRight" : undefined
+                                            }
                                             className="tooltip-custom"
+                                            arrow={{ pointAtCenter: true }}
                                           >
                                             <InfoCircleOutlined
                                               className={
@@ -1054,7 +1131,8 @@ export const ActionsPage = () => {
                                 CONTENT.BUTTON_TO_PAY
                               ) : item.type === "report" ? (
                                 isForming &&
-                                item.task_code === tasCodeForming ? (
+                                item.task_code === tasCodeForming &&
+                                item.year === yearForming ? (
                                   <Spin indicator={antIcon} />
                                 ) : (
                                   CONTENT.BUTTON_FORM
