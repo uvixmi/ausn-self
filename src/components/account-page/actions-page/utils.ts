@@ -40,11 +40,11 @@ export const taxesQuarterHeading = (quarter: string, year: number) => {
   const quarterText = quarter.charAt(2)
   const romeQuarter =
     quarterText === "1"
-      ? "I"
+      ? "I кв"
       : quarterText === "2"
-      ? "II"
+      ? "II кв"
       : quarterText === "3"
-      ? "III"
+      ? "III кв"
       : ""
 
   const yearText =
