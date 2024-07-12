@@ -86,6 +86,7 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       })
 
       setBanners(linkedBanners)
+      dispatch(fetchBanners())
     } catch (error) {
       if ((error as ApiError).status === 422) {
         logout(), dispatch(clearData()), navigate("/login")
@@ -117,6 +118,7 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       })
 
       setBanners(linkedBanners)
+      dispatch(fetchBanners())
     } catch (error) {
       if ((error as ApiError).status === 422) {
         logout(), dispatch(clearData()), navigate("/login")

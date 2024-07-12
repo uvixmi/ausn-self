@@ -261,3 +261,16 @@ $xxl: 2560px;
   line-height: 24px;
   text-align: left;
 }
+
+.error-text {
+  color: $red-primary;
+  font-family: "Inter";
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.inputs-form {
+  display: flex;
+  flex-direction: column;
+}

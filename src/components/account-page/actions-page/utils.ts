@@ -80,12 +80,23 @@ export const getCurrency = (value: number, category?: string) => {
 }
 
 export const compareDates = (date1: string, date2: string) => {
-  const date1Obj = new Date(date1)
+  const convertToISOFormat = (date: string) => {
+    const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/
+    if (dateRegex.test(date)) {
+      const [day, month, year] = date.split(".")
+      return `${year}-${month}-${day}`
+    }
+    return date
+  }
+
+  const date1Formatted = convertToISOFormat(date1)
+  const date1Obj = new Date(date1Formatted)
   date1Obj.setHours(3, 0, 0, 1)
 
-  console.log(date1Obj)
-
   const date2Obj = new Date(date2)
+
+  console.log(date1Obj)
   console.log(date2Obj)
+
   return date2Obj >= date1Obj ? 1 : 0
 }

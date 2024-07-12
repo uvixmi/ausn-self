@@ -379,7 +379,7 @@ $xxl: 2560px;
   font-weight: 400 !important;
   line-height: 22px !important;
   text-align: left;
-  color: $base-additional-grey;
+  color: $base-additional-grey !important;
 }
 
 .amount-heading {
@@ -645,9 +645,6 @@ $xxl: 2560px;
   &:hover {
     background: inherit !important;
   }
-  &:hover {
-    background: inherit !important;
-  }
 
   &:focus,
   &:active {
@@ -724,6 +721,7 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -938,4 +936,9 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 20px;
   color: #fff !important;
+}
+
+.button-notifications {
+  border: none;
+  padding: 0;
 }

@@ -228,7 +228,9 @@ export const ActionsPage = () => {
   const [isForming, setIsForming] = useState(false)
   const [tasCodeForming, setTaskCodeForming] = useState("")
   const [yearForming, setYearForming] = useState<number | null>(null)
-  const [formedSuccess, setFormedSucces] = useState([""])
+  const [formedSuccess, setFormedSucces] = useState([
+    { task_code: "", year: 0 },
+  ])
   const navigate = useNavigate()
   const handleFormReport = async (task_code: string, year: number) => {
     setIsForming(true)
@@ -249,7 +251,7 @@ export const ActionsPage = () => {
       }
       await api.reports.generateReportsReportsPost(data, { headers })
       setIsForming(false)
-      setFormedSucces([...formedSuccess, task_code])
+      setFormedSucces([...formedSuccess, { task_code: task_code, year: year }])
       try {
         dispatch(fetchTasks())
       } catch (error) {
@@ -600,8 +602,11 @@ export const ActionsPage = () => {
                 {CONTENT.ACTIONS_HEADING}
               </Text>
               {isMobile && (
-                <Link
-                  className={styles["source-link-title"]}
+                <Button
+                  className={cn(
+                    styles["source-link-title"],
+                    styles["button-notifications"]
+                  )}
                   onClick={
                     banners?.length && banners?.length > 0
                       ? showNotifications
@@ -611,7 +616,6 @@ export const ActionsPage = () => {
                   <div
                     style={{
                       display: "flex",
-
                       justifyContent: "center",
                     }}
                   >
@@ -625,7 +629,7 @@ export const ActionsPage = () => {
                     )}
                   </div>
                   {CONTENT.NOTIFICATIONS_TITLE}
-                </Link>
+                </Button>
               )}
             </div>
             <div className={styles["right-header-part"]}>
@@ -1012,7 +1016,10 @@ export const ActionsPage = () => {
                                   )}
                                 </div>
                                 {(!item.report_update ||
-                                  (!formedSuccess.includes(item.task_code) &&
+                                  (!formedSuccess.includes({
+                                    task_code: item.task_code,
+                                    year: item.year,
+                                  }) &&
                                     !item.report_update)) && (
                                   <div
                                     className={styles["declaration-wrapper"]}
@@ -1045,10 +1052,16 @@ export const ActionsPage = () => {
                         {((item.type === "report" &&
                           item.report_code &&
                           item.report_update) ||
-                          formedSuccess.includes(item.task_code)) && (
+                          formedSuccess.includes({
+                            task_code: item.task_code,
+                            year: item.year,
+                          })) && (
                           <div className={styles["amount-pay"]}>
                             <div className={styles["formed-date"]}>
-                              {formedSuccess.includes(item.task_code) ? (
+                              {formedSuccess.includes({
+                                task_code: item.task_code,
+                                year: item.year,
+                              }) ? (
                                 <Text
                                   className={styles["amount-heading-formed"]}
                                 >
@@ -1085,7 +1098,10 @@ export const ActionsPage = () => {
                         )}
                         <div className={styles["row-item-buttons"]}>
                           {(item.type === "report" && item.report_code) ||
-                          formedSuccess.includes(item.task_code) ? (
+                          formedSuccess.includes({
+                            task_code: item.task_code,
+                            year: item.year,
+                          }) ? (
                             <div className={styles["row-item-buttons-wrapper"]}>
                               <ButtonOne
                                 className={styles["download-button"]}

@@ -2,6 +2,7 @@ import {
   Button,
   Collapse,
   Divider,
+  Form,
   Input,
   Modal,
   Select,
@@ -48,15 +49,19 @@ export const EnsPaymentModal = ({
 
   const [amount, setAmount] = useState(0)
   const [amountInput, setAmountInput] = useState("")
+  const [amountError, setAmountError] = useState(false)
 
   const headers = {
     Authorization: `Bearer ${token}`,
   }
-
+  const [reasonError, setReasonError] = useState(false)
   const [reason, setReason] = useState<string>("")
 
   const handleReason = (event: React.ChangeEvent<HTMLInputElement>) => {
     setReason(event.target.value)
+
+    if (event.target.value.length > 0) setReasonError(false)
+    else setReasonError(true)
   }
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
@@ -65,6 +70,8 @@ export const EnsPaymentModal = ({
     setReason("")
     setAmount(0)
     setAmountInput("")
+    setAmountError(false)
+    setReasonError(false)
     setDueAmount && setDueAmount(undefined)
     setEnsRequsites(undefined)
   }
@@ -175,6 +182,14 @@ export const EnsPaymentModal = ({
 
       if (amount === "") setAmount(0)
     }
+
+    if (
+      parseFloat(amount) > 0 &&
+      parseFloat(amount) <= 9999999999999.99 &&
+      inputValue !== ""
+    )
+      setAmountError(false)
+    else setAmountError(true)
   }
 
   const [handler, setHandler] = useState(false)
@@ -431,44 +446,83 @@ export const EnsPaymentModal = ({
                   )*/}
                 </div>
               </div>
-              <div className={styles["inputs-row"]}>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
-                  >
-                    {CONTENT.TEXT_PAYMENT_DIRECTION}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
+              <div className={styles["inputs-form"]}>
+                <div className={styles["inputs-row"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_PAYMENT_DIRECTION}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
                     </Text>
-                  </Text>
-                  <InputOne
-                    value={reason}
-                    onChange={handleReason}
-                    className={styles["text-area-style"]}
-                  />
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={reasonError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        reasonError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {reason.length === 0
+                                ? CONTENT.INPUT_ERROR_HINT
+                                : null}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        value={reason}
+                        onChange={handleReason}
+                        className={styles["text-area-style"]}
+                        placeholder={CONTENT.INPUT_PLACEHOLDER}
+                      />
+                    </Form.Item>
+                  </div>
                 </div>
-              </div>
-              <div className={styles["inputs-row"]}>
-                <div className={styles["input-item"]}>
-                  <Text
-                    className={cn(
-                      styles["text-description"],
-                      styles["default-text"]
-                    )}
-                  >
-                    {CONTENT.TEXT_AMOUNT}
-                    <Text className={styles["necessary"]}>
-                      {CONTENT.NECESSARY}
+                <div className={styles["inputs-row"]}>
+                  <div className={styles["input-item"]}>
+                    <Text
+                      className={cn(
+                        styles["text-description"],
+                        styles["default-text"]
+                      )}
+                    >
+                      {CONTENT.TEXT_AMOUNT}
+                      <Text className={styles["necessary"]}>
+                        {CONTENT.NECESSARY}
+                      </Text>
                     </Text>
-                  </Text>
-                  <InputOne
-                    placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
-                    value={amountInput}
-                    onChange={handleChange}
-                  />
+                    <Form.Item
+                      className={styles["form-inn"]}
+                      validateStatus={amountError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        amountError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {amountInput === "0" || amountInput[0] === "-"
+                                ? CONTENT.INPUT_FAULT_HINT
+                                : CONTENT.INPUT_ERROR_HINT}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        placeholder={CONTENT.INPUT_AMOUNT_PLACEHOLDER}
+                        value={amountInput}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
                 </div>
               </div>
               <Collapse

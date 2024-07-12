@@ -99,6 +99,7 @@ export const PaymentModal = ({
 
   const [amountInputs, setAmountInputs] = useState([{ amountrrr: "" }])
   const [amountErrors, setAmountErrors] = useState([{ error: false }])
+  const [datesErrors, setDatesErrors] = useState([{ error: false }])
 
   const handleAmount = (amountIn: string, index: number) => {
     const amount = amountIn.replace(/\s/g, "")
@@ -153,6 +154,10 @@ export const PaymentModal = ({
     handleYear(index)
   }
 
+  useEffect(() => {
+    console.log(datesErrors)
+  }, [datesErrors])
+
   const handleDocNumber = (doc_number: string, index: number) => {
     dispatch(setDocNumber({ doc_number, index }))
   }
@@ -170,6 +175,7 @@ export const PaymentModal = ({
     setOpen(false)
     setAmountInputs([{ amountrrr: "" }])
     setAmountErrors([{ error: false }])
+    setDatesErrors([{ error: false }])
     dispatch(clear())
   }
   const handlePay = async () => {
@@ -226,6 +232,7 @@ export const PaymentModal = ({
       { amountrrr: numberWithSpaces(payAmount?.toString() || "") },
     ])
     setAmountErrors([{ error: false }])
+    setDatesErrors([{ error: false }])
   }, [isOpen])
 
   useEffect(() => {
@@ -332,6 +339,9 @@ export const PaymentModal = ({
                             setAmountErrors((prevAmountInputs) =>
                               prevAmountInputs.filter((_, i) => i !== index)
                             )
+                            setDatesErrors((prevDatesInputs) =>
+                              prevDatesInputs.filter((_, i) => i !== index)
+                            )
                           }}
                         >
                           <TrashWarningIcon />
@@ -396,34 +406,18 @@ export const PaymentModal = ({
                           <Form.Item
                             className={styles["form-inn"]}
                             validateStatus={
-                              currentUser.tax_date_begin &&
-                              compareDates(
-                                item.date,
-                                currentUser.tax_date_begin
-                              )
-                                ? "error"
-                                : ""
+                              datesErrors[index]?.error ? "error" : ""
                             }
                             help={
-                              currentUser.tax_date_begin &&
-                              compareDates(
-                                item.date,
-                                currentUser.tax_date_begin
-                              ) ? (
+                              datesErrors[index]?.error ? (
                                 <div>
                                   <Text className={styles["error-text"]}>
-                                    {currentUser.tax_date_begin &&
-                                    compareDates(
-                                      item.date,
-                                      currentUser.tax_date_begin
-                                    )
+                                    {item.date !== ""
                                       ? CONTENT.INPUT_FAULT_HINT
                                       : CONTENT.INPUT_ERROR_HINT}
                                   </Text>
                                 </div>
-                              ) : (
-                                ""
-                              )
+                              ) : null
                             }
                           >
                             <DatePicker
@@ -446,10 +440,64 @@ export const PaymentModal = ({
                               value={
                                 item.date ? dayjs(item.date, dateFormat) : null
                               }
-                              onChange={(value, dateString) =>
+                              onChange={(value, dateString) => {
                                 typeof dateString === "string" &&
-                                handleDate(dateString, index)
-                              }
+                                  handleDate(dateString, index)
+                                if (dateString === "") {
+                                  setDatesErrors((prevAmountErrors) => {
+                                    const updatedAmountInputs = [
+                                      ...prevAmountErrors,
+                                    ]
+                                    updatedAmountInputs[index] = {
+                                      error: true,
+                                    }
+
+                                    return updatedAmountInputs
+                                  })
+                                } else {
+                                  setDatesErrors((prevAmountErrors) => {
+                                    const updatedAmountInputs = [
+                                      ...prevAmountErrors,
+                                    ]
+                                    updatedAmountInputs[index] = {
+                                      error: false,
+                                    }
+
+                                    return updatedAmountInputs
+                                  })
+                                }
+
+                                if (
+                                  currentUser.tax_date_begin &&
+                                  typeof dateString === "string" &&
+                                  !compareDates(
+                                    dateString,
+                                    currentUser.tax_date_begin
+                                  )
+                                ) {
+                                  setDatesErrors((prevAmountErrors) => {
+                                    const updatedAmountInputs = [
+                                      ...prevAmountErrors,
+                                    ]
+                                    updatedAmountInputs[index] = {
+                                      error: false,
+                                    }
+
+                                    return updatedAmountInputs
+                                  })
+                                } else {
+                                  setDatesErrors((prevAmountErrors) => {
+                                    const updatedErrorInputs = [
+                                      ...prevAmountErrors,
+                                    ]
+                                    updatedErrorInputs[index] = {
+                                      error: true,
+                                    }
+
+                                    return updatedErrorInputs
+                                  })
+                                }
+                              }}
                             />
                           </Form.Item>
                         </div>
@@ -503,6 +551,7 @@ export const PaymentModal = ({
                   onClick={() => {
                     setAmountInputs([...amountInputs, { amountrrr: "" }])
                     setAmountErrors([...amountErrors, { error: false }])
+                    setDatesErrors([...datesErrors, { error: false }])
                     dispatch(addPayment())
                   }}
                 >
