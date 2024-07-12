@@ -67,7 +67,7 @@
     }
   }
 
-  @media (hover: none) {
+  @media (hover: none) and (pointer: coarse) {
     &:hover {
       background-color: $base-color-white !important;
       color: $brand-primary !important;
