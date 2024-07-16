@@ -1,6 +1,15 @@
-import { ConfigProvider, Layout, List, Typography } from "antd"
+import {
+  Button,
+  ConfigProvider,
+  Dropdown,
+  Layout,
+  List,
+  Menu,
+  Skeleton,
+  Typography,
+} from "antd"
 import { Link, useLocation } from "react-router-dom"
-import { CONTENT } from "./constants"
+import { CONTENT, TAX_SYSTEM } from "./constants"
 import styles from "./styles.module.scss"
 import { Outlet, useNavigate } from "react-router-dom"
 import { LogoIcon } from "../main-page/logo-icon"
@@ -17,7 +26,11 @@ import { Footer } from "antd/es/layout/layout"
 import { MenuTaxesIcon } from "./taxes-page/type-operation/icons/menu-taxes"
 import { MenuActionsIcon } from "./taxes-page/type-operation/icons/menu-actions"
 import { MenuSettingsIcon } from "./taxes-page/type-operation/icons/menu-settings"
-
+import { DownOutlined } from "@ant-design/icons"
+import { ButtonOne } from "../../ui-kit/button"
+import { CopyIcon } from "./taxes-page/type-operation/icons/copy"
+import { QuitModal } from "./settings-page/quit-modal"
+import { debug } from "console"
 export const AccountPage = ({
   token_type,
   accessToken,
@@ -82,13 +95,13 @@ export const AccountPage = ({
   const navigate = useNavigate()
 
   const isMobile = useMediaQuery("(max-width: 1279px)")
+  const isTablet = useMediaQuery("(max-width: 1023px)")
 
   const { data: currentUser } = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
-    if (!loaded && loading !== "") {
+    if (!loaded && loading !== "" && loading !== "loading") {
       dispatch(fetchCurrentUser())
-
       dispatch(fetchSourcesInfo())
     }
     setTasksCount(getTaskSum())
@@ -168,31 +181,35 @@ export const AccountPage = ({
   const { Title, Text } = Typography
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    window.carrotquest &&
+    if (!loaded && loading !== "") {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      window.carrotquest.onReady(function () {
+      window.carrotquest &&
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        window.carrotquest.messenger.toStateCollapsed()
+        window.carrotquest.onReady(function () {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          window.carrotquest.messenger.toStateCollapsed()
 
-        if (currentUser.email) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          window.carrotquest.auth(currentUser.id, currentUser.hashed_id)
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          window.carrotquest.identify({
-            $name: currentUser.full_name,
-            $email: currentUser.email,
-            $phone: currentUser.phone_number,
-            inn: currentUser.inn,
-          })
-        }
-      })
-  }, [])
+          if (currentUser.email) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            window.carrotquest.auth(currentUser.id, currentUser.hashed_id)
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            window.carrotquest.identify({
+              $name: currentUser.full_name,
+              $email: currentUser.email,
+              $phone: currentUser.phone_number,
+              inn: currentUser.inn,
+            })
+          }
+        })
+    }
+  }, [loaded, loading])
+
+  const [isQuitOpen, setIsQuitOpen] = useState(false)
 
   return (
     <>
@@ -325,7 +342,101 @@ export const AccountPage = ({
               </div>
             </Sider>
           )}
+          {!isTablet && location.pathname !== "/settings" ? (
+            currentUser.inn ? (
+              <div className={styles["info-drop"]}>
+                <Dropdown
+                  trigger={["click"]}
+                  overlayStyle={{ width: "408px" }}
+                  dropdownRender={() => (
+                    <div className={styles["dropdown-main"]}>
+                      <Text className={styles["menu-title"]}>Профиль</Text>
+                      <div className={styles["menu-info-wrapper"]}>
+                        <div className={styles["menu-row"]}>
+                          <Text className={styles["menu-fio"]}>
+                            {currentUser.inn?.length === 12
+                              ? "ИП " +
+                                currentUser.lastname +
+                                " " +
+                                currentUser.firstname?.charAt(0) +
+                                ". " +
+                                currentUser.patronymic?.charAt(0) +
+                                "."
+                              : currentUser.full_name}
+                          </Text>
+                          <Text className={styles["menu-name"]}>
+                            {currentUser.tax_system &&
+                              TAX_SYSTEM[currentUser.tax_system]}
 
+                            {" " + currentUser.tax_rate + "%"}
+                          </Text>
+                        </div>
+                        <div className={styles["menu-row"]}>
+                          <Text className={styles["menu-name"]}>
+                            ИНН
+                            <Text className={styles["menu-inn"]}>
+                              {" "}
+                              {currentUser.inn}{" "}
+                            </Text>
+                            <Button
+                              className={styles["button-icon"]}
+                              onClick={() =>
+                                currentUser.inn &&
+                                navigator.clipboard.writeText(currentUser.inn)
+                              }
+                            >
+                              {" "}
+                              <CopyIcon />
+                            </Button>
+                          </Text>
+                        </div>
+                      </div>
+                      <ButtonOne
+                        type="secondary"
+                        className={styles["button-menu"]}
+                        onClick={() => {
+                          setIsQuitOpen(true)
+                        }}
+                      >
+                        {"Выход"}
+                      </ButtonOne>
+                    </div>
+                  )}
+                >
+                  <Button
+                    type="link"
+                    onClick={(e) => e.preventDefault()}
+                    style={{ paddingTop: "8px", paddingBottom: "8px" }}
+                  >
+                    <div className={styles["menu-inner-wrapper"]}>
+                      <div className={styles["menu-inner"]}>
+                        <Text className={styles["text-menu"]}>
+                          {currentUser.inn?.length === 12
+                            ? "ИП " +
+                              currentUser.lastname +
+                              " " +
+                              currentUser.firstname?.charAt(0) +
+                              ". " +
+                              currentUser.patronymic?.charAt(0) +
+                              "."
+                            : currentUser.full_name}
+                        </Text>
+                        {!isMobile && (
+                          <div className={styles["divider-menu"]}></div>
+                        )}
+                        <Text className={styles["text-menu"]}>
+                          {currentUser.tax_rate + "%"}
+                        </Text>
+                      </div>
+                      <DownOutlined />
+                    </div>
+                  </Button>
+                </Dropdown>
+              </div>
+            ) : (
+              <Skeleton.Input active />
+            )
+          ) : null}
           <Outlet />
           {isMobile && (
             <Footer
@@ -344,6 +455,7 @@ export const AccountPage = ({
           )}
         </Layout>
       </ConfigProvider>
+      <QuitModal isOpen={isQuitOpen} setOpen={setIsQuitOpen} />
     </>
   )
 }

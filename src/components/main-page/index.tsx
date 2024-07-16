@@ -37,6 +37,7 @@ export const MainPage = () => {
     if (!role) {
       dispatch(clearData())
       dispatch(fetchCurrentUser())
+      debugger
     }
   }, [dispatch, role])
 

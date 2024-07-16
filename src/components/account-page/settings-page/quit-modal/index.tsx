@@ -10,9 +10,10 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../../../AuthContext"
 import { clearData } from "../../../authorization-page/slice"
 import { useMediaQuery } from "@react-hook/media-query"
+import { ButtonOne } from "../../../../ui-kit/button"
 
 export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
-  const { Title } = Typography
+  const { Text } = Typography
   const dispatch = useDispatch()
 
   const [serviceDisabled, setServiceDisabled] = useState(false)
@@ -30,6 +31,7 @@ export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
     <>
       <Modal
         open={isOpen}
+        zIndex={1200}
         style={{
           borderRadius: "0",
           top: !isMobile ? "30%" : undefined,
@@ -38,32 +40,34 @@ export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
           setOpen(false)
           serviceDisabled && leaveService()
         }}
-        mask={false}
         onCancel={() => {
           setOpen(false)
           serviceDisabled && leaveService()
         }}
         footer={null}
-        className={cn(styles["ant-modal"], "modal-settings")}
+        className={cn(styles["ant-modal"], "modal-settings-quit")}
       >
         <div className={styles["modal-style"]}>
           <div className={styles["modal-inner"]}>
             <div className={styles["operation-inner"]}>
-              <Title level={2}>{CONTENT.HEADING_MODAL}</Title>
+              <Text className={styles["title-text-head"]}>
+                {CONTENT.HEADING_MODAL}
+              </Text>
 
               <div className={styles["footer-button"]}>
-                <Button
+                <ButtonOne
+                  type="secondary"
                   className={styles["cancel-button"]}
                   onClick={leaveService}
                 >
                   {CONTENT.BUTTON_QUIT}
-                </Button>
-                <Button
+                </ButtonOne>
+                <ButtonOne
                   className={styles["save-button"]}
                   onClick={() => setOpen(false)}
                 >
                   {CONTENT.BUTTON_CANCEL}
-                </Button>
+                </ButtonOne>
               </div>
             </div>
           </div>

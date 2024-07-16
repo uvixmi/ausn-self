@@ -6,21 +6,25 @@ $l: 1440px;
 $xl: 1920px;
 $xxl: 2560px;
 
-.modal-settings .ant-modal-content {
-  border-radius: 0px;
+.modal-settings-quit .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-radius: 4px;
   padding: 24px !important;
   height: auto;
 
   @media screen and (min-width: $tablet) {
-    padding: 40px;
+    gap: 32px;
+    padding: 40px !important;
   }
 }
 
-.modal-settings .ant-modal-body {
+.modal-settings-quit .ant-modal-body {
   height: 100%;
 }
 
-.modal-settings .ant-select-selector {
+.modal-settings-quit .ant-select-selector {
   border-radius: 0px;
 }
 

@@ -45,6 +45,11 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   max-width: 440px;
+  gap: 24px;
+
+  @media screen and (min-width: $tablet) {
+    gap: 32px;
+  }
 }
 
 .inputs-row {
@@ -77,27 +82,11 @@ $xxl: 2560px;
 }
 
 .cancel-button {
-  height: 34px;
-  padding: 8px 16px;
-  border-radius: 4px;
   width: 100%;
-  color: #6159ff;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .save-button {
-  height: 34px;
-  padding: 8px 16px;
-  border-radius: 4px;
   width: 100%;
-  background: #6159ff;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .add-payment-inner {
@@ -199,4 +188,11 @@ $xxl: 2560px;
   line-height: 22px;
   letter-spacing: 0em;
   text-align: left;
+}
+
+.title-text-head {
+  font-family: "Inter";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
 }

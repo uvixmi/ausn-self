@@ -41,3 +41,11 @@ export const CONTENT = {
   DEFAULT_DATE: "20.09.2023",
   DEFAULT_DATE_STRING: "сентябрь 2023",
 }
+
+export const TAX_SYSTEM: Record<string, string> = {
+  usn_d: "УСН Доходы",
+  usn_d_r: "УСН Доходы - Расходы",
+  patent: "Патент",
+  eshn: "ЕСХН",
+  osn: "Общая система НО",
+}

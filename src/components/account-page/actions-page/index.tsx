@@ -197,16 +197,30 @@ export const ActionsPage = () => {
     getBanners()
   }, [dispatch])
 
+  const { loading, loaded: loadedSources } = useSelector(
+    (state: RootState) => state.sources
+  )
+
+  const { loading: tasksLoading, loaded: loadedTasks } = useSelector(
+    (state: RootState) => state.tasks
+  )
+
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        dispatch(fetchTasks())
+        if (
+          tasksLoading !== undefined &&
+          tasksLoading !== "loading" &&
+          !loadedTasks
+        )
+          dispatch(fetchTasks())
         setIsTasksLoaded(true)
       } catch (error) {
         errorTasks()
       }
+      if (loading !== undefined && loading !== "loading" && !loadedSources)
+        dispatch(fetchSourcesInfo())
 
-      dispatch(fetchSourcesInfo())
       try {
         const linkedBanners = fetchedBanners?.map((item) => {
           const regex = /(\{link:[^\}]+\})/g
@@ -221,7 +235,7 @@ export const ActionsPage = () => {
       }
     }
     fetchSources()
-  }, [fetchedBanners])
+  }, [fetchedBanners, loading, loadedSources, loadedTasks, tasksLoading])
 
   const [taskYear, setTaskYear] = useState(2020)
 

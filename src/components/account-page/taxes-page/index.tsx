@@ -342,29 +342,45 @@ export const TaxesPage = () => {
 
   const { logout } = useAuth()
   const navigate = useNavigate()
+  const [sourcesIsLoading, setSourcesIsLoading] = useState("")
+
+  const [sourcesLoaded, setSourcesLoaded] = useState(false)
+  const [sourcesError, setSourcesError] = useState(false)
+
+  const { loaded: loadedSources, loading: loadingSources } = useSelector(
+    (state: RootState) => state.sources
+  )
+
+  const sources_red = useSelector(
+    (state: RootState) => state.sources.sourcesInfo
+  )
 
   useEffect(() => {
     const fetchOperations = async () => {
       try {
-        const sourcesResponse = await api.sources.getSourcesInfoSourcesGet({
-          headers,
-        })
-        setSources(sourcesResponse.data)
+        console.log(loadingSources)
+        dispatch(fetchSourcesInfo())
+        setSources(sources_red)
         setSourcesLoaded(true)
+        setSourcesIsLoading("")
         setSourcesError(false)
       } catch (error) {
         if ((error as ApiError).status === 422) {
           logout(), dispatch(clearData()), navigate("/login")
         }
+        setSourcesIsLoading("")
         setSourcesLoaded(false)
         setSourcesError(true)
       }
     }
-    fetchOperations()
-  }, [])
-
-  const [sourcesLoaded, setSourcesLoaded] = useState(false)
-  const [sourcesError, setSourcesError] = useState(false)
+    if (
+      loadingSources !== "loading" &&
+      loadingSources !== undefined &&
+      !loadedSources
+    ) {
+      fetchOperations()
+    }
+  }, [loadingSources, loadedSources])
 
   const fetchSourcesHand = async () => {
     try {
@@ -1797,7 +1813,7 @@ export const TaxesPage = () => {
             breakpoint="lg"
             collapsedWidth="0"
           >
-            <Title level={3}>
+            <Text className={styles["non-title"]}>
               {CONTENT.HEADING_DATA_SOURCES}
               <Button
                 onClick={() => fetchSourcesHand()}
@@ -1805,7 +1821,7 @@ export const TaxesPage = () => {
               >
                 <ArrowCounterIcon />
               </Button>
-            </Title>
+            </Text>
 
             {/*<div className={styles["sider-buttons"]}>
             <Button

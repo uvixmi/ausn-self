@@ -6,11 +6,13 @@ interface SourcesInitialType {
   sourcesInfo?: SourcesInfo
   loading: string
   error?: string
+  loaded: boolean
 }
 
 const initialState: SourcesInitialType = {
   sourcesInfo: undefined,
   loading: "",
+  loaded: false,
   error: undefined,
 }
 
@@ -22,6 +24,7 @@ const sourcesSlice = createSlice({
     builder.addCase(fetchSourcesInfo.fulfilled, (state, action) => {
       state.sourcesInfo = action.payload
       state.loading = "succeeded"
+      state.loaded = true
     })
 
     builder.addCase(fetchSourcesInfo.pending, (state) => {
@@ -31,6 +34,7 @@ const sourcesSlice = createSlice({
     builder.addCase(fetchSourcesInfo.rejected, (state, action) => {
       state.loading = "failed"
       state.error = action.error.message
+      state.loaded = false
     })
   },
 })
