@@ -110,7 +110,6 @@ export const AccountPage = ({
   useEffect(() => {
     if (!loaded && loading !== "" && loading !== "loading") {
       dispatch(fetchCurrentUser())
-      dispatch(fetchSourcesInfo())
     }
     setTasksCount(getTaskSum())
   }, [dispatch, getTaskSum, loaded, loading])

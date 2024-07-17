@@ -370,8 +370,8 @@ export const TaxesPage = () => {
 
   useEffect(() => {
     const fetchOperations = () => {
+      setIsSourcesLoaded(true)
       try {
-        setIsSourcesLoaded(true)
         dispatch(fetchSourcesInfo())
       } catch (error) {
         if ((error as ApiError).status === 422) {

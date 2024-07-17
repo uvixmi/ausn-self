@@ -45,7 +45,6 @@ export const MainPage = () => {
     if (!role) {
       clearAll()
       dispatch(fetchCurrentUser())
-      debugger
     }
   }, [dispatch, role])
 
