@@ -5,6 +5,7 @@ import styles from "./styles.module.scss"
 import "./styles.scss"
 import cn from "classnames"
 import { DownloadOutlined, InfoCircleOutlined } from "@ant-design/icons"
+import { useEffect } from "react"
 
 export const ReportsPage = () => {
   const { Sider, Content } = Layout
