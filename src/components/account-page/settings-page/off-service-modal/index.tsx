@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../../../AuthContext"
 import { clearData } from "../../../authorization-page/slice"
 import { useMediaQuery } from "@react-hook/media-query"
+import { clearTasks } from "../../client/tasks/slice"
+import { clearSources } from "../../client/sources/slice"
 
 export const OffServiceModal = ({ isOpen, setOpen }: OffServiceModalProps) => {
   const { Title, Text, Link } = Typography
@@ -51,11 +53,16 @@ export const OffServiceModal = ({ isOpen, setOpen }: OffServiceModalProps) => {
       failedProcess()
     }
   }
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
 
   const navigate = useNavigate()
   const { logout } = useAuth()
   const leaveService = async () => {
-    setOpen(false), navigate("/main"), logout(), dispatch(clearData())
+    setOpen(false), navigate("/main"), logout(), clearAll()
     setServiceDisabled(false)
   }
   const isMobile = useMediaQuery("(max-width: 767px)")

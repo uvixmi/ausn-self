@@ -90,6 +90,8 @@ import { DeleteOperationIcon } from "./type-operation/icons/delete-operation"
 import { SourceMobileIcon } from "./type-operation/icons/source-mobile"
 import { SelectProps, SelectValue } from "antd/lib/select"
 import { PickerProps } from "antd/lib/date-picker/generatePicker"
+import { clearTasks } from "../client/tasks/slice"
+import { clearSources, newPage } from "../client/sources/slice"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -124,6 +126,7 @@ export const TaxesPage = () => {
   ]
 
   const dispatch = useDispatch<AppDispatch>()
+
   const token = Cookies.get("token")
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -347,26 +350,32 @@ export const TaxesPage = () => {
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourcesError, setSourcesError] = useState(false)
 
-  const { loaded: loadedSources, loading: loadingSources } = useSelector(
-    (state: RootState) => state.sources
-  )
+  const {
+    loaded: loadedSources,
+    loading: loadingSources,
+    isLoadingForPage,
+  } = useSelector((state: RootState) => state.sources)
 
   const sources_red = useSelector(
     (state: RootState) => state.sources.sourcesInfo
   )
 
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
+
+  const [isSourcesLoaded, setIsSourcesLoaded] = useState(false)
+
   useEffect(() => {
-    const fetchOperations = async () => {
+    const fetchOperations = () => {
       try {
-        console.log(loadingSources)
+        setIsSourcesLoaded(true)
         dispatch(fetchSourcesInfo())
-        setSources(sources_red)
-        setSourcesLoaded(true)
-        setSourcesIsLoading("")
-        setSourcesError(false)
       } catch (error) {
         if ((error as ApiError).status === 422) {
-          logout(), dispatch(clearData()), navigate("/login")
+          logout(), clearAll(), navigate("/login")
         }
         setSourcesIsLoading("")
         setSourcesLoaded(false)
@@ -376,11 +385,19 @@ export const TaxesPage = () => {
     if (
       loadingSources !== "loading" &&
       loadingSources !== undefined &&
-      !loadedSources
+      !isSourcesLoaded &&
+      !isLoadingForPage
     ) {
       fetchOperations()
     }
-  }, [loadingSources, loadedSources])
+  }, [loadingSources, isSourcesLoaded, isLoadingForPage])
+
+  useEffect(() => {
+    setSources(sources_red)
+    setSourcesLoaded(true)
+    setSourcesIsLoading("")
+    setSourcesError(false)
+  }, [sources_red])
 
   const fetchSourcesHand = async () => {
     try {
@@ -392,7 +409,7 @@ export const TaxesPage = () => {
       setSourcesError(false)
     } catch (error) {
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
       setSourcesLoaded(false)
       setSourcesError(true)
@@ -679,7 +696,7 @@ export const TaxesPage = () => {
       } catch (error) {
         console.log(error)
         if ((error as ApiError).status === 422) {
-          logout(), dispatch(clearData()), navigate("/login")
+          logout(), clearAll(), navigate("/login")
         } else {
           setTaxesErrorImage(true)
         }

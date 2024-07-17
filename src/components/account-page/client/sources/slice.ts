@@ -7,6 +7,7 @@ interface SourcesInitialType {
   loading: string
   error?: string
   loaded: boolean
+  isLoadingForPage: boolean
 }
 
 const initialState: SourcesInitialType = {
@@ -14,21 +15,35 @@ const initialState: SourcesInitialType = {
   loading: "",
   loaded: false,
   error: undefined,
+  isLoadingForPage: false,
 }
 
 const sourcesSlice = createSlice({
   name: "sources",
   initialState,
-  reducers: {},
+  reducers: {
+    clearSources: (state) => {
+      state.sourcesInfo = undefined
+      state.loaded = false
+      state.loading = ""
+      state.error = undefined
+      state.isLoadingForPage = false
+    },
+    newPage: (state) => {
+      state.isLoadingForPage = false
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchSourcesInfo.fulfilled, (state, action) => {
       state.sourcesInfo = action.payload
       state.loading = "succeeded"
       state.loaded = true
+      state.isLoadingForPage = false
     })
 
     builder.addCase(fetchSourcesInfo.pending, (state) => {
       state.loading = "loading"
+      state.isLoadingForPage = true
     })
 
     builder.addCase(fetchSourcesInfo.rejected, (state, action) => {
@@ -39,5 +54,5 @@ const sourcesSlice = createSlice({
   },
 })
 
-export const {} = sourcesSlice.actions
+export const { clearSources, newPage } = sourcesSlice.actions
 export default sourcesSlice.reducer

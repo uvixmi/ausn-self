@@ -11,6 +11,8 @@ import { useAuth } from "../../../../AuthContext"
 import { clearData } from "../../../authorization-page/slice"
 import { useMediaQuery } from "@react-hook/media-query"
 import { ButtonOne } from "../../../../ui-kit/button"
+import { clearTasks } from "../../client/tasks/slice"
+import { clearSources } from "../../client/sources/slice"
 
 export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
   const { Text } = Typography
@@ -18,10 +20,16 @@ export const QuitModal = ({ isOpen, setOpen }: QuitModalProps) => {
 
   const [serviceDisabled, setServiceDisabled] = useState(false)
 
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
+
   const navigate = useNavigate()
   const { logout } = useAuth()
   const leaveService = async () => {
-    setOpen(false), navigate("/main"), logout(), dispatch(clearData())
+    setOpen(false), navigate("/main"), logout(), clearAll()
     setServiceDisabled(false)
   }
 

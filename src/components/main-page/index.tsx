@@ -16,6 +16,8 @@ import { TaxesPage } from "../account-page/taxes-page"
 import { SettingsPage } from "../account-page/settings-page"
 import { ReportsPage } from "../account-page/reports-page"
 import { jwtDecode } from "jwt-decode"
+import { clearSources } from "../account-page/client/sources/slice"
+import { clearTasks } from "../account-page/client/tasks/slice"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -33,17 +35,22 @@ export const MainPage = () => {
 
   const token = Cookies.get("token")
 
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
+
   useEffect(() => {
     if (!role) {
-      dispatch(clearData())
+      clearAll()
       dispatch(fetchCurrentUser())
       debugger
     }
   }, [dispatch, role])
 
   useEffect(() => {
-    if (loading === "failed")
-      logout(), dispatch(clearData()), navigate("/login")
+    if (loading === "failed") logout(), clearAll(), navigate("/login")
   }, [loading])
 
   useEffect(() => {
@@ -75,7 +82,7 @@ export const MainPage = () => {
           <div className={styles["register-header"]}>
             <LogoIcon
               onClick={() => {
-                logout(), dispatch(clearData()), navigate("/login")
+                logout(), clearAll(), navigate("/login")
               }}
               type="icon-custom"
               className={styles["logo-item"]}
@@ -123,7 +130,7 @@ export const MainPage = () => {
           <div className={styles["register-header"]}>
             <LogoIcon
               onClick={() => {
-                logout(), navigate("/login"), dispatch(clearData())
+                logout(), navigate("/login"), clearAll()
               }}
               type="icon-custom"
               className={styles["logo-item"]}
@@ -170,7 +177,7 @@ export const MainPage = () => {
           <div className={styles["register-header"]}>
             <LogoIcon
               onClick={() => {
-                logout(), navigate("/login"), dispatch(clearData())
+                logout(), navigate("/login"), clearAll()
               }}
               type="icon-custom"
               className={styles["logo-item"]}

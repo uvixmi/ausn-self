@@ -62,6 +62,8 @@ import { HaveBannersIcon } from "../taxes-page/type-operation/icons/have-banners
 import { NotificationsModal } from "./notifications-modal"
 import "./styles.scss"
 import { ArrowRoundUpdateIcon } from "../taxes-page/type-operation/icons/arrow-round-update"
+import { clearTasks } from "../client/tasks/slice"
+import { clearSources } from "../client/sources/slice"
 
 export interface InfoBannerLinked {
   id: string
@@ -177,6 +179,12 @@ export const ActionsPage = () => {
     }
   }
 
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
+
   const [isConfirmPass, setIsConfirmPass] = useState(false)
   const [сonfirmTaskCode, setConfirmTaskCode] = useState("")
   const [confirmYear, setConfirmYear] = useState(0)
@@ -205,22 +213,26 @@ export const ActionsPage = () => {
     (state: RootState) => state.tasks
   )
 
+  const [isTasksLoaded, setIsTasksLoaded] = useState(false)
+
+  const [isSourcesLoaded, setIsSourcesLoaded] = useState(false)
   useEffect(() => {
     const fetchSources = async () => {
       try {
         if (
           tasksLoading !== undefined &&
           tasksLoading !== "loading" &&
-          !loadedTasks
-        )
+          !isTasksLoaded
+        ) {
           dispatch(fetchTasks())
+        }
         setIsTasksLoaded(true)
       } catch (error) {
         errorTasks()
       }
-      if (loading !== undefined && loading !== "loading" && !loadedSources)
+      if (loading !== undefined && loading !== "loading" && !isSourcesLoaded)
         dispatch(fetchSourcesInfo())
-
+      setIsSourcesLoaded(true)
       try {
         const linkedBanners = fetchedBanners?.map((item) => {
           const regex = /(\{link:[^\}]+\})/g
@@ -235,7 +247,7 @@ export const ActionsPage = () => {
       }
     }
     fetchSources()
-  }, [fetchedBanners, loading, loadedSources, loadedTasks, tasksLoading])
+  }, [fetchedBanners, loading, isSourcesLoaded, loadedTasks, isTasksLoaded])
 
   const [taskYear, setTaskYear] = useState(2020)
 
@@ -272,7 +284,7 @@ export const ActionsPage = () => {
         errorTasks()
 
         if ((error as ApiError).status === 422) {
-          logout(), dispatch(clearData()), navigate("/login")
+          logout(), clearAll(), navigate("/login")
         }
       }
     } catch (error) {
@@ -308,7 +320,7 @@ export const ActionsPage = () => {
       console.error("Error during API call:", error)
       errorDownload()
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
     }
   }
@@ -339,12 +351,10 @@ export const ActionsPage = () => {
       console.error("Error during API call:", error)
       errorDownload()
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
     }
   }
-
-  const [isTasksLoaded, setIsTasksLoaded] = useState(false)
 
   const handleSentReport = async (
     task_code: string,
@@ -387,7 +397,7 @@ export const ActionsPage = () => {
       setBanners(linkedBanners)
     } catch (error) {
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
     }
   }

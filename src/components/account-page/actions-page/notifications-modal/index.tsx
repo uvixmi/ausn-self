@@ -23,6 +23,8 @@ import { useAuth } from "../../../../AuthContext"
 import Link from "antd/es/typography/Link"
 import { LINK_MAP } from "../constants"
 import { BellBannerIcon } from "../../taxes-page/type-operation/icons/bell-banner"
+import { clearTasks } from "../../client/tasks/slice"
+import { clearSources } from "../../client/sources/slice"
 
 export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   const { Title, Text } = Typography
@@ -47,6 +49,12 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
 
   const navigate = useNavigate()
   const { logout } = useAuth()
+
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
 
   useEffect(() => {
     const fetchSources = async () => {
@@ -89,7 +97,7 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       dispatch(fetchBanners())
     } catch (error) {
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
     }
   }
@@ -121,7 +129,7 @@ export const NotificationsModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       dispatch(fetchBanners())
     } catch (error) {
       if ((error as ApiError).status === 422) {
-        logout(), dispatch(clearData()), navigate("/login")
+        logout(), clearAll(), navigate("/login")
       }
     }
   }

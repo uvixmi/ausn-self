@@ -23,6 +23,7 @@ import { QuitModal } from "./quit-modal"
 import { getRateReason } from "./utils"
 import { TaxSystemType } from "../../../api/myApi"
 import Link from "antd/es/typography/Link"
+import { ButtonOne } from "../../../ui-kit/button"
 
 export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
@@ -57,14 +58,14 @@ export const SettingsPage = () => {
           >
             {CONTENT.SETTINGS_HEADING}
           </Title>
-          <Button
+          <ButtonOne
             className={styles["remark-button"]}
             onClick={() => {
               setIsQuitOpen(true)
             }}
           >
             {CONTENT.BUTTON_OFF_PROFILE}
-          </Button>
+          </ButtonOne>
         </div>
         <div className={styles["settings-wrapper"]}>
           <div className={styles["info-user-inner"]}>

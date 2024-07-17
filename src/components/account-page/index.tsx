@@ -31,6 +31,8 @@ import { ButtonOne } from "../../ui-kit/button"
 import { CopyIcon } from "./taxes-page/type-operation/icons/copy"
 import { QuitModal } from "./settings-page/quit-modal"
 import { debug } from "console"
+import { clearTasks } from "./client/tasks/slice"
+import { clearSources } from "./client/sources/slice"
 export const AccountPage = ({
   token_type,
   accessToken,
@@ -91,6 +93,12 @@ export const AccountPage = ({
   const [tasksCount, setTasksCount] = useState<number | undefined>(0)
 
   const dispatch = useDispatch<AppDispatch>()
+
+  const clearAll = () => {
+    dispatch(clearData())
+    dispatch(clearTasks())
+    dispatch(clearSources())
+  }
 
   const navigate = useNavigate()
 
@@ -253,7 +261,7 @@ export const AccountPage = ({
                 <div className={styles["logo-inner"]}>
                   <LogoIcon
                     onClick={() => {
-                      navigate("/main"), logOut(), dispatch(clearData())
+                      navigate("/main")
                     }}
                     type="icon-custom"
                     className={styles["logo-item"]}

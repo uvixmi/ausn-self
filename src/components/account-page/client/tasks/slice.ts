@@ -19,7 +19,14 @@ const initialState: SourcesInitialType = {
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    clearTasks: (state) => {
+      state.tasks = undefined
+      state.loaded = false
+      state.loading = ""
+      state.error = undefined
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchTasks.fulfilled, (state, action) => {
       state.tasks = action.payload
@@ -39,5 +46,5 @@ const tasksSlice = createSlice({
   },
 })
 
-export const {} = tasksSlice.actions
+export const { clearTasks } = tasksSlice.actions
 export default tasksSlice.reducer
