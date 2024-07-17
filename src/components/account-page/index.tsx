@@ -406,7 +406,7 @@ export const AccountPage = ({
                           setIsQuitOpen(true)
                         }}
                       >
-                        {"Выход"}
+                        {"Выйти"}
                       </ButtonOne>
                     </div>
                   )}
@@ -433,7 +433,7 @@ export const AccountPage = ({
                           <div className={styles["divider-menu"]}></div>
                         )}
                         <Text className={styles["text-menu"]}>
-                          {currentUser.tax_rate + "%"}
+                          {"УСН " + currentUser.tax_rate + "%"}
                         </Text>
                       </div>
                       <DownOutlined />

@@ -11,10 +11,10 @@ $xxl: 2560px;
   flex-direction: column;
   background-color: #fff;
   gap: 8px;
-  padding: 14px 14px 66px;
+  padding: 24px 14px 66px;
 
   @media screen and (min-width: $m) {
-    margin: 35px 24px 0px 274px;
+    margin: 32px 24px 0px 274px;
     padding: 0;
     gap: 24px;
   }
