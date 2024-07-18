@@ -95,8 +95,5 @@ export const compareDates = (date1: string, date2: string) => {
 
   const date2Obj = new Date(date2)
 
-  console.log(date1Obj)
-  console.log(date2Obj)
-
   return date2Obj >= date1Obj ? 1 : 0
 }

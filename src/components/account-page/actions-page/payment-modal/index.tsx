@@ -154,10 +154,6 @@ export const PaymentModal = ({
     handleYear(index)
   }
 
-  useEffect(() => {
-    console.log(datesErrors)
-  }, [datesErrors])
-
   const handleDocNumber = (doc_number: string, index: number) => {
     dispatch(setDocNumber({ doc_number, index }))
   }

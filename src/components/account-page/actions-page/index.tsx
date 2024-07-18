@@ -239,7 +239,6 @@ export const ActionsPage = () => {
           const parts = item.description.split(regex)
           return { ...item, description: parts }
         })
-        console.log(linkedBanners)
 
         setBanners(linkedBanners)
       } catch (error) {

@@ -59,7 +59,6 @@ export const AuthorizationPage = ({
       document.cookie = "carrotquest_uid=; max-age=0; path=/"
       document.cookie = "carrotquest_auth_token=; max-age=0; path=/"
       localStorage.removeItem("carrotquest_data")
-      console.log("deleted")
     }
 
     deleteCookie()

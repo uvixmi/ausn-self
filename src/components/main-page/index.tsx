@@ -42,13 +42,6 @@ export const MainPage = () => {
   }
 
   useEffect(() => {
-    if (!role) {
-      clearAll()
-      dispatch(fetchCurrentUser())
-    }
-  }, [dispatch, role])
-
-  useEffect(() => {
     if (loading === "failed") logout(), clearAll(), navigate("/login")
   }, [loading])
 
