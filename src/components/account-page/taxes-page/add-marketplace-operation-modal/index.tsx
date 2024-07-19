@@ -26,7 +26,7 @@ import {
   convertReverseFormat,
   numberWithSpaces,
 } from "../../actions-page/payment-modal/utils"
-import { formatDateString } from "../../actions-page/utils"
+import { compareDates, formatDateString } from "../../actions-page/utils"
 import { InfoCircleOutlined } from "@ant-design/icons"
 import { SelectOne } from "../../../../ui-kit/select"
 import { InputOne } from "../../../../ui-kit/input"
@@ -373,7 +373,9 @@ export const AddMarketplaceOperationModal = ({
                         dateError ? (
                           <div>
                             <Text className={styles["error-text"]}>
-                              {CONTENT.INPUT_ERROR_HINT}
+                              {dateOperation !== ""
+                                ? CONTENT.INPUT_FAULT_HINT
+                                : CONTENT.INPUT_ERROR_HINT}
                             </Text>
                           </div>
                         ) : (
@@ -411,6 +413,13 @@ export const AddMarketplaceOperationModal = ({
                           typeof dateString === "string" &&
                             setDateOperation(dateString)
                           if (dateString === "") setDateError(true)
+                          else setDateError(false)
+                          if (
+                            currentUser.tax_date_begin &&
+                            typeof dateString === "string" &&
+                            compareDates(dateString, currentUser.tax_date_begin)
+                          )
+                            setDateError(true)
                           else setDateError(false)
                         }}
                       />

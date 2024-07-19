@@ -185,6 +185,7 @@ export const DownloadKudirModal = ({
                 value={selectedYear}
                 placeholder={CONTENT.SELECT_PLACEHOLDER}
                 options={yearsOptions}
+                className="kudir-select"
                 onChange={(value) => setSelectedYear(value)}
               />
             </div>
@@ -205,6 +206,7 @@ export const DownloadKudirModal = ({
                 value={selectedFormat}
                 options={formatOptions}
                 placeholder={CONTENT.SELECT_PLACEHOLDER}
+                className="kudir-select"
                 onChange={(value) => setSelectedFormat(value)}
               />
             </div>

@@ -96,6 +96,15 @@ export const ActionsPage = () => {
     />
   )
 
+  const updateIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 14,
+      }}
+      spin
+    />
+  )
+
   const [dueAmount, setDueAmount] = useState<number | undefined>(undefined)
 
   const openEnsModal = (due_amount?: number | null) => {
@@ -1110,10 +1119,21 @@ export const ActionsPage = () => {
                               onClick={() =>
                                 handleFormReport(item.task_code, item.year)
                               }
+                              disabled={
+                                isForming &&
+                                item.task_code === tasCodeForming &&
+                                item.year === yearForming
+                              }
                             >
-                              <ArrowCounterIcon
-                                className={styles["hide-icon"]}
-                              />
+                              {isForming &&
+                              item.task_code === tasCodeForming &&
+                              item.year === yearForming ? (
+                                <Spin indicator={updateIcon} />
+                              ) : (
+                                <ArrowCounterIcon
+                                  className={styles["hide-icon"]}
+                                />
+                              )}
 
                               {CONTENT.BUTTON_UPDATE}
                             </Button>

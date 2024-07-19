@@ -26,7 +26,7 @@ import {
   convertReverseFormat,
   numberWithSpaces,
 } from "../../actions-page/payment-modal/utils"
-import { formatDateString } from "../../actions-page/utils"
+import { compareDates, formatDateString } from "../../actions-page/utils"
 import { InfoCircleOutlined } from "@ant-design/icons"
 import { SelectOne } from "../../../../ui-kit/select"
 import { InputOne } from "../../../../ui-kit/input"
@@ -140,6 +140,7 @@ export const AddOperationModal = ({
       setCounterparty("")
     }
   }, [income])
+  const [dateError, setDateError] = useState(false)
 
   useEffect(() => {
     if (
@@ -147,11 +148,13 @@ export const AddOperationModal = ({
       counterparty !== "" &&
       direct !== "" &&
       amount !== 0 &&
-      dateOperation !== ""
+      dateOperation !== "" &&
+      !dateError &&
+      income !== null
     )
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
-  }, [income, counterparty, direct, amount, dateOperation])
+  }, [income, counterparty, direct, amount, dateOperation, dateError])
   const currentYear = new Date().getFullYear()
 
   const addOperation = async () => {
@@ -226,8 +229,6 @@ export const AddOperationModal = ({
   const [counterpartyError, setCounterpartyError] = useState(false)
   const [purposeError, setPurposeError] = useState(false)
   const [amountError, setAmountError] = useState(false)
-
-  const [dateError, setDateError] = useState(false)
 
   const isMobile = useMediaQuery("(max-width: 1023px)")
 
@@ -444,7 +445,9 @@ export const AddOperationModal = ({
                         dateError ? (
                           <div>
                             <Text className={styles["error-text"]}>
-                              {CONTENT.INPUT_ERROR_HINT}
+                              {dateOperation !== ""
+                                ? CONTENT.INPUT_FAULT_HINT
+                                : CONTENT.INPUT_ERROR_HINT}
                             </Text>
                           </div>
                         ) : (
@@ -481,6 +484,13 @@ export const AddOperationModal = ({
                           typeof dateString === "string" &&
                             setDateOperation(dateString)
                           if (dateString === "") setDateError(true)
+                          else setDateError(false)
+                          if (
+                            currentUser.tax_date_begin &&
+                            typeof dateString === "string" &&
+                            compareDates(dateString, currentUser.tax_date_begin)
+                          )
+                            setDateError(true)
                           else setDateError(false)
                         }}
                       />

@@ -510,6 +510,21 @@ $xxl: 2560px;
   padding: 2px 0px;
   width: 130px;
 
+  &:disabled {
+    border: none !important;
+    background: none !important;
+    color: $brand-primary !important;
+  }
+
+  &:active {
+    border: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: $brand-primary !important;
+    box-shadow: none !important;
+  }
+
   @media screen and (min-width: $tablet) {
   }
 

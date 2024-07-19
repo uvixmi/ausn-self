@@ -1538,10 +1538,20 @@ export const TaxesPage = () => {
                                               }
                                             />
                                           ) : (
-                                            getCurrency(
-                                              operation.amount_doc,
-                                              operation.category
-                                            )
+                                            <Amount
+                                              prefix={
+                                                operation.category === "debet"
+                                                  ? "plus"
+                                                  : "minus"
+                                              }
+                                              currency="RUB"
+                                              value={Math.abs(
+                                                operation.markup.amount
+                                              )}
+                                              className={
+                                                styles["amount-nowrap"]
+                                              }
+                                            />
                                           )}
                                         </Text>
                                         <Text

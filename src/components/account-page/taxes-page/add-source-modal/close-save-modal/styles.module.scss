@@ -1,31 +1,40 @@
+@import "../../../../../ui-kit/theme/colors.scss";
+
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .button-item-back {
-  border-radius: 2px;
-  background: #6159ff;
-  color: #fff;
-  height: 32px;
-  margin: 16px 0;
-  width: 50%;
+  width: 100%;
+  @media screen and (min-width: $s) {
+    width: 50%;
+  }
 }
 
 .button-item-cancel {
-  border-radius: 2px;
-  border: 1px solid #9984ff;
-  color: #6159ff;
-  height: 32px;
-  margin: 16px 0;
-  width: 50%;
+  width: 100%;
+  @media screen and (min-width: $s) {
+    width: 50%;
+  }
 }
 
 .buttons-row {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  gap: 8px;
+  @media screen and (min-width: $s) {
+    flex-direction: row;
+    gap: 16px;
+  }
 }
 
 .list-wrapper {
   display: flex;
   flex-direction: column;
-  margin-top: 16px;
-  gap: 32px;
 }
 
 .text {
@@ -36,4 +45,27 @@
   letter-spacing: 0em;
   text-align: left;
   color: #505050;
+}
+
+.text-heading {
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+
+  @media screen and (min-width: $s) {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.modal-wrapper {
+  padding: 4px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  @media screen and (min-width: $s) {
+    padding: 20px 16px;
+    gap: 32px;
+  }
 }
