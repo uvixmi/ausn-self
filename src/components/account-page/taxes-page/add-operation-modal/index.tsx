@@ -212,7 +212,7 @@ export const AddOperationModal = ({
 
   const closeModal = () => {
     setOpen(false)
-    setIncome(1)
+    setIncome(null)
     setCounterparty("")
     setDirect("")
     setAmount(0)
