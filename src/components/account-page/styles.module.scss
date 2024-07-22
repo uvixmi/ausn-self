@@ -398,6 +398,29 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 20px;
   color: $base-additional-grey;
+  max-width: 200px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: initial;
+  align-self: center;
+}
+
+.text-menu-no-break {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: $base-additional-grey;
+}
+
+.text-menu-percent {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: $base-additional-grey;
+
+  align-self: center;
 }
 .divider-menu {
   height: 20px;

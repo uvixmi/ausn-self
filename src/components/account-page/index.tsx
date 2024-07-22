@@ -413,25 +413,34 @@ export const AccountPage = ({
                   <Button
                     type="link"
                     onClick={(e) => e.preventDefault()}
-                    style={{ paddingTop: "8px", paddingBottom: "8px" }}
+                    style={{
+                      paddingTop: "8px",
+                      paddingBottom: "8px",
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      maxWidth: "280px",
+                      height: "auto",
+                    }}
                   >
                     <div className={styles["menu-inner-wrapper"]}>
                       <div className={styles["menu-inner"]}>
                         <Text className={styles["text-menu"]}>
-                          {currentUser.inn?.length === 12
-                            ? "ИП " +
-                              currentUser.lastname +
-                              " " +
-                              currentUser.firstname?.charAt(0) +
-                              ". " +
-                              currentUser.patronymic?.charAt(0) +
-                              "."
-                            : currentUser.full_name}
+                          {currentUser.inn?.length === 12 ? (
+                            <>
+                              ИП {currentUser.lastname}{" "}
+                              <Text className={styles["text-menu-no-break"]}>
+                                {currentUser.firstname?.charAt(0)}.{" "}
+                                {currentUser.patronymic?.charAt(0)}.
+                              </Text>
+                            </>
+                          ) : (
+                            currentUser.full_name
+                          )}
                         </Text>
                         {!isMobile && (
                           <div className={styles["divider-menu"]}></div>
                         )}
-                        <Text className={styles["text-menu"]}>
+                        <Text className={styles["text-menu-percent"]}>
                           {"УСН " + currentUser.tax_rate + "%"}
                         </Text>
                       </div>
