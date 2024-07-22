@@ -6,6 +6,7 @@ import {
   List,
   Menu,
   Skeleton,
+  Tooltip,
   Typography,
 } from "antd"
 import { Link, useLocation } from "react-router-dom"
@@ -33,6 +34,7 @@ import { QuitModal } from "./settings-page/quit-modal"
 import { debug } from "console"
 import { clearTasks } from "./client/tasks/slice"
 import { clearSources } from "./client/sources/slice"
+import { abbreviateFullName } from "./utils"
 export const AccountPage = ({
   token_type,
   accessToken,
@@ -434,7 +436,9 @@ export const AccountPage = ({
                               </Text>
                             </>
                           ) : (
-                            currentUser.full_name
+                            <Tooltip title={currentUser.full_name}>
+                              {abbreviateFullName(currentUser.full_name)}
+                            </Tooltip>
                           )}
                         </Text>
                         {!isMobile && (
