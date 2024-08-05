@@ -1,0 +1,23 @@
+@import "../../ui-kit/theme/colors.scss";
+
+.custom-steps .ant-steps-item-wait .ant-steps-item-icon {
+  background-color: $base-secondary-pale !important;
+  border-color: $brand-primary !important;
+  color: $brand-primary !important;
+}
+
+.custom-steps .ant-steps-item-wait .ant-steps-icon {
+  color: $brand-primary !important;
+}
+
+.custom-radio {
+  display: flex;
+}
+
+.custom-radio .ant-radio-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 0;
+}

@@ -51,6 +51,8 @@ export type ButtonProps = {
    * Пользовательское имя класса
    */
   className?: string
+
+  status?: "" | "error" | "warning" | undefined
   /**
    * Идентификатор для автоматизированного тестирования
    */

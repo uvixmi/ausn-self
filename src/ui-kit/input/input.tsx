@@ -16,6 +16,7 @@ export const InputOne = ({
   className,
   autoComplete,
   value,
+  status,
   ref,
   onBlur,
   onFocus,
@@ -65,6 +66,7 @@ export const InputOne = ({
       onMouseLeave={handleMouseLeave}
       placeholder={placeholder}
       type={type}
+      status={status}
     >
       {children}
     </Input>

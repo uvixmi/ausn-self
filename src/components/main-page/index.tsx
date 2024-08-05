@@ -1,7 +1,13 @@
 import styles from "./styles.module.scss"
 import { LogoIcon } from "./logo-icon"
 import { AuthorizationPage } from "../authorization-page"
-import { Routes, Route, useNavigate, Navigate } from "react-router-dom"
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+  useLocation,
+} from "react-router-dom"
 import { RegisterPage } from "../register-page"
 import { AccountPage } from "../account-page"
 import { useEffect, useState } from "react"
@@ -18,6 +24,8 @@ import { ReportsPage } from "../account-page/reports-page"
 import { jwtDecode } from "jwt-decode"
 import { clearSources } from "../account-page/client/sources/slice"
 import { clearTasks } from "../account-page/client/tasks/slice"
+import { ResetPasswordPage } from "../reset-password-page"
+import { getQueryParam } from "./utils"
 
 export const MainPage = () => {
   const navigate = useNavigate()
@@ -45,6 +53,30 @@ export const MainPage = () => {
     if (loading === "failed") logout(), clearAll(), navigate("/login")
   }, [loading])
 
+  const location = useLocation()
+
+  useEffect(() => {
+    console.log(location)
+    const access_token = getQueryParam("token")
+    console.log(access_token)
+    const resetToken = location.search.substring(
+      location.search.indexOf("=") + 1
+    )
+    console.log(resetToken)
+    if (location.pathname === "/password_change") {
+      const { exp } = jwtDecode(resetToken)
+      if (exp) {
+        const expDate = new Date(exp * 1000)
+        const expiresIn = Math.floor((expDate.getTime() - Date.now()) / 1000)
+        login(resetToken, expiresIn)
+      } else login(resetToken, 86400)
+      dispatch(fetchCurrentUser())
+      setAccessToken(resetToken)
+      setTokenType(token_type)
+      setIsAuth(true)
+    }
+  }, [])
+
   useEffect(() => {
     if (loaded && token) {
       let expiresIn = 0
@@ -71,15 +103,6 @@ export const MainPage = () => {
     return (
       <>
         <div className={styles["main-wrapper"]}>
-          <div className={styles["register-header"]}>
-            <LogoIcon
-              onClick={() => {
-                logout(), clearAll(), navigate("/login")
-              }}
-              type="icon-custom"
-              className={styles["logo-item"]}
-            />
-          </div>
           <div className={styles["background-cover"]}>
             <Routes>
               <Route
@@ -104,13 +127,31 @@ export const MainPage = () => {
                   />
                 )}
               />
+              <Route
+                path="/non-target"
+                Component={() => (
+                  <NonTargetPage
+                    accessToken={accessToken}
+                    token_type={token_type}
+                    logOut={logout}
+                  />
+                )}
+              />
+              <Route
+                path="/reset"
+                Component={() => (
+                  <ResetPasswordPage
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
+                  />
+                )}
+              />
 
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/*" element={<Navigate to="/login" replace />} />
             </Routes>
-          </div>
-          <div>
-            <div className={styles["register-footer"]}></div>
           </div>
         </div>
       </>

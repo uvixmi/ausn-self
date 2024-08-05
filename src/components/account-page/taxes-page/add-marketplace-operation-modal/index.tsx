@@ -17,7 +17,11 @@ import cn from "classnames"
 import "./styles.scss"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
-import { MarketplaceName, OperationCategory, api } from "../../../../api/myApi"
+import {
+  MarketplaceKey as MarketplaceName,
+  OperationCategory,
+  api,
+} from "../../../../api/myApi"
 import ru_RU from "antd/lib/date-picker/locale/ru_RU"
 import dayjs from "dayjs"
 import "dayjs/locale/ru"

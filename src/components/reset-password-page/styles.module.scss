@@ -40,13 +40,11 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   width: 100%;
-
   gap: 24px;
-
   padding: 0 14px;
 
   @media screen and (min-width: $s) {
-    padding: auto;
+    padding: 0;
     max-width: 348px;
   }
 }
@@ -65,13 +63,6 @@ $xxl: 2560px;
 
 .input-item {
   border-radius: 2px;
-}
-
-.button-item {
-  border-radius: 4px;
-  background: #6159ff;
-  color: #fff;
-  height: 40px;
 }
 
 .links-wrapper {
@@ -104,6 +95,7 @@ $xxl: 2560px;
   font-weight: 600;
   line-height: 40px;
   color: $brand-primary;
+  word-break: normal;
 
   @media screen and (min-width: $s) {
     font-size: 42px;
@@ -113,7 +105,6 @@ $xxl: 2560px;
 
 .form-email {
   width: 100%;
-  margin-bottom: 0px;
 }
 
 .form-password {
@@ -168,24 +159,20 @@ $xxl: 2560px;
 .image-register {
   margin-top: 20px;
   margin-bottom: 30px;
-  width: 97px;
-  height: 107px;
+  width: 165px;
+  height: 79px;
 
   @media screen and (min-width: $s) {
     margin-top: 92px;
     margin-bottom: 108px;
-    width: 320px;
-    height: 355px;
+    width: 453px;
+    height: 218px;
   }
 
   @media screen and (min-width: $m) {
     margin: 0;
-    width: 435px;
-    height: 482px;
-  }
-  @media screen and (min-width: $xl) {
-    width: 574px;
-    height: 636px;
+    width: 530px;
+    height: 254px;
   }
 }
 
@@ -196,4 +183,17 @@ $xxl: 2560px;
   @media screen and (min-width: $xl) {
     margin-top: 70px;
   }
+}
+
+.description-text {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+}
+
+.description-block {
+  display: flex;
+  flex-direction: column;
 }

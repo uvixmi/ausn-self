@@ -85,6 +85,34 @@ export enum BannerType {
 /** Body_create_client_marketplace_sources_marketplace_post */
 export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
   /**
+   * Date Begin
+   * Дата с которой необходимо подгружать отчеты по реализации
+   */
+  date_begin?: string | null
+  /**
+   * Shop Id
+   *
+   *                     Идентификатор магазина.
+   *                     Обязательно для заполнения, если source_name = ozon или ya_market:
+   *                     Для Ozon = Seller ID
+   *                     Для Яндекс Маркет = ID магазина
+   *
+   */
+  shop_id?: string | null
+  /**
+   * Password
+   *
+   *                     Пароль / токен доступа.
+   *                     Обязательно для заполнения, если sync_type = 2
+   *
+   */
+  password?: string | null
+  /**
+   * Saldo
+   * Сумма, еще не поступившая на банковский счет от МП за предыдущий период. Не передается, если сальдо = 0. Отправляется только sync_type = 2, source_name = ozon или wbn
+   */
+  saldo?: number | null
+  /**
    *
    *                     Тип синхронизации. Возможные значения:
    *
@@ -92,23 +120,23 @@ export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
    *                     2 - API МП (как при автозагрузке по API)
    *                     3 - OAuth 2.0 (для последующей генерации ссылки)
    */
-  marketplace_type: MarketplaceType
+  sync_type: MarketplaceType
   /**
    *
    *                     Наименование маркетплейса
    *
    *                     Возможные варианты:
-   *                         - если marketplace_type = 1:
-   *                             - Ozon
-   *                             - Wildberries
-   *                         - если marketplace_type = 2:
-   *                             - Ozon
-   *                             - Wildberries
-   *                         - если marketplace_type = 3:
-   *                             - Яндекс Маркет
+   *                         - если sync_type = 1:
+   *                             - ozon
+   *                             - wb
+   *                         - если sync_type = 2:
+   *                             - ozon
+   *                             - wb
+   *                         - если sync_type = 3:
+   *                             - ya_market
    *
    */
-  marketplace_source: MarketplaceName
+  source_name: MarketplaceName
   /**
    * Marketplace File
    * Файл с отчетом по реализации из файла xlsx, закодированный в base64
@@ -699,9 +727,9 @@ export enum LeadReason {
 
 /** MarketplaceName */
 export enum MarketplaceName {
-  ValueЯндексМаркет = "Яндекс Маркет",
-  Wildberries = "Wildberries",
-  Ozon = "Ozon",
+  YaMarket = "ya_market",
+  Wb = "wb",
+  Ozon = "ozon",
 }
 
 /** MarketplaceType */
@@ -1753,6 +1781,11 @@ export interface User {
    */
   fns_reg_date?: string | null
   /**
+   * Last Closed Year
+   * Год последней сданной декларации
+   */
+  last_closed_year?: string | null
+  /**
    * Email
    * Электронная почта пользователя
    */
@@ -2059,7 +2092,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.19
+ * @version 0.1.21
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2410,20 +2443,11 @@ export class Api<
      */
     createClientMarketplaceSourcesMarketplacePost: (
       data: BodyCreateClientMarketplaceSourcesMarketplacePost,
-      query?: {
-        /** Date Begin */
-        date_begin?: string | null
-        /** Login */
-        login?: string | null
-        /** Password */
-        password?: string | null
-      },
       params: RequestParams = {}
     ) =>
       this.request<CreateSourceResponse, void>({
         path: `/sources/marketplace`,
         method: "POST",
-        query: query,
         body: data,
         secure: true,
         type: ContentType.FormData,
@@ -2775,13 +2799,11 @@ export class Api<
      * @name GetTasksReferencesTasksReferencesGet
      * @summary Получить справочник задачи пользователя
      * @request GET:/tasks/references
-     * @secure
      */
     getTasksReferencesTasksReferencesGet: (params: RequestParams = {}) =>
       this.request<TaskReferencesResponse, void>({
         path: `/tasks/references`,
         method: "GET",
-        secure: true,
         format: "json",
         ...params,
       }),

@@ -7,14 +7,8 @@ $xl: 1920px;
 $xxl: 2560px;
 
 .background-cover {
-  background-image: url("../../svg-images/register-background.svg");
-  background-size: cover;
   flex-grow: 1;
   display: flex;
-
-  @media screen and (min-width: $s) {
-    padding: 50px 40px;
-  }
 }
 
 .main-wrapper {

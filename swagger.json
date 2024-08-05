@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AKB",
-    "version": "0.1.21"
+    "version": "0.1.25"
   },
   "paths": {
     "/auth": {
@@ -57,6 +57,43 @@
         }
       }
     },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh Token",
+        "operationId": "refresh_token_auth_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
     "/users/registration": {
       "post": {
         "tags": [
@@ -86,6 +123,36 @@
               }
             }
           },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По ИНН: {inn} не получены реквизиты из сервиса",
+                  "error_key": "inn_not_found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "Пользователь с ИНН {inn} уже зарегистрирован.",
+                      "error_key": "users_conflict"
+                    },
+                    {
+                      "message": "Пользователь {curr_u.email} уже имеет сохраненный ИНН в ЛК.",
+                      "error_key": "user_inn_conflict"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -103,6 +170,111 @@
                 "example": {
                   "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
                   "error_key": "internal_server_error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сервис заполнения по ИНН недоступен",
+                  "error_key": "inn_service_not_available"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/registration/retry": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Зарегистрироваться. Шаг регистрации 1.1. Повторная отправка письма.",
+        "description": "Метод реализует базовый механизм повторную отправку письма, если пользователь при регистрации находится на 1 её шаге.",
+        "operationId": "retry_email_send_users_registration_retry_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendRegistrationMail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "По ИНН: {inn} не получены реквизиты из сервиса",
+                  "error_key": "inn_not_found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт",
+            "content": {
+              "application/json": {
+                "example": {
+                  "possible_exceptions": [
+                    {
+                      "message": "Пользователь с ИНН {inn} уже зарегистрирован.",
+                      "error_key": "users_conflict"
+                    },
+                    {
+                      "message": "Пользователь {curr_u.email} уже имеет сохраненный ИНН в ЛК.",
+                      "error_key": "user_inn_conflict"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Сервис недоступен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сервис заполнения по ИНН недоступен",
+                  "error_key": "inn_service_not_available"
                 }
               }
             }
@@ -348,6 +520,167 @@
             "OAuth2PasswordBearer": []
           }
         ]
+      }
+    },
+    "/users/password/reset": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Отправить запрос на сброс пароля (письмо на почту).",
+        "description": "Метод реализует отправку запроса на сброс пароля пользователя. После сброса на почту направляется письмо с нужной информацией.",
+        "operationId": "password_reset_users_password_reset_post",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Почта для получения письма на сброс пароля",
+              "title": "Email"
+            },
+            "description": "Почта для получения письма на сброс пароля"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/password/change": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Сменить пароль.",
+        "description": "Метод реализует смену пароля при обычной смене пароля в ЛК, а также при сбросе.",
+        "operationId": "password_change_users_password_change_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Получить авторизационный токен на смену пароля.",
+        "description": "Метод реализует отправку запроса на смену пароля пользователя. При запросе происходит проверка на соответствие текущего пароля.",
+        "operationId": "password_change_request_users_password_change_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_password_change_request_users_password_change_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Произошла внутренняя ошибка сервиса. Пожалуйста, обратитесь к администрации ",
+                  "error_key": "internal_server_error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users": {
@@ -1134,6 +1467,50 @@
               }
             }
           },
+          "400": {
+            "description": "Плохой запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Некорректный запрос. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_bad_request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неавторизованно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Неверный логин, пароль или токен. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Запрещено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Доступ запрещен. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не найден ответ. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_not_found"
+                }
+              }
+            }
+          },
           "409": {
             "description": "Конфликт",
             "content": {
@@ -1141,6 +1518,28 @@
                 "example": {
                   "message": "Данная интеграция МП уже в процессе добавления.",
                   "error_key": "marketplace_already_in_progress"
+                }
+              }
+            }
+          },
+          "417": {
+            "description": "Сервер не может удовлетворить значению поля Expect заголовка запроса. ",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Учетная запись интеграции не найдена в мастер системе. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_missing"
+                }
+              }
+            }
+          },
+          "420": {
+            "description": "Слишком много запросов",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Слишком много запросов. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_error"
                 }
               }
             }
@@ -1180,10 +1579,6 @@
                       "error_key": "login_not_required_wildberries_api_sync"
                     },
                     {
-                      "message": "При синхронизации по API МП c Wildberries логин передавать не нужно.",
-                      "error_key": "login_not_required_wildberries_api_sync"
-                    },
-                    {
                       "message": "Необходима дата с которой подгружать отчеты при использовании синхронизации по Oauth.",
                       "error_key": "date_required_oauth_sync"
                     },
@@ -1202,8 +1597,27 @@
                     {
                       "message": "При синхронизации по OAuth, файл с отчетом по реализации передавать не нужно.",
                       "error_key": "file_not_required_auth_sync"
+                    },
+                    {
+                      "message": "Интеграция с текущими учетными данными уже существует. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                      "error_key": "marketplace_integration_already_exists"
+                    },
+                    {
+                      "message": "Структура файла не соответствует системе. Не найдена ключевая колонка +имяК+",
+                      "error_key": "invalid_marketplace_file"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "470": {
+            "description": "Additional Response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Яндекс Маркет. Регистрация под учетной записью без доступа к кабинету. ДАННАЯ ОШИБКА ТАКЖЕ ВОЗМОЖНА СТАТУСАХ ПО ПОДКЛЮЧАЕМОМУ ИСТОЧНИКУ.",
+                  "error_key": "marketplace_integration_incorrect_account"
                 }
               }
             }
@@ -1933,7 +2347,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GenerateENSOrder"
+                "$ref": "#/components/schemas/GenerateENSOrderTxt"
               }
             }
           },
@@ -2814,51 +3228,23 @@
       "Body_create_client_marketplace_sources_marketplace_post": {
         "properties": {
           "date_begin": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
+            "format": "date",
             "title": "Date Begin",
             "description": "Дата с которой необходимо подгружать отчеты по реализации"
           },
           "shop_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
             "title": "Shop Id",
             "description": "\n                    Идентификатор магазина.\n                    Обязательно для заполнения, если source_name = ozon или ya_market:\n                    Для Ozon = Seller ID\n                    Для Яндекс Маркет = ID магазина\n                    "
           },
           "password": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
             "title": "Password",
             "description": "\n                    Пароль / токен доступа.\n                    Обязательно для заполнения, если sync_type = 2\n                    "
           },
           "saldo": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "number",
             "title": "Saldo",
             "description": "Сумма, еще не поступившая на банковский счет от МП за предыдущий период. Не передается, если сальдо = 0. Отправляется только sync_type = 2, source_name = ozon или wbn"
           },
@@ -2873,16 +3259,46 @@
           "source_name": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/MarketplaceName"
+                "$ref": "#/components/schemas/MarketplaceKey"
               }
             ],
             "description": "\n                    Наименование маркетплейса\n\n                    Возможные варианты:\n                        - если sync_type = 1:\n                            - ozon\n                            - wb\n                        - если sync_type = 2:\n                            - ozon\n                            - wb\n                        - если sync_type = 3:\n                            - ya_market\n                    "
+          },
+          "source_title": {
+            "type": "string",
+            "title": "Source Title",
+            "description": "Дополнительное название магазина на МП"
+          },
+          "processing_begin_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Processing Begin Date",
+            "description": "Дата начала преобразования документов. Обязательно для заполнения при source_name=wb"
+          },
+          "wb_summary_flag": {
+            "type": "boolean",
+            "title": "Wb Summary Flag",
+            "description": "Флаг получения итоговой суммы, перечисленной за прошлую неделю. Обязательно для заполнения при source_name=wb"
+          },
+          "wb_calculation_mode": {
+            "type": "integer",
+            "enum": [
+              1,
+              2
+            ],
+            "title": "Wb Calculation Mode",
+            "description": "Метод расчета дохода по отчетам WB. Обязательно для заполнения при source_name=wb. Возможные значения: 1 - Реализационный метод (Доход = Сумма продаж). 2 - Восстановление комиссии (Доход = Сумма удержанной комиссии)."
           },
           "marketplace_file": {
             "type": "string",
             "format": "binary",
             "title": "Marketplace File",
-            "description": "Файл с отчетом по реализации из файла xlsx, закодированный в base64"
+            "description": "Файл с отчетом по реализации из файла xlsx"
+          },
+          "test_marketplace": {
+            "type": "boolean",
+            "title": "Test Marketplace",
+            "description": "Флаг тестовой интеграции маркетплейса, отключен и недоступен на продуктивной среде."
           }
         },
         "type": "object",
@@ -2995,6 +3411,77 @@
           "password"
         ],
         "title": "Body_login_auth_post"
+      },
+      "Body_password_change_request_users_password_change_post": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "password"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_password_change_request_users_password_change_post"
+      },
+      "ChangePassword": {
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "title": "New Password",
+            "description": "Новый пароль пользователя для смены"
+          }
+        },
+        "type": "object",
+        "required": [
+          "new_password"
+        ],
+        "title": "ChangePassword"
       },
       "ChangeTax": {
         "properties": {
@@ -3658,6 +4145,36 @@
           "purpose": "Единый налоговый платеж"
         }
       },
+      "GenerateENSOrderTxt": {
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "title": "Account Number",
+            "description": "Номер счета списания"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose",
+            "description": "Назначение платежа"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_number",
+          "purpose",
+          "amount"
+        ],
+        "title": "GenerateENSOrderTxt",
+        "example": {
+          "account_number": "40702810845370000004",
+          "amount": 17800.55,
+          "purpose": "Единый налоговый платеж"
+        }
+      },
       "GenerateReportsRequest": {
         "properties": {
           "report_type": {
@@ -3738,6 +4255,9 @@
             "title": "Operations Types",
             "description": "Вид операции. Обязателен при использовании параметров description1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов."
           },
+          "pagination": {
+            "$ref": "#/components/schemas/OperationsPagination"
+          },
           "sources_ids": {
             "anyOf": [
               {
@@ -3752,9 +4272,6 @@
             ],
             "title": "Sources Ids",
             "description": "Идентификаторы источников данных"
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/OperationsPagination"
           }
         },
         "type": "object",
@@ -4045,14 +4562,14 @@
         ],
         "title": "LeadReason"
       },
-      "MarketplaceName": {
+      "MarketplaceKey": {
         "type": "string",
         "enum": [
           "ya_market",
           "wb",
           "ozon"
         ],
-        "title": "MarketplaceName"
+        "title": "MarketplaceKey"
       },
       "MarketplaceType": {
         "type": "integer",
@@ -4177,6 +4694,18 @@
             "type": "string",
             "title": "Source Name",
             "description": "Наименование источника, по счету которого у клиента прошла операция."
+          },
+          "source_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Title",
+            "description": "Дополнительное наименование источника, например, название магазина на МП"
           },
           "counterparty_name": {
             "type": "string",
@@ -4775,10 +5304,25 @@
         "type": "string",
         "enum": [
           "in_progress",
+          "processing",
           "completed",
           "failed"
         ],
         "title": "RequestState"
+      },
+      "ResendRegistrationMail": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "Электронная почта пользователя"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "ResendRegistrationMail"
       },
       "ResultInfo": {
         "properties": {
@@ -4942,16 +5486,22 @@
       "Source": {
         "properties": {
           "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "ID источника данных."
+          },
+          "in_progress_id": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "format": "uuid"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Id",
-            "description": "ID источника данных. Отсутствует при state = [in_progress, failed]"
+            "title": "In Progress Id",
+            "description": "ID источника в процессе добавления. Отсутствует при state = [completed]"
           },
           "type": {
             "allOf": [
@@ -4967,7 +5517,7 @@
                 "$ref": "#/components/schemas/OFDSource"
               },
               {
-                "$ref": "#/components/schemas/MarketplaceName"
+                "$ref": "#/components/schemas/MarketplaceKey"
               },
               {
                 "type": "string"
@@ -4975,6 +5525,18 @@
             ],
             "title": "Name",
             "description": "Наименование источника.  "
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Дополнительное наименование источника, например, название магазина МП."
           },
           "short_name": {
             "anyOf": [
@@ -5090,6 +5652,7 @@
         },
         "type": "object",
         "required": [
+          "id",
           "type",
           "name",
           "is_integrated"
@@ -5304,6 +5867,29 @@
             ],
             "title": "Report Code",
             "description": "ID сформированного уведомления / декларации"
+          },
+          "report_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Статус отчета. Обязательно возвращается, если type = report. Возможные значения: 0 - отчет не сформирован. 1 - отчет сформирован и передан клиенту. 2 - отчет принят ФНС (через ЭЦП). 3 - отчет не принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно)."
+          },
+          "need_resend": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Need Resend",
+            "description": "Обязательно для заполнения для задач отчетности. Флаг требуется для возврата на пользователя сданных уведомлений (статус 4), если расчет по ним менялся. В возврат идет уведомление со статусом True.При перегенерации отчета (переход в статус 1), статус также остается в True. При повторной сдаче отчета (смена статуса с 1 на 4), статус меняется в False. Во всех остальных случаях статус возвращается False."
           },
           "report_update": {
             "anyOf": [

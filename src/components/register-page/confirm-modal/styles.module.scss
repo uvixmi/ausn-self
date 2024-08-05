@@ -1,9 +1,12 @@
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .button-item-enter {
-  border-radius: 4px;
-  background: #6159ff;
-  color: #fff;
-  height: 40px;
-  margin: 32px 0 16px 0;
   width: 100%;
 }
 
@@ -32,5 +35,51 @@
 }
 
 .text-bold {
+  font-family: "Inter";
+  font-size: 14px;
   font-weight: 600;
+  line-height: 22px;
+  text-align: left;
+}
+
+.text-style {
+  font-family: "Inter";
+  font-size: 14px;
+
+  line-height: 22px;
+  text-align: left;
+}
+
+.list-radio-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media screen and (min-width: $s) {
+    gap: 37px;
+    padding: 20px 16px;
+  }
+}
+
+.title-confirm {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+
+  text-align: left;
+}
+
+.heading-text {
+  font-family: "Inter";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-align: left;
+}
+
+.heading-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

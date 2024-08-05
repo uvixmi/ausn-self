@@ -1,8 +1,7 @@
-import { Checkbox, ConfigProvider, Form, Typography } from "antd"
+import { ConfigProvider, Form, Typography } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
-import { RegisterWelcomeImage } from "./images/register-welcome"
-import Link from "antd/es/typography/Link"
+
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { api } from "../../api/myApi"
@@ -12,18 +11,18 @@ import { fetchCurrentUser } from "./slice"
 import { AppDispatch, RootState } from "../main-page/store"
 import Cookies from "js-cookie"
 import { useAuth } from "../../AuthContext"
-import { isErrorResponse } from "./utils"
-import { jwtDecode } from "jwt-decode"
 import { ButtonOne } from "../../ui-kit/button"
 import { InputOne } from "../../ui-kit/input"
 import cn from "classnames"
 import "./styles.scss"
 import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
+import { ResetPasswordImage } from "./images/reset-password"
+import { isErrorResponse } from "./utils"
 
 const { Title, Text } = Typography
 
-export const AuthorizationPage = ({
+export const ResetPasswordPage = ({
   setTokenType,
   setAccessToken,
   setIsAuth,
@@ -106,6 +105,26 @@ export const AuthorizationPage = ({
     deleteCarrotquestCookies()
   }, [])
 
+  const [emailInvalid, setEmailInvalid] = useState(false)
+  const [emailInvalidText, setEmailInvalidText] = useState("")
+
+  const resetPassword = async () => {
+    try {
+      const data = { email: email }
+      await api.users.passwordResetUsersPasswordResetPost(data)
+      setEmailInvalid(false)
+      setEmailInvalidText("")
+    } catch (error) {
+      console.error("Ошибка при выполнении запроса:", error)
+
+      setEmailInvalid(true)
+
+      if (isErrorResponse(error)) {
+        setEmailInvalidText(error.error.detail.message)
+      }
+    }
+  }
+
   return (
     <>
       <ConfigProvider
@@ -126,8 +145,16 @@ export const AuthorizationPage = ({
           <div className={styles["register-block-wrapper"]}>
             <div className={styles["inputs-wrapper"]}>
               <Text className={styles["heading-text"]}>
-                {CONTENT.AUTHORIZATION_HEADING}
+                {CONTENT.RESET_HEADING}
               </Text>
+              <div className={styles["description-block"]}>
+                <Text className={styles["description-text"]}>
+                  {CONTENT.TEXT_DESCRIPTION_ONE}
+                </Text>
+                <Text className={styles["description-text"]}>
+                  {CONTENT.TEXT_DESCRIPTION_TWO}
+                </Text>
+              </div>
               <div className={styles["inputs-window"]}>
                 <div className={styles["input-item-wrapper"]}>
                   <Text className={styles["input-title"]}>
@@ -135,7 +162,16 @@ export const AuthorizationPage = ({
                   </Text>
                   <Form.Item
                     className={styles["form-email"]}
-                    validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    validateStatus={emailInvalid ? "error" : ""}
+                    help={
+                      emailInvalid ? (
+                        <Text className={styles["error-text"]}>
+                          {emailInvalidText}
+                        </Text>
+                      ) : (
+                        ""
+                      )
+                    }
                   >
                     <InputOne
                       placeholder={CONTENT.EMAIL_PLACEHOLDER}
@@ -145,98 +181,10 @@ export const AuthorizationPage = ({
                       }}
                     />
                   </Form.Item>
+                  <ButtonOne onClick={resetPassword}>
+                    {CONTENT.ENTER_BUTTON}
+                  </ButtonOne>
                 </div>
-                <div className={styles["input-item-wrapper"]}>
-                  <Text className={styles["input-title"]}>
-                    {CONTENT.PASSWORD_TITLE}
-                  </Text>
-                  <Form.Item
-                    className={styles["form-password"]}
-                    validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                    help={
-                      authError ? (
-                        <div>
-                          <Text className={styles["error-text"]}>
-                            {errorText}
-                          </Text>
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <InputOne
-                      placeholder={CONTENT.PASSWORD_PLACEHOLDER}
-                      type="password"
-                      value={password}
-                      onChange={(event) => {
-                        setPassword(event.target.value.trim())
-                        setAuthError(false)
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-              <div className={styles["remember-wrapper"]}>
-                <Checkbox
-                  className={cn("custom-checkbox", styles["checkbox-style"])}
-                  style={{ width: "22px", height: "22px" }}
-                />
-                <Text className={styles["input-title"]}>
-                  {CONTENT.REMEMBER_ME}
-                </Text>
-              </div>
-              <ButtonOne
-                className={styles["button-item"]}
-                onClick={async () => {
-                  try {
-                    const response = await api.auth.loginAuthPost({
-                      username: email,
-                      password: password,
-                    })
-                    // Проверка наличия свойства data в ответе
-                    if (response.data) {
-                      const { token_type, access_token } = response.data
-                      const { exp } = jwtDecode(access_token)
-                      if (exp) {
-                        const expDate = new Date(exp * 1000)
-                        const expiresIn = Math.floor(
-                          (expDate.getTime() - Date.now()) / 1000
-                        )
-                        login(access_token, expiresIn)
-                      } else login(access_token, 86400)
-                      dispatch(fetchCurrentUser())
-                      setAccessToken(access_token)
-                      setTokenType(token_type)
-                      setIsAuth(true)
-                    } else {
-                      console.error("Отсутствует свойство data в ответе API.")
-                    }
-                  } catch (error) {
-                    console.error("Ошибка при выполнении запроса:", error)
-
-                    setAuthError(true)
-                    if (isErrorResponse(error)) {
-                      setErrorText(error.error.detail.message)
-                    }
-                  }
-                }}
-              >
-                {CONTENT.ENTER_BUTTON}
-              </ButtonOne>
-              <div className={styles["links-wrapper"]}>
-                <Link
-                  className={styles["link-text"]}
-                  onClick={() => navigate("/register")}
-                >
-                  {CONTENT.REGISTRATION_TEXT}
-                </Link>
-                <Link
-                  className={styles["link-text"]}
-                  onClick={() => navigate("/reset")}
-                >
-                  {CONTENT.PASSWORD_FORGOT_TEXT}
-                </Link>
               </div>
             </div>
           </div>
@@ -247,7 +195,7 @@ export const AuthorizationPage = ({
                 className={styles["logo-item"]}
               />
             )}
-            <RegisterWelcomeImage className={styles["image-register"]} />
+            <ResetPasswordImage className={styles["image-register"]} />
           </div>
         </div>
       </ConfigProvider>

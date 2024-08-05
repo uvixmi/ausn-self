@@ -10,6 +10,7 @@ import {
 } from "../../authorization-page/slice"
 import { AppDispatch, RootState } from "../../main-page/store"
 import { useEffect, useState } from "react"
+import { ButtonOne } from "../../../ui-kit/button"
 
 export const ConfirmModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
@@ -32,53 +33,65 @@ export const ConfirmModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
       onCancel={() => setOpen(false)}
       footer={null}
     >
-      <Title level={3}>{"Подтверждение"}</Title>
-      <Text>{"Пожалуйста, выберите условие"}</Text>
-      <Radio.Group
-        onChange={(e) => {
-          setValue(e.target.value)
-        }}
-        value={value}
-      >
-        <div className={styles["list-radio"]}>
-          <Radio value={1} />
-          <div className={styles["list-wrapper"]}>
-            <Text>
-              <Text className={styles["text-bold"]}>{"Подтверждаю"}</Text>
-              {", что:"}
-            </Text>
-            <Text>
-              {
-                "- не нанимаю физических лиц по трудовым или гражданско-правовым договорам;"
-              }
-            </Text>
-            <Text>{"- не применяю патентую систему налогообложения;"}</Text>
-            <Text>{"- не являюсь плательщиком торгового сбора;"}</Text>
-            <Text>{"- не имею движений по валютным счетам ИП"}</Text>
-          </div>
+      <div className={styles["list-radio-inner"]}>
+        <div className={styles["heading-wrapper"]}>
+          <Text className={styles["heading-text"]}>{"Подтверждение"}</Text>
+          <Text className={styles["title-confirm"]}>
+            {"Пожалуйста, выберите условие"}
+          </Text>
         </div>
-        <div>
-          <Radio value={2} />
-          <Text className={styles["text-bold"]}>{"Не подтверждаю "}</Text>
-          <Text>{"вышеперечисленное"}</Text>
-        </div>
-      </Radio.Group>
-      <div className={styles["buttons-row"]}>
-        <Button
-          key="back"
-          onClick={
-            value === 1
-              ? () => {
-                  handleUpdate()
-                }
-              : () => {
-                  setOpen(false), navigate("/non-target")
-                }
-          }
-          className={styles["button-item-enter"]}
+        <Radio.Group
+          onChange={(e) => {
+            setValue(e.target.value)
+          }}
+          value={value}
         >
-          {"Отправить"}
-        </Button>
+          <div className={styles["list-radio"]}>
+            <Radio value={1} />
+            <div className={styles["list-wrapper"]}>
+              <Text className={styles["text-style"]}>
+                <Text className={styles["text-bold"]}>{"Подтверждаю"}</Text>
+                {", что:"}
+              </Text>
+              <Text className={styles["text-style"]}>
+                {
+                  "- не нанимаю физических лиц по трудовым или гражданско-правовым договорам;"
+                }
+              </Text>
+              <Text className={styles["text-style"]}>
+                {"- не применяю патентую систему налогообложения;"}
+              </Text>
+              <Text className={styles["text-style"]}>
+                {"- не являюсь плательщиком торгового сбора;"}
+              </Text>
+              <Text className={styles["text-style"]}>
+                {"- не имею движений по валютным счетам ИП"}
+              </Text>
+            </div>
+          </div>
+          <div style={{ marginTop: "24px" }}>
+            <Radio value={2} />
+            <Text className={styles["text-bold"]}>{"Не подтверждаю "}</Text>
+            <Text className={styles["text-style"]}>{"вышеперечисленное"}</Text>
+          </div>
+        </Radio.Group>
+        <div className={styles["buttons-row"]}>
+          <ButtonOne
+            key="back"
+            className={styles["button-item-enter"]}
+            onClick={
+              value === 1
+                ? () => {
+                    handleUpdate()
+                  }
+                : () => {
+                    setOpen(false), navigate("/non-target")
+                  }
+            }
+          >
+            {"Отправить"}
+          </ButtonOne>
+        </div>
       </div>
     </Modal>
   )

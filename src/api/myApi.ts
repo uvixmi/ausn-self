@@ -87,8 +87,9 @@ export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
   /**
    * Date Begin
    * Дата с которой необходимо подгружать отчеты по реализации
+   * @format date
    */
-  date_begin?: string | null
+  date_begin?: string
   /**
    * Shop Id
    *
@@ -98,7 +99,7 @@ export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
    *                     Для Яндекс Маркет = ID магазина
    *
    */
-  shop_id?: string | null
+  shop_id?: string
   /**
    * Password
    *
@@ -106,12 +107,12 @@ export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
    *                     Обязательно для заполнения, если sync_type = 2
    *
    */
-  password?: string | null
+  password?: string
   /**
    * Saldo
    * Сумма, еще не поступившая на банковский счет от МП за предыдущий период. Не передается, если сальдо = 0. Отправляется только sync_type = 2, source_name = ozon или wbn
    */
-  saldo?: number | null
+  saldo?: number
   /**
    *
    *                     Тип синхронизации. Возможные значения:
@@ -136,13 +137,39 @@ export interface BodyCreateClientMarketplaceSourcesMarketplacePost {
    *                             - ya_market
    *
    */
-  source_name: MarketplaceName
+  source_name: MarketplaceKey
+  /**
+   * Source Title
+   * Дополнительное название магазина на МП
+   */
+  source_title?: string
+  /**
+   * Processing Begin Date
+   * Дата начала преобразования документов. Обязательно для заполнения при source_name=wb
+   * @format date
+   */
+  processing_begin_date?: string
+  /**
+   * Wb Summary Flag
+   * Флаг получения итоговой суммы, перечисленной за прошлую неделю. Обязательно для заполнения при source_name=wb
+   */
+  wb_summary_flag?: boolean
+  /**
+   * Wb Calculation Mode
+   * Метод расчета дохода по отчетам WB. Обязательно для заполнения при source_name=wb. Возможные значения: 1 - Реализационный метод (Доход = Сумма продаж). 2 - Восстановление комиссии (Доход = Сумма удержанной комиссии).
+   */
+  wb_calculation_mode?: 1 | 2
   /**
    * Marketplace File
-   * Файл с отчетом по реализации из файла xlsx, закодированный в base64
+   * Файл с отчетом по реализации из файла xlsx
    * @format binary
    */
   marketplace_file?: File
+  /**
+   * Test Marketplace
+   * Флаг тестовой интеграции маркетплейса, отключен и недоступен на продуктивной среде.
+   */
+  test_marketplace?: boolean
 }
 
 /** Body_create_client_ofd_sources_ofd_post */
@@ -186,6 +213,34 @@ export interface BodyLoginAuthPost {
   client_id?: string | null
   /** Client Secret */
   client_secret?: string | null
+}
+
+/** Body_password_change_request_users_password_change_post */
+export interface BodyPasswordChangeRequestUsersPasswordChangePost {
+  /** Grant Type */
+  grant_type?: string | null
+  /** Username */
+  username: string
+  /** Password */
+  password: string
+  /**
+   * Scope
+   * @default ""
+   */
+  scope?: string
+  /** Client Id */
+  client_id?: string | null
+  /** Client Secret */
+  client_secret?: string | null
+}
+
+/** ChangePassword */
+export interface ChangePassword {
+  /**
+   * New Password
+   * Новый пароль пользователя для смены
+   */
+  new_password: string
 }
 
 /**
@@ -524,6 +579,25 @@ export interface GenerateENSOrder {
 }
 
 /**
+ * GenerateENSOrderTxt
+ * @example {"account_number":"40702810845370000004","amount":17800.55,"purpose":"Единый налоговый платеж"}
+ */
+export interface GenerateENSOrderTxt {
+  /**
+   * Account Number
+   * Номер счета списания
+   */
+  account_number: string
+  /**
+   * Purpose
+   * Назначение платежа
+   */
+  purpose: string
+  /** Amount */
+  amount: number
+}
+
+/**
  * GenerateReportsRequest
  * @example {"period_type":1,"period_year":2023,"report_type":2}
  */
@@ -556,12 +630,12 @@ export interface GetOperationsRequest {
    * Вид операции. Обязателен при использовании параметров description1 - доход. 2 - не влияет на налоговую базу. 3 - возврат покупателю. 4 - уплата налогов/взносов.
    */
   operations_types?: OperationType[] | null
+  pagination: OperationsPagination
   /**
    * Sources Ids
    * Идентификаторы источников данных
    */
   sources_ids?: string[] | null
-  pagination: OperationsPagination
 }
 
 /** HTTPValidationError */
@@ -725,8 +799,8 @@ export enum LeadReason {
   Other = "other",
 }
 
-/** MarketplaceName */
-export enum MarketplaceName {
+/** MarketplaceKey */
+export enum MarketplaceKey {
   YaMarket = "ya_market",
   Wb = "wb",
   Ozon = "ozon",
@@ -819,6 +893,11 @@ export interface Operation {
    * Наименование источника, по счету которого у клиента прошла операция.
    */
   source_name: string
+  /**
+   * Source Title
+   * Дополнительное наименование источника, например, название магазина на МП
+   */
+  source_title?: string | null
   /**
    * Counterparty Name
    * Наименование контрагента
@@ -1198,8 +1277,18 @@ export interface ReportsInfoResponse {
 /** RequestState */
 export enum RequestState {
   InProgress = "in_progress",
+  Processing = "processing",
   Completed = "completed",
   Failed = "failed",
+}
+
+/** ResendRegistrationMail */
+export interface ResendRegistrationMail {
+  /**
+   * Email
+   * Электронная почта пользователя
+   */
+  email: string
 }
 
 /** ResultInfo */
@@ -1257,16 +1346,26 @@ export interface SNOReferencesResponse {
 export interface Source {
   /**
    * Id
-   * ID источника данных. Отсутствует при state = [in_progress, failed]
+   * ID источника данных.
    */
-  id?: string | null
+  id: string
+  /**
+   * In Progress Id
+   * ID источника в процессе добавления. Отсутствует при state = [completed]
+   */
+  in_progress_id?: string | null
   /** Тип источника. Возможные значения:  */
   type: SourceType
   /**
    * Name
    * Наименование источника.
    */
-  name: OFDSource | MarketplaceName | string
+  name: OFDSource | MarketplaceKey | string
+  /**
+   * Title
+   * Дополнительное наименование источника, например, название магазина МП.
+   */
+  title?: string | null
   /**
    * Short Name
    * Коротокое название источника. Пока реализовано только для банков.
@@ -1417,6 +1516,13 @@ export interface TaskInfo {
    * ID сформированного уведомления / декларации
    */
   report_code?: string | null
+  /** Статус отчета. Обязательно возвращается, если type = report. Возможные значения: 0 - отчет не сформирован. 1 - отчет сформирован и передан клиенту. 2 - отчет принят ФНС (через ЭЦП). 3 - отчет не принят ФНС. 4 - отчет принят ФНС (сдал самостоятельно). */
+  report_status?: ReportStatus | null
+  /**
+   * Need Resend
+   * Обязательно для заполнения для задач отчетности. Флаг требуется для возврата на пользователя сданных уведомлений (статус 4), если расчет по ним менялся. В возврат идет уведомление со статусом True.При перегенерации отчета (переход в статус 1), статус также остается в True. При повторной сдаче отчета (смена статуса с 1 на 4), статус меняется в False. Во всех остальных случаях статус возвращается False.
+   */
+  need_resend?: boolean | null
   /**
    * Report Update
    * Дата последнего формирования  уведомления / декларации
@@ -2092,7 +2198,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title AKB
- * @version 0.1.21
+ * @version 0.1.25
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -2115,6 +2221,24 @@ export class Api<
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Authentication
+     * @name RefreshTokenAuthRefreshPost
+     * @summary Refresh Token
+     * @request POST:/auth/refresh
+     * @secure
+     */
+    refreshTokenAuthRefreshPost: (params: RequestParams = {}) =>
+      this.request<Token, void>({
+        path: `/auth/refresh`,
+        method: "POST",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   }
   users = {
     /**
@@ -2129,8 +2253,29 @@ export class Api<
       data: CreateUser,
       params: RequestParams = {}
     ) =>
-      this.request<User, HTTPValidationError | void>({
+      this.request<User, void | HTTPValidationError>({
         path: `/users/registration`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод реализует базовый механизм повторную отправку письма, если пользователь при регистрации находится на 1 её шаге.
+     *
+     * @tags Users
+     * @name RetryEmailSendUsersRegistrationRetryPost
+     * @summary Зарегистрироваться. Шаг регистрации 1.1. Повторная отправка письма.
+     * @request POST:/users/registration/retry
+     */
+    retryEmailSendUsersRegistrationRetryPost: (
+      data: ResendRegistrationMail,
+      params: RequestParams = {}
+    ) =>
+      this.request<User, void | HTTPValidationError>({
+        path: `/users/registration/retry`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -2208,6 +2353,76 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод реализует отправку запроса на сброс пароля пользователя. После сброса на почту направляется письмо с нужной информацией.
+     *
+     * @tags Users
+     * @name PasswordResetUsersPasswordResetPost
+     * @summary Отправить запрос на сброс пароля (письмо на почту).
+     * @request POST:/users/password/reset
+     */
+    passwordResetUsersPasswordResetPost: (
+      query: {
+        /**
+         * Email
+         * Почта для получения письма на сброс пароля
+         */
+        email: string
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<any, HTTPValidationError | void>({
+        path: `/users/password/reset`,
+        method: "POST",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод реализует смену пароля при обычной смене пароля в ЛК, а также при сбросе.
+     *
+     * @tags Users
+     * @name PasswordChangeUsersPasswordChangePut
+     * @summary Сменить пароль.
+     * @request PUT:/users/password/change
+     * @secure
+     */
+    passwordChangeUsersPasswordChangePut: (
+      data: ChangePassword,
+      params: RequestParams = {}
+    ) =>
+      this.request<Token, HTTPValidationError | void>({
+        path: `/users/password/change`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Метод реализует отправку запроса на смену пароля пользователя. При запросе происходит проверка на соответствие текущего пароля.
+     *
+     * @tags Users
+     * @name PasswordChangeRequestUsersPasswordChangePost
+     * @summary Получить авторизационный токен на смену пароля.
+     * @request POST:/users/password/change
+     */
+    passwordChangeRequestUsersPasswordChangePost: (
+      data: BodyPasswordChangeRequestUsersPasswordChangePost,
+      params: RequestParams = {}
+    ) =>
+      this.request<any, HTTPValidationError | void>({
+        path: `/users/password/change`,
+        method: "POST",
+        body: data,
+        type: ContentType.UrlEncoded,
         format: "json",
         ...params,
       }),
@@ -2718,7 +2933,7 @@ export class Api<
      * @secure
      */
     generateEnsOrderTxtTaxesEnsOrderTxtPost: (
-      data: GenerateENSOrder,
+      data: GenerateENSOrderTxt,
       params: RequestParams = {}
     ) =>
       this.request<string, HTTPValidationError>({

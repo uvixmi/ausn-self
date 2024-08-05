@@ -15,7 +15,7 @@ import {
   CreateAccountResponse,
   CreateSourceResponse,
   LeadReason,
-  MarketplaceName,
+  MarketplaceKey as MarketplaceName,
   OFDSource,
   api,
 } from "../../../../api/myApi"

@@ -64,3 +64,8 @@ export const formatToPayDate = (dueDate: string): string | null => {
 
   return `${day} ${month} ${year}`
 }
+
+export const getQueryParam = (param: string) => {
+  const urlParams = new URLSearchParams(window.location.search)
+  return urlParams.get(param)
+}
