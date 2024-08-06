@@ -7,7 +7,7 @@ export const CONTENT = {
   REGISTRATION_TEXT_TWO:
     " вы получите сообщение с вашим паролем на указанную почту",
   EMAIL_PLACEHOLDER: "Введите",
-  PHONE_PLACEHOLDER: "+7 900 123 12 12",
+  PHONE_PLACEHOLDER: "+_ (___) ___ __ __",
   MAIL_SENT_FIRST: "Мы отправили письмо на почту ",
   MAIL_SENT_SECOND:
     "Пожалуйста, пройдите по ссылке из письма для подтверждения почты и получения пароля.",

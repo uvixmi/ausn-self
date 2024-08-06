@@ -19,6 +19,7 @@ import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
 import { ResetPasswordImage } from "./images/reset-password"
 import { isErrorResponse } from "./utils"
+import { jwtDecode } from "jwt-decode"
 
 const { Title, Text } = Typography
 
@@ -27,10 +28,12 @@ export const ResetPasswordPage = ({
   setAccessToken,
   setIsAuth,
   login,
+  step,
 }: AuthorizationPageProps) => {
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [repeatPassword, setRepeatPassword] = useState("")
   const dispatch = useDispatch<AppDispatch>()
   const {
     data: currentUser,
@@ -40,6 +43,8 @@ export const ResetPasswordPage = ({
 
   const [authError, setAuthError] = useState(false)
   const [errorText, setErrorText] = useState("")
+  const [authRepeatError, setAuthRepeatError] = useState(false)
+  const [errorRepeatText, setErrorRepeatText] = useState("")
 
   const isDesktop = useMediaQuery("(min-width: 1280px)")
 
@@ -109,20 +114,62 @@ export const ResetPasswordPage = ({
   const [emailInvalidText, setEmailInvalidText] = useState("")
 
   const resetPassword = async () => {
-    try {
-      const data = { email: email }
-      await api.users.passwordResetUsersPasswordResetPost(data)
-      setEmailInvalid(false)
-      setEmailInvalidText("")
-    } catch (error) {
-      console.error("Ошибка при выполнении запроса:", error)
+    if (step === 0) {
+      try {
+        const data = { email: email }
+        await api.users.passwordResetUsersPasswordResetPost(data)
+        setEmailInvalid(false)
+        setEmailInvalidText("")
+      } catch (error) {
+        console.error("Ошибка при выполнении запроса:", error)
 
-      setEmailInvalid(true)
+        setEmailInvalid(true)
 
-      if (isErrorResponse(error)) {
-        setEmailInvalidText(error.error.detail.message)
+        if (isErrorResponse(error)) {
+          setEmailInvalidText(error.error.detail.message)
+        }
       }
-    }
+    } else
+      try {
+        const data = { new_password: password }
+
+        const resetToken = localStorage.getItem("resetToken")
+        const headers = {
+          Authorization: `Bearer ${resetToken}`,
+        }
+        const response = await api.users.passwordChangeUsersPasswordChangePut(
+          data,
+          { headers }
+        )
+        setEmailInvalid(false)
+        setEmailInvalidText("")
+
+        if (response.data) {
+          const { token_type, access_token } = response.data
+          const { exp } = jwtDecode(access_token)
+          if (exp) {
+            const expDate = new Date(exp * 1000)
+            const expiresIn = Math.floor(
+              (expDate.getTime() - Date.now()) / 1000
+            )
+            login(access_token, expiresIn)
+          } else login(access_token, 86400)
+          dispatch(fetchCurrentUser())
+          setAccessToken(access_token)
+          setTokenType(token_type)
+          setIsAuth(true)
+        } else {
+          console.error("Отсутствует свойство data в ответе API.")
+        }
+      } catch (error) {
+        console.error("Ошибка при выполнении запроса:", error)
+
+        setEmailInvalid(true)
+
+        if (isErrorResponse(error)) {
+          setEmailInvalidText(error.error.detail.message)
+        }
+      }
   }
 
   return (
@@ -142,52 +189,132 @@ export const ResetPasswordPage = ({
         }}
       >
         <div className={styles["content-wrapper"]}>
-          <div className={styles["register-block-wrapper"]}>
-            <div className={styles["inputs-wrapper"]}>
-              <Text className={styles["heading-text"]}>
-                {CONTENT.RESET_HEADING}
-              </Text>
-              <div className={styles["description-block"]}>
-                <Text className={styles["description-text"]}>
-                  {CONTENT.TEXT_DESCRIPTION_ONE}
+          {step === 0 ? (
+            <div className={styles["register-block-wrapper"]}>
+              <div className={styles["inputs-wrapper"]}>
+                <Text className={styles["heading-text"]}>
+                  {CONTENT.RESET_HEADING}
                 </Text>
-                <Text className={styles["description-text"]}>
-                  {CONTENT.TEXT_DESCRIPTION_TWO}
-                </Text>
-              </div>
-              <div className={styles["inputs-window"]}>
-                <div className={styles["input-item-wrapper"]}>
-                  <Text className={styles["input-title"]}>
-                    {CONTENT.EMAIL_TITLE}
+                <div className={styles["description-block"]}>
+                  <Text className={styles["description-text"]}>
+                    {CONTENT.TEXT_DESCRIPTION_ONE}
                   </Text>
-                  <Form.Item
-                    className={styles["form-email"]}
-                    validateStatus={emailInvalid ? "error" : ""}
-                    help={
-                      emailInvalid ? (
-                        <Text className={styles["error-text"]}>
-                          {emailInvalidText}
-                        </Text>
-                      ) : (
-                        ""
-                      )
-                    }
-                  >
-                    <InputOne
-                      placeholder={CONTENT.EMAIL_PLACEHOLDER}
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value.toLowerCase())
-                      }}
-                    />
-                  </Form.Item>
+                  <Text className={styles["description-text"]}>
+                    {CONTENT.TEXT_DESCRIPTION_TWO}
+                  </Text>
+                </div>
+                <div className={styles["inputs-window"]}>
+                  <div className={styles["input-item-wrapper"]}>
+                    <Text className={styles["input-title"]}>
+                      {CONTENT.EMAIL_TITLE}
+                    </Text>
+                    <Form.Item
+                      className={styles["form-email"]}
+                      validateStatus={emailInvalid ? "error" : ""}
+                      help={
+                        emailInvalid ? (
+                          <Text className={styles["error-text"]}>
+                            {emailInvalidText}
+                          </Text>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        placeholder={CONTENT.EMAIL_PLACEHOLDER}
+                        value={email}
+                        onChange={(event) => {
+                          setEmail(event.target.value.toLowerCase())
+                        }}
+                      />
+                    </Form.Item>
+                    <ButtonOne onClick={resetPassword}>
+                      {CONTENT.ENTER_BUTTON}
+                    </ButtonOne>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className={styles["register-block-wrapper"]}>
+              <div className={styles["inputs-wrapper"]}>
+                <Text className={styles["heading-text"]}>
+                  {CONTENT.RESET_HEADING}
+                </Text>
+                <div className={styles["description-block"]}>
+                  <Text className={styles["description-text"]}>
+                    {CONTENT.PASSWORD_DESCRIPTION}
+                  </Text>
+                </div>
+                <div className={styles["inputs-window"]}>
+                  <div className={styles["input-item-wrapper"]}>
+                    <Text className={styles["input-title"]}>
+                      {CONTENT.PASSWORD_TITLE}
+                    </Text>
+                    <Form.Item
+                      className={styles["form-password"]}
+                      validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        authError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {errorText}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                        type="password"
+                        value={password}
+                        onChange={(event) => {
+                          setPassword(event.target.value.trim())
+                          setAuthError(false)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={styles["input-item-wrapper"]}>
+                    <Text className={styles["input-title"]}>
+                      {CONTENT.PASSWORD_REPEAT_TITLE}
+                    </Text>
+                    <Form.Item
+                      className={styles["form-password"]}
+                      validateStatus={authRepeatError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                      help={
+                        authRepeatError ? (
+                          <div>
+                            <Text className={styles["error-text"]}>
+                              {errorRepeatText}
+                            </Text>
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      }
+                    >
+                      <InputOne
+                        placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                        type="password"
+                        value={repeatPassword}
+                        onChange={(event) => {
+                          setRepeatPassword(event.target.value.trim())
+                          setAuthRepeatError(false)
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
                   <ButtonOne onClick={resetPassword}>
                     {CONTENT.ENTER_BUTTON}
                   </ButtonOne>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           <div className={styles["img-wrapper"]}>
             {isDesktop && (
               <LogoMainIcon

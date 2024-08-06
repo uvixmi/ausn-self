@@ -3,6 +3,7 @@ export interface AuthorizationPageProps {
   setAccessToken: (str: string) => void
   setIsAuth: (log: boolean) => void
   login: (str: string, exp: number) => void
+  step: number
 }
 
 export interface ErrorResponse {

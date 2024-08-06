@@ -53,27 +53,19 @@ export const MainPage = () => {
     if (loading === "failed") logout(), clearAll(), navigate("/login")
   }, [loading])
 
+  const [reset, setReset] = useState("")
+
   const location = useLocation()
 
   useEffect(() => {
-    console.log(location)
-    const access_token = getQueryParam("token")
-    console.log(access_token)
     const resetToken = location.search.substring(
       location.search.indexOf("=") + 1
     )
-    console.log(resetToken)
+
     if (location.pathname === "/password_change") {
-      const { exp } = jwtDecode(resetToken)
-      if (exp) {
-        const expDate = new Date(exp * 1000)
-        const expiresIn = Math.floor((expDate.getTime() - Date.now()) / 1000)
-        login(resetToken, expiresIn)
-      } else login(resetToken, 86400)
-      dispatch(fetchCurrentUser())
-      setAccessToken(resetToken)
-      setTokenType(token_type)
-      setIsAuth(true)
+      localStorage.setItem("resetToken", resetToken)
+
+      setRole("reset", 86400)
     }
   }, [])
 
@@ -145,6 +137,7 @@ export const MainPage = () => {
                     setAccessToken={setAccessToken}
                     setIsAuth={setIsAuth}
                     login={login}
+                    step={0}
                   />
                 )}
               />
@@ -199,6 +192,32 @@ export const MainPage = () => {
           </div>
           <div>
             <div className={styles["register-footer"]}></div>
+          </div>
+        </div>
+      </>
+    )
+  else if (role === "reset")
+    return (
+      <>
+        <div className={styles["main-wrapper"]}>
+          <div className={styles["background-cover"]}>
+            <Routes>
+              <Route
+                path="/reset"
+                Component={() => (
+                  <ResetPasswordPage
+                    setTokenType={setTokenType}
+                    setAccessToken={setAccessToken}
+                    setIsAuth={setIsAuth}
+                    login={login}
+                    step={1}
+                  />
+                )}
+              />
+
+              <Route path="/" element={<Navigate to="/reset" replace />} />
+              <Route path="/*" element={<Navigate to="/reset" replace />} />
+            </Routes>
           </div>
         </div>
       </>

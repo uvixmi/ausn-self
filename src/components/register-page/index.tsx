@@ -153,7 +153,7 @@ export const RegisterPage = ({
   const [user, setUser] = useState<InnInfo | undefined>(undefined)
   const error = { code: 0, message: "" }
 
-  const [sno, setSno] = useState<TaxSystemType | undefined>(TaxSystemType.UsnD)
+  const [sno, setSno] = useState<TaxSystemType | undefined>(undefined)
 
   const onChangeStep = (step: number) => {
     setCurrentStep(step)
@@ -639,9 +639,9 @@ export const RegisterPage = ({
                         </div>
                       </div>
                       <ButtonOne
-                        disabled={isDisabledFirstButton}
-                        onClick={handleRegisterMail}
-                        //onClick={() => onChangeStep(1)}
+                        // disabled={isDisabledFirstButton}
+                        // onClick={handleRegisterMail}
+                        onClick={() => onChangeStep(1)}
                       >
                         {CONTENT.CONTINUE_BUTTON}
                       </ButtonOne>
@@ -735,11 +735,11 @@ export const RegisterPage = ({
                         </ButtonOne>
                         <ButtonOne
                           className={styles["button-item-wide"]}
-                          disabled={isButtonDisabled}
-                          onClick={enterAccount}
-                          //onClick={() => {
-                          // onChangeStep(2) //, navigate("/login")
-                          //  }}
+                          // disabled={isButtonDisabled}
+                          //onClick={enterAccount}
+                          onClick={() => {
+                            onChangeStep(2) //, navigate("/login")
+                          }}
                         >
                           {CONTENT.CONTINUE_BUTTON}
                           {/*
@@ -874,6 +874,7 @@ export const RegisterPage = ({
                             {"Год, с которого вести учет в сервисе"}
                           </Text>
                           <SelectOne
+                            disabled={!isInnLoaded}
                             className={styles["select-row"]}
                             options={optionsYears}
                             placeholder={CONTENT.SELECT_PLACEHOLDER}
@@ -890,6 +891,7 @@ export const RegisterPage = ({
                             {"Система налогообложения"}
                           </Text>
                           <SelectOne
+                            disabled={!isInnLoaded}
                             className={styles["select-row"]}
                             options={optionsSNO}
                             placeholder={CONTENT.SELECT_PLACEHOLDER}
