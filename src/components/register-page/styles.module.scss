@@ -68,14 +68,10 @@ $xxl: 2560px;
 }
 
 .error-mail-text {
-  font-size: 12px;
-  line-height: 14px;
-  color: red;
-
-  @media screen and (min-width: $m) {
-    font-size: 16px;
-    line-height: 20px;
-  }
+  font-size: 10px;
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
 }
 
 .error-text {
@@ -256,7 +252,6 @@ $xxl: 2560px;
   align-items: flex-start;
 
   @media screen and (min-width: $s) {
-    min-width: 250px;
     width: auto;
   }
 }

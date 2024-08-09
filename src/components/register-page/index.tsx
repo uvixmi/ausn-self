@@ -154,7 +154,7 @@ export const RegisterPage = ({
   const [user, setUser] = useState<InnInfo | undefined>(undefined)
   const error = { code: 0, message: "" }
 
-  const [sno, setSno] = useState<TaxSystemType | undefined>(TaxSystemType.UsnD)
+  const [sno, setSno] = useState<TaxSystemType | undefined>(undefined)
 
   const onChangeStep = (step: number) => {
     setCurrentStep(step)
@@ -622,6 +622,7 @@ export const RegisterPage = ({
                             />
                           </Form.Item>
                         </div>
+
                         <div className={styles["input-item-wrapper"]}>
                           <Text className={styles["input-title-text"]}>
                             {CONTENT.PHONE_TITLE}
