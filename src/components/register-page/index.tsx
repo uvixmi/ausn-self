@@ -51,6 +51,7 @@ import { ArrowPremium } from "../reset-password-page/images/arrow-premium"
 import { FirstStepper } from "../reset-password-page/images/first-stepper"
 import { SecondStepper } from "../reset-password-page/images/second-stepper"
 import { ThirdStepper } from "../reset-password-page/images/third-stepper"
+import { LogoRegisterImage } from "../reset-password-page/images/logo-register"
 
 const { Title, Text, Link } = Typography
 
@@ -153,7 +154,7 @@ export const RegisterPage = ({
   const [user, setUser] = useState<InnInfo | undefined>(undefined)
   const error = { code: 0, message: "" }
 
-  const [sno, setSno] = useState<TaxSystemType | undefined>(undefined)
+  const [sno, setSno] = useState<TaxSystemType | undefined>(TaxSystemType.UsnD)
 
   const onChangeStep = (step: number) => {
     setCurrentStep(step)
@@ -168,7 +169,7 @@ export const RegisterPage = ({
     />
   )
 
-  const [isButtonDisabled, setButtonDisabled] = useState(true)
+  const [isButtonDisabled, setButtonDisabled] = useState(false)
   const [secondsRemaining, setSecondsRemaining] = useState(0)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -344,7 +345,6 @@ export const RegisterPage = ({
     setRate(marks[value as keyof typeof marks])
   }
 
-  /*
   useEffect(() => {
     let timer: NodeJS.Timeout
     if (isButtonDisabled) {
@@ -365,16 +365,13 @@ export const RegisterPage = ({
   useEffect(() => {
     startTimer()
   }, [currentStep])
-  
 
   const startTimer = () => {
     setButtonDisabled(true)
-    setSecondsRemaining(10)
+    setSecondsRemaining(59)
   }
-  */
 
   const validateEmail = (email: string) => {
-    // Регулярное выражение для проверки формата email
     const emailRegex: RegExp =
       /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 
@@ -561,7 +558,7 @@ export const RegisterPage = ({
           <div className={styles["register-logo-wrapper"]}>
             {isTablet ? (
               <div className={styles["logo-stepper"]}>
-                <LogoIcon className={styles["logo-wrapper"]} />
+                <LogoRegisterImage className={styles["logo-wrapper"]} />
                 {currentStep === 0 ? (
                   <FirstStepper />
                 ) : currentStep === 1 ? (
@@ -571,7 +568,7 @@ export const RegisterPage = ({
                 ) : null}
               </div>
             ) : (
-              <LogoIcon className={styles["logo-wrapper"]} />
+              <LogoRegisterImage className={styles["logo-wrapper"]} />
             )}
             {isTablet && !isMobile ? (
               <ResetPasswordImage className={styles["image-register"]} />
@@ -595,7 +592,9 @@ export const RegisterPage = ({
                           </Text>
                           <Form.Item
                             className={styles["form-password"]}
-                            validateStatus={emailDoubleError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                            validateStatus={
+                              emailDoubleError || emailError ? "error" : ""
+                            }
                             help={
                               emailDoubleError ? (
                                 <div>
@@ -603,6 +602,10 @@ export const RegisterPage = ({
                                     {emailDoubleErrorText}
                                   </Text>
                                 </div>
+                              ) : emailError ? (
+                                <Text className={styles["error-mail-text"]}>
+                                  {email === "" ? CONTENT.INPUT_ERROR_HINT : ""}
+                                </Text>
                               ) : (
                                 ""
                               )
@@ -611,11 +614,9 @@ export const RegisterPage = ({
                             <InputOne
                               value={email}
                               onChange={(event) => {
-                                setEmail(event.target.value),
-                                  setEmailError(
-                                    validateEmail(event.target.value)
-                                  ),
-                                  setEmailDoubleError(false)
+                                setEmail(event.target.value)
+                                setEmailError(validateEmail(event.target.value))
+                                setEmailDoubleError(false)
                               }}
                               placeholder={CONTENT.EMAIL_PLACEHOLDER}
                             />
@@ -630,8 +631,8 @@ export const RegisterPage = ({
                             className={styles["input-item"]}
                             value={phone}
                             onChange={(event) => {
-                              setPhone(event.target.value),
-                                setPhoneError(validatePhone(event.target.value))
+                              setPhone(event.target.value)
+                              setPhoneError(validatePhone(event.target.value))
                             }}
                             placeholder={CONTENT.PHONE_PLACEHOLDER}
                             status={phoneError ? "error" : undefined}
@@ -639,9 +640,9 @@ export const RegisterPage = ({
                         </div>
                       </div>
                       <ButtonOne
-                        // disabled={isDisabledFirstButton}
-                        // onClick={handleRegisterMail}
-                        onClick={() => onChangeStep(1)}
+                        disabled={isDisabledFirstButton}
+                        onClick={handleRegisterMail}
+                        //onClick={() => onChangeStep(1)}
                       >
                         {CONTENT.CONTINUE_BUTTON}
                       </ButtonOne>
@@ -654,7 +655,7 @@ export const RegisterPage = ({
                           {CONTENT.REGISTRATION_TEXT_TWO}
                         </Text>
                       </div>
-                      {/*currentStep == 2 ? (
+                      {currentStep == 0 && !isTablet ? (
                         <div className={styles["links-wrapper"]}>
                           <Text className={styles["oferta-description"]}>
                             {CONTENT.OFERTA_REGISTER_ONE}
@@ -679,8 +680,7 @@ export const RegisterPage = ({
                             </Link>
                           </Text>
                         </div>
-                      ) : null
-                       */}
+                      ) : null}
                     </>
                   )}
                   {currentStep == 1 && (
@@ -717,12 +717,29 @@ export const RegisterPage = ({
                           }
                         />
                       </div>
-                      <Link
-                        className={styles["link-oferta"]}
-                        onClick={handleRegisterMail}
-                      >
-                        {CONTENT.BUTTON_ONE_MORE_MAIL}
-                      </Link>
+                      <div className={styles["link_timer"]}>
+                        <Link
+                          className={cn(styles["link-oferta"], {
+                            [styles["link-disabled"]]: isButtonDisabled,
+                          })}
+                          onClick={handleRegisterMail}
+                          disabled={isButtonDisabled}
+                        >
+                          {CONTENT.BUTTON_ONE_MORE_MAIL}
+                        </Link>
+                        {isButtonDisabled && (
+                          <Text className={styles["repeat-time"]}>
+                            {CONTENT.TIMER_REPEAT}{" "}
+                            <Text style={{ width: "39px" }}>
+                              <Text className={styles["repeat-time-seconds"]}>
+                                {" "}
+                                {secondsRemaining}
+                              </Text>
+                              c.
+                            </Text>
+                          </Text>
+                        )}
+                      </div>
                       <div className={styles["buttons-wrapper"]}>
                         <ButtonOne
                           onClick={() => {
@@ -735,11 +752,11 @@ export const RegisterPage = ({
                         </ButtonOne>
                         <ButtonOne
                           className={styles["button-item-wide"]}
-                          // disabled={isButtonDisabled}
-                          //onClick={enterAccount}
-                          onClick={() => {
-                            onChangeStep(2) //, navigate("/login")
-                          }}
+                          disabled={isButtonDisabled}
+                          onClick={enterAccount}
+                          //onClick={() => {
+                          // onChangeStep(2) //, navigate("/login")
+                          // }}
                         >
                           {CONTENT.CONTINUE_BUTTON}
                           {/*
@@ -760,6 +777,7 @@ export const RegisterPage = ({
                       </Text>
                       <div className={styles["inn-wrapper"]}>
                         <Form.Item
+                          className={styles["input-inn-check"]}
                           validateStatus={checkedError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                           help={
                             checkedError ? (
@@ -835,8 +853,13 @@ export const RegisterPage = ({
                               </Text>
                             ) : isLoading ? (
                               <Skeleton.Input
-                                style={{ width: "370px", height: "12px" }}
                                 active
+                                className="skeleton-custom"
+                                style={{
+                                  width: "100%",
+                                  height: "12px",
+                                  display: "flex",
+                                }}
                               />
                             ) : null}
                           </div>
@@ -859,8 +882,13 @@ export const RegisterPage = ({
                               </Text>
                             ) : isLoading ? (
                               <Skeleton.Input
-                                style={{ width: "290px", height: "12px" }}
+                                className="skeleton-custom"
                                 active
+                                style={{
+                                  width: "100%",
+                                  height: "12px",
+                                  display: "flex",
+                                }}
                               />
                             ) : null}
                           </div>
@@ -900,12 +928,13 @@ export const RegisterPage = ({
                         </div>
                       </div>
 
-                      {(true ||
-                        ((sno == TaxSystemType.UsnD ||
-                          sno == TaxSystemType.UsnDR) &&
-                          rate)) && (
-                        <div
-                          className={cn(styles["rate-wrapper-outer-standart"], {
+                      {(sno == TaxSystemType.UsnD ||
+                        sno == TaxSystemType.UsnDR) &&
+                        rate && (
+                          <div
+                            className={cn(
+                              styles["rate-wrapper-outer-standart"]
+                              /*, {
                             [styles["rate-wrapper-outer"]]:
                               (sno === TaxSystemType.UsnD &&
                                 rate !== null &&
@@ -915,13 +944,15 @@ export const RegisterPage = ({
                                 rate !== null &&
                                 rate &&
                                 parseInt(rate.slice(0, -1), 10) < 15),
-                          })}
-                        >
-                          <div
-                            className={cn(
-                              styles["rate-wrapper"],
-
-                              {
+                          }
+                                */
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                styles["rate-wrapper"],
+                                styles["rate-wrapper-inner-standart"]
+                                /* {
                                 [styles["rate-wrapper-inner-standart"]]:
                                   (sno === TaxSystemType.UsnD &&
                                     rate !== null &&
@@ -931,11 +962,11 @@ export const RegisterPage = ({
                                     rate !== null &&
                                     rate &&
                                     parseInt(rate.slice(0, -1), 10) == 15),
-                              }
-                            )}
-                          >
-                            <div className={styles["slider-style"]}>
-                              {(sno === TaxSystemType.UsnD &&
+                              }*/
+                              )}
+                            >
+                              <div className={styles["slider-style"]}>
+                                {/*(sno === TaxSystemType.UsnD &&
                                 rate !== null &&
                                 rate &&
                                 parseInt(rate.slice(0, -1), 10) < 6) ||
@@ -957,12 +988,12 @@ export const RegisterPage = ({
                                     className={styles["premium-arrow"]}
                                   />
                                 </>
-                              ) : null}
-                              <Text className={styles["rate-title"]}>
-                                {"Ставка налогообложения, % "}
-                              </Text>
+                              ) : null */}
+                                <Text className={styles["rate-title"]}>
+                                  {"Ставка налогообложения, % "}
+                                </Text>
 
-                              {/*Slider
+                                {/*Slider
                                   dots
                                   onChange={onChangeSlider}
                                   defaultValue={6}
@@ -970,68 +1001,115 @@ export const RegisterPage = ({
                                   // value={parseInt(rate.slice(0, -1))}
                                 />*/}
 
-                              {sno == TaxSystemType.UsnD ? (
-                                <Radio.Group
-                                  options={marks3}
-                                  onChange={(value) =>
-                                    setRate(value.target.value)
-                                  }
-                                  value={rate}
-                                  optionType="button"
-                                  buttonStyle="solid"
-                                  className={cn(
-                                    "custom-radio",
-                                    styles["radio-group"]
-                                  )}
-                                  style={{ width: "100%" }}
-                                />
-                              ) : sno == TaxSystemType.UsnDR ? (
-                                <Radio.Group
-                                  options={marks4}
-                                  onChange={(value) =>
-                                    setRate(value.target.value)
-                                  }
-                                  value={rate}
-                                  optionType="button"
-                                  buttonStyle="solid"
-                                  className={cn(
-                                    "custom-radio",
-                                    styles["radio-group"]
-                                  )}
-                                  style={{ width: "100%" }}
-                                />
-                              ) : null}
-                            </div>
+                                {sno == TaxSystemType.UsnD ? (
+                                  <Radio.Group
+                                    options={marks3}
+                                    onChange={(value) => {
+                                      setRate(value.target.value)
+                                    }}
+                                    value={rate}
+                                    optionType="button"
+                                    buttonStyle="solid"
+                                    className={cn(
+                                      "custom-radio",
+                                      styles["radio-group"]
+                                    )}
+                                    style={{ width: "100%" }}
+                                  />
+                                ) : sno == TaxSystemType.UsnDR ? (
+                                  <Radio.Group
+                                    options={marks4}
+                                    onChange={(value) =>
+                                      setRate(value.target.value)
+                                    }
+                                    value={rate}
+                                    optionType="button"
+                                    buttonStyle="solid"
+                                    className={cn(
+                                      "custom-radio",
+                                      styles["radio-group"]
+                                    )}
+                                    style={{ width: "100%" }}
+                                  />
+                                ) : null}
+                              </div>
 
-                            {(sno === TaxSystemType.UsnD &&
-                              rate !== null &&
-                              rate &&
-                              parseInt(rate.slice(0, -1), 10) < 6) ||
-                              (sno === TaxSystemType.UsnDR &&
+                              {((sno === TaxSystemType.UsnD &&
                                 rate !== null &&
                                 rate &&
-                                parseInt(rate.slice(0, -1), 10) < 15 && (
-                                  <>
+                                parseInt(rate.slice(0, -1), 10) < 6) ||
+                                (sno === TaxSystemType.UsnDR &&
+                                  rate !== null &&
+                                  rate &&
+                                  parseInt(rate.slice(0, -1), 10) < 15)) && (
+                                <>
+                                  <div style={{ display: "flex", gap: "8px" }}>
+                                    <Text className={styles["rate-title"]}>
+                                      {CONTENT.JUSTIFICATION_TITLE}
+                                    </Text>
+                                    <Tooltip>
+                                      <InfoCircleOutlined
+                                        className={styles["info-icon-amount"]}
+                                      />
+                                    </Tooltip>
+                                  </div>
+                                  <div>
                                     <div
-                                      style={{ display: "flex", gap: "8px" }}
+                                      className={styles["input-item-justify"]}
                                     >
-                                      <Text className={styles["rate-title"]}>
-                                        {CONTENT.JUSTIFICATION_TITLE}
+                                      <Text
+                                        className={styles["text-input-title"]}
+                                      >
+                                        {CONTENT.SELECT_JUSTIFICATION_TITLE}
+                                        <Text className={styles["necessary"]}>
+                                          {" " + CONTENT.NECESSARY}
+                                        </Text>
                                       </Text>
-                                      <Tooltip>
-                                        <InfoCircleOutlined
-                                          className={styles["info-icon-amount"]}
+                                      <Form.Item
+                                        className={styles["form-inn"]}
+                                        validateStatus={
+                                          counterpartyError ? "error" : ""
+                                        } // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                                        help={
+                                          counterpartyError ? (
+                                            <div>
+                                              <Text
+                                                className={styles["error-text"]}
+                                              >
+                                                {
+                                                  CONTENT.SELECT_JUSTIFICATION_TITLE
+                                                }
+                                              </Text>
+                                            </div>
+                                          ) : (
+                                            ""
+                                          )
+                                        }
+                                      >
+                                        <SelectOne
+                                          value={selectedReasonType}
+                                          options={justificationOptions}
+                                          placeholder={
+                                            CONTENT.SELECT_PLACEHOLDER
+                                          }
+                                          onChange={(value) => {
+                                            setSelectedReasonType(value)
+                                          }}
                                         />
-                                      </Tooltip>
+                                      </Form.Item>
                                     </div>
-                                    <div>
+
+                                    <div className={styles["inputs-row"]}>
                                       <div
                                         className={styles["input-item-justify"]}
                                       >
                                         <Text
-                                          className={styles["text-input-title"]}
+                                          className={cn(
+                                            styles["text-description"],
+                                            styles["default-text"]
+                                          )}
                                         >
-                                          {CONTENT.SELECT_JUSTIFICATION_TITLE}
+                                          {CONTENT.INPUT_ARTICLE_TITLE}
                                           <Text className={styles["necessary"]}>
                                             {" " + CONTENT.NECESSARY}
                                           </Text>
@@ -1049,8 +1127,57 @@ export const RegisterPage = ({
                                                     styles["error-text"]
                                                   }
                                                 >
+                                                  {CONTENT.INPUT_ARTICLE_TITLE}
+                                                </Text>
+                                              </div>
+                                            ) : (
+                                              ""
+                                            )
+                                          }
+                                        >
+                                          <InputOne
+                                            placeholder={
+                                              CONTENT.INPUT_PLACEHOLDER
+                                            }
+                                            value={selectedArticle}
+                                            onChange={(event) => {
+                                              const inputValue =
+                                                event.target.value.replace(
+                                                  /[^\d./-]/g,
+                                                  ""
+                                                )
+                                              setSelectedArticle(inputValue)
+                                            }}
+                                            maxLength={4}
+                                          />
+                                        </Form.Item>
+                                      </div>
+                                      <div
+                                        className={styles["input-item-justify"]}
+                                      >
+                                        <Text
+                                          className={cn(
+                                            styles["text-description"],
+                                            styles["default-text"]
+                                          )}
+                                        >
+                                          {CONTENT.INPUT_PARAGRAPH_TITLE}
+                                        </Text>
+                                        <Form.Item
+                                          className={styles["form-inn"]}
+                                          validateStatus={
+                                            counterpartyError ? "error" : ""
+                                          } // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                                          help={
+                                            counterpartyError ? (
+                                              <div>
+                                                <Text
+                                                  className={
+                                                    styles["error-text"]
+                                                  }
+                                                >
                                                   {
-                                                    CONTENT.SELECT_JUSTIFICATION_TITLE
+                                                    CONTENT.INPUT_PARAGRAPH_TITLE
                                                   }
                                                 </Text>
                                               </div>
@@ -1059,193 +1186,83 @@ export const RegisterPage = ({
                                             )
                                           }
                                         >
-                                          <SelectOne
-                                            value={selectedReasonType}
-                                            options={justificationOptions}
+                                          <InputOne
                                             placeholder={
-                                              CONTENT.SELECT_PLACEHOLDER
+                                              CONTENT.INPUT_PLACEHOLDER
                                             }
-                                            onChange={(value) => {
-                                              setSelectedReasonType(value)
+                                            value={selectedParagraph}
+                                            onChange={(event) => {
+                                              const inputValue =
+                                                event.target.value.replace(
+                                                  /[^\d./-]/g,
+                                                  ""
+                                                )
+                                              setSelectedParagraph(inputValue)
                                             }}
+                                            maxLength={4}
                                           />
                                         </Form.Item>
                                       </div>
-
-                                      <div className={styles["inputs-row"]}>
-                                        <div
-                                          className={
-                                            styles["input-item-justify"]
+                                      <div
+                                        className={styles["input-item-justify"]}
+                                      >
+                                        <Text
+                                          className={cn(
+                                            styles["text-description"],
+                                            styles["default-text"]
+                                          )}
+                                        >
+                                          {CONTENT.INPUT_SUBPARAGRAPH_TITLE}
+                                        </Text>
+                                        <Form.Item
+                                          className={styles["form-inn"]}
+                                          validateStatus={
+                                            counterpartyError ? "error" : ""
+                                          } // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                                          help={
+                                            counterpartyError ? (
+                                              <div>
+                                                <Text
+                                                  className={
+                                                    styles["error-text"]
+                                                  }
+                                                >
+                                                  {
+                                                    CONTENT.INPUT_SUBPARAGRAPH_TITLE
+                                                  }
+                                                </Text>
+                                              </div>
+                                            ) : (
+                                              ""
+                                            )
                                           }
                                         >
-                                          <Text
-                                            className={cn(
-                                              styles["text-description"],
-                                              styles["default-text"]
-                                            )}
-                                          >
-                                            {CONTENT.INPUT_ARTICLE_TITLE}
-                                            <Text
-                                              className={styles["necessary"]}
-                                            >
-                                              {" " + CONTENT.NECESSARY}
-                                            </Text>
-                                          </Text>
-                                          <Form.Item
-                                            className={styles["form-inn"]}
-                                            validateStatus={
-                                              counterpartyError ? "error" : ""
-                                            } // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                                            help={
-                                              counterpartyError ? (
-                                                <div>
-                                                  <Text
-                                                    className={
-                                                      styles["error-text"]
-                                                    }
-                                                  >
-                                                    {
-                                                      CONTENT.INPUT_ARTICLE_TITLE
-                                                    }
-                                                  </Text>
-                                                </div>
-                                              ) : (
-                                                ""
-                                              )
+                                          <InputOne
+                                            placeholder={
+                                              CONTENT.INPUT_PLACEHOLDER
                                             }
-                                          >
-                                            <InputOne
-                                              placeholder={
-                                                CONTENT.INPUT_PLACEHOLDER
-                                              }
-                                              value={selectedArticle}
-                                              onChange={(event) => {
-                                                const inputValue =
-                                                  event.target.value.replace(
-                                                    /[^\d./-]/g,
-                                                    ""
-                                                  )
-                                                setSelectedArticle(inputValue)
-                                              }}
-                                              maxLength={4}
-                                            />
-                                          </Form.Item>
-                                        </div>
-                                        <div
-                                          className={
-                                            styles["input-item-justify"]
-                                          }
-                                        >
-                                          <Text
-                                            className={cn(
-                                              styles["text-description"],
-                                              styles["default-text"]
-                                            )}
-                                          >
-                                            {CONTENT.INPUT_PARAGRAPH_TITLE}
-                                          </Text>
-                                          <Form.Item
-                                            className={styles["form-inn"]}
-                                            validateStatus={
-                                              counterpartyError ? "error" : ""
-                                            } // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                                            help={
-                                              counterpartyError ? (
-                                                <div>
-                                                  <Text
-                                                    className={
-                                                      styles["error-text"]
-                                                    }
-                                                  >
-                                                    {
-                                                      CONTENT.INPUT_PARAGRAPH_TITLE
-                                                    }
-                                                  </Text>
-                                                </div>
-                                              ) : (
-                                                ""
-                                              )
-                                            }
-                                          >
-                                            <InputOne
-                                              placeholder={
-                                                CONTENT.INPUT_PLACEHOLDER
-                                              }
-                                              value={selectedParagraph}
-                                              onChange={(event) => {
-                                                const inputValue =
-                                                  event.target.value.replace(
-                                                    /[^\d./-]/g,
-                                                    ""
-                                                  )
-                                                setSelectedParagraph(inputValue)
-                                              }}
-                                              maxLength={4}
-                                            />
-                                          </Form.Item>
-                                        </div>
-                                        <div
-                                          className={
-                                            styles["input-item-justify"]
-                                          }
-                                        >
-                                          <Text
-                                            className={cn(
-                                              styles["text-description"],
-                                              styles["default-text"]
-                                            )}
-                                          >
-                                            {CONTENT.INPUT_SUBPARAGRAPH_TITLE}
-                                          </Text>
-                                          <Form.Item
-                                            className={styles["form-inn"]}
-                                            validateStatus={
-                                              counterpartyError ? "error" : ""
-                                            } // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                                            help={
-                                              counterpartyError ? (
-                                                <div>
-                                                  <Text
-                                                    className={
-                                                      styles["error-text"]
-                                                    }
-                                                  >
-                                                    {
-                                                      CONTENT.INPUT_SUBPARAGRAPH_TITLE
-                                                    }
-                                                  </Text>
-                                                </div>
-                                              ) : (
-                                                ""
-                                              )
-                                            }
-                                          >
-                                            <InputOne
-                                              placeholder={
-                                                CONTENT.INPUT_PLACEHOLDER
-                                              }
-                                              value={selectedSubparagraph}
-                                              onChange={(event) => {
-                                                const inputValue =
-                                                  event.target.value.replace(
-                                                    /[^\d./-]/g,
-                                                    ""
-                                                  )
-                                                setSelectedSubparagraph(
-                                                  inputValue
+                                            value={selectedSubparagraph}
+                                            onChange={(event) => {
+                                              const inputValue =
+                                                event.target.value.replace(
+                                                  /[^\d./-]/g,
+                                                  ""
                                                 )
-                                              }}
-                                              maxLength={4}
-                                            />
-                                          </Form.Item>
-                                        </div>
+                                              setSelectedSubparagraph(
+                                                inputValue
+                                              )
+                                            }}
+                                            maxLength={4}
+                                          />
+                                        </Form.Item>
                                       </div>
                                     </div>
-                                  </>
-                                ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                       <div className={styles["button-one"]}>
                         <ButtonOne
                           className={styles["button-item-enter"]}
@@ -1285,7 +1302,7 @@ export const RegisterPage = ({
                   )}
                 </div>
               </div>
-              {currentStep === 0 && (
+              {currentStep < 3 && (
                 <div className={styles["already-wrapper"]}>
                   <Text className={styles["already-text"]}>
                     {CONTENT.ALREADY_HAVE}

@@ -3,11 +3,12 @@ export const CONTENT = {
   PHONE_TITLE: "Номер телефона",
   EMAIL_TITLE: "Ваш e-mail",
   CONTINUE_BUTTON: "Продолжить",
+  TIMER_REPEAT: "Повторно через: ",
   REGISTRATION_TEXT_ONE: "После нажатия на кнопку ",
   REGISTRATION_TEXT_TWO:
     " вы получите сообщение с вашим паролем на указанную почту",
   EMAIL_PLACEHOLDER: "Введите",
-  PHONE_PLACEHOLDER: "+_ (___) ___ __ __",
+  PHONE_PLACEHOLDER: "+7 (___) ___ __ __",
   MAIL_SENT_FIRST: "Мы отправили письмо на почту ",
   MAIL_SENT_SECOND:
     "Пожалуйста, пройдите по ссылке из письма для подтверждения почты и получения пароля.",
@@ -48,4 +49,7 @@ export const CONTENT = {
   SELECT_PLACEHOLDER: "Выберите",
   ALREADY_HAVE: "Уже есть профиль?",
   AUTHORIZATION_LINK: "Авторизация",
+
+  INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
+  INPUT_FAULT_HINT: "Поле заполнено некорректно",
 }

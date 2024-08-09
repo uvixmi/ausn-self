@@ -153,15 +153,6 @@ export const MainPage = () => {
     return (
       <>
         <div className={styles["main-wrapper"]}>
-          <div className={styles["register-header"]}>
-            <LogoIcon
-              onClick={() => {
-                logout(), navigate("/login"), clearAll()
-              }}
-              type="icon-custom"
-              className={styles["logo-item"]}
-            />
-          </div>
           <div className={styles["background-cover"]}>
             <Routes>
               <Route
@@ -189,9 +180,6 @@ export const MainPage = () => {
               />
               <Route path="/*" element={<Navigate to="/register" replace />} />
             </Routes>
-          </div>
-          <div>
-            <div className={styles["register-footer"]}></div>
           </div>
         </div>
       </>

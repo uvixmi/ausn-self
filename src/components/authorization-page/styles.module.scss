@@ -54,7 +54,6 @@ $xxl: 2560px;
 .inputs-window {
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .input-item-wrapper {
@@ -68,10 +67,7 @@ $xxl: 2560px;
 }
 
 .button-item {
-  border-radius: 4px;
-  background: #6159ff;
-  color: #fff;
-  height: 40px;
+  margin-top: 24px;
 }
 
 .links-wrapper {
@@ -111,25 +107,11 @@ $xxl: 2560px;
   }
 }
 
-.form-email {
-  width: 100%;
-  margin-bottom: 0px;
-}
-
-.form-password {
-  width: 100%;
-  margin-bottom: 8px;
-}
-
 .error-text {
   font-size: 10px;
-  line-height: 10px;
-  color: red;
-
-  @media screen and (min-width: $m) {
-    font-size: 12px;
-    line-height: 16px;
-  }
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
 }
 
 .input-title {

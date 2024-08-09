@@ -9,3 +9,14 @@ export function isErrorResponse(obj: any): obj is ErrorResponse {
     obj.error.detail.message !== undefined
   )
 }
+
+export const validateEmail = (email: string) => {
+  const emailRegex: RegExp =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+
+  if (!emailRegex.test(email)) {
+    return true
+  }
+
+  return false
+}

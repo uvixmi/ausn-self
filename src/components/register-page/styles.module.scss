@@ -21,13 +21,15 @@ $xxl: 2560px;
 
 .register-block-wrapper {
   display: flex;
-  column-gap: 20px;
+  gap: 24px;
   height: 100%;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-top: 24px;
 
   @media screen and (min-width: $m) {
+    margin-top: 0;
     justify-content: space-between;
     width: 848px;
   }
@@ -77,14 +79,10 @@ $xxl: 2560px;
 }
 
 .error-text {
-  font-size: 8px;
-  line-height: 8px;
-  color: red;
-
-  @media screen and (min-width: $m) {
-    font-size: 12px;
-    line-height: 16px;
-  }
+  font-size: 10px;
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
 }
 
 .links-wrapper {
@@ -142,11 +140,7 @@ $xxl: 2560px;
 }
 
 .input-inn-check {
-  width: 230px;
-
-  @media screen and (min-width: $s) {
-    width: 331px;
-  }
+  flex-grow: 1;
 }
 
 .input-inn-completed {
@@ -176,6 +170,8 @@ $xxl: 2560px;
 
 .text-row {
   display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .rate-wrapper {
@@ -258,7 +254,6 @@ $xxl: 2560px;
 .row-right {
   display: flex;
   align-items: flex-start;
-  width: 150px;
 
   @media screen and (min-width: $s) {
     min-width: 250px;
@@ -423,10 +418,12 @@ $xxl: 2560px;
 }
 
 .logo-wrapper {
+  width: 195px;
+  height: 34px;
   @media screen and (min-width: $m) {
     margin-top: 30px;
     margin-left: 0px;
-    height: 34px;
+
     align-self: center;
     margin-bottom: 182px;
   }
@@ -448,7 +445,6 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 22px;
   text-align: left;
-  color: $base-secondary-1;
 }
 
 .link-auth {
@@ -502,6 +498,26 @@ $xxl: 2560px;
   font-size: 14px;
   font-weight: 600;
   line-height: 22px;
+  color: $base-additional-grey;
+}
+
+.repeat-time {
+  font-family: "Inter";
+  display: flex;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  gap: 4px;
+  color: $base-additional-grey;
+}
+
+.repeat-time-seconds {
+  font-family: "Inter";
+
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+
   color: $base-additional-grey;
 }
 
@@ -595,4 +611,18 @@ $xxl: 2560px;
   line-height: 160px;
   text-align: center;
   background: #364d79;
+}
+
+.link_timer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.link-disabled {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-2 !important;
 }

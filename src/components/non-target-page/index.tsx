@@ -17,12 +17,22 @@ import { SecondStepper } from "../reset-password-page/images/second-stepper"
 import { ThirdStepper } from "../reset-password-page/images/third-stepper"
 import { ButtonOne } from "../../ui-kit/button"
 import { InputOne } from "../../ui-kit/input"
+import { LogoRegisterImage } from "../reset-password-page/images/logo-register"
+import { MaskedInput } from "antd-mask-input"
 
 export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
   const [phone, setPhone] = useState("")
   const { Title, Text } = Typography
   const { logout } = useAuth()
   const navigate = useNavigate()
+  const [phoneError, setPhoneError] = useState(false)
+
+  const validatePhone = (phoneNumber: string) => {
+    const strippedNumber = phoneNumber.replace(/[^\d+]/g, "")
+    const lengthRegex = /^\+\d{11}$/
+    const isValidLength = lengthRegex.test(strippedNumber)
+    return !(isValidLength || strippedNumber.length === 1)
+  }
 
   const { inn, start_year, tax_rate, tax_system } = useSelector(
     (state: RootState) => state.registration
@@ -36,6 +46,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
 
   const isMobile = useMediaQuery("(max-width: 1023px)")
   const isTablet = useMediaQuery("(max-width: 1279px)")
+  const PhoneMask = "+7 (000) 000-00-00"
 
   const [currentStep, setCurrentStep] = useState(3)
 
@@ -104,7 +115,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
         <div className={styles["register-logo-wrapper"]}>
           {isTablet ? (
             <div className={styles["logo-stepper"]}>
-              <LogoIcon className={styles["logo-wrapper"]} />
+              <LogoRegisterImage className={styles["logo-wrapper"]} />
               {currentStep === 0 ? (
                 <FirstStepper />
               ) : currentStep === 1 ? (
@@ -114,7 +125,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
               ) : null}
             </div>
           ) : (
-            <LogoIcon className={styles["logo-wrapper"]} />
+            <LogoRegisterImage className={styles["logo-wrapper"]} />
           )}
           {isTablet && !isMobile ? (
             <ResetPasswordImage className={styles["image-register"]} />
@@ -136,17 +147,24 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
                   <Text className={styles["text-input-title"]}>
                     {CONTENT.PHONE_TITLE}
                   </Text>
-                  <InputOne
-                    placeholder={users?.phone_number || ""}
+
+                  <MaskedInput
+                    mask={PhoneMask}
+                    className={styles["input-item"]}
                     value={phone}
                     onChange={(event) => {
                       setPhone(event.target.value)
+
+                      setPhoneError(validatePhone(event.target.value))
                     }}
-                  />
+                    placeholder={CONTENT.PHONE_PLACEHOLDER}
+                    status={phoneError ? "error" : undefined}
+                  ></MaskedInput>
                 </div>
               </div>
               <ButtonOne
                 className={styles["button-item"]}
+                disabled={phoneError || phone.length !== 18}
                 onClick={async () => {
                   if (tax_system)
                     api.users.saveLeadInfoUsersRegistrationLeadInfoPut(
@@ -155,6 +173,7 @@ export const NonTargetPage = ({ accessToken }: NonTargetPageProps) => {
                         start_year,
                         tax_rate,
                         tax_system,
+                        phone_number: phone,
                       },
                       { headers }
                     )

@@ -176,54 +176,55 @@ export const AuthorizationPage = ({
                     />
                   </Form.Item>
                 </div>
-              </div>
-              <div className={styles["remember-wrapper"]}>
-                <Checkbox
-                  className={cn("custom-checkbox", styles["checkbox-style"])}
-                  style={{ width: "22px", height: "22px" }}
-                />
-                <Text className={styles["input-title"]}>
-                  {CONTENT.REMEMBER_ME}
-                </Text>
-              </div>
-              <ButtonOne
-                className={styles["button-item"]}
-                onClick={async () => {
-                  try {
-                    const response = await api.auth.loginAuthPost({
-                      username: email,
-                      password: password,
-                    })
-                    // Проверка наличия свойства data в ответе
-                    if (response.data) {
-                      const { token_type, access_token } = response.data
-                      const { exp } = jwtDecode(access_token)
-                      if (exp) {
-                        const expDate = new Date(exp * 1000)
-                        const expiresIn = Math.floor(
-                          (expDate.getTime() - Date.now()) / 1000
-                        )
-                        login(access_token, expiresIn)
-                      } else login(access_token, 86400)
-                      dispatch(fetchCurrentUser())
-                      setAccessToken(access_token)
-                      setTokenType(token_type)
-                      setIsAuth(true)
-                    } else {
-                      console.error("Отсутствует свойство data в ответе API.")
-                    }
-                  } catch (error) {
-                    console.error("Ошибка при выполнении запроса:", error)
 
-                    setAuthError(true)
-                    if (isErrorResponse(error)) {
-                      setErrorText(error.error.detail.message)
+                <div className={styles["remember-wrapper"]}>
+                  <Checkbox
+                    className={cn("custom-checkbox", styles["checkbox-style"])}
+                    style={{ width: "22px", height: "22px" }}
+                  />
+                  <Text className={styles["input-title"]}>
+                    {CONTENT.REMEMBER_ME}
+                  </Text>
+                </div>
+                <ButtonOne
+                  className={styles["button-item"]}
+                  onClick={async () => {
+                    try {
+                      const response = await api.auth.loginAuthPost({
+                        username: email,
+                        password: password,
+                      })
+                      // Проверка наличия свойства data в ответе
+                      if (response.data) {
+                        const { token_type, access_token } = response.data
+                        const { exp } = jwtDecode(access_token)
+                        if (exp) {
+                          const expDate = new Date(exp * 1000)
+                          const expiresIn = Math.floor(
+                            (expDate.getTime() - Date.now()) / 1000
+                          )
+                          login(access_token, expiresIn)
+                        } else login(access_token, 86400)
+                        dispatch(fetchCurrentUser())
+                        setAccessToken(access_token)
+                        setTokenType(token_type)
+                        setIsAuth(true)
+                      } else {
+                        console.error("Отсутствует свойство data в ответе API.")
+                      }
+                    } catch (error) {
+                      console.error("Ошибка при выполнении запроса:", error)
+
+                      setAuthError(true)
+                      if (isErrorResponse(error)) {
+                        setErrorText(error.error.detail.message)
+                      }
                     }
-                  }
-                }}
-              >
-                {CONTENT.ENTER_BUTTON}
-              </ButtonOne>
+                  }}
+                >
+                  {CONTENT.ENTER_BUTTON}
+                </ButtonOne>
+              </div>
               <div className={styles["links-wrapper"]}>
                 <Link
                   className={styles["link-text"]}

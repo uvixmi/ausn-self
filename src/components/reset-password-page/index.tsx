@@ -18,7 +18,7 @@ import "./styles.scss"
 import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
 import { ResetPasswordImage } from "./images/reset-password"
-import { isErrorResponse } from "./utils"
+import { isErrorResponse, validateEmail } from "./utils"
 import { jwtDecode } from "jwt-decode"
 
 const { Title, Text } = Typography
@@ -110,12 +110,15 @@ export const ResetPasswordPage = ({
     deleteCarrotquestCookies()
   }, [])
 
+  const [emaiRegexValid, setEmailRegexValid] = useState(false)
+
   const [emailInvalid, setEmailInvalid] = useState(false)
   const [emailInvalidText, setEmailInvalidText] = useState("")
 
   const resetPassword = async () => {
     if (step === 0) {
       try {
+        startTimer()
         const data = { email: email }
         await api.users.passwordResetUsersPasswordResetPost(data)
         setEmailInvalid(false)
@@ -171,6 +174,62 @@ export const ResetPasswordPage = ({
         }
       }
   }
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/
+
+  const validatePassword = (password: string) => {
+    return passwordRegex.test(password)
+  }
+
+  useEffect(() => {
+    if (
+      password === repeatPassword &&
+      validatePassword(password) &&
+      validatePassword(repeatPassword)
+    )
+      setIsButtonDisabled(false)
+    else setIsButtonDisabled(true)
+  }, [password, repeatPassword])
+
+  const [secondsRemaining, setSecondsRemaining] = useState(0)
+  const [isFirstButtonDisabled, setIsDisabledFirstButton] = useState(false)
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (isButtonDisabled) {
+      timer = setInterval(() => {
+        if (secondsRemaining > 0) {
+          setSecondsRemaining((prev) => prev - 1)
+        } else {
+          setIsDisabledFirstButton(false)
+          clearInterval(timer)
+        }
+      }, 1000)
+    }
+    return () => {
+      clearInterval(timer)
+    }
+  }, [isButtonDisabled, secondsRemaining])
+
+  const startTimer = () => {
+    setIsDisabledFirstButton(true)
+    setSecondsRemaining(59)
+  }
+
+  useEffect(() => {
+    if (
+      password !== repeatPassword &&
+      password.length > 0 &&
+      validatePassword(password) &&
+      repeatPassword.length > 0
+    ) {
+      setAuthRepeatError(true)
+      setErrorRepeatText(CONTENT.PASSWORDS_DIFFERENT)
+    } else {
+      setAuthRepeatError(false)
+      setErrorRepeatText("")
+    }
+  }, [password, repeatPassword])
 
   return (
     <>
@@ -210,11 +269,17 @@ export const ResetPasswordPage = ({
                     </Text>
                     <Form.Item
                       className={styles["form-email"]}
-                      validateStatus={emailInvalid ? "error" : ""}
+                      validateStatus={
+                        emailInvalid || emaiRegexValid ? "error" : ""
+                      }
                       help={
                         emailInvalid ? (
                           <Text className={styles["error-text"]}>
                             {emailInvalidText}
+                          </Text>
+                        ) : emaiRegexValid ? (
+                          <Text className={styles["error-mail-text"]}>
+                            {email === "" ? CONTENT.INPUT_ERROR_HINT : ""}
                           </Text>
                         ) : (
                           ""
@@ -226,12 +291,41 @@ export const ResetPasswordPage = ({
                         value={email}
                         onChange={(event) => {
                           setEmail(event.target.value.toLowerCase())
+                          setEmailRegexValid(
+                            validateEmail(event.target.value.trim())
+                          )
                         }}
                       />
                     </Form.Item>
-                    <ButtonOne onClick={resetPassword}>
+                    <ButtonOne
+                      onClick={resetPassword}
+                      disabled={
+                        emaiRegexValid ||
+                        email.length === 0 ||
+                        isFirstButtonDisabled
+                      }
+                    >
                       {CONTENT.ENTER_BUTTON}
                     </ButtonOne>
+                    {isFirstButtonDisabled && (
+                      <div className={styles["repeat-timer-password"]}>
+                        <div className={styles["repeat-timer-password-inner"]}>
+                          <Text className={styles["repeat-timer-title"]}>
+                            {CONTENT.REPEAT_TIMER_TITLE}
+                          </Text>
+                          <Text className={styles["repeat-timer-text"]}>
+                            {CONTENT.REPEAT_TIMER_DESCRIPTION}
+                            <Text style={{ width: "39px" }}>
+                              <Text className={styles["repeat-time-seconds"]}>
+                                {" "}
+                                {secondsRemaining}
+                              </Text>
+                              c.
+                            </Text>
+                          </Text>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -253,7 +347,6 @@ export const ResetPasswordPage = ({
                       {CONTENT.PASSWORD_TITLE}
                     </Text>
                     <Form.Item
-                      className={styles["form-password"]}
                       validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                       help={
                         authError ? (
@@ -273,7 +366,6 @@ export const ResetPasswordPage = ({
                         value={password}
                         onChange={(event) => {
                           setPassword(event.target.value.trim())
-                          setAuthError(false)
                         }}
                       />
                     </Form.Item>
@@ -283,7 +375,6 @@ export const ResetPasswordPage = ({
                       {CONTENT.PASSWORD_REPEAT_TITLE}
                     </Text>
                     <Form.Item
-                      className={styles["form-password"]}
                       validateStatus={authRepeatError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                       help={
                         authRepeatError ? (
@@ -303,13 +394,15 @@ export const ResetPasswordPage = ({
                         value={repeatPassword}
                         onChange={(event) => {
                           setRepeatPassword(event.target.value.trim())
-                          setAuthRepeatError(false)
                         }}
                       />
                     </Form.Item>
                   </div>
-                  <ButtonOne onClick={resetPassword}>
-                    {CONTENT.ENTER_BUTTON}
+                  <ButtonOne
+                    onClick={resetPassword}
+                    disabled={isButtonDisabled}
+                  >
+                    {CONTENT.RESET_AND_ENTER_BUTTON}
                   </ButtonOne>
                 </div>
               </div>

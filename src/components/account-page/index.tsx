@@ -35,6 +35,9 @@ import { debug } from "console"
 import { clearTasks } from "./client/tasks/slice"
 import { clearSources } from "./client/sources/slice"
 import { abbreviateFullName } from "./utils"
+import { NewPasswordModal } from "./new-password-modal"
+import { JwtPayload, jwtDecode } from "jwt-decode"
+import Cookies from "js-cookie"
 export const AccountPage = ({
   token_type,
   accessToken,
@@ -219,6 +222,14 @@ export const AccountPage = ({
   }, [loaded, loading])
 
   const [isQuitOpen, setIsQuitOpen] = useState(false)
+  const token = Cookies.get("token")
+  interface CustomJwtPayload extends JwtPayload {
+    need_to_change_password?: boolean
+  }
+  const jwtDecoded = token && jwtDecode<CustomJwtPayload>(token)
+
+  const initialOpen =
+    jwtDecoded && jwtDecoded.need_to_change_password === true ? true : false
 
   return (
     <>
@@ -476,6 +487,7 @@ export const AccountPage = ({
         </Layout>
       </ConfigProvider>
       <QuitModal isOpen={isQuitOpen} setOpen={setIsQuitOpen} />
+      {initialOpen && <NewPasswordModal />}
     </>
   )
 }

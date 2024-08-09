@@ -1,4 +1,5 @@
-@import "../../ui-kit/theme/colors.scss";
+@import "../../../ui-kit/theme/colors.scss";
+@import "../../../ui-kit/theme/fonts.scss";
 
 $mobile: 320px;
 $tablet: 768px;
@@ -36,6 +37,13 @@ $xxl: 2560px;
   }
 }
 
+.payment-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
 .inputs-wrapper {
   display: flex;
   flex-direction: column;
@@ -45,21 +53,21 @@ $xxl: 2560px;
 
   @media screen and (min-width: $s) {
     padding: 0;
-    max-width: 448px;
+    max-width: 348px;
   }
 }
 
 .inputs-window {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+
+  width: 100%;
 }
 
 .input-item-wrapper {
   display: flex;
   flex-direction: column;
   border-radius: 2px;
-  position: relative;
 }
 
 .input-item {
@@ -97,21 +105,31 @@ $xxl: 2560px;
   line-height: 40px;
   color: $brand-primary;
   word-break: normal;
-  width: 350px;
 
   @media screen and (min-width: $s) {
-    width: auto;
     font-size: 42px;
     line-height: 50px;
   }
 }
 
+.heading-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .form-email {
   width: 100%;
 }
 
 .form-password {
   width: 100%;
+}
+
+.error-text {
+  font-size: 10px;
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
 }
 
 .input-title {
@@ -147,26 +165,6 @@ $xxl: 2560px;
   border: 1px solid #fff !important;
 }
 
-.image-register {
-  margin-top: 40px;
-  margin-bottom: 30px;
-  width: 165px;
-  height: 79px;
-
-  @media screen and (min-width: $s) {
-    margin-top: 92px;
-    margin-bottom: 108px;
-    width: 453px;
-    height: 218px;
-  }
-
-  @media screen and (min-width: $m) {
-    margin: 0;
-    width: 530px;
-    height: 254px;
-  }
-}
-
 .logo-item {
   @media screen and (min-width: $m) {
     margin-top: 32px;
@@ -182,7 +180,6 @@ $xxl: 2560px;
   font-weight: 400;
   line-height: 24px;
   text-align: left;
-  color: $base-additional-grey;
 }
 
 .description-block {
@@ -190,62 +187,47 @@ $xxl: 2560px;
   flex-direction: column;
 }
 
-.error-mail-text {
-  font-size: 10px;
-  line-height: 18px;
-  color: $red-primary;
-  font-weight: 600;
+.image-register {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  width: 161px;
+  height: 77px;
+
+  @media screen and (min-width: $s) {
+    margin-top: 8px;
+    margin-bottom: 38px;
+
+    width: 255px;
+    height: 122px;
+  }
 }
 
-.error-text {
-  font-size: 10px;
-  line-height: 18px;
-  color: $red-primary;
-  font-weight: 600;
+.image-logo {
+  margin: 0;
+  width: 168px;
+  height: 39px;
+
+  @media screen and (min-width: $s) {
+    width: 234px;
+    height: 54px;
+  }
 }
 
-.repeat-timer-password {
-  position: absolute;
-
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-radius: 8px;
-  background-color: $brand-secondary-pale;
-  bottom: -128px;
-  width: 100%;
-}
-
-.repeat-timer-password-inner {
-  display: flex;
-  flex-direction: column;
-  margin: 24px;
-  gap: 8px;
-}
-
-.repeat-timer-title {
+.modal-title {
   font-family: "Inter";
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
-  line-height: 24px;
-  color: $brand-primary;
+  line-height: 32px;
 }
 
-.repeat-timer-text {
+.text-description {
   font-family: "Inter";
-  font-family: Inter;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-  color: $base-additional-grey;
+  text-align: left;
 }
 
-.repeat-time-seconds {
-  font-family: "Inter";
-
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-
-  color: $base-additional-grey;
+.button-inner {
+  width: 100%;
 }

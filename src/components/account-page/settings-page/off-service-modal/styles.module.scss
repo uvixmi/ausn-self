@@ -1,3 +1,5 @@
+@import "../../../../ui-kit/theme/colors.scss";
+
 $mobile: 320px;
 $tablet: 768px;
 $s: 1024px;
@@ -171,14 +173,10 @@ $xxl: 2560px;
 }
 
 .error-text {
-  font-size: 8px;
-  line-height: 8px;
-  color: red;
-
-  @media screen and (min-width: $m) {
-    font-size: 12px;
-    line-height: 16px;
-  }
+  font-size: 10px;
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
 }
 
 .inputs-row {
