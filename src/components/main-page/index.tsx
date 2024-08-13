@@ -60,6 +60,19 @@ export const MainPage = () => {
   const location = useLocation()
 
   useEffect(() => {
+    const updateVh = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty("--vh", `${vh}px`)
+    }
+
+    // Обновляем переменную при загрузке и изменении размера окна
+    updateVh()
+    window.addEventListener("resize", updateVh)
+
+    return () => window.removeEventListener("resize", updateVh)
+  }, [])
+
+  useEffect(() => {
     const resetToken = location.search.substring(
       location.search.indexOf("=") + 1
     )
