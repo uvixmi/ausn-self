@@ -403,6 +403,14 @@ $xxl: 2560px;
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  @media screen and (min-width: $m) {
+    width: 768px;
+  }
+
+  @media screen and (min-width: $l) {
+    width: 848px;
+  }
 }
 
 .logo-stepper {
@@ -473,6 +481,8 @@ $xxl: 2560px;
   font-size: 14px;
   font-weight: 400;
   line-height: 22px;
+  align-self: flex-start !important;
+  word-break: normal;
 }
 
 .skeleton-input {
@@ -620,4 +630,8 @@ $xxl: 2560px;
   line-height: 22px;
   text-align: left;
   color: $base-secondary-2 !important;
+}
+
+.logo-wrapper-third {
+  margin-bottom: 67px;
 }

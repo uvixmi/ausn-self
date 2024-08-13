@@ -50,7 +50,9 @@ export const MainPage = () => {
   }
 
   useEffect(() => {
-    if (loading === "failed") logout(), clearAll(), navigate("/login")
+    if (loading === "failed") {
+      logout(), clearAll(), navigate("/login")
+    }
   }, [loading])
 
   const [reset, setReset] = useState("")

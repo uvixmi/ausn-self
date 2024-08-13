@@ -12,7 +12,7 @@ import { fetchCurrentUser } from "./slice"
 import { AppDispatch, RootState } from "../main-page/store"
 import Cookies from "js-cookie"
 import { useAuth } from "../../AuthContext"
-import { isErrorResponse } from "./utils"
+import { isErrorResponse, validatePassword } from "./utils"
 import { jwtDecode } from "jwt-decode"
 import { ButtonOne } from "../../ui-kit/button"
 import { InputOne } from "../../ui-kit/input"
@@ -20,6 +20,7 @@ import cn from "classnames"
 import "./styles.scss"
 import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
+import { validateEmail } from "../reset-password-page/utils"
 
 const { Title, Text } = Typography
 
@@ -31,6 +32,7 @@ export const AuthorizationPage = ({
 }: AuthorizationPageProps) => {
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [password, setPassword] = useState("")
   const dispatch = useDispatch<AppDispatch>()
   const {
@@ -106,6 +108,12 @@ export const AuthorizationPage = ({
     deleteCarrotquestCookies()
   }, [])
 
+  useEffect(() => {
+    if (!validateEmail(email) && validatePassword(password))
+      setIsButtonDisabled(false)
+    else setIsButtonDisabled(true)
+  }, [email, password])
+
   return (
     <>
       <ConfigProvider
@@ -142,6 +150,8 @@ export const AuthorizationPage = ({
                       value={email}
                       onChange={(event) => {
                         setEmail(event.target.value.toLowerCase())
+                        setAuthError(false)
+                        setErrorText("")
                       }}
                     />
                   </Form.Item>
@@ -172,6 +182,7 @@ export const AuthorizationPage = ({
                       onChange={(event) => {
                         setPassword(event.target.value.trim())
                         setAuthError(false)
+                        setErrorText("")
                       }}
                     />
                   </Form.Item>
@@ -189,6 +200,8 @@ export const AuthorizationPage = ({
                 <ButtonOne
                   className={styles["button-item"]}
                   onClick={async () => {
+                    setAuthError(false)
+                    setErrorText("")
                     try {
                       const response = await api.auth.loginAuthPost({
                         username: email,
@@ -221,6 +234,7 @@ export const AuthorizationPage = ({
                       }
                     }
                   }}
+                  disabled={isButtonDisabled}
                 >
                   {CONTENT.ENTER_BUTTON}
                 </ButtonOne>

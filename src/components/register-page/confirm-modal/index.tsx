@@ -12,16 +12,25 @@ import { AppDispatch, RootState } from "../../main-page/store"
 import { useEffect, useState } from "react"
 import { ButtonOne } from "../../../ui-kit/button"
 
-export const ConfirmModal = ({ isOpen, setOpen }: ConfirmModalProps) => {
+export const ConfirmModal = ({
+  isOpen,
+  setOpen,
+  onEnter,
+}: ConfirmModalProps) => {
   const { Title, Text, Link } = Typography
 
   const dispatch = useDispatch<AppDispatch>()
 
   const { loaded, loading } = useSelector((state: RootState) => state.user)
 
-  const handleUpdate = () => {
-    dispatch(refreshRole())
-    dispatch(fetchCurrentUser())
+  const handleUpdate = async () => {
+    try {
+      await onEnter()
+      dispatch(fetchCurrentUser())
+      //dispatch(refreshRole())
+    } catch (error) {
+      setOpen(false)
+    }
   }
   const [value, setValue] = useState(1)
 

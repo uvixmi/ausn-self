@@ -23,10 +23,12 @@ $xxl: 2560px;
 
 .register-block-wrapper {
   display: flex;
-  column-gap: 20px;
-
+  gap: 24px;
+  height: 100%;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  margin-top: 24px;
 
   @media screen and (min-width: $m) {
     width: 37.4%;
@@ -248,4 +250,32 @@ $xxl: 2560px;
   line-height: 24px;
 
   color: $base-additional-grey;
+}
+
+.already-text {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1;
+  align-self: center;
+}
+
+.link-auth {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: right;
+  color: $brand-primary !important;
+}
+
+.already-wrapper {
+  display: flex;
+  gap: 4px;
+  align-self: center;
+  margin-bottom: 20px;
+  position: absolute;
+  bottom: 0;
 }

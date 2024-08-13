@@ -21,7 +21,7 @@ import { ResetPasswordImage } from "./images/reset-password"
 import { isErrorResponse, validateEmail } from "./utils"
 import { jwtDecode } from "jwt-decode"
 
-const { Title, Text } = Typography
+const { Title, Text, Link } = Typography
 
 export const ResetPasswordPage = ({
   setTokenType,
@@ -328,6 +328,17 @@ export const ResetPasswordPage = ({
                     )}
                   </div>
                 </div>
+              </div>
+              <div className={styles["already-wrapper"]}>
+                <Link
+                  className={styles["link-auth"]}
+                  onClick={() => {
+                    logout()
+                    navigate("/login")
+                  }}
+                >
+                  {CONTENT.AUTHORIZATION_LINK}
+                </Link>
               </div>
             </div>
           ) : (

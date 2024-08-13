@@ -52,6 +52,7 @@ import { FirstStepper } from "../reset-password-page/images/first-stepper"
 import { SecondStepper } from "../reset-password-page/images/second-stepper"
 import { ThirdStepper } from "../reset-password-page/images/third-stepper"
 import { LogoRegisterImage } from "../reset-password-page/images/logo-register"
+import { useAuth } from "../../AuthContext"
 
 const { Title, Text, Link } = Typography
 
@@ -146,6 +147,7 @@ export const RegisterPage = ({
     },
   ]
 
+  const { logout } = useAuth()
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [inn, setInn] = useState("")
@@ -227,6 +229,7 @@ export const RegisterPage = ({
   }
 
   const handleCheck = async (inn: string) => {
+    setIsInnLoaded(false)
     setIsLoading(true)
     setInnRequst(inn)
     try {
@@ -245,6 +248,7 @@ export const RegisterPage = ({
       setInnError(true)
       setIsLoading(false)
       setCheckedError(true)
+      setIsInnLoaded(false)
       if (isErrorResponse(error)) {
         // Если объект ошибки соответствует интерфейсу ErrorResponse
         setErrorText(error.error.detail.message)
@@ -362,10 +366,6 @@ export const RegisterPage = ({
     }
   }, [isButtonDisabled, secondsRemaining])
 
-  useEffect(() => {
-    startTimer()
-  }, [currentStep])
-
   const startTimer = () => {
     setButtonDisabled(true)
     setSecondsRemaining(59)
@@ -386,7 +386,8 @@ export const RegisterPage = ({
     const strippedNumber = phoneNumber.replace(/[^\d+]/g, "")
     const lengthRegex = /^\+\d{11}$/
     const isValidLength = lengthRegex.test(strippedNumber)
-    return !(isValidLength || strippedNumber.length === 1)
+
+    return !(isValidLength || strippedNumber.length === 2)
   }
 
   useEffect(() => {
@@ -417,19 +418,29 @@ export const RegisterPage = ({
         })
       )
 
-    if (sno == TaxSystemType.UsnD && rate) {
-      await api.users.saveTaxInfoUsersRegistrationTaxInfoPut(
-        {
-          inn,
-          tax_rate: parseInt(rate.slice(0, -1), 10),
-          tax_system: sno,
-          start_year: startYear,
-          rate_reason: selectedReason ? selectedReason : undefined,
-          reason_type: selectedReasonType ? selectedReasonType : undefined,
-        },
-        { headers }
-      )
-      setOpen(true)
+    if ((sno == TaxSystemType.UsnD || sno == TaxSystemType.UsnDR) && rate) {
+      try {
+        await api.users.saveTaxInfoUsersRegistrationTaxInfoPut(
+          {
+            inn,
+            tax_rate: parseInt(rate.slice(0, -1), 10),
+            tax_system: sno,
+            start_year: startYear,
+            rate_reason: selectedReason ? selectedReason : undefined,
+            reason_type: selectedReasonType ? selectedReasonType : undefined,
+          },
+          { headers }
+        )
+        debugger
+      } catch (error) {
+        setInnError(true)
+        setIsInnLoaded(false)
+        setCheckedError(true)
+        setOpen(false)
+        if (isErrorResponse(error)) {
+          setErrorText(error.error.detail.message)
+        }
+      }
     } else navigate("/non-target")
   }
 
@@ -531,6 +542,14 @@ export const RegisterPage = ({
     else setDisabledEnter(true)
   }, [innError, rate, selectedReason, selectedReasonType, sno, startYear])
 
+  const clearFirstPage = () => {
+    setPhone("")
+    setPhoneError(false)
+    setEmail("")
+    setEmailError(false)
+    setEmailDoubleError(false)
+  }
+
   return (
     <>
       <ConfigProvider
@@ -538,6 +557,7 @@ export const RegisterPage = ({
           token: {
             colorLink: "#505050",
             colorPrimary: "#6159ff",
+            fontFamily: "Inter",
           },
           components: {
             Steps: {
@@ -568,7 +588,11 @@ export const RegisterPage = ({
                 ) : null}
               </div>
             ) : (
-              <LogoRegisterImage className={styles["logo-wrapper"]} />
+              <LogoRegisterImage
+                className={cn(styles["logo-wrapper"], {
+                  [styles["logo-wrapper-third"]]: currentStep === 2,
+                })}
+              />
             )}
             {isTablet && !isMobile ? (
               <ResetPasswordImage className={styles["image-register"]} />
@@ -709,21 +733,40 @@ export const RegisterPage = ({
                             {CONTENT.NECESSARY}
                           </Text>
                         </Text>
-                        <InputOne
-                          placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
-                          value={passwordMail}
-                          type="password"
-                          onChange={(event) =>
-                            setPasswordMail(event.target.value)
+                        <Form.Item
+                          className={styles["form-password"]}
+                          validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                          help={
+                            authError ? (
+                              <div>
+                                <Text className={styles["error-text"]}>
+                                  {errorTextPassword}
+                                </Text>
+                              </div>
+                            ) : (
+                              ""
+                            )
                           }
-                        />
+                        >
+                          <InputOne
+                            placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
+                            value={passwordMail}
+                            type="password"
+                            onChange={(event) =>
+                              setPasswordMail(event.target.value)
+                            }
+                          />
+                        </Form.Item>
                       </div>
                       <div className={styles["link_timer"]}>
                         <Link
                           className={cn(styles["link-oferta"], {
                             [styles["link-disabled"]]: isButtonDisabled,
                           })}
-                          onClick={handleRegisterMail}
+                          onClick={() => {
+                            startTimer()
+                            handleRegisterMail()
+                          }}
                           disabled={isButtonDisabled}
                         >
                           {CONTENT.BUTTON_ONE_MORE_MAIL}
@@ -736,7 +779,7 @@ export const RegisterPage = ({
                                 {" "}
                                 {secondsRemaining}
                               </Text>
-                              c.
+                              {" c."}
                             </Text>
                           </Text>
                         )}
@@ -744,6 +787,7 @@ export const RegisterPage = ({
                       <div className={styles["buttons-wrapper"]}>
                         <ButtonOne
                           onClick={() => {
+                            clearFirstPage()
                             onChangeStep(0) //, navigate("/login")
                           }}
                           className={styles["button-back"]}
@@ -795,6 +839,7 @@ export const RegisterPage = ({
                           <InputOne
                             placeholder={CONTENT.INPUT_PLACEHOLDER}
                             disabled={isLoading}
+                            maxLength={12}
                             className={cn(styles["input-inn-check"], {
                               [styles["input-inn-completed"]]: isInnLoaded,
                             })}
@@ -901,14 +946,26 @@ export const RegisterPage = ({
                             })}
                           >
                             {"Год, с которого вести учет в сервисе"}
+                            {isInnLoaded && (
+                              <Text className={styles["necessary"]}>
+                                {" " + CONTENT.NECESSARY}
+                              </Text>
+                            )}
                           </Text>
-                          <SelectOne
-                            disabled={!isInnLoaded}
-                            className={styles["select-row"]}
-                            options={optionsYears}
-                            placeholder={CONTENT.SELECT_PLACEHOLDER}
-                            onChange={(value) => setStartYear(value)}
-                          />
+                          <div className="custom-select-register">
+                            <SelectOne
+                              disabled={!isInnLoaded}
+                              className={cn(styles["select-row"])}
+                              options={optionsYears}
+                              placeholder={CONTENT.SELECT_PLACEHOLDER}
+                              onChange={(value) => setStartYear(value)}
+                              dropdownRender={(menu) => (
+                                <div className="custom-select-register">
+                                  {menu}
+                                </div>
+                              )}
+                            />
+                          </div>
                         </div>
 
                         <div className={styles["select-row-item"]}>
@@ -918,13 +975,23 @@ export const RegisterPage = ({
                             })}
                           >
                             {"Система налогообложения"}
+                            {isInnLoaded && (
+                              <Text className={styles["necessary"]}>
+                                {" " + CONTENT.NECESSARY}
+                              </Text>
+                            )}
                           </Text>
                           <SelectOne
                             disabled={!isInnLoaded}
-                            className={styles["select-row"]}
+                            className={cn(styles["select-row"])}
                             options={optionsSNO}
                             placeholder={CONTENT.SELECT_PLACEHOLDER}
                             onChange={(value) => setSno(value)}
+                            dropdownRender={(menu) => (
+                              <div className="custom-select-register">
+                                {menu}
+                              </div>
+                            )}
                           />
                         </div>
                       </div>
@@ -1089,6 +1156,7 @@ export const RegisterPage = ({
                                       >
                                         <SelectOne
                                           value={selectedReasonType}
+                                          className="custom-select-register"
                                           options={justificationOptions}
                                           placeholder={
                                             CONTENT.SELECT_PLACEHOLDER
@@ -1096,6 +1164,11 @@ export const RegisterPage = ({
                                           onChange={(value) => {
                                             setSelectedReasonType(value)
                                           }}
+                                          dropdownRender={(menu) => (
+                                            <div className="custom-select-register">
+                                              {menu}
+                                            </div>
+                                          )}
                                         />
                                       </Form.Item>
                                     </div>
@@ -1268,9 +1341,9 @@ export const RegisterPage = ({
                         <ButtonOne
                           className={styles["button-item-enter"]}
                           disabled={disabledEnter}
-                          onClick={onEnter}
+                          //onClick={onEnter}
 
-                          // onClick={() => setOpen(true)}
+                          onClick={() => setOpen(true)}
                         >
                           {CONTENT.BUTTON_ENTER}
                         </ButtonOne>
@@ -1310,7 +1383,10 @@ export const RegisterPage = ({
                   </Text>
                   <Link
                     className={styles["link-auth"]}
-                    onClick={() => navigate("/login")}
+                    onClick={() => {
+                      logout()
+                      navigate("/login")
+                    }}
                   >
                     {CONTENT.AUTHORIZATION_LINK}
                   </Link>
@@ -1332,7 +1408,7 @@ export const RegisterPage = ({
             </div>
           )}
         </div>
-        <ConfirmModal isOpen={isOpen} setOpen={setOpen} />
+        <ConfirmModal isOpen={isOpen} setOpen={setOpen} onEnter={onEnter} />
       </ConfigProvider>
     </>
   )
