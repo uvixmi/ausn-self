@@ -16,6 +16,6 @@ export const CONTENT = {
   REPEAT_TIMER_TITLE: "Пароль отправлен на указанную почту",
   REPEAT_TIMER_DESCRIPTION: "Отправить повторно можно через:",
   PASSWORDS_DIFFERENT: "Пароли не совпадают",
-
+  PASSWORD_EASY: "Слишком слабый пароль",
   AUTHORIZATION_LINK: "Вернуться к авторизации",
 }

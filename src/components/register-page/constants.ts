@@ -52,4 +52,8 @@ export const CONTENT = {
 
   INPUT_ERROR_HINT: "Это поле обязательно для заполнения",
   INPUT_FAULT_HINT: "Поле заполнено некорректно",
+  FIRST_JUSTIFICATION_DESCRIPTION:
+    "Укажите обоснование из регионального законодательства",
+  SECOND_JUSTIFICATION_DESCRIPTION:
+    "Эта информация отразится в Декларации по УСН",
 }

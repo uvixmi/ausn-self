@@ -98,7 +98,8 @@ export const NewPasswordModal = () => {
       }
     } catch (error) {}
   }
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d_!%@$^&*()\-+=]{8,}$/
 
   const validatePassword = (password: string) => {
     return passwordRegex.test(password)
@@ -112,6 +113,31 @@ export const NewPasswordModal = () => {
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [password, repeatPassword])
+
+  useEffect(() => {
+    if (
+      password !== repeatPassword &&
+      password.length > 0 &&
+      validatePassword(password) &&
+      repeatPassword.length > 0
+    ) {
+      setAuthRepeatError(true)
+      setErrorRepeatText(CONTENT.PASSWORDS_DIFFERENT)
+    } else {
+      setAuthRepeatError(false)
+      setErrorRepeatText("")
+    }
+  }, [password, repeatPassword])
+
+  useEffect(() => {
+    if (!validatePassword(password) && password !== "") {
+      setAuthError(true)
+      setErrorText(CONTENT.PASSWORD_EASY)
+    } else {
+      setAuthError(false)
+      setErrorText("")
+    }
+  }, [password])
 
   return (
     <Modal

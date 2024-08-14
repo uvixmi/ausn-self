@@ -176,7 +176,8 @@ export const ResetPasswordPage = ({
   }
   const [isButtonDisabled, setIsButtonDisabled] = useState(false)
 
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d_!%@$^&*()\-+=]{8,}$/
 
   const validatePassword = (password: string) => {
     return passwordRegex.test(password)
@@ -230,6 +231,16 @@ export const ResetPasswordPage = ({
       setErrorRepeatText("")
     }
   }, [password, repeatPassword])
+
+  useEffect(() => {
+    if (!validatePassword(password)) {
+      setAuthError(true)
+      setErrorText(CONTENT.PASSWORD_EASY)
+    } else {
+      setAuthError(false)
+      setErrorText("")
+    }
+  }, [password])
 
   return (
     <>

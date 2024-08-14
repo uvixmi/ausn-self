@@ -14,6 +14,9 @@ export const CONTENT = {
   PASSWORD_TITLE: "Пароль",
   PASSWORD_REPEAT_TITLE: "Подтвердите пароль",
   PASSWORD_PLACEHOLDER: "Введите",
-  PASSWORD_DESCRIPTION: "Пароль должен быть не менее 8 символов",
+  PASSWORD_DESCRIPTION:
+    "Пароль должен быть не менее 8 символов и содержать прописные и строчные латинские буквы, а также цифры",
+  PASSWORDS_DIFFERENT: "Пароли не совпадают",
+PASSWORD_EASY:"Слишком слабый пароль",
   ENTER_BUTTON: "Подтвердить",
 }

@@ -53,6 +53,7 @@ import { SecondStepper } from "../reset-password-page/images/second-stepper"
 import { ThirdStepper } from "../reset-password-page/images/third-stepper"
 import { LogoRegisterImage } from "../reset-password-page/images/logo-register"
 import { useAuth } from "../../AuthContext"
+import { validatePassword } from "../authorization-page/utils"
 
 const { Title, Text, Link } = Typography
 
@@ -448,9 +449,12 @@ export const RegisterPage = ({
 
   const [passwordMail, setPasswordMail] = useState("")
 
+  const [isButtonDisabledByPassword, setButtonDisabledByPassword] =
+    useState(false)
   useEffect(() => {
-    if (passwordMail !== "") setButtonDisabled(false)
-    else setButtonDisabled(true)
+    if (passwordMail !== "" && validatePassword(passwordMail)) {
+      setButtonDisabledByPassword(false)
+    } else setButtonDisabledByPassword(true)
   }, [passwordMail])
 
   const [authError, setAuthError] = useState(false)
@@ -797,7 +801,9 @@ export const RegisterPage = ({
                         </ButtonOne>
                         <ButtonOne
                           className={styles["button-item-wide"]}
-                          disabled={isButtonDisabled}
+                          disabled={
+                            isButtonDisabled || isButtonDisabledByPassword
+                          }
                           onClick={enterAccount}
                           //onClick={() => {
                           // onChangeStep(2) //, navigate("/login")
@@ -1115,7 +1121,34 @@ export const RegisterPage = ({
                                     <Text className={styles["rate-title"]}>
                                       {CONTENT.JUSTIFICATION_TITLE}
                                     </Text>
-                                    <Tooltip>
+                                    <Tooltip
+                                      title={
+                                        <div
+                                          className={
+                                            styles["just-description-inner"]
+                                          }
+                                        >
+                                          <Text
+                                            className={cn(
+                                              styles["just-description"]
+                                            )}
+                                          >
+                                            {
+                                              CONTENT.FIRST_JUSTIFICATION_DESCRIPTION
+                                            }
+                                          </Text>
+                                          <Text
+                                            className={cn(
+                                              styles["just-description"]
+                                            )}
+                                          >
+                                            {
+                                              CONTENT.SECOND_JUSTIFICATION_DESCRIPTION
+                                            }
+                                          </Text>
+                                        </div>
+                                      }
+                                    >
                                       <InfoCircleOutlined
                                         className={styles["info-icon-amount"]}
                                       />
