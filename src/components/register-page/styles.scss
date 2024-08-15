@@ -57,3 +57,10 @@
   .ant-select-item-option-content {
   color: $brand-primary !important;
 }
+
+.custom-select-register
+  .ant-select-item-option-active
+  .ant-select-item-option-content {
+  color: $brand-primary !important;
+  font-weight: 600;
+}
