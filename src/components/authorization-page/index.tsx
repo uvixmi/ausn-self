@@ -262,7 +262,6 @@ export const AuthorizationPage = ({
                         setAccessToken(access_token)
                         setTokenType(token_type)
                         setIsAuth(true)
-                        debugger
                       } else {
                         console.error("Отсутствует свойство data в ответе API.")
                       }
