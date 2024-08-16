@@ -568,12 +568,14 @@ $xxl: 2560px;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-all;
 
   @media screen and (min-width: $m) {
     display: block;
     -webkit-line-clamp: unset;
     -webkit-box-orient: unset;
     overflow: visible;
+    word-break: normal;
     text-overflow: initial;
   }
 }
