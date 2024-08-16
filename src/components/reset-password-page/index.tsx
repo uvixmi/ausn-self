@@ -200,6 +200,7 @@ export const ResetPasswordPage = ({
     return passwordRegex.test(password)
   }
 
+  const [form] = Form.useForm()
   useEffect(() => {
     if (
       password === repeatPassword &&
@@ -390,62 +391,75 @@ export const ResetPasswordPage = ({
                   </Text>
                 </div>
                 <div className={styles["inputs-window"]}>
-                  <div className={styles["input-item-wrapper"]}>
-                    <Text className={styles["input-title"]}>
-                      {CONTENT.PASSWORD_TITLE}
-                    </Text>
-                    <Form.Item
-                      validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                      help={
-                        authError ? (
-                          <div>
-                            <Text className={styles["error-text"]}>
-                              {errorText}
-                            </Text>
-                          </div>
-                        ) : (
-                          ""
-                        )
-                      }
-                    >
-                      <InputOne
-                        placeholder={CONTENT.PASSWORD_PLACEHOLDER}
-                        type="password"
-                        value={password}
-                        onChange={(event) => {
-                          setPassword(event.target.value.trim())
-                        }}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className={styles["input-item-wrapper"]}>
-                    <Text className={styles["input-title"]}>
-                      {CONTENT.PASSWORD_REPEAT_TITLE}
-                    </Text>
-                    <Form.Item
-                      validateStatus={authRepeatError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                      help={
-                        authRepeatError ? (
-                          <div>
-                            <Text className={styles["error-text"]}>
-                              {errorRepeatText}
-                            </Text>
-                          </div>
-                        ) : (
-                          ""
-                        )
-                      }
-                    >
-                      <InputOne
-                        placeholder={CONTENT.PASSWORD_PLACEHOLDER}
-                        type="password"
-                        value={repeatPassword}
-                        onChange={(event) => {
-                          setRepeatPassword(event.target.value.trim())
-                        }}
-                      />
-                    </Form.Item>
-                  </div>
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    className={styles["inputs-window"]}
+                  >
+                    <div className={styles["input-item-wrapper"]}>
+                      <Text className={styles["input-title"]}>
+                        {CONTENT.PASSWORD_TITLE}
+                      </Text>
+                      <Form.Item
+                        name="password"
+                        validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          authError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {errorText}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <InputOne
+                          placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                          type="password"
+                          id="password"
+                          autoComplete="off"
+                          value={password}
+                          onChange={(event) => {
+                            setPassword(event.target.value.trim())
+                          }}
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={styles["input-item-wrapper"]}>
+                      <Text className={styles["input-title"]}>
+                        {CONTENT.PASSWORD_REPEAT_TITLE}
+                      </Text>
+                      <Form.Item
+                        name="confirm"
+                        dependencies={["password"]}
+                        validateStatus={authRepeatError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                        help={
+                          authRepeatError ? (
+                            <div>
+                              <Text className={styles["error-text"]}>
+                                {errorRepeatText}
+                              </Text>
+                            </div>
+                          ) : (
+                            ""
+                          )
+                        }
+                      >
+                        <InputOne
+                          id="reset-password"
+                          placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                          type="password"
+                          autoComplete="off"
+                          value={repeatPassword}
+                          onChange={(event) => {
+                            setRepeatPassword(event.target.value.trim())
+                          }}
+                        />
+                      </Form.Item>
+                    </div>
+                  </Form>
                   <ButtonOne
                     onClick={resetPassword}
                     disabled={isButtonDisabled}

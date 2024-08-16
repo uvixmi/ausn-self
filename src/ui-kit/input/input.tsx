@@ -17,6 +17,7 @@ export const InputOne = ({
   autoComplete,
   value,
   status,
+
   ref,
   onBlur,
   onFocus,

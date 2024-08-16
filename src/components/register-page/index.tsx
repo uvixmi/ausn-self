@@ -941,7 +941,9 @@ export const RegisterPage = ({
                           className={styles["button-item-check"]}
                           onClick={() => handleCheck(inn)}
                           type="secondary"
-                          disabled={isCheckInnDisabled || innError}
+                          disabled={
+                            isCheckInnDisabled || innError || inn.length === 0
+                          }
                         >
                           {isLoading ? (
                             <Spin indicator={antIcon} />
