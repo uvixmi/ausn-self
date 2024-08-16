@@ -117,7 +117,7 @@ export const NewPasswordModal = () => {
     }
   }
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d_!%@$^&*()\-+=]{8,}$/
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d_!%@$,^&*()\-+=]{8,}$/
 
   const validatePassword = (password: string) => {
     return passwordRegex.test(password)

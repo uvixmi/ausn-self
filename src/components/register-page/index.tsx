@@ -501,8 +501,12 @@ export const RegisterPage = ({
 
   const [isButtonDisabledByPassword, setButtonDisabledByPassword] =
     useState(false)
+
   useEffect(() => {
-    if (passwordMail !== "" && validatePassword(passwordMail)) {
+    if (
+      passwordMail !== ""
+      //&& validatePassword(passwordMail)
+    ) {
       setButtonDisabledByPassword(false)
     } else setButtonDisabledByPassword(true)
   }, [passwordMail])

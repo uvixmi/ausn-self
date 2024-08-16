@@ -124,8 +124,7 @@ export const AuthorizationPage = ({
   )
 
   useEffect(() => {
-    if (!validateEmail(email) && validatePassword(password))
-      setIsButtonDisabled(false)
+    if (!validateEmail(email) && password.length > 0) setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [email, password])
 
@@ -140,7 +139,6 @@ export const AuthorizationPage = ({
                     colorPrimary: "#6159FF",
                     colorPrimaryHover: "#6159FF",
                     colorPrimaryBorder: "#6159FF",
-
                     controlInteractiveSize: 22,
                     fontSize: 14,
                     lineHeight: 14,
@@ -193,12 +191,7 @@ export const AuthorizationPage = ({
                   </Text>
                   <Form.Item
                     className={styles["form-password"]}
-                    validateStatus={
-                      authError ||
-                      (!validatePassword(password) && password.length > 0)
-                        ? "error"
-                        : ""
-                    } // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                     help={
                       authError ? (
                         <div>

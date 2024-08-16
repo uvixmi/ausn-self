@@ -10,9 +10,13 @@ $xxl: 2560px;
 
 .content-wrapper {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column-reverse;
+
+  @media screen and (min-width: $s) {
+    height: auto;
+  }
 
   @media screen and (min-width: $m) {
     height: auto;
@@ -25,12 +29,18 @@ $xxl: 2560px;
   display: flex;
   gap: 24px;
   height: 100%;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
   flex-direction: column;
   margin-top: 14px;
   padding: 0 14px;
+
+  @media screen and (min-width: $s) {
+    justify-content: space-between;
+  }
+
   @media screen and (min-width: $m) {
+    justify-content: center;
     height: auto;
     width: 37.4%;
     padding: 0;
@@ -279,6 +289,26 @@ $xxl: 2560px;
   gap: 4px;
   align-self: center;
   margin-bottom: 20px;
-  position: absolute;
+  position: initial;
   bottom: 0;
+  @media screen and (min-width: $s) {
+    position: initial;
+  }
+
+  @media screen and (min-width: $m) {
+    position: absolute;
+  }
+}
+
+.already-wrapper-tablet {
+  display: flex;
+  gap: 4px;
+  align-self: center;
+  margin-bottom: 20px;
+}
+
+.already-inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
