@@ -1,4 +1,4 @@
-import { Checkbox, ConfigProvider, Form, Typography } from "antd"
+import { Checkbox, Spin, ConfigProvider, Form, Typography } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
@@ -21,6 +21,7 @@ import "./styles.scss"
 import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
 import { validateEmail } from "../reset-password-page/utils"
+import { LoadingOutlined } from "@ant-design/icons"
 
 const { Title, Text } = Typography
 
@@ -45,6 +46,10 @@ export const AuthorizationPage = ({
   const [errorText, setErrorText] = useState("")
 
   const isDesktop = useMediaQuery("(min-width: 1280px)")
+
+  const isMobile = useMediaQuery("(max-width: 1023px)")
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const token = Cookies.get("token")
   const { isAuthenticated, setRole, logout } = useAuth()
@@ -108,6 +113,16 @@ export const AuthorizationPage = ({
     deleteCarrotquestCookies()
   }, [])
 
+  const antIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 24,
+        color: "#fff",
+      }}
+      spin
+    />
+  )
+
   useEffect(() => {
     if (!validateEmail(email) && validatePassword(password))
       setIsButtonDisabled(false)
@@ -117,18 +132,34 @@ export const AuthorizationPage = ({
   return (
     <>
       <ConfigProvider
-        theme={{
-          components: {
-            Checkbox: {
-              colorPrimary: "#6159FF",
-              colorPrimaryHover: "#6159FF",
-              colorPrimaryBorder: "#6159FF",
-              controlInteractiveSize: 22,
-              fontSize: 14,
-              lineHeight: 14,
-            },
-          },
-        }}
+        theme={
+          isMobile
+            ? {
+                components: {
+                  Checkbox: {
+                    colorPrimary: "#6159FF",
+                    colorPrimaryHover: "#6159FF",
+                    colorPrimaryBorder: "#6159FF",
+
+                    controlInteractiveSize: 22,
+                    fontSize: 14,
+                    lineHeight: 14,
+                  },
+                },
+              }
+            : {
+                components: {
+                  Checkbox: {
+                    colorPrimary: "#6159FF",
+                    colorPrimaryHover: "#6159FF",
+                    colorPrimaryBorder: "#6159FF",
+                    controlInteractiveSize: 22,
+                    fontSize: 14,
+                    lineHeight: 14,
+                  },
+                },
+              }
+        }
       >
         <div className={styles["content-wrapper"]}>
           <div className={styles["register-block-wrapper"]}>
@@ -162,7 +193,12 @@ export const AuthorizationPage = ({
                   </Text>
                   <Form.Item
                     className={styles["form-password"]}
-                    validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    validateStatus={
+                      authError ||
+                      (!validatePassword(password) && password.length > 0)
+                        ? "error"
+                        : ""
+                    } // Устанавливаем статус ошибки в 'error' при наличии ошибки
                     help={
                       authError ? (
                         <div>
@@ -179,6 +215,7 @@ export const AuthorizationPage = ({
                       placeholder={CONTENT.PASSWORD_PLACEHOLDER}
                       type="password"
                       value={password}
+                      // status={validatePassword(password) ? "error" : ""}
                       onChange={(event) => {
                         setPassword(event.target.value.trim())
                         setAuthError(false)
@@ -201,6 +238,7 @@ export const AuthorizationPage = ({
                   className={styles["button-item"]}
                   onClick={async () => {
                     setAuthError(false)
+                    setIsLoading(true)
                     setErrorText("")
                     try {
                       const response = await api.auth.loginAuthPost({
@@ -218,16 +256,19 @@ export const AuthorizationPage = ({
                           )
                           login(access_token, expiresIn)
                         } else login(access_token, 86400)
+
                         dispatch(fetchCurrentUser())
+
                         setAccessToken(access_token)
                         setTokenType(token_type)
                         setIsAuth(true)
+                        debugger
                       } else {
                         console.error("Отсутствует свойство data в ответе API.")
                       }
                     } catch (error) {
                       console.error("Ошибка при выполнении запроса:", error)
-
+                      setIsLoading(false)
                       setAuthError(true)
                       if (isErrorResponse(error)) {
                         setErrorText(error.error.detail.message)
@@ -236,7 +277,11 @@ export const AuthorizationPage = ({
                   }}
                   disabled={isButtonDisabled}
                 >
-                  {CONTENT.ENTER_BUTTON}
+                  {isLoading ? (
+                    <Spin indicator={antIcon} />
+                  ) : (
+                    CONTENT.ENTER_BUTTON
+                  )}
                 </ButtonOne>
               </div>
               <div className={styles["links-wrapper"]}>

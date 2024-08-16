@@ -1,7 +1,7 @@
-import { ConfigProvider, Form, Typography } from "antd"
+import { ConfigProvider, Form, Spin, Typography } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
-
+import { LoadingOutlined } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { api } from "../../api/myApi"
@@ -40,6 +40,17 @@ export const ResetPasswordPage = ({
     loading,
     error,
   } = useSelector((state: RootState) => state.user)
+
+  const [isFirstLoading, setIsFirstLoading] = useState(false)
+  const antFirstIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 24,
+        color: "#fff",
+      }}
+      spin
+    />
+  )
 
   const [authError, setAuthError] = useState(false)
   const [errorText, setErrorText] = useState("")
@@ -118,10 +129,11 @@ export const ResetPasswordPage = ({
   const resetPassword = async () => {
     if (step === 0) {
       try {
-        startTimer()
+        setIsFirstLoading(true)
         const data = { email: email }
         await api.users.passwordResetUsersPasswordResetPost(data)
         setEmailInvalid(false)
+        startTimer()
         setEmailInvalidText("")
       } catch (error) {
         console.error("Ошибка при выполнении запроса:", error)
@@ -131,9 +143,12 @@ export const ResetPasswordPage = ({
         if (isErrorResponse(error)) {
           setEmailInvalidText(error.error.detail.message)
         }
+      } finally {
+        setIsFirstLoading(false)
       }
     } else
       try {
+        setIsFirstLoading(true)
         const data = { new_password: password }
 
         const resetToken = localStorage.getItem("resetToken")
@@ -172,6 +187,8 @@ export const ResetPasswordPage = ({
         if (isErrorResponse(error)) {
           setEmailInvalidText(error.error.detail.message)
         }
+      } finally {
+        setIsFirstLoading(false)
       }
   }
   const [isButtonDisabled, setIsButtonDisabled] = useState(false)
@@ -233,7 +250,7 @@ export const ResetPasswordPage = ({
   }, [password, repeatPassword])
 
   useEffect(() => {
-    if (!validatePassword(password)) {
+    if (!validatePassword(password) && password.length > 0) {
       setAuthError(true)
       setErrorText(CONTENT.PASSWORD_EASY)
     } else {
@@ -305,6 +322,8 @@ export const ResetPasswordPage = ({
                           setEmailRegexValid(
                             validateEmail(event.target.value.trim())
                           )
+                          setEmailInvalidText("")
+                          setEmailInvalid(false)
                         }}
                       />
                     </Form.Item>
@@ -316,7 +335,11 @@ export const ResetPasswordPage = ({
                         isFirstButtonDisabled
                       }
                     >
-                      {CONTENT.ENTER_BUTTON}
+                      {isFirstLoading ? (
+                        <Spin indicator={antFirstIcon} />
+                      ) : (
+                        CONTENT.ENTER_BUTTON
+                      )}
                     </ButtonOne>
                     {isFirstButtonDisabled && (
                       <div className={styles["repeat-timer-password"]}>
@@ -331,7 +354,7 @@ export const ResetPasswordPage = ({
                                 {" "}
                                 {secondsRemaining}
                               </Text>
-                              c.
+                              {" c."}
                             </Text>
                           </Text>
                         </div>
@@ -424,7 +447,11 @@ export const ResetPasswordPage = ({
                     onClick={resetPassword}
                     disabled={isButtonDisabled}
                   >
-                    {CONTENT.RESET_AND_ENTER_BUTTON}
+                    {isFirstLoading ? (
+                      <Spin indicator={antFirstIcon} />
+                    ) : (
+                      CONTENT.RESET_AND_ENTER_BUTTON
+                    )}
                   </ButtonOne>
                 </div>
               </div>

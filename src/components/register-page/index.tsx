@@ -141,10 +141,14 @@ export const RegisterPage = ({
       label: "УСН Доходы - Расходы",
       value: TaxSystemType.UsnDR,
     },
-    { label: "Патент", value: TaxSystemType.Eshn },
+    { label: "ЕСХН", value: TaxSystemType.Eshn },
     {
       label: "Общая система НО",
       value: TaxSystemType.Osn,
+    },
+    {
+      label: "Патент",
+      value: TaxSystemType.Patent,
     },
   ]
 
@@ -153,7 +157,7 @@ export const RegisterPage = ({
   const [phone, setPhone] = useState("")
   const [inn, setInn] = useState("")
   const [innRequest, setInnRequst] = useState("")
-  const [startYear, setStartYear] = useState(0)
+  const [startYear, setStartYear] = useState<number | undefined>(undefined)
   const [user, setUser] = useState<InnInfo | undefined>(undefined)
   const error = { code: 0, message: "" }
 
@@ -162,6 +166,16 @@ export const RegisterPage = ({
   const onChangeStep = (step: number) => {
     setCurrentStep(step)
   }
+
+  const antFirstIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 24,
+        color: "#fff",
+      }}
+      spin
+    />
+  )
 
   const antIcon = (
     <LoadingOutlined
@@ -177,6 +191,7 @@ export const RegisterPage = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [isInnLoaded, setIsInnLoaded] = useState(false)
+  const [isInnLoadedInput, setIsInnLoadedInput] = useState(false)
   const [checkedError, setCheckedError] = useState(false)
   const [errorTextPassword, setErrorTextPassword] = useState("")
 
@@ -209,16 +224,44 @@ export const RegisterPage = ({
     )
   }
 
+  const [isFirstLoading, setIsFirstLoading] = useState(false)
+  const [isSecondLoading, setIsSecondLoading] = useState(false)
   const handleRegisterMail = async () => {
     if (email === "") {
       setEmailError(true)
     } else {
       try {
+        setEmailDoubleError(false)
+        setEmailDoubleErrorText("")
+        setIsFirstLoading(true)
         await api.users.createUserUsersRegistrationPost({
           email: email.toLocaleLowerCase(),
           phone_number: phone,
         })
+
         onChangeStep(1)
+        setIsFirstLoading(false)
+      } catch (error) {
+        setEmailDoubleError(true)
+        setIsFirstLoading(false)
+        if (isErrorResponse(error)) {
+          // Если объект ошибки соответствует интерфейсу ErrorResponse
+          setEmailDoubleErrorText(error.error.detail.message)
+        }
+      }
+    }
+  }
+
+  const [isCheckInnDisabled, setIsCheckInnDisabled] = useState(false)
+
+  const handleRetryMail = async () => {
+    if (email === "") {
+      setEmailError(true)
+    } else {
+      try {
+        await api.users.retryEmailSendUsersRegistrationRetryPost({
+          email: email.toLocaleLowerCase(),
+        })
       } catch (error) {
         setEmailDoubleError(true)
         if (isErrorResponse(error)) {
@@ -230,7 +273,9 @@ export const RegisterPage = ({
   }
 
   const handleCheck = async (inn: string) => {
+    setIsCheckInnDisabled(true)
     setIsInnLoaded(false)
+    setIsInnLoadedInput(false)
     setIsLoading(true)
     setInnRequst(inn)
     try {
@@ -242,6 +287,7 @@ export const RegisterPage = ({
 
       if (user?.lastname != "" && !innError) {
         setIsInnLoaded(true)
+        setIsInnLoadedInput(true)
         setIsLoading(false)
         setCheckedError(false)
       }
@@ -250,10 +296,14 @@ export const RegisterPage = ({
       setIsLoading(false)
       setCheckedError(true)
       setIsInnLoaded(false)
+      setIsCheckInnDisabled(true)
+      setIsInnLoadedInput(false)
       if (isErrorResponse(error)) {
         // Если объект ошибки соответствует интерфейсу ErrorResponse
         setErrorText(error.error.detail.message)
       }
+    } finally {
+      setIsCheckInnDisabled(false)
     }
   }
 
@@ -409,7 +459,7 @@ export const RegisterPage = ({
     if (sno)
       dispatch(
         setTaxSystem({
-          start_year: startYear,
+          start_year: startYear ? startYear : 0,
           tax_rate:
             sno == TaxSystemType.UsnDR && rate
               ? parseInt(rate.slice(0, -1), 10)
@@ -426,16 +476,16 @@ export const RegisterPage = ({
             inn,
             tax_rate: parseInt(rate.slice(0, -1), 10),
             tax_system: sno,
-            start_year: startYear,
+            start_year: startYear ? startYear : 0,
             rate_reason: selectedReason ? selectedReason : undefined,
             reason_type: selectedReasonType ? selectedReasonType : undefined,
           },
           { headers }
         )
-        debugger
       } catch (error) {
         setInnError(true)
         setIsInnLoaded(false)
+        setIsInnLoadedInput(false)
         setCheckedError(true)
         setOpen(false)
         if (isErrorResponse(error)) {
@@ -462,6 +512,7 @@ export const RegisterPage = ({
 
   const enterAccount = async () => {
     try {
+      setIsSecondLoading(true)
       const response = await api.auth.loginAuthPost({
         username: email,
         password: passwordMail,
@@ -488,8 +539,11 @@ export const RegisterPage = ({
 
       setAuthError(true)
       if (isErrorResponse(error)) {
-        setErrorTextPassword(error.error.detail.message)
+        //setErrorTextPassword(error.error.detail.message)
+        setErrorTextPassword("Неверный пароль")
       }
+    } finally {
+      setIsSecondLoading(false)
     }
   }
 
@@ -673,7 +727,11 @@ export const RegisterPage = ({
                         onClick={handleRegisterMail}
                         //onClick={() => onChangeStep(1)}
                       >
-                        {CONTENT.CONTINUE_BUTTON}
+                        {isFirstLoading ? (
+                          <Spin indicator={antFirstIcon} />
+                        ) : (
+                          CONTENT.CONTINUE_BUTTON
+                        )}
                       </ButtonOne>
                       <div className={styles["links-wrapper"]}>
                         <Text className={styles["oferta-description"]}>
@@ -730,63 +788,67 @@ export const RegisterPage = ({
                           </Text>
                         </div>
                       </div>
-                      <div>
-                        <Text className={styles["text-input-title"]}>
-                          {CONTENT.PASSWORD_MAIL_TEXT}
-                          <Text className={styles["necessary"]}>
-                            {CONTENT.NECESSARY}
-                          </Text>
-                        </Text>
-                        <Form.Item
-                          className={styles["form-password"]}
-                          validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
-                          help={
-                            authError ? (
-                              <div>
-                                <Text className={styles["error-text"]}>
-                                  {errorTextPassword}
-                                </Text>
-                              </div>
-                            ) : (
-                              ""
-                            )
-                          }
-                        >
-                          <InputOne
-                            placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
-                            value={passwordMail}
-                            type="password"
-                            onChange={(event) =>
-                              setPasswordMail(event.target.value)
-                            }
-                          />
-                        </Form.Item>
-                      </div>
-                      <div className={styles["link_timer"]}>
-                        <Link
-                          className={cn(styles["link-oferta"], {
-                            [styles["link-disabled"]]: isButtonDisabled,
-                          })}
-                          onClick={() => {
-                            startTimer()
-                            handleRegisterMail()
-                          }}
-                          disabled={isButtonDisabled}
-                        >
-                          {CONTENT.BUTTON_ONE_MORE_MAIL}
-                        </Link>
-                        {isButtonDisabled && (
-                          <Text className={styles["repeat-time"]}>
-                            {CONTENT.TIMER_REPEAT}{" "}
-                            <Text style={{ width: "39px" }}>
-                              <Text className={styles["repeat-time-seconds"]}>
-                                {" "}
-                                {secondsRemaining}
-                              </Text>
-                              {" c."}
+                      <div className={styles["password-mail-wrapper"]}>
+                        <div>
+                          <Text className={styles["text-password-mail-title"]}>
+                            {CONTENT.PASSWORD_MAIL_TEXT}
+                            <Text className={styles["necessary"]}>
+                              {CONTENT.NECESSARY}
                             </Text>
                           </Text>
-                        )}
+                          <Form.Item
+                            className={styles["form-password"]}
+                            validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                            help={
+                              authError ? (
+                                <div>
+                                  <Text className={styles["error-text"]}>
+                                    {errorTextPassword}
+                                  </Text>
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            }
+                          >
+                            <InputOne
+                              placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
+                              value={passwordMail}
+                              type="password"
+                              onChange={(event) => {
+                                setPasswordMail(event.target.value)
+                                setAuthError(false)
+                                setErrorTextPassword("")
+                              }}
+                            />
+                          </Form.Item>
+                        </div>
+                        <div className={styles["link_timer"]}>
+                          <Link
+                            className={cn(styles["link-oferta"], {
+                              [styles["link-disabled"]]: isButtonDisabled,
+                            })}
+                            onClick={() => {
+                              startTimer()
+                              handleRetryMail()
+                            }}
+                            disabled={isButtonDisabled}
+                          >
+                            {CONTENT.BUTTON_ONE_MORE_MAIL}
+                          </Link>
+                          {isButtonDisabled && (
+                            <Text className={styles["repeat-time"]}>
+                              {CONTENT.TIMER_REPEAT}{" "}
+                              <Text style={{ width: "39px" }}>
+                                <Text className={styles["repeat-time-seconds"]}>
+                                  {" "}
+                                  {secondsRemaining}
+                                </Text>
+                                {" c."}
+                              </Text>
+                            </Text>
+                          )}
+                        </div>
                       </div>
                       <div className={styles["buttons-wrapper"]}>
                         <ButtonOne
@@ -801,15 +863,18 @@ export const RegisterPage = ({
                         </ButtonOne>
                         <ButtonOne
                           className={styles["button-item-wide"]}
-                          disabled={
-                            isButtonDisabled || isButtonDisabledByPassword
-                          }
+                          disabled={isButtonDisabledByPassword}
                           onClick={enterAccount}
                           //onClick={() => {
                           // onChangeStep(2) //, navigate("/login")
                           // }}
                         >
-                          {CONTENT.CONTINUE_BUTTON}
+                          {isSecondLoading ? (
+                            <Spin indicator={antFirstIcon} />
+                          ) : (
+                            CONTENT.CONTINUE_BUTTON
+                          )}
+
                           {/*
                       onClick={startTimer}
                       isButtonDisabled &&
@@ -847,12 +912,16 @@ export const RegisterPage = ({
                             disabled={isLoading}
                             maxLength={12}
                             className={cn(styles["input-inn-check"], {
-                              [styles["input-inn-completed"]]: isInnLoaded,
+                              [styles["input-inn-completed"]]: isInnLoadedInput,
                             })}
                             value={inn}
                             onChange={(event) => {
                               const input = event.target.value
                               const numericInput = input.replace(/[^0-9]/g, "")
+                              setIsInnLoadedInput(false)
+                              setSno(undefined)
+                              setStartYear(undefined)
+                              setRate(undefined)
                               setInn(numericInput)
                               setErrorText("")
                               setInnError(validateInn(input, error))
@@ -868,6 +937,7 @@ export const RegisterPage = ({
                           className={styles["button-item-check"]}
                           onClick={() => handleCheck(inn)}
                           type="secondary"
+                          disabled={isCheckInnDisabled || innError}
                         >
                           {isLoading ? (
                             <Spin indicator={antIcon} />
@@ -963,6 +1033,7 @@ export const RegisterPage = ({
                               disabled={!isInnLoaded}
                               className={cn(styles["select-row"])}
                               options={optionsYears}
+                              value={startYear}
                               placeholder={CONTENT.SELECT_PLACEHOLDER}
                               onChange={(value) => setStartYear(value)}
                               dropdownRender={(menu) => (
@@ -992,6 +1063,7 @@ export const RegisterPage = ({
                             className={cn(styles["select-row"])}
                             options={optionsSNO}
                             placeholder={CONTENT.SELECT_PLACEHOLDER}
+                            value={sno}
                             onChange={(value) => setSno(value)}
                             dropdownRender={(menu) => (
                               <div className="custom-select-register">

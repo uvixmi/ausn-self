@@ -1,3 +1,13 @@
+@import "../../ui-kit/theme/colors.scss";
+
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .custom-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
   width: 4.87px !important;
   height: 12.09px !important;
@@ -5,4 +15,28 @@
   border-top: 0 !important;
   border-inline-start: 0 !important;
   top: 45%;
+}
+
+.custom-checkbox .ant-checkbox .ant-checkbox-inner {
+  border: 1px solid #d9d9d9; /* Граница по умолчанию */
+
+  /* Стили для состояния при наведении курсора */
+  &:hover {
+    border-color: #d9d9d9 !important; /* Цвет границы при наведении */
+  }
+
+  /* Медиа-запрос для экранов от размера $m и больше */
+  @media screen and (min-width: $m) {
+    &:hover {
+      border-color: #6159ff !important; /* Цвет границы при наведении для экранов от размера $m и больше */
+    }
+  }
+}
+
+.custom-checkbox .ant-checkbox .ant-checkbox-inner:hover {
+  border-color: 1px solid #d9d9d9 !important;
+
+  @media screen and (min-width: $m) {
+    border-color: #6159ff !important; /* Цвет границы при наведении для экранов от размера $m и больше */
+  }
 }

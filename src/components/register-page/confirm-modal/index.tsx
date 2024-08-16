@@ -1,8 +1,10 @@
-import { Button, Modal, Radio, Typography } from "antd"
+import { Button, Modal, Radio, Spin, Typography } from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
+import { LoadingOutlined } from "@ant-design/icons"
+
 import {
   fetchCurrentUser,
   refreshRole,
@@ -21,15 +23,29 @@ export const ConfirmModal = ({
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const [isFirstLoading, setIsFirstLoading] = useState(false)
+  const antFirstIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 24,
+        color: "#fff",
+      }}
+      spin
+    />
+  )
+
   const { loaded, loading } = useSelector((state: RootState) => state.user)
 
   const handleUpdate = async () => {
     try {
+      setIsFirstLoading(true)
       await onEnter()
       dispatch(fetchCurrentUser())
+      setIsFirstLoading(false)
       //dispatch(refreshRole())
     } catch (error) {
       setOpen(false)
+      setIsFirstLoading(false)
     }
   }
   const [value, setValue] = useState(1)
@@ -98,7 +114,7 @@ export const ConfirmModal = ({
                   }
             }
           >
-            {"Отправить"}
+            {isFirstLoading ? <Spin indicator={antFirstIcon} /> : "Отправить"}
           </ButtonOne>
         </div>
       </div>

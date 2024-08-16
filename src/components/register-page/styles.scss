@@ -55,12 +55,13 @@
 .custom-select-register
   .ant-select-item-option-selected
   .ant-select-item-option-content {
-  color: $brand-primary !important;
+  color: $brand-additional-dark !important;
+  font-weight: 400;
 }
 
 .custom-select-register
   .ant-select-item-option-active
   .ant-select-item-option-content {
-  color: $brand-primary !important;
-  font-weight: 600;
+  color: $brand-primary;
+  font-weight: 400;
 }
