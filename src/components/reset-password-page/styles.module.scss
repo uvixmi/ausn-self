@@ -70,6 +70,11 @@ $xxl: 2560px;
   gap: 24px;
 }
 
+.inputs-window-form {
+  display: flex;
+  flex-direction: column;
+}
+
 .input-item-wrapper {
   display: flex;
   flex-direction: column;

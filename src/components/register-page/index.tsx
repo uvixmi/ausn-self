@@ -965,10 +965,12 @@ export const RegisterPage = ({
                             </Text>
                             {isInnLoaded ? (
                               <Text
-                                className={cn(
-                                  styles["row-right"],
-                                  styles["text-title-person"]
-                                )}
+                                className={cn(styles["row-right"], {
+                                  [styles["text-title-person"]]:
+                                    innRequest.length === 12,
+                                  [styles["text-title-person-ooo"]]:
+                                    innRequest.length === 10,
+                                })}
                               >
                                 {innRequest.length === 12
                                   ? "ИП " +

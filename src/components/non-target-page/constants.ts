@@ -1,6 +1,6 @@
 export const CONTENT = {
   NON_TARGET_HEADING: "Решение для налогового учёта",
-  PHONE_TITLE: "Ваш телефон",
+  PHONE_TITLE: "Номер телефона",
   SEND_BUTTON: "Отправить",
   PHONE_PLACEHOLDER: "+7 (___) ___ __ __",
   NON_TARGET_TEXT:

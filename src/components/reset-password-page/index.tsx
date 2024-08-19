@@ -394,7 +394,7 @@ export const ResetPasswordPage = ({
                   <Form
                     form={form}
                     layout="vertical"
-                    className={styles["inputs-window"]}
+                    className={styles["inputs-window-form"]}
                   >
                     <div className={styles["input-item-wrapper"]}>
                       <Text className={styles["input-title"]}>
