@@ -815,9 +815,11 @@ export const RegisterPage = ({
                               )
                             }
                           >
-                            <InputOne
+                            <Input.Password
                               placeholder={CONTENT.PASSWORD_MAIL_PLACEHOLDER}
+                              visibilityToggle
                               value={passwordMail}
+                              className={styles["default-input"]}
                               type="password"
                               onChange={(event) => {
                                 setPasswordMail(event.target.value)
@@ -900,7 +902,7 @@ export const RegisterPage = ({
                           className={styles["input-inn-check"]}
                           validateStatus={checkedError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                           help={
-                            checkedError ? (
+                            checkedError || innError ? (
                               <div>
                                 <Text className={styles["error-text"]}>
                                   {errorText}
@@ -930,7 +932,8 @@ export const RegisterPage = ({
                               setErrorText("")
                               setInnError(validateInn(input, error))
                               if (validateInn(input, error))
-                                setErrorText(error.message)
+                                setErrorText(CONTENT.INPUT_FAULT_HINT)
+                              //setErrorText(error.message)
                               setCheckedError(false)
                             }}
                             status={innError ? "error" : undefined}

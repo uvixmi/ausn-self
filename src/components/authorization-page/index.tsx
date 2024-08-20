@@ -1,4 +1,4 @@
-import { Checkbox, Spin, ConfigProvider, Form, Typography } from "antd"
+import { Checkbox, Spin, ConfigProvider, Form, Typography, Input } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
 import { RegisterWelcomeImage } from "./images/register-welcome"
@@ -143,6 +143,9 @@ export const AuthorizationPage = ({
                     fontSize: 14,
                     lineHeight: 14,
                   },
+                  Input: {
+                    activeBorderColor: "#6159FF",
+                  },
                 },
               }
             : {
@@ -204,10 +207,12 @@ export const AuthorizationPage = ({
                       )
                     }
                   >
-                    <InputOne
+                    <Input.Password
                       placeholder={CONTENT.PASSWORD_PLACEHOLDER}
                       type="password"
                       value={password}
+                      className={styles["default-input"]}
+                      visibilityToggle
                       // status={validatePassword(password) ? "error" : ""}
                       onChange={(event) => {
                         setPassword(event.target.value.trim())

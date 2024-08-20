@@ -1,4 +1,4 @@
-import { ConfigProvider, Form, Spin, Typography } from "antd"
+import { ConfigProvider, Form, Input, Spin, Typography } from "antd"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
 import { LoadingOutlined } from "@ant-design/icons"
@@ -415,10 +415,12 @@ export const ResetPasswordPage = ({
                           )
                         }
                       >
-                        <InputOne
+                        <Input.Password
                           placeholder={CONTENT.PASSWORD_PLACEHOLDER}
                           type="password"
                           id="password"
+                          visibilityToggle
+                          className={styles["default-input"]}
                           autoComplete="off"
                           value={password}
                           onChange={(event) => {
@@ -447,10 +449,12 @@ export const ResetPasswordPage = ({
                           )
                         }
                       >
-                        <InputOne
+                        <Input.Password
                           id="reset-password"
                           placeholder={CONTENT.PASSWORD_PLACEHOLDER}
                           type="password"
+                          visibilityToggle
+                          className={styles["default-input"]}
                           autoComplete="off"
                           value={repeatPassword}
                           onChange={(event) => {

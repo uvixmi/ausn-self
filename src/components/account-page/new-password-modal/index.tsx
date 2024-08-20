@@ -1,4 +1,4 @@
-import { Form, Modal, Spin, Typography } from "antd"
+import { Form, Input, Modal, Spin, Typography } from "antd"
 import { ConfirmModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
@@ -213,8 +213,10 @@ export const NewPasswordModal = () => {
                         )
                       }
                     >
-                      <InputOne
+                      <Input.Password
                         placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                        className={styles["default-input"]}
+                        visibilityToggle
                         type="password"
                         value={password}
                         onChange={(event) => {
@@ -243,8 +245,10 @@ export const NewPasswordModal = () => {
                         )
                       }
                     >
-                      <InputOne
+                      <Input.Password
                         placeholder={CONTENT.PASSWORD_PLACEHOLDER}
+                        className={styles["default-input"]}
+                        visibilityToggle
                         type="password"
                         value={repeatPassword}
                         onChange={(event) => {
