@@ -192,7 +192,7 @@ $xxl: 2560px;
   font-size: 14px;
   line-height: 22px;
   border: 1px solid $base-secondary-2;
-  background-color: #e8f0fe;
+  background-color: #e8f0fe !important;
 
   &::placeholder {
     font-family: "Inter" !important;
