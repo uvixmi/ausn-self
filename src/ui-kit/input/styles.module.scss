@@ -47,3 +47,24 @@
   text-align: left;
   color: $base-secondary-1;
 }
+
+.default > input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input > input {
+  background: #fff !important;
+}
+
+.default-input :-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  background-color: #fff !important;
+}
+
+.default-input :-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input :-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}

@@ -2,6 +2,7 @@ import cn from "classnames"
 import { ButtonProps } from "./types"
 import styles from "./styles.module.scss"
 import { Input } from "antd"
+import "./styles.scss"
 
 export const InputOne = ({
   id,
@@ -49,27 +50,29 @@ export const InputOne = ({
   const inputClassnames = cn(styles["default"], className)
 
   return (
-    <Input
-      {...ariaAttributes}
-      value={value}
-      id={id}
-      ref={ref}
-      disabled={disabled}
-      data-test-id={dataTestId}
-      maxLength={maxLength}
-      className={inputClassnames}
-      autoComplete={autoComplete}
-      onBlur={handleBlur}
-      onChange={handleChange}
-      showCount={showCount}
-      onFocus={handleFocus}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      placeholder={placeholder}
-      type={type}
-      status={status}
-    >
-      {children}
-    </Input>
+    <div className="default-input-auto">
+      <Input
+        {...ariaAttributes}
+        value={value}
+        id={id}
+        ref={ref}
+        disabled={disabled}
+        data-test-id={dataTestId}
+        maxLength={maxLength}
+        className={inputClassnames}
+        autoComplete={autoComplete}
+        onBlur={handleBlur}
+        onChange={handleChange}
+        showCount={showCount}
+        onFocus={handleFocus}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        placeholder={placeholder}
+        type={type}
+        status={status}
+      >
+        {children}
+      </Input>
+    </div>
   )
 }

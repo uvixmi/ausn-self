@@ -224,6 +224,26 @@ export const RegisterPage = ({
     )
   }
 
+  interface InnErrorResponse {
+    error: {
+      detail: {
+        message: string
+        error_key: string
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function isInnErrorResponse(obj: any): obj is InnErrorResponse {
+    return (
+      obj &&
+      obj.error &&
+      obj.error.detail &&
+      obj.error.detail.message !== undefined &&
+      obj.error.detail.error_key !== undefined
+    )
+  }
+
   const [isFirstLoading, setIsFirstLoading] = useState(false)
   const [isSecondLoading, setIsSecondLoading] = useState(false)
   const handleRegisterMail = async () => {
@@ -291,19 +311,21 @@ export const RegisterPage = ({
         setIsLoading(false)
         setCheckedError(false)
       }
+      setIsCheckInnDisabled(false)
     } catch (error) {
       setInnError(true)
       setIsLoading(false)
       setCheckedError(true)
       setIsInnLoaded(false)
-      setIsCheckInnDisabled(true)
+
       setIsInnLoadedInput(false)
-      if (isErrorResponse(error)) {
+      if (isInnErrorResponse(error)) {
         // Если объект ошибки соответствует интерфейсу ErrorResponse
         setErrorText(error.error.detail.message)
-      }
-    } finally {
-      setIsCheckInnDisabled(false)
+        if (error.error.detail.error_key === "inn_not_found")
+          setIsCheckInnDisabled(true)
+        else setIsCheckInnDisabled(false)
+      } else setIsCheckInnDisabled(false)
     }
   }
 
@@ -700,8 +722,10 @@ export const RegisterPage = ({
                             <InputOne
                               value={email}
                               onChange={(event) => {
-                                setEmail(event.target.value)
-                                setEmailError(validateEmail(event.target.value))
+                                setEmail(event.target.value.trim())
+                                setEmailError(
+                                  validateEmail(event.target.value.trim())
+                                )
                                 setEmailDoubleError(false)
                               }}
                               placeholder={CONTENT.EMAIL_PLACEHOLDER}
@@ -930,6 +954,7 @@ export const RegisterPage = ({
                               setRate(undefined)
                               setInn(numericInput)
                               setErrorText("")
+                              setIsCheckInnDisabled(validateInn(input, error))
                               setInnError(validateInn(input, error))
                               if (validateInn(input, error))
                                 setErrorText(CONTENT.INPUT_FAULT_HINT)
@@ -944,9 +969,7 @@ export const RegisterPage = ({
                           className={styles["button-item-check"]}
                           onClick={() => handleCheck(inn)}
                           type="secondary"
-                          disabled={
-                            isCheckInnDisabled || innError || inn.length === 0
-                          }
+                          disabled={isCheckInnDisabled || inn.length === 0}
                         >
                           {isLoading ? (
                             <Spin indicator={antIcon} />

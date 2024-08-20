@@ -192,7 +192,7 @@ $xxl: 2560px;
   font-size: 14px;
   line-height: 22px;
   border: 1px solid $base-secondary-2;
-  background-color: #e8f0fe !important;
+  background-color: #fff !important;
 
   &::placeholder {
     font-family: "Inter" !important;
@@ -241,4 +241,20 @@ $xxl: 2560px;
   line-height: 22px;
   text-align: left;
   color: $base-secondary-1;
+}
+
+.default-input > input {
+  background: #fff !important;
+}
+
+.default-input > input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input > input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input > input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
 }

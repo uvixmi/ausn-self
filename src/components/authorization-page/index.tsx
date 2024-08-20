@@ -143,9 +143,6 @@ export const AuthorizationPage = ({
                     fontSize: 14,
                     lineHeight: 14,
                   },
-                  Input: {
-                    activeBorderColor: "#6159FF",
-                  },
                 },
               }
             : {
@@ -157,6 +154,9 @@ export const AuthorizationPage = ({
                     controlInteractiveSize: 22,
                     fontSize: 14,
                     lineHeight: 14,
+                  },
+                  Input: {
+                    colorBgContainer: "#fff",
                   },
                 },
               }
@@ -174,14 +174,13 @@ export const AuthorizationPage = ({
                     {CONTENT.EMAIL_TITLE}
                   </Text>
                   <Form.Item
-                    className={styles["form-email"]}
                     validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                   >
                     <InputOne
                       placeholder={CONTENT.EMAIL_PLACEHOLDER}
                       value={email}
                       onChange={(event) => {
-                        setEmail(event.target.value.toLowerCase())
+                        setEmail(event.target.value.toLowerCase().trim())
                         setAuthError(false)
                         setErrorText("")
                       }}
@@ -212,6 +211,7 @@ export const AuthorizationPage = ({
                       type="password"
                       value={password}
                       className={styles["default-input"]}
+                      autoComplete="off"
                       visibilityToggle
                       // status={validatePassword(password) ? "error" : ""}
                       onChange={(event) => {
