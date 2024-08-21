@@ -276,6 +276,10 @@ export const ResetPasswordPage = ({
               fontSize: 14,
               lineHeight: 14,
             },
+            Dropdown: {
+              borderRadius: 4,
+              borderRadiusOuter: 4,
+            },
           },
         }}
       >

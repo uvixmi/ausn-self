@@ -124,6 +124,17 @@ $xxl: 2560px;
   font-weight: 600;
 }
 
+.error-text-inn {
+  font-size: 10px;
+  line-height: 12px;
+  color: $red-primary;
+  font-weight: 600;
+
+  @media screen and (min-width: $m) {
+    line-height: 18px;
+  }
+}
+
 .links-wrapper {
   display: flex;
   flex-direction: column;

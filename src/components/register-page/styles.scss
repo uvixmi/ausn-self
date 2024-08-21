@@ -1,5 +1,13 @@
 @import "../../ui-kit/theme/colors.scss";
 
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
 .custom-steps .ant-steps-item-wait .ant-steps-item-icon {
   background-color: $base-secondary-pale !important;
   border-color: $brand-primary !important;
@@ -64,4 +72,27 @@
   .ant-select-item-option-content {
   color: $brand-primary;
   font-weight: 400;
+}
+
+.custom-select-register .ant-select-dropdown {
+  border-radius: 4px !important;
+}
+
+.custom-select-register .ant-select-item-option-selected {
+  border-radius: 0 !important;
+}
+
+.custom-select-register .ant-select-item-option-active {
+  border-radius: 0 !important;
+}
+
+.input-inn-check .ant-form-item-explain {
+  line-height: 10px;
+  /* @media screen and (min-width: $m) {
+    line-height: 1.5714285714285714;
+  }*/
+}
+
+.input-inn-check {
+  flex-grow: 1;
 }

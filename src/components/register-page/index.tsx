@@ -957,12 +957,12 @@ export const RegisterPage = ({
                       </Text>
                       <div className={styles["inn-wrapper"]}>
                         <Form.Item
-                          className={styles["input-inn-check"]}
+                          className="input-inn-check"
                           validateStatus={checkedError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
                           help={
                             checkedError || innError ? (
                               <div>
-                                <Text className={styles["error-text"]}>
+                                <Text className={styles["error-text-inn"]}>
                                   {inn.length > 0
                                     ? errorText
                                     : CONTENT.INPUT_ERROR_HINT}
