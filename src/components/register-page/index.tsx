@@ -584,7 +584,8 @@ export const RegisterPage = ({
   useEffect(() => {
     if (
       (sno === TaxSystemType.UsnD && rate === "6%") ||
-      (sno === TaxSystemType.UsnDR && rate === "15%")
+      (sno === TaxSystemType.UsnDR && rate === "15%") ||
+      (sno !== TaxSystemType.UsnD && sno !== TaxSystemType.UsnDR)
     ) {
       setSelectedArticle("")
       setSelectedParagraph("")
