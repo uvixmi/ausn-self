@@ -8,4 +8,5 @@ export const CONTENT = {
   EMAIL_PLACEHOLDER: "Введите",
   PASSWORD_PLACEHOLDER: "Введите",
   REMEMBER_ME: "Запомнить меня",
+  INPUT_ERROR: "Поле заполнено некорректно",
 }

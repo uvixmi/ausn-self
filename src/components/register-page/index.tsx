@@ -712,7 +712,9 @@ export const RegisterPage = ({
                                 </div>
                               ) : emailError ? (
                                 <Text className={styles["error-mail-text"]}>
-                                  {email === "" ? CONTENT.INPUT_ERROR_HINT : ""}
+                                  {email === ""
+                                    ? CONTENT.INPUT_ERROR_HINT
+                                    : CONTENT.INPUT_FAULT_HINT}
                                 </Text>
                               ) : (
                                 ""
@@ -722,9 +724,15 @@ export const RegisterPage = ({
                             <InputOne
                               value={email}
                               onChange={(event) => {
-                                setEmail(event.target.value.trim())
+                                setEmail(
+                                  event.target.value.trim().replace(/\s+/g, "")
+                                )
                                 setEmailError(
-                                  validateEmail(event.target.value.trim())
+                                  validateEmail(
+                                    event.target.value
+                                      .trim()
+                                      .replace(/\s+/g, "")
+                                  )
                                 )
                                 setEmailDoubleError(false)
                               }}
@@ -737,17 +745,29 @@ export const RegisterPage = ({
                           <Text className={styles["input-title-text"]}>
                             {CONTENT.PHONE_TITLE}
                           </Text>
-                          <MaskedInput
-                            mask={PhoneMask}
-                            className={styles["input-item"]}
-                            value={phone}
-                            onChange={(event) => {
-                              setPhone(event.target.value)
-                              setPhoneError(validatePhone(event.target.value))
-                            }}
-                            placeholder={CONTENT.PHONE_PLACEHOLDER}
-                            status={phoneError ? "error" : undefined}
-                          ></MaskedInput>
+                          <Form.Item
+                            className={styles["form-password"]}
+                            validateStatus={phoneError ? "error" : ""}
+                            help={
+                              phoneError ? (
+                                <Text className={styles["error-mail-text"]}>
+                                  {CONTENT.INPUT_FAULT_HINT}
+                                </Text>
+                              ) : null
+                            }
+                          >
+                            <MaskedInput
+                              mask={PhoneMask}
+                              className={styles["input-item"]}
+                              value={phone}
+                              onChange={(event) => {
+                                setPhone(event.target.value)
+                                setPhoneError(validatePhone(event.target.value))
+                              }}
+                              placeholder={CONTENT.PHONE_PLACEHOLDER}
+                              status={phoneError ? "error" : undefined}
+                            ></MaskedInput>
+                          </Form.Item>
                         </div>
                       </div>
                       <ButtonOne

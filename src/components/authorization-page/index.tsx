@@ -44,6 +44,12 @@ export const AuthorizationPage = ({
 
   const [authError, setAuthError] = useState(false)
   const [errorText, setErrorText] = useState("")
+  const [emailError, setEmailError] = useState(false)
+
+  useEffect(() => {
+    if (validateEmail(email) && email.length > 0) setEmailError(true)
+    else setEmailError(false)
+  }, [email])
 
   const isDesktop = useMediaQuery("(min-width: 1280px)")
 
@@ -174,13 +180,29 @@ export const AuthorizationPage = ({
                     {CONTENT.EMAIL_TITLE}
                   </Text>
                   <Form.Item
-                    validateStatus={authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    validateStatus={emailError || authError ? "error" : ""} // Устанавливаем статус ошибки в 'error' при наличии ошибки
+                    help={
+                      emailError ? (
+                        <div>
+                          <Text className={styles["error-text"]}>
+                            {CONTENT.INPUT_ERROR}
+                          </Text>
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    }
                   >
                     <InputOne
                       placeholder={CONTENT.EMAIL_PLACEHOLDER}
                       value={email}
                       onChange={(event) => {
-                        setEmail(event.target.value.toLowerCase().trim())
+                        setEmail(
+                          event.target.value
+                            .toLowerCase()
+                            .trim()
+                            .replace(/\s+/g, "")
+                        )
                         setAuthError(false)
                         setErrorText("")
                       }}

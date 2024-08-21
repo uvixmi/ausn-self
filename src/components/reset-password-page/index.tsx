@@ -311,7 +311,9 @@ export const ResetPasswordPage = ({
                           </Text>
                         ) : emaiRegexValid ? (
                           <Text className={styles["error-mail-text"]}>
-                            {email === "" ? CONTENT.INPUT_ERROR_HINT : ""}
+                            {email === ""
+                              ? CONTENT.INPUT_ERROR_HINT
+                              : CONTENT.INPUT_ERROR}
                           </Text>
                         ) : (
                           ""
@@ -322,9 +324,19 @@ export const ResetPasswordPage = ({
                         placeholder={CONTENT.EMAIL_PLACEHOLDER}
                         value={email}
                         onChange={(event) => {
-                          setEmail(event.target.value.toLowerCase())
+                          setEmail(
+                            event.target.value
+                              .trim()
+                              .toLowerCase()
+                              .replace(/\s+/g, "")
+                          )
                           setEmailRegexValid(
-                            validateEmail(event.target.value.trim())
+                            validateEmail(
+                              event.target.value
+                                .trim()
+                                .toLowerCase()
+                                .replace(/\s+/g, "")
+                            )
                           )
                           setEmailInvalidText("")
                           setEmailInvalid(false)
