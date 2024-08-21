@@ -581,6 +581,19 @@ export const RegisterPage = ({
     string | undefined
   >("")
 
+  useEffect(() => {
+    if (
+      (sno === TaxSystemType.UsnD && rate === "6%") ||
+      (sno === TaxSystemType.UsnDR && rate === "15%")
+    ) {
+      setSelectedArticle("")
+      setSelectedParagraph("")
+      setSelectedSubparagraph("")
+      setSelectedReason(null)
+      setSelectedReasonType(null)
+    }
+  }, [rate, sno])
+
   const justificationOptions = [
     { label: "Предприниматель Крыма и Севастополя", value: "crimea" },
     { label: "Налоговые каникулы", value: "tax_holidays" },
@@ -949,7 +962,9 @@ export const RegisterPage = ({
                             checkedError || innError ? (
                               <div>
                                 <Text className={styles["error-text"]}>
-                                  {errorText}
+                                  {inn.length > 0
+                                    ? errorText
+                                    : CONTENT.INPUT_ERROR_HINT}
                                 </Text>
                               </div>
                             ) : (
