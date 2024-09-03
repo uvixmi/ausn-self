@@ -6,8 +6,8 @@ import sourcesReducer from "../account-page/client/sources/slice"
 import tasksReducer from "../account-page/client/tasks/slice"
 import bannersReducer from "../account-page/client/banners/slice"
 import taxesReducer from "../account-page/taxes-page/slice"
+import authorizationReducer from "../authorization-page/authorization/slice"
 
-// Создайте хранилище с вашим редьюсером
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -17,6 +17,7 @@ export const store = configureStore({
     tasks: tasksReducer,
     banners: bannersReducer,
     taxes: taxesReducer,
+    authorization: authorizationReducer,
   },
 })
 

@@ -64,6 +64,7 @@ import "./styles.scss"
 import { ArrowRoundUpdateIcon } from "../taxes-page/type-operation/icons/arrow-round-update"
 import { clearTasks } from "../client/tasks/slice"
 import { clearSources } from "../client/sources/slice"
+import { TaxesErrorImage } from "../taxes-page/images/taxes-error"
 
 export interface InfoBannerLinked {
   id: string
@@ -130,7 +131,15 @@ export const ActionsPage = () => {
     (state: RootState) => state.banners.banners?.banners
   )
   const token = Cookies.get("token")
+  const [actionsError, setIsActionsError] = useState(false)
   const location = useLocation()
+
+  const errorGetter = useSelector((state: RootState) => state.tasks.error)
+
+  useEffect(() => {
+    if (errorGetter) setIsActionsError(true)
+    else setIsActionsError(false)
+  }, [errorGetter])
 
   const [messageApi, contextHolder] = message.useMessage()
   const successDownload = () => {
@@ -934,6 +943,7 @@ export const ActionsPage = () => {
                                         item.accrued_amount_kv <
                                           item.accrued_amount && (
                                           <Tooltip
+                                            zIndex={1000}
                                             title={() =>
                                               item.accrued_amount_kv &&
                                               item.accrued_amount &&
@@ -1004,6 +1014,7 @@ export const ActionsPage = () => {
                                         item.accrued_amount_now !=
                                           item.accrued_amount && (
                                           <Tooltip
+                                            zIndex={1000}
                                             title={() =>
                                               getTooltipReport(
                                                 item.accrued_amount,
@@ -1185,6 +1196,11 @@ export const ActionsPage = () => {
                             <ButtonOne
                               className={styles["amount-button"]}
                               type="secondary"
+                              disabled={
+                                isForming &&
+                                item.task_code === tasCodeForming &&
+                                item.year === yearForming
+                              }
                               onClick={() =>
                                 item.type === "report"
                                   ? handleFormReport(item.task_code, item.year)
@@ -1217,7 +1233,8 @@ export const ActionsPage = () => {
                                     item.year,
                                     item.report_code
                                   )
-                                : item.due_amount &&
+                                : item.due_amount !== null &&
+                                  item.due_amount !== undefined &&
                                   handleSentPayment(
                                     item.due_amount.toString(),
                                     item.year
@@ -1235,26 +1252,40 @@ export const ActionsPage = () => {
                   </div>
                 ))}
           </div>
-          {tasks && tasks.length === 0 && isRelevant === false && (
-            <div className={styles["block-new"]}>
-              <NewActionsImage />
-              <div className={styles["block-new-text"]}>
-                <Text className={styles["title-block"]}>
-                  {CONTENT.TITLE_NEW_ACTIONS}
-                </Text>
-                <Text className={styles["text-block"]}>
-                  {CONTENT.DESCRIPTION_NEW_ACTIONS_ONE}
-                </Text>
-                <Text className={styles["text-block"]}>
-                  {CONTENT.DESCRIPTION_NEW_ACTIONS_TWO}
-                </Text>
-                <Link
-                  className={styles["link-block"]}
-                  onClick={() => navigate("/taxes")}
-                >
-                  {CONTENT.OPERATIONS_LINK}
-                </Link>
+          {tasks &&
+            tasks.length === 0 &&
+            isRelevant === false &&
+            !actionsError && (
+              <div className={styles["block-new"]}>
+                <NewActionsImage />
+                <div className={styles["block-new-text"]}>
+                  <Text className={styles["title-block"]}>
+                    {CONTENT.TITLE_NEW_ACTIONS}
+                  </Text>
+                  <Text className={styles["text-block"]}>
+                    {CONTENT.DESCRIPTION_NEW_ACTIONS_ONE}
+                  </Text>
+                  <Text className={styles["text-block"]}>
+                    {CONTENT.DESCRIPTION_NEW_ACTIONS_TWO}
+                  </Text>
+                  <Link
+                    className={styles["link-block"]}
+                    onClick={() => navigate("/taxes")}
+                  >
+                    {CONTENT.OPERATIONS_LINK}
+                  </Link>
+                </div>
               </div>
+            )}
+          {actionsError && (
+            <div className={styles["taxes-error-block"]}>
+              <TaxesErrorImage />
+              <Text className={styles["taxes-error-title"]}>
+                {CONTENT.TAXES_ERROR_HEADING}
+              </Text>
+              <Text className={styles["non-text"]}>
+                {CONTENT.TAXES_ERROR_DESCRIPTION}
+              </Text>
             </div>
           )}
           {(tasks?.filter((item) => item.type === "report").length === 0 ||

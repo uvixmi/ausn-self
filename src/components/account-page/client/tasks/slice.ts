@@ -36,12 +36,14 @@ const tasksSlice = createSlice({
 
     builder.addCase(fetchTasks.pending, (state) => {
       state.loading = "loading"
+      state.error = undefined
     })
 
     builder.addCase(fetchTasks.rejected, (state, action) => {
       state.loading = "failed"
       state.error = action.error.message
       state.loaded = false
+      state.tasks = undefined
     })
   },
 })

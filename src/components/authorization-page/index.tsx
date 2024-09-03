@@ -22,6 +22,7 @@ import { LogoMainIcon } from "../main-page/logo-icon-main"
 import { useMediaQuery } from "@react-hook/media-query"
 import { validateEmail } from "../reset-password-page/utils"
 import { LoadingOutlined } from "@ant-design/icons"
+import { setEmail, setPassword } from "./authorization/slice"
 
 const { Title, Text } = Typography
 
@@ -32,9 +33,15 @@ export const AuthorizationPage = ({
   login,
 }: AuthorizationPageProps) => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
-  const [password, setPassword] = useState("")
+
+  const { email, password } = useSelector(
+    (state: RootState) => state.authorization
+  )
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(
+    !(!validateEmail(email) && password.length > 0)
+  )
+
   const dispatch = useDispatch<AppDispatch>()
   const {
     data: currentUser,
@@ -197,11 +204,13 @@ export const AuthorizationPage = ({
                       placeholder={CONTENT.EMAIL_PLACEHOLDER}
                       value={email}
                       onChange={(event) => {
-                        setEmail(
-                          event.target.value
-                            .toLowerCase()
-                            .trim()
-                            .replace(/\s+/g, "")
+                        dispatch(
+                          setEmail(
+                            event.target.value
+                              .toLowerCase()
+                              .trim()
+                              .replace(/\s+/g, "")
+                          )
                         )
                         setAuthError(false)
                         setErrorText("")
@@ -237,7 +246,7 @@ export const AuthorizationPage = ({
                       visibilityToggle
                       // status={validatePassword(password) ? "error" : ""}
                       onChange={(event) => {
-                        setPassword(event.target.value.trim())
+                        dispatch(setPassword(event.target.value.trim()))
                         setAuthError(false)
                         setErrorText("")
                       }}

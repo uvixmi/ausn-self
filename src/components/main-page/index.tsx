@@ -65,7 +65,6 @@ export const MainPage = () => {
       document.documentElement.style.setProperty("--vh", `${vh}px`)
     }
 
-    // Обновляем переменную при загрузке и изменении размера окна
     updateVh()
     window.addEventListener("resize", updateVh)
 
@@ -105,6 +104,7 @@ export const MainPage = () => {
       }
     }
   }, [currentUser.inn, currentUser.is_lead, loaded, token])
+
 
   if (!role)
     return (

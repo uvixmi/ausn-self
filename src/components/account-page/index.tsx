@@ -475,7 +475,7 @@ export const AccountPage = ({
                 position: "fixed",
                 bottom: 0,
                 width: "100%",
-                zIndex: 999,
+                zIndex: 1050,
               }}
               className={styles["menu-footer"]}
             >

@@ -92,6 +92,7 @@ import { SelectProps, SelectValue } from "antd/lib/select"
 import { PickerProps } from "antd/lib/date-picker/generatePicker"
 import { clearTasks } from "../client/tasks/slice"
 import { clearSources, newPage } from "../client/sources/slice"
+import { userInfo } from "os"
 
 export const TaxesPage = () => {
   const { Sider, Content } = Layout
@@ -1604,7 +1605,11 @@ export const TaxesPage = () => {
                           <Text className={styles["non-text"]}>
                             {CONTENT.NON_OPERATIONS_NEED}
                             <Text className={styles["non-text-bold"]}>
-                              {getFormattedYearDate()}
+                              {currentUser.tax_date_begin
+                                ? convertReverseFormat(
+                                    currentUser.tax_date_begin
+                                  )
+                                : getFormattedYearDate()}
                             </Text>
                           </Text>
                         </div>
