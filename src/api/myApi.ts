@@ -3243,4 +3243,4 @@ export class Api<
   }
 }
 
-export const api = new Api({ baseUrl: "https://akb-api.buh.app" })
+export const api = new Api({ baseUrl: "https://api-dev.buh.app" })
