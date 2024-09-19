@@ -1,0 +1,384 @@
+@import "../../../../ui-kit/theme/colors.scss";
+@import "../../../../ui-kit/theme/fonts.scss";
+
+$mobile: 320px;
+$tablet: 768px;
+$s: 1024px;
+$m: 1280px;
+$l: 1440px;
+$xl: 1920px;
+$xxl: 2560px;
+
+.content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+
+  @media screen and (min-width: $m) {
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.register-block-wrapper {
+  display: flex;
+  column-gap: 20px;
+
+  justify-content: center;
+  align-items: center;
+
+  @media screen and (min-width: $m) {
+    width: 37.4%;
+  }
+  @media screen and (min-width: $xl) {
+    width: 44%;
+  }
+}
+
+.payment-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 24px;
+  padding: 0 14px;
+
+  @media screen and (min-width: $s) {
+    padding: 0;
+    max-width: 348px;
+  }
+}
+
+.inputs-window {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+}
+
+.input-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  border-radius: 2px;
+}
+
+.input-item {
+  border-radius: 2px;
+}
+
+.links-wrapper {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media screen and (min-width: $m) {
+    width: 62.6%;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    background-color: $brand-secondary-pale;
+  }
+
+  @media screen and (min-width: $xl) {
+    width: 56%;
+  }
+}
+
+.heading-text {
+  font-family: "Inter";
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  color: $brand-primary;
+  word-break: normal;
+
+  @media screen and (min-width: $s) {
+    font-size: 42px;
+    line-height: 50px;
+  }
+}
+
+.heading-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-email {
+  width: 100%;
+}
+
+.form-password {
+  width: 100%;
+}
+
+.error-text {
+  font-size: 10px;
+  line-height: 18px;
+  color: $red-primary;
+  font-weight: 600;
+}
+
+.input-title {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-primary-dark;
+}
+
+.link-text {
+  font-family: "Inter";
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: left;
+}
+
+.remember-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.checkbox-style {
+  width: 22px;
+  height: 22px;
+}
+
+.checkbox-style .ant-checkbox-checked .ant-checkbox-inner::after {
+  width: 4.87px;
+  height: 12.09px;
+  border: 1px solid #fff !important;
+}
+
+.logo-item {
+  @media screen and (min-width: $m) {
+    margin-top: 32px;
+  }
+  @media screen and (min-width: $xl) {
+    margin-top: 70px;
+  }
+}
+
+.description-text {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+}
+
+.description-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-register {
+  margin-bottom: 30px;
+  width: 161px;
+  height: 77px;
+
+  @media screen and (min-width: $s) {
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+    width: 255px;
+    height: 122px;
+  }
+}
+
+.image-logo {
+  margin: 0;
+  width: 168px;
+  height: 39px;
+
+  @media screen and (min-width: $s) {
+    width: 234px;
+    height: 54px;
+  }
+}
+
+.modal-title {
+  font-family: "Inter";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+.text-description {
+  font-family: "Inter";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+  color: $base-additional-grey;
+}
+
+.button-inner {
+  width: 100%;
+}
+
+.images-inner {
+  background-color: $brand-secondary-pale;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.images-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 30px;
+
+  @media screen and (min-width: $s) {
+    padding: 40px 40px 40px;
+    gap: 40px;
+  }
+}
+
+.password-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+  @media screen and (min-width: $s) {
+    padding: 30px 40px 40px;
+    gap: 32px;
+  }
+}
+
+.input-button-inner {
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: $s) {
+    gap: 8px;
+  }
+}
+
+.default-input {
+  height: 34px;
+  padding: 6px 12px;
+  display: flex;
+  width: 100%;
+  border-radius: 4px;
+  color: $base-primary-dark;
+  font-family: "Inter" !important;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  border: 1px solid $base-secondary-2;
+
+  &::placeholder {
+    font-family: "Inter" !important;
+    color: $base-secondary-1;
+  }
+
+  &:disabled {
+    background-color: $base-secondary-pale !important;
+    border: 1px solid $base-secondary-2;
+
+    &:hover,
+    &:focus {
+      background-color: $base-secondary-pale !important;
+      border: 1px solid $base-secondary-2;
+    }
+  }
+
+  &:hover {
+    border: 1px solid $base-secondary-1 !important;
+  }
+
+  &:focus {
+    border: 1px solid $brand-primary !important;
+    box-shadow: 0px 0px 0px 2px #f0f0ff;
+  }
+
+  &:focus-within {
+    border: 1px solid $brand-primary !important;
+    box-shadow: 0px 0px 0px 2px #f0f0ff;
+  }
+
+  &:active {
+    border: 1px solid $brand-primary !important;
+    box-shadow: 0px 0px 0px 2px #f0f0ff;
+
+    &:hover {
+      border: 1px solid $brand-primary !important;
+    }
+  }
+}
+
+.default-input > input::placeholder {
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  text-align: left;
+  color: $base-secondary-1;
+}
+
+.default-input > input {
+  background: #fff !important;
+}
+
+.default-input > input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input > input:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.default-input > input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+
+.error-input {
+  border: 1px solid $red-primary !important;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: #f0f0f0;
+  border-radius: 4px 0px 0px 0px;
+  opacity: 0px;
+}
+
+.necessary {
+  color: #cf133c;
+  font-family: "Inter";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0em;
+  text-align: left;
+}
+
+.footer-button {
+  display: flex;
+
+  gap: 8px;
+  flex-direction: column;
+  @media screen and (min-width: $tablet) {
+    flex-direction: row;
+    margin-top: 20px;
+    gap: 16px;
+  }
+}

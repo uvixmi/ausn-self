@@ -24,6 +24,8 @@ import { getRateReason } from "./utils"
 import { TaxSystemType } from "../../../api/myApi"
 import Link from "antd/es/typography/Link"
 import { ButtonOne } from "../../../ui-kit/button"
+import { NewPasswordModal } from "../new-password-modal"
+import { NewPasswordSettingsModal } from "./new-password-settings-modal"
 
 export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
@@ -47,6 +49,13 @@ export const SettingsPage = () => {
   const isMobile = useMediaQuery("(max-width: 767px)")
 
   const [isQuitOpen, setIsQuitOpen] = useState(false)
+
+  const [isNewPasswordOpen, setIsNewPasswordOpen] = useState(false)
+
+  const setNewPassword = () => {
+    setIsNewPasswordOpen(true)
+  }
+
   return (
     <>
       <Content className={styles["content-wrapper"]}>
@@ -220,9 +229,14 @@ export const SettingsPage = () => {
               )}
             </div>
 
-            {/* <Button className={styles["button-password"]}>
-              {CONTENT.BUTTON_CHANGE_PASSWORD}
-                </Button>*/}
+            {
+              <Button
+                className={styles["button-password"]}
+                onClick={setNewPassword}
+              >
+                {CONTENT.BUTTON_CHANGE_PASSWORD}
+              </Button>
+            }
           </div>
           <div className={styles["right-info"]}>
             <div className={styles["contact-info-inner"]}>
@@ -316,6 +330,10 @@ export const SettingsPage = () => {
       <ChangeModeModal isOpen={isOpenEditMode} setOpen={setIsOpenEditMode} />
       <OffServiceModal isOpen={isOffOpen} setOpen={setIsOffOpen} />
       <QuitModal isOpen={isQuitOpen} setOpen={setIsQuitOpen} />
+      <NewPasswordSettingsModal
+        isOpen={isNewPasswordOpen}
+        setIsOpen={setIsNewPasswordOpen}
+      />
     </>
   )
 }
