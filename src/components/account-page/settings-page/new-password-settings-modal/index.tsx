@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Spin, Typography } from "antd"
+import { Form, Input, Modal, Radio, Space, Spin, Typography } from "antd"
 import { NewPasswordSettingsModalProps } from "./types"
 import styles from "./styles.module.scss"
 import { CONTENT } from "./constants"
@@ -190,6 +190,15 @@ export const NewPasswordSettingsModal = ({
       setIsButtonDisabled(false)
     else setIsButtonDisabled(true)
   }, [password, repeatPassword, currentPassword])
+  const [hasNumbers, setHasNumbers] = useState(false)
+  const [hasLetters, setHasLetters] = useState(false)
+  const [hasMinLength, setMinLength] = useState(false)
+
+  useEffect(() => {
+    setHasNumbers(/\d/.test(password))
+    setHasLetters(/[a-zA-Z]/.test(password))
+    setMinLength(password.length >= 8)
+  }, [password])
 
   useEffect(() => {
     if (!validatePassword(password) && password !== "") {
@@ -318,6 +327,25 @@ export const NewPasswordSettingsModal = ({
                       />
                     </Form.Item>
                   </div>
+
+                  <div className={styles["radio-wrapper"]}>
+                    <Radio checked={hasNumbers}>
+                      <Text className={cn(styles["text-description"])}>
+                        {CONTENT.RADIO_DIGITS}
+                      </Text>
+                    </Radio>
+                    <Radio checked={hasLetters}>
+                      <Text className={cn(styles["text-description"])}>
+                        {CONTENT.RADIO_LETTERS}
+                      </Text>
+                    </Radio>
+                    <Radio checked={hasMinLength}>
+                      <Text className={cn(styles["text-description"])}>
+                        {CONTENT.RADIO_LENGTH}
+                      </Text>
+                    </Radio>
+                  </div>
+
                   <div className={styles["input-item-wrapper"]}>
                     <Text className={styles["input-title"]}>
                       {CONTENT.PASSWORD_REPEAT_TITLE}

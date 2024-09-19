@@ -21,4 +21,7 @@ export const CONTENT = {
   PASSWORD_EASY: "Слишком слабый пароль",
   ENTER_BUTTON: "Сохранить",
   CANCEL_BUTTON: "Отменить",
+  RADIO_DIGITS: "Цифры",
+  RADIO_LETTERS: "Буквы",
+  RADIO_LENGTH: "8 символов",
 }

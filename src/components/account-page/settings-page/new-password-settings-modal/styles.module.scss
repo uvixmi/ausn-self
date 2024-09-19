@@ -382,3 +382,10 @@ $xxl: 2560px;
     gap: 16px;
   }
 }
+
+.radio-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+}
