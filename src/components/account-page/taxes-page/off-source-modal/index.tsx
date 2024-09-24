@@ -131,9 +131,11 @@ export const OffSourceModal = ({
               )}
               <Text className={styles["text-source"]}> {source}</Text>
             </div>
-            <Text className={styles["text-source"]}>
-              {CONTENT.LINE_DESCRIPTION}
-            </Text>
+            {typeSource === 1 || typeSource === 2 ? (
+              <Text className={styles["text-source"]}>
+                {CONTENT.LINE_DESCRIPTION}
+              </Text>
+            ) : null}
             {typeSource === 1 || typeSource === 2 ? (
               <div className={styles["list-text"]}>
                 <Text className={styles["text-input"]}>

@@ -66,7 +66,7 @@ export const AuthorizationPage = ({
 
   const token = Cookies.get("token")
   const { isAuthenticated, setRole, logout } = useAuth()
-
+  /*
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -124,6 +124,32 @@ export const AuthorizationPage = ({
 
     // Удаление данных и куки
     deleteCarrotquestCookies()
+  }, [])*/
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      window.carrotquest.onReady(function () {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        window.carrotquest.auth(null, null)
+
+        // Очищаем данные пользователя
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        window.carrotquest.identify({})
+      })
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest.auth("", "")
+
+    // Очищаем данные пользователя
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest.identify({})
   }, [])
 
   const antIcon = (

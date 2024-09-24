@@ -96,6 +96,14 @@
       }
     }
   }
+  touch-action: manipulation;
+  @media (hover: none) {
+    &:hover {
+      background-color: $base-color-white !important;
+      color: $brand-primary !important;
+      border: 1px solid $base-secondary-2 !important;
+    }
+  }
 }
 .danger {
   background-color: $base-color-white;

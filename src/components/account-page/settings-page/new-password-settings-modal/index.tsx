@@ -7,7 +7,6 @@ import "./styles.scss"
 import { LoadingOutlined } from "@ant-design/icons"
 import Cookies from "js-cookie"
 import { useEffect, useRef, useState } from "react"
-import { MaskedInput } from "antd-mask-input"
 import { JwtPayload, jwtDecode } from "jwt-decode"
 import { useDispatch, useSelector } from "react-redux"
 

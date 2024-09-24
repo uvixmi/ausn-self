@@ -192,7 +192,7 @@ export const AccountPage = ({
 
   const { Title, Text } = Typography
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!loaded && loading !== "") {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
@@ -220,6 +220,21 @@ export const AccountPage = ({
         })
     }
   }, [loaded, loading])
+*/
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest.auth(currentUser.id, currentUser.hashed_id)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    window.carrotquest.identify({
+      $name: currentUser.full_name,
+      $email: currentUser.email,
+      $phone: currentUser.phone_number,
+      inn: currentUser.inn,
+    })
+  }, [])
 
   const [isQuitOpen, setIsQuitOpen] = useState(false)
   const token = Cookies.get("token")
@@ -464,9 +479,7 @@ export const AccountPage = ({
                   </Button>
                 </Dropdown>
               </div>
-            ) : (
-              <Skeleton.Input active />
-            )
+            ) : null //Skeleton
           ) : null}
           <Outlet />
           {isMobile && (

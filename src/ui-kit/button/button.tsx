@@ -2,6 +2,7 @@ import cn from "classnames"
 import { ButtonProps } from "./types"
 import styles from "./styles.module.scss"
 import { Button } from "antd"
+import { useState } from "react"
 
 export const ButtonOne = ({
   id,
@@ -17,9 +18,10 @@ export const ButtonOne = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
-  onTouchEnd,
+
   ...ariaAttributes
 }: ButtonProps) => {
+  const [isActive, setIsActive] = useState(false)
   const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
     onMouseEnter?.(event)
   }
@@ -41,10 +43,19 @@ export const ButtonOne = ({
     onMouseLeave?.(event)
   }
 
+  const handleTouchStart = (event: React.TouchEvent<HTMLButtonElement>) => {
+    setIsActive(true)
+  }
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLButtonElement>) => {
+    setIsActive(false)
+  }
+
   const buttonClassnames = cn(
     styles.button,
     styles["default"],
     styles[type],
+    { [styles.active]: isActive },
     className
   )
 
@@ -61,7 +72,8 @@ export const ButtonOne = ({
       onFocus={handleFocus}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onTouchEnd={onTouchEnd}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {children}
     </Button>

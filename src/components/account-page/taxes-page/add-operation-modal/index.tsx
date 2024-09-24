@@ -232,6 +232,21 @@ export const AddOperationModal = ({
 
   const isMobile = useMediaQuery("(max-width: 1023px)")
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    const element = e.target as HTMLInputElement // Приведение к типу HTMLInputElement
+    const allowedKeys = [
+      "Backspace",
+      "Tab",
+      "ArrowLeft",
+      "ArrowRight",
+      "Delete",
+    ] // разрешенные клавиши
+    const isNumberOrDot = /^\d$/.test(e.key) || e.key === "." // проверка на цифры или точку
+
+    if (!isNumberOrDot && !allowedKeys.includes(e.key)) {
+      e.preventDefault() // предотвращаем ввод, если это не цифра или разрешенные клавиши
+    }
+  }
   return (
     <>
       {contextHolder}
@@ -463,6 +478,7 @@ export const AddOperationModal = ({
                           styles["datepicker-style"]
                         )}
                         locale={locale}
+                        onKeyDown={handleKeyDown}
                         minDate={
                           currentUser.tax_date_begin
                             ? dayjs(

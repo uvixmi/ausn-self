@@ -105,7 +105,6 @@ export const MainPage = () => {
     }
   }, [currentUser.inn, currentUser.is_lead, loaded, token])
 
-
   if (!role)
     return (
       <>
