@@ -31,15 +31,39 @@ export const SettingsPage = () => {
   const [isOpenEditMode, setIsOpenEditMode] = useState(false)
   const [isOffOpen, setIsOffOpen] = useState(false)
   const { isAuthenticated, login, setRole, logout } = useAuth()
-
-  const navigate = useNavigate()
-  const { Sider, Content } = Layout
-  const { Title, Text } = Typography
   const {
     data: currentUser,
     loaded,
     loading,
   } = useSelector((state: RootState) => state.user)
+
+  const jwtToken =
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudF90eXBlIjoyLCJpZGVudCI6IjcwMTcxMTE5MjMzMiIsImlhdCI6MTcyNzI3NjA3NX0.4cVQwUzn16gyo1ww8vccBc6thKFycnlQp5FjlAZ_0ww"
+
+  useEffect(() => {
+    const renderWidget = () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      if (document.getElementById("widget-container") && window.lbxwidget) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        const widget = window.lbxwidget({
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudF90eXBlIjoyLCJpZGVudCI6IjcwMTcxMTE5MjMzMiIsImlhdCI6MTcyNzI3NjA3NX0.4cVQwUzn16gyo1ww8vccBc6thKFycnlQp5FjlAZ_0ww",
+        })
+        widget.render("widget-container")
+      }
+    }
+
+    setTimeout(() => {
+      renderWidget()
+    }, 0)
+  }, [])
+
+  const navigate = useNavigate()
+  const { Sider, Content } = Layout
+  const { Title, Text } = Typography
+
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     if (!loaded && loading !== "succeeded" && loading !== "loading")
@@ -76,6 +100,7 @@ export const SettingsPage = () => {
             {CONTENT.BUTTON_OFF_PROFILE}
           </ButtonOne>
         </div>
+        <div id="widget-container"></div>
         <div className={styles["settings-wrapper"]}>
           <div className={styles["info-user-inner"]}>
             <div className={styles["info-wrapper"]}>
