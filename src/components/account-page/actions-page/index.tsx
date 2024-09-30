@@ -711,9 +711,9 @@ export const ActionsPage = () => {
                   disabled={isButtonDisabled}
                 >
                   {!isButtonDisabled ? (
-                    <>
+                    <div>
                       <ArrowRoundUpdateIcon /> {CONTENT.BUTTON_UPDATE_ACTIONS}
-                    </>
+                    </div>
                   ) : secondsRemaining > 58 ? (
                     <>
                       <Spin indicator={antIcon} />
