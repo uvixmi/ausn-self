@@ -47,7 +47,9 @@
     "eject": "react-scripts eject",
     "generate-api": "sta -p ./swagger.json -o ./src/api -n myApi.ts",
     "deploy": "gh-pages -d build",
-    "predeploy": "yarn build"
+    "predeploy": "yarn build",
+    "build:dev": "react-scripts build --mode development",
+    "build:prod": "react-scripts build --mode production"
   },
   "eslintConfig": {
     "extends": [
