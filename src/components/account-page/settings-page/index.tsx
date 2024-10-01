@@ -40,7 +40,7 @@ export const SettingsPage = () => {
   const jwtToken =
     "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZGVudF90eXBlIjoyLCJpZGVudCI6IjcwMTcxMTE5MjMzMiIsImlhdCI6MTcyNzI3NjA3NX0.4cVQwUzn16gyo1ww8vccBc6thKFycnlQp5FjlAZ_0ww"
 
-  useEffect(() => {
+  /*useEffect(() => {
     const renderWidget = () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
@@ -58,7 +58,7 @@ export const SettingsPage = () => {
     setTimeout(() => {
       renderWidget()
     }, 0)
-  }, [])
+  }, [])*/
 
   const navigate = useNavigate()
   const { Sider, Content } = Layout
@@ -100,7 +100,7 @@ export const SettingsPage = () => {
             {CONTENT.BUTTON_OFF_PROFILE}
           </ButtonOne>
         </div>
-        <div id="widget-container"></div>
+        {/*<div id="widget-container"></div>*/}
         <div className={styles["settings-wrapper"]}>
           <div className={styles["info-user-inner"]}>
             <div className={styles["info-wrapper"]}>
