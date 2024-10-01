@@ -48,8 +48,8 @@
     "generate-api": "sta -p ./swagger.json -o ./src/api -n myApi.ts",
     "deploy": "gh-pages -d build",
     "predeploy": "yarn build",
-    "build:dev": "react-scripts build --mode development",
-    "build:prod": "react-scripts build --mode production"
+    "build:dev": "env-cmd -f .env.development react-scripts build",
+    "build:prod": "react-scripts build"
   },
   "eslintConfig": {
     "extends": [
@@ -73,6 +73,7 @@
     "@types/js-cookie": "^3.0.6",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
+    "env-cmd": "^10.1.0",
     "eslint-config-prettier": "^9.0.0",
     "openapi-typescript": "^6.7.0",
     "prettier": "3.0.3"
